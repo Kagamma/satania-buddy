@@ -5,7 +5,6 @@ Virtual Desktop Assistant in the form of Satania.
 ##### Q: Linux requirements?
 
 A: x11, qt5, qt5pas, openssl (for IMAP)
-For development, trunk version of Lazarus is needed
 
 ##### Q: Why X11? Where's wayland support?
 
