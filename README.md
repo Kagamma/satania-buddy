@@ -1,7 +1,7 @@
-### satania-buddy
+## satania-buddy
 Virtual Desktop Assistant in the form of Satania.
 
-### Q & A
+## Q & A
 ##### Q: Linux requirements?
 
 A: x11, qt5, qt5pas, openssl (for IMAP)
@@ -28,6 +28,25 @@ For example this is Japanese's codepoints:
 - Katakana (x30a0 - x30ff)
 - Full-width roman characters and half-width katakana (xff00 - xffef)
 - CJK unifed ideographs - Common and uncommon kanji (x4e00 - x9faf)
+
+##### Q: Chat features?
+A: Type `>app_name` to execute external applications, for example: `>echo Hello`
+
+Type an expression, for example `5+3*2` and she will answer with `10`
+
+By default she has a simple rule-based chat system, you can configure patterns and responses in `data/nn/chatbot/rules.json`, then tell her to learn the rules in `Actions>Learn Rules Again` menu
+
+##### Q: What is Chatbot in Settings?
+
+A: She can send messages that she doesn't understand to another 3rd chatbot service if you have one available. Basically she will:
+- Make a POST to chatbot's URL, with formdata format: message=<her message>
+- Wait for chatbot server to respond in JSON format:
+  ```
+  {
+    "type": <"chat"> or <"script">,
+    "message": <"response data">
+  }
+  ```
 
 ##### Q: /g/ regulator?
 
