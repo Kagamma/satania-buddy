@@ -6,6 +6,8 @@ Virtual Desktop Assistant in the form of Satania.
 
 A: x11, qt5, qt5pas, openssl (for IMAP)
 
+You also need a compositor, or else the app will show black screen.
+
 ##### Q: Why X11? Where's wayland support?
 
 A: Wayland's "security" measurements makes this kind of software impossible to develope.
