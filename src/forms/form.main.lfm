@@ -1395,6 +1395,10 @@ object FormMain: TFormMain
       Caption = 'Settings'
       OnClick = MenuItemSettingsClick
     end
+    object MenuItemAbout: TMenuItem
+      Caption = 'About'
+      OnClick = MenuItemAboutClick
+    end
     object MenuItemQuit: TMenuItem
       Caption = 'Quit'
       OnClick = MenuItemQuitClick

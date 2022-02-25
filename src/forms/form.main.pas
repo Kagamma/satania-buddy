@@ -75,6 +75,7 @@ type
   TFormMain = class(TForm)
     CastleControl: TCastleControl;
     MainMenu1: TMainMenu;
+    MenuItemAbout: TMenuItem;
     MenuItemRefreshMenu: TMenuItem;
     MenuItemEditor: TMenuItem;
     MenuItemActions: TMenuItem;
@@ -92,6 +93,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MenuItemAboutClick(Sender: TObject);
     procedure MenuItemChatWithHerClick(Sender: TObject);
     procedure MenuItemEditorClick(Sender: TObject);
     procedure MenuItemHideShowClick(Sender: TObject);
@@ -196,6 +198,11 @@ end;
 procedure TFormMain.FormShow(Sender: TObject);
 begin
   InitCommon;
+end;
+
+procedure TFormMain.MenuItemAboutClick(Sender: TObject);
+begin
+  Satania.Talk('Satania Buddy'#10'Homepage: https://kgm.itch.io/satania-buddy');
 end;
 
 procedure TFormMain.MenuItemChatWithHerClick(Sender: TObject);

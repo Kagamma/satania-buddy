@@ -8,5 +8,6 @@
 {"hash":265952567,"name":"tformmain.menuitemsitonwindow.caption","sourcebytes":[83,105,116,32,79,110,32,87,105,110,100,111,119],"value":"Sit On Window"},
 {"hash":323493,"name":"tformmain.menuitemhideshow.caption","sourcebytes":[72,105,100,101],"value":"Hide"},
 {"hash":213582195,"name":"tformmain.menuitemsettings.caption","sourcebytes":[83,101,116,116,105,110,103,115],"value":"Settings"},
+{"hash":4691652,"name":"tformmain.menuitemabout.caption","sourcebytes":[65,98,111,117,116],"value":"About"},
 {"hash":363524,"name":"tformmain.menuitemquit.caption","sourcebytes":[81,117,105,116],"value":"Quit"}
 ]}
