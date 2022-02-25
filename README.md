@@ -2,6 +2,10 @@
 Virtual Desktop Assistant in the form of Satania.
 
 ## Q & A
+##### Q: Windows requirements?
+
+A: Windows Vista or above with Aero enabled.
+
 ##### Q: Linux requirements?
 
 A: x11, qt5, qt5pas, freetype, openssl (for IMAP)
