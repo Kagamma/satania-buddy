@@ -1,6 +1,6 @@
 rm -rf src/components/castle-engine
-rm -rf src/components/neural-api   
-rm -rf src/components/csscontrols
+rm -rf src/components/neural-api
+rm -rf src/components/typing-label
 rm -rf src/components/synalist
 
 cd src/components
