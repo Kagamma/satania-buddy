@@ -1,6 +1,8 @@
 ## satania-buddy
 Virtual Desktop Assistant in the form of Satania.
 
+Download page: https://kgm.itch.io/satania-buddy
+
 ## Q & A
 ##### Q: Windows requirements?
 
