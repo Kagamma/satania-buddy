@@ -60,6 +60,14 @@ A: She can send messages that she doesn't understand to another 3rd chatbot serv
   }
   ```
 
+##### Q: How can I change her size?
+
+A: `Base Scaling` in `Settings`.
+
+##### Q: How can I make her stay silent?
+
+A: Change `main.evil` to `main-silent.evil` in `Settings`.
+
 ##### Q: /g/ regulator?
 
 A: Nah just a tourist.
