@@ -6,13 +6,15 @@ Virtual Desktop Assistant in the form of Satania.
 
 A: x11, qt5, qt5pas, freetype, openssl (for IMAP)
 
+Optional dependencies: fortune, sensors, metar
+
 You also need a compositor, or else the app will show black screen.
 
 ##### Q: Why X11? Where's wayland support?
 
 A: Wayland's "security" measurements makes this kind of software impossible to develope.
 
-##### Q: OS X supports when
+##### Q: OS X support when
 
 A:![Gt999+dollars+for+a+stand+itoddlers+btfo+_954ed86b58d371154ab7f95a68054faf](https://user-images.githubusercontent.com/7451778/155552903-936f2ff1-a32b-4fe2-bbbd-0403d169808a.gif)
 
@@ -20,7 +22,7 @@ A:![Gt999+dollars+for+a+stand+itoddlers+btfo+_954ed86b58d371154ab7f95a68054faf](
 
 A: Not available right now, I am working on it.
 
-##### Q: How to make her speaks in my language? She only shows `?` in her chat bubble. 
+##### Q: How to make her speaks in my language? She only shows `?` in her chat bubble.
 
 A: By default only ASCII is enabled. If you want to add supports for your language, make sure to add suitable fonts in `data/fonts`, enable it in `Settings`, and add unicode codepoints in Charsets.
 For example this is Japanese's codepoints:
@@ -40,7 +42,7 @@ By default she has a simple rule-based chat system, you can configure patterns a
 ##### Q: What is Chatbot in Settings?
 
 A: She can send messages that she doesn't understand to another 3rd chatbot service if you have one available. Basically she will:
-- Make a POST to chatbot's URL, with formdata format: 
+- Make a POST to chatbot's URL, with formdata format:
   ```
   message=<her message>
   ```

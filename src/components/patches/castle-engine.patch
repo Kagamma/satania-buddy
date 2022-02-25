@@ -1,0 +1,132 @@
+diff --git a/src/common_includes/castleconf.inc b/src/common_includes/castleconf.inc
+index d762405..7e27145 100644
+--- a/src/common_includes/castleconf.inc
++++ b/src/common_includes/castleconf.inc
+@@ -508,7 +508,7 @@
+   It also makes some exposed X3D fields into non-exposed
+   (it means you cannot define X3D ROUTEs to pass value into/out of this field).
+   The choice "which fields are seldom used" is purely subjective, and may change! }
+-{.$define CASTLE_SLIM_NODES}
++{$define CASTLE_SLIM_NODES}
+ 
+ { Vampyre Imaging ------------------------------------------------------------ }
+ 
+diff --git a/src/window/castlewindow.pas b/src/window/castlewindow.pas
+index 8088b20..d62c289 100644
+--- a/src/window/castlewindow.pas
++++ b/src/window/castlewindow.pas
+@@ -219,8 +219,8 @@ unit CastleWindow;
+              {$define CASTLE_WINDOW_XLIB}
+            {$else}
+              // various possible backends on traditional Unix (Linux, FreeBSD) desktop:
+-             {$define CASTLE_WINDOW_GTK_2} // best (looks native and most functional), supports both OpenGL and OpenGLES
+-             { $define CASTLE_WINDOW_XLIB} // supports both OpenGL and OpenGLES
++             {.$define CASTLE_WINDOW_GTK_2} // best (looks native and most functional), supports both OpenGL and OpenGLES
++             {$define CASTLE_WINDOW_XLIB} // supports both OpenGL and OpenGLES
+              { $define CASTLE_WINDOW_LCL}
+              { $define CASTLE_WINDOW_LIBRARY}
+              { $define CASTLE_WINDOW_TEMPLATE} // only useful for developers
+@@ -2380,9 +2380,6 @@ type
+     { Override TCustomApplication to pass TCustomApplication.Log
+       to CastleLog logger. }
+     procedure DoLog(EventType: TEventType; const Msg: String); override;
+-    { Every backend must override this. TCustomApplication will
+-      automatically catch exceptions occuring inside DoRun. }
+-    procedure DoRun; override;
+   public
+     { If VideoResize, then next VideoChange call will
+       try to resize the screen to given VideoResizeWidth /
+@@ -2393,6 +2390,9 @@ type
+     VideoResizeWidth,
+     VideoResizeheight : integer;
+     { @groupEnd }
++    { Every backend must override this. TCustomApplication will
++      automatically catch exceptions occuring inside DoRun. }
++    procedure DoRun; override;
+ 
+     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+ 
+@@ -3010,7 +3010,7 @@ procedure TCastleWindow.OpenCore;
+         TDrawableImage from Application.OnInitialize work Ok. }
+       ApplicationProperties._GLContextEarlyOpen;
+ 
+-      RenderLoadingBackground;
++      //RenderLoadingBackground;
+ 
+       Application.CastleEngineInitialize;
+       if Closed then Exit;
+diff --git a/src/window/unix/castlewindow_glx.inc b/src/window/unix/castlewindow_glx.inc
+index 91f053f..ae1a38e 100644
+--- a/src/window/unix/castlewindow_glx.inc
++++ b/src/window/unix/castlewindow_glx.inc
+@@ -92,7 +92,7 @@ begin
+       { Buffer sizes below are all in bits. }
+       GLX_DEPTH_SIZE, DepthBits,
+       GLX_STENCIL_SIZE, StencilBits,
+-      GLX_ALPHA_SIZE, AlphaBits,
++      GLX_ALPHA_SIZE, 8,
+       GLX_ACCUM_RED_SIZE, FAccumBits[0],
+       GLX_ACCUM_GREEN_SIZE, FAccumBits[1],
+       GLX_ACCUM_BLUE_SIZE, FAccumBits[2],
+@@ -132,6 +132,7 @@ begin
+     end else
+       XVisual := glXChooseVisual(Application.XDisplay, Application.XScreen, Attribs.L);
+   finally FreeAndNil(Attribs) end;
++  XMatchVisualInfo(Application.XDisplay, DefaultScreen(Application.XDisplay), 32, TrueColor, XVisual);
+ 
+   if XVisual = nil then
+     raise EGLContextNotPossible.CreateFmt(
+diff --git a/src/window/unix/castlewindow_xlib.inc b/src/window/unix/castlewindow_xlib.inc
+index 05aa7af..2b63532 100644
+--- a/src/window/unix/castlewindow_xlib.inc
++++ b/src/window/unix/castlewindow_xlib.inc
+@@ -25,7 +25,8 @@
+ {$endif}
+ 
+ {$ifdef read_interface_uses}
+-Xlib, CastleInternalXlib, XUtil, X, KeySym, CursorFont,
++{$Linklib Xfixes}
++Xlib, CastleInternalXlib, XUtil, X, KeySym, CursorFont, Xfixes,
+ {$endif}
+ 
+ {$ifdef read_window_interface}
+@@ -130,6 +131,8 @@ var
+   ClassHint: TXClassHint;
+   WMHints: TXWMHints;
+   PWindTitle: PChar;
++  rrect: TXRectangle;
++  rregion: TXserverRegion;
+   {$endif}
+ const
+   AllPointerEventsMask = ButtonPressMask or ButtonReleaseMask or
+@@ -162,10 +165,12 @@ begin
+   Colormap := XCreateColormap(Application.XDisplay, ParentWinXID,
+     XVisual^.Visual, AllocNone);
+   Attr.Colormap := Colormap;
++  Attr.background_pixel := None;
++  Attr.border_pixmap := None;
+   AttrValueMask := AttrValueMask or CWColormap;
+   {$endif}
+-
+-  if FullScreen then
++  //FullScreen := True;
++  if True then
+   begin
+     Attr.override_redirect := XBool_true;
+     AttrValueMask := AttrValueMask or CWOverrideRedirect;
+@@ -273,10 +278,14 @@ begin
+   end;
+   {$endif}
+ 
++  rregion := XFixesCreateRegion(Application.XDisplay, @rrect, 1);
++  XFixesSetWindowShapeRegion(Application.XDisplay, windowXID, 2, 0, 0, rregion);
++  XFixesDestroyRegion(Application.XDisplay, rregion);
++
+   ContextCreateEnd(windowXID);
+ 
+   { applying FullScreen changes to the Left / Top / Width / Height }
+-  if FullScreen then
++  if True then
+   begin
+     FLeft := 0;
+     FTop := 0;

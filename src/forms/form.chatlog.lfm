@@ -1,0 +1,39 @@
+object FormChatLog: TFormChatLog
+  Left = 356
+  Height = 368
+  Top = 31
+  Width = 471
+  Caption = 'Chat'
+  ClientHeight = 368
+  ClientWidth = 471
+  Position = poScreenCenter
+  object MemoChatLog: TMemo
+    Left = 0
+    Height = 320
+    Top = 0
+    Width = 471
+    Align = alClient
+    ReadOnly = True
+    ScrollBars = ssAutoBoth
+    TabOrder = 0
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 48
+    Top = 320
+    Width = 471
+    Align = alBottom
+    ClientHeight = 48
+    ClientWidth = 471
+    TabOrder = 1
+    object BttonClear: TBitBtn
+      Left = 384
+      Height = 30
+      Top = 8
+      Width = 75
+      Caption = 'Clear'
+      OnClick = BttonClearClick
+      TabOrder = 0
+    end
+  end
+end
