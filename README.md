@@ -4,7 +4,7 @@ Virtual Desktop Assistant in the form of Satania.
 ## Q & A
 ##### Q: Linux requirements?
 
-A: x11, qt5, qt5pas, openssl (for IMAP)
+A: x11, qt5, qt5pas, freetype, openssl (for IMAP)
 
 You also need a compositor, or else the app will show black screen.
 
@@ -33,14 +33,17 @@ For example this is Japanese's codepoints:
 ##### Q: Chat features?
 A: Type `>app_name` to execute external applications, for example: `>echo Hello`
 
-Type an expression, for example `5+3*2` and she will answer with `10`
+Type an expression, for example `5+3*2` and she will answer with `11`
 
 By default she has a simple rule-based chat system, you can configure patterns and responses in `data/nn/chatbot/rules.json`, then tell her to learn the rules in `Actions>Learn Rules Again` menu
 
 ##### Q: What is Chatbot in Settings?
 
 A: She can send messages that she doesn't understand to another 3rd chatbot service if you have one available. Basically she will:
-- Make a POST to chatbot's URL, with formdata format: message=<her message>
+- Make a POST to chatbot's URL, with formdata format: 
+  ```
+  message=<her message>
+  ```
 - Wait for chatbot server to respond in JSON format:
   ```
   {
