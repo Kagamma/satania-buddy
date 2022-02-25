@@ -13,7 +13,7 @@ uses
   Forms, Form.Main, utils.activewindow,
   mcdowell, State.Main, Form.Touch, globals, form.settings, form.chat,
   mcdowell.chatbot, mcdowell.chatbot.train, 
-  form.evilc.editor, mcdowell.imap, EvilC;
+  form.evilc.editor, mcdowell.imap;
 
 {$R *.res}
 
