@@ -13,6 +13,6 @@ cd neural-api
 git apply ../patches/neural-api.patch
 cd ..
 git clone https://gitlab.com/EugeneLoza/typing-label.git
-svn checkout https://svn.code.sf.net/p/synalist/code/trunk synalist
+svn checkout https://svn.code.sf.net/p/synalist/code/trunk synalist --trust-server-cert
 cd ..
 

@@ -1,12 +1,12 @@
 object FormMain: TFormMain
-  Left = 0
-  Height = 248
-  Top = 0
-  Width = 459
+  Left = -8
+  Height = 287
+  Top = -8
+  Width = 475
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 248
-  ClientWidth = 459
+  ClientHeight = 287
+  ClientWidth = 475
   FormStyle = fsSystemStayOnTop
   Menu = MainMenu1
   OnCreate = FormCreate
@@ -14,13 +14,14 @@ object FormMain: TFormMain
   OnShow = FormShow
   PopupMenu = TrayMenu
   ShowInTaskBar = stNever
+  LCLVersion = '2.3.0.0'
   Visible = True
   WindowState = wsMaximized
   object CastleControl: TCastleControl
     Left = 0
-    Height = 248
+    Height = 256
     Top = 0
-    Width = 459
+    Width = 467
     Align = alClient
     Options = []
     TabOrder = 0

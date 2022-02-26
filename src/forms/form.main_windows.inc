@@ -49,7 +49,7 @@ begin
   DwmCompositionEnabled;
   B.dwFlags := DWM_BB_ENABLE or DWM_BB_BLURREGION;
   B.fEnable := true;
-  B.hRgnBlur := CreateRectRgn(0, 0, 1, 1);
+  B.hRgnBlur := CreateRectRgn(0, 0, -1, -1);
   B.fTransitionOnMaximized := true;
   DwmEnableBlurBehindWindow(Handle, @B);
 end;
