@@ -23,6 +23,7 @@ object FormMain: TFormMain
     Top = 0
     Width = 467
     Align = alClient
+    AlphaBits = 8
     Options = []
     TabOrder = 0
   end
