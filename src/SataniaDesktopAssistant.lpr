@@ -30,8 +30,9 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
+  globals,
   Forms, Form.Main, utils.activewindow, mcdowell, State.Main, Form.Touch,
-  globals, form.settings, form.chat, mcdowell.chatbot, mcdowell.chatbot.train,
+  form.settings, form.chat, mcdowell.chatbot, mcdowell.chatbot.train,
   form.evilc.editor, mcdowell.imap, Mcdowell.SpeechToText;
 
 {$R *.res}

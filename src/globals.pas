@@ -30,7 +30,7 @@ uses
   {$endif}
   Classes, SysUtils, Types, Generics.Collections, fpjsonrtti,
   CastleFonts, CastleStringUtils, CastleUnicode, StrUtils,
-  CastleVectors, Mcdowell.EvilC, Blowfish;
+  CastleVectors, Mcdowell.EvilC, Blowfish, base64;
 
 const
   PATH_SCRIPTS = 'castle-data:/scripts/';
@@ -184,7 +184,7 @@ function Grep(Src, S: String): String;
 implementation
 
 uses
-  CastleWindow;
+  CastleWindow, Mcdowell;
 
 function UIToScreenCoord(const V: TVector2): TVector2Integer;
 begin
@@ -366,8 +366,13 @@ end;
 
 procedure TCommonThread.Execute;
 begin
-  Method;
-  Terminate;
+  try
+    Method;
+    Terminate;
+  except
+    on E: Exception do
+      Satania.Talk(E.Message);
+  end;
 end;
 
 function Encrypt(S: String): String;
@@ -379,7 +384,7 @@ begin
   EncrytpStream := TBlowFishEncryptStream.Create(SECRET_KEY, StringStream);
   EncrytpStream.WriteAnsiString(S);
   EncrytpStream.Free;
-  Result := StringStream.DataString;
+  Result := EncodeStringBase64(StringStream.DataString);
   StringStream.Free;
 end;
 
@@ -388,6 +393,7 @@ var
   DecrytpStream: TBlowFishDeCryptStream;
   StringStream: TStringStream;
 begin
+  S := DecodeStringBase64(S);
   StringStream := TStringStream.Create(S);
   DecrytpStream := TBlowFishDeCryptStream.Create(SECRET_KEY, StringStream);
   Result := DecrytpStream.ReadAnsiString;
@@ -459,14 +465,9 @@ end;
 
 initialization
   OwnedWindowHandleList := TQWordList.Create;
-  Save := TSave.Create;
-  if FileExists('configs.json') then
-    Save.LoadFromFile('configs.json');
 
 finalization
-  Save.SaveToFile('configs.json');
   FreeAndNil(OwnedWindowHandleList);
-  FreeAndNil(Save);
 
 end.
 

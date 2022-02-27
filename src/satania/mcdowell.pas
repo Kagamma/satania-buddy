@@ -791,12 +791,17 @@ begin
   Log('System', S);
 end;
 
-initialization
+initialization    
+  Save := TSave.Create;
+  if FileExists('configs.json') then
+    Save.LoadFromFile('configs.json');
   Satania := TSatania.Create;
   RunList := TStringList.Create;
   RunResultList := TStringDict.Create;
 
-finalization
+finalization 
+  Save.SaveToFile('configs.json');
+  FreeAndNil(Save);
   FreeAndNil(Satania);
   FreeAndNil(RunList);
   FreeAndNil(RunResultList);

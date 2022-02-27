@@ -32,7 +32,6 @@ type
   TSataniaIMAP = class
   private
     Imap: TIMAPSend;
-    MimeMess: TMimeMess;
     FolderList: TStringList;
     FIsRunning: Boolean;
     FIsSuccess: Boolean;
@@ -58,7 +57,8 @@ procedure TSataniaIMAP.GetMessagesParallel;
 var
   I, J, Count, SubPartCount: Integer;
   Mail: TMailRec;
-  MimePart: TMimePart;
+  MimePart: TMimePart; 
+  MimeMess: TMimeMess;
   S: String;
 begin
   FIsRunning := True;
@@ -77,25 +77,30 @@ begin
         Imap.SelectROFolder(FolderList[I]);
         for J := Imap.SelectedCount - Imap.SelectedRecent to Imap.SelectedCount do
         begin
-          MimeMess.Clear;
+          MimeMess := TMimeMess.Create;
           Imap.FetchMess(J, MimeMess.Lines);
-          MimeMess.DecodeMessage;
-          Mail.Sender := MimeMess.Header.From;
-          Mail.Subject := MimeMess.Header.Subject;
-          Mail.Body := '';
-          SubPartCount := MimeMess.MessagePart.GetSubPartCount();
-          if SubPartCount > 0 then
-          begin
-            for Count := 0 to SubPartCount - 1 do
+          try
+            MimeMess.DecodeMessage;
+            Mail.Sender := MimeMess.Header.From;
+            Mail.Subject := MimeMess.Header.Subject;
+            Mail.Body := '';
+            SubPartCount := MimeMess.MessagePart.GetSubPartCount();
+            if SubPartCount > 0 then
             begin
-              MimePart := MimeMess.MessagePart.GetSubPart(Count);
-              MimePart.DecodePart;
-              Setlength(S, MimePart.DecodedLines.Size);
-              MimePart.DecodedLines.Read(S[1], Length(S));
-              Mail.Body := Mail.Body + S + #10;
-            end
-          end else
-            Mail.Body := MimeMess.MessagePart.Lines.Text;
+              for Count := 0 to SubPartCount - 1 do
+              begin
+                MimePart := MimeMess.MessagePart.GetSubPart(Count);
+                MimePart.DecodePart;
+                Setlength(S, MimePart.DecodedLines.Size);
+                MimePart.DecodedLines.Read(S[1], Length(S));
+                Mail.Body := Mail.Body + S + #10;
+              end
+            end else
+              Mail.Body := MimeMess.MessagePart.Lines.Text;
+          except
+            on E: Exception do;
+          end;
+          MimeMess.Free;
           MailList.Add(Mail);
         end;
       end;
@@ -134,7 +139,6 @@ begin
   if not IsEmailConfigured then
     Exit;
   Imap := TIMAPSend.create;
-  MimeMess := TMimeMess.Create;
 
   Imap.TargetHost := Save.Settings.EmailServer;
   Imap.TargetPort := IntToStr(Save.Settings.EmailPort);
@@ -152,7 +156,6 @@ begin
   if Imap <> nil then
   begin
     FreeAndNil(Imap);
-    FreeAndNil(MimeMess);
   end;
 end;
 
