@@ -66,7 +66,7 @@ A: `Base Scaling` in `Settings`.
 
 ##### Q: How can I make her stay silent?
 
-A: Change `main.evil` to `main-silent.evil` in `Settings`.
+A: `Silent` menu.
 
 ##### Q: /g/ regulator?
 
