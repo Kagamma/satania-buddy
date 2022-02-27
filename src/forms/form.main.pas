@@ -288,7 +288,7 @@ begin
       Satania.Talk('Speech recognition disabled.');
     end;
   end else
-    Satania.Talk('You haven''t installed CMU Sphinx''s libraries.'#10#10'Please install <font color="#0000ff">libsphinxad</font>, <font color="#0000ff">libsphinxbase</font> and <font color="#0000ff">libpocketsphinx</font>.');
+    Satania.Talk('You haven''t installed <font color="#0000ff">pocketsphinx</font>.');
 end;
 
 procedure TFormMain.TimerMainLoopTimer(Sender: TObject);
