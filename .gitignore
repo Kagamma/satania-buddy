@@ -2,6 +2,7 @@
 *.bak
 *.exe
 *.csv
+*.dll
 satania-buddy*
 link*.res
 lib
@@ -10,6 +11,7 @@ src/components/castle-engine
 src/components/neural-api
 src/components/synalist
 src/components/typing-label
+src/components/TPocketSphinx
 data-source
 ppas.sh
 configs.json
