@@ -6,6 +6,7 @@
 {"hash":150937109,"name":"tformmain.menuitemrefreshmenu.caption","sourcebytes":[82,101,102,114,101,115,104,32,65,99,116,105,111,110,32,77,101,110,117],"value":"Refresh Action Menu"},
 {"hash":88919470,"name":"tformmain.menuitemlearn.caption","sourcebytes":[76,101,97,114,110,32,82,117,108,101,115,32,65,103,97,105,110],"value":"Learn Rules Again"},
 {"hash":265952567,"name":"tformmain.menuitemsitonwindow.caption","sourcebytes":[83,105,116,32,79,110,32,87,105,110,100,111,119],"value":"Sit On Window"},
+{"hash":94383188,"name":"tformmain.menuitemsilent.caption","sourcebytes":[83,105,108,101,110,116],"value":"Silent"},
 {"hash":323493,"name":"tformmain.menuitemhideshow.caption","sourcebytes":[72,105,100,101],"value":"Hide"},
 {"hash":213582195,"name":"tformmain.menuitemsettings.caption","sourcebytes":[83,101,116,116,105,110,103,115],"value":"Settings"},
 {"hash":4691652,"name":"tformmain.menuitemabout.caption","sourcebytes":[65,98,111,117,116],"value":"About"},

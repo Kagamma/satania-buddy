@@ -123,6 +123,7 @@ type
     FSpriteDefaultLocationX: Single;
     FSpriteDefaultLocationY: Single;
     FSettings: TSaveSettings;
+    FSilent: Boolean;
   public
     constructor Create;
     destructor Destroy; override;
@@ -136,6 +137,7 @@ type
     property SitOnWindow: Boolean read FSitOnWindow write FSitOnWindow default false;
     property SpriteDefaultLocationX: Single read FSpriteDefaultLocationX write FSpriteDefaultLocationX;
     property SpriteDefaultLocationY: Single read FSpriteDefaultLocationY write FSpriteDefaultLocationY;
+    property Silent: Boolean read FSilent write FSilent;
   end;
 
   TMethod = procedure of object;
@@ -235,6 +237,7 @@ begin
   SpriteDefaultLocationX := -1;
   SpriteDefaultLocationY := -1;
   FFlags := TSaveCollection.Create(TSaveFlagCollectionItem);
+  FSilent := False;
   FSettings := TSaveSettings.Create; 
   FSettings.ChatBubbleDelay := 5000;
   FSettings.FPS := 16;        

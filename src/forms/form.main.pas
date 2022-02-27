@@ -75,6 +75,7 @@ type
   TFormMain = class(TForm)
     CastleControl: TCastleControl;
     MainMenu1: TMainMenu;
+    MenuItemSilent: TMenuItem;
     MenuItemAbout: TMenuItem;
     MenuItemRefreshMenu: TMenuItem;
     MenuItemEditor: TMenuItem;
@@ -101,6 +102,7 @@ type
     procedure MenuItemQuitClick(Sender: TObject);
     procedure MenuItemRefreshMenuClick(Sender: TObject);
     procedure MenuItemSettingsClick(Sender: TObject);
+    procedure MenuItemSilentClick(Sender: TObject);
     procedure MenuItemSitOnWindowClick(Sender: TObject);
     procedure TimerMainLoopTimer(Sender: TObject);
     procedure TrayIconDblClick(Sender: TObject);
@@ -163,7 +165,8 @@ begin
     Satania.Form := Self;
     Satania.FormTouch := FormTouch;
 
-    MenuItemSitOnWindow.Checked := Save.SitOnWindow;
+    MenuItemSitOnWindow.Checked := Save.SitOnWindow;     
+    MenuItemSilent.Checked := Save.Silent;
 
     {$if defined(WINDOWS)}
     TCastleControl.MainControl := CastleControl;
@@ -248,6 +251,13 @@ end;
 procedure TFormMain.MenuItemSettingsClick(Sender: TObject);
 begin
   FormSettings.Show;
+end;
+
+procedure TFormMain.MenuItemSilentClick(Sender: TObject);
+begin
+  Save.Silent := not Save.Silent;
+  MenuItemSilent.Checked := Save.Silent;
+  Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
 end;
 
 procedure TFormMain.MenuItemSitOnWindowClick(Sender: TObject);

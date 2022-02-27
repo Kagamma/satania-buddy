@@ -43,7 +43,7 @@ var
 begin
   Color := clFuchsia;
   Attrib := GetWindowLongA(Handle, GWL_EXSTYLE);
-  SetWindowLongA(Handle, GWL_EXSTYLE, Attrib or WS_EX_LAYERED);
+  SetWindowLongA(Handle, GWL_EXSTYLE, Attrib or WS_EX_LAYERED or WS_EX_TOOLWINDOW and not WS_EX_APPWINDOW);
   SetLayeredWindowAttributes(Handle, Color, 0, LWA_COLORKEY);
   InitDwmLibrary;
   DwmCompositionEnabled;
