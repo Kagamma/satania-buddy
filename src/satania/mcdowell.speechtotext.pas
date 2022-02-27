@@ -48,7 +48,8 @@ var
 implementation
 
 uses
-  Mcdowell;
+  Mcdowell,
+  Globals;
 
 constructor TSataniaSpeechToText.Create;
 begin
@@ -67,7 +68,7 @@ procedure TSataniaSpeechToText.OnPocketSphinxStateChange(Sender: TObject;
 begin
   case AState of
     rsNotInitialized: ;
-    rsInitialized: Satania.Talk('I''m listening');
+    rsInitialized: Satania.Talk('I''m listening.');
     rsReady: ;
     rsListening: ;
     rsAnalyze: Satania.Talk('...');
@@ -97,15 +98,15 @@ begin
   FPocketSphinx.OnStateChange := @OnPocketSphinxStateChange;
   FPocketSphinx.OnHypothesis := @OnPocketSphinxHypothesis;
 
-  FPocketSphinx.AcousticModelPath := 'data/nn/sphinx/english/en-us';
+  FPocketSphinx.AcousticModelPath := PATH_SPHINX + Save.Settings.STTModel;
   FPocketSphinx.Threshold := 0;
 
   FPocketSphinx.Init;
   if FPocketSphinx.State = rsInitialized then
   begin
-    if FPocketSphinx.LoadDictionary('data/nn/sphinx/english/cmudict-en-us.dict') then
+    if FPocketSphinx.LoadDictionary(PATH_SPHINX + Save.Settings.STTDict) then
     begin
-      FPocketSphinx.AddNgramSearch('ngram', 'data/nn/sphinx/english/en-us.lm.bin');
+      FPocketSphinx.AddNgramSearch('ngram', PATH_SPHINX + Save.Settings.STTNgram);
       FPocketSphinx.ActiveSearch := 'ngram';
     end;
 

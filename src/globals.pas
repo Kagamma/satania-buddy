@@ -35,7 +35,8 @@ uses
 const
   PATH_SCRIPTS = 'castle-data:/scripts/';
   PATH_SPRITES = 'castle-data:/sprites/';
-  PATH_FONT = 'castle-data:/fonts/';
+  PATH_FONT = 'castle-data:/fonts/';   
+  PATH_SPHINX = 'data/nn/sphinx/';
   SECRET_KEY = 'satania_mcdowell';
 
 type
@@ -93,6 +94,9 @@ type
     FFrameSkip: Integer;
     FLewd: Boolean;
     FSkin: String;
+    FSSTModel,
+    FSSTDict,
+    FSSTNgram: String;
   published
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;
     property TextSpeed: Integer read FTextSpeed write FTextSpeed;
@@ -113,7 +117,10 @@ type
     property FontSize: Integer read FFontSize write FFontSize;
     property FrameSkip: Integer read FFrameSkip write FFrameSkip;
     property Lewd: Boolean read FLewd write FLewd default False;
-    property Skin: String read FSkin write FSkin;
+    property Skin: String read FSkin write FSkin;         
+    property STTModel: String read FSSTModel write FSSTModel;
+    property STTDict: String read FSSTDict write FSSTDict;
+    property STTNgram: String read FSSTNgram write FSSTNgram;
   end;
 
   TSave = class(TPersistent)
@@ -252,6 +259,9 @@ begin
   FSettings.FrameSkip := 0;
   FSettings.Lewd := False;
   FSettings.Skin := 'satania';
+  FSettings.STTModel := 'english/model';  
+  FSettings.STTDict := 'english/cmudict-en-us.dict';
+  FSettings.STTNgram := 'english/en-us.lm.bin';
   {$ifdef WINDOWS}
   FSettings.FSitOnWindowRightMargin := 256;
   {$else}

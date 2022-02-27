@@ -44,6 +44,9 @@ type
     EditCharsetTo: TLabeledEdit;
     EditDefaultEvilScheme: TEdit;
     EditChatBubbleDelay: TSpinEdit;
+    EditSTTModel: TEdit;
+    EditSTTDict: TEdit;
+    EditSTTNgram: TEdit;
     EditSkin: TEdit;
     EditFrameSkip: TSpinEdit;
     EditFontName: TEdit;
@@ -58,6 +61,9 @@ type
     EditTextSpeed: TSpinEdit;
     EditBaseScaling: TFloatSpinEdit;
     LabelChatbotServer: TLabel;
+    LabelSTTModel: TLabel;
+    LabelSTTDict: TLabel;
+    LabelSTTNgram: TLabel;
     LabelEmailUsername: TLabel;
     LabelEmailPassword: TLabel;
     LabelEmailUseSSL: TLabel;
@@ -84,6 +90,7 @@ type
     Panel1: TPanel;
     PopupMenuCharset: TPopupMenu;
     TabSheet1: TTabSheet;
+    TabSheetSpeechRecognition: TTabSheet;
     TabSheetEmail: TTabSheet;
     TabSheetGraphics: TTabSheet;
     TabSheetBot: TTabSheet;
@@ -106,7 +113,7 @@ implementation
 {$R *.lfm}
 
 uses
-  Globals, Mcdowell, Mcdowell.imap, State.Main;
+  Globals, Mcdowell, Mcdowell.imap, State.Main, Mcdowell.SpeechToText;
 
 { TFormSettings }
 
@@ -131,6 +138,10 @@ begin
   EditEmailPort.Value := Save.Settings.EmailPort;
   EditEmailUsername.Text := Save.Settings.EmailUsername;
   EditEmailFetchFrom.Text := Save.Settings.EmailFetchFrom;
+
+  EditSTTModel.Text := Save.Settings.STTModel;
+  EditSTTDict.Text := Save.Settings.STTDict;
+  EditSTTNgram.Text := Save.Settings.STTNgram;
 
   EditFontName.Text := Save.Settings.Font;
   EditFontSize.Value := Save.Settings.FontSize;
@@ -207,6 +218,18 @@ begin
     Satania.ChatText.FontSize := Save.Settings.FontSize;
     Satania.Sprite.AnimateSkipTicks := Save.Settings.FrameSkip;
     Satania.UpdateMenuItems;
+
+    if (EditSTTModel.Text <> Save.Settings.STTModel)
+      or (EditSTTDict.Text <> Save.Settings.STTDict)
+      or (EditSTTNgram.Text <> Save.Settings.STTNgram) then
+    begin
+      Save.Settings.STTModel := EditSTTModel.Text;
+      Save.Settings.STTDict := EditSTTDict.Text;
+      Save.Settings.STTNgram := EditSTTNgram.Text;
+      if Save.SpeechToText then
+        SataniaSpeechToText.Enable;
+    end;
+
     Hide;
   except
     on E: Exception do
