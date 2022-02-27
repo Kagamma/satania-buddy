@@ -54,7 +54,7 @@ var
 
 procedure AddFormToIgnoreHandleList(F: TForm);
 
-{$undef unit_declare_uses}
+{$define unit_declare_uses}
 {$I utils.activewindow_windows.inc}
 {$I utils.activewindow_linux_x11.inc}
 {$undef unit_declare_uses}

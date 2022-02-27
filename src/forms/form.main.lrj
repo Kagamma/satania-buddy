@@ -1,6 +1,7 @@
 {"version":1,"strings":[
 {"hash":110244654,"name":"tformmain.caption","sourcebytes":[70,111,114,109,77,97,105,110],"value":"FormMain"},
 {"hash":302724,"name":"tformmain.menuitemchatwithher.caption","sourcebytes":[67,104,97,116],"value":"Chat"},
+{"hash":63876510,"name":"tformmain.menuitemspeechrecognition.caption","sourcebytes":[83,112,101,101,99,104,32,82,101,99,111,103,110,105,116,105,111,110],"value":"Speech Recognition"},
 {"hash":128648723,"name":"tformmain.menuitemactions.caption","sourcebytes":[65,99,116,105,111,110,115],"value":"Actions"},
 {"hash":166287426,"name":"tformmain.menuitemeditor.caption","sourcebytes":[69,118,105,108,32,83,99,104,101,109,101,32,69,100,105,116,111,114],"value":"Evil Scheme Editor"},
 {"hash":150937109,"name":"tformmain.menuitemrefreshmenu.caption","sourcebytes":[82,101,102,114,101,115,104,32,65,99,116,105,111,110,32,77,101,110,117],"value":"Refresh Action Menu"},

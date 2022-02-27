@@ -1,14 +1,13 @@
 object FormMain: TFormMain
   Left = -8
-  Height = 326
+  Height = 404
   Top = -8
-  Width = 491
+  Width = 523
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 303
-  ClientWidth = 491
+  ClientHeight = 381
+  ClientWidth = 523
   FormStyle = fsSystemStayOnTop
-  Menu = MainMenu1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
@@ -18,9 +17,9 @@ object FormMain: TFormMain
   WindowState = wsMaximized
   object CastleControl: TCastleControl
     Left = 0
-    Height = 303
+    Height = 381
     Top = 0
-    Width = 491
+    Width = 523
     Align = alClient
     AlphaBits = 8
     Options = []
@@ -1366,6 +1365,10 @@ object FormMain: TFormMain
       Caption = 'Chat'
       OnClick = MenuItemChatWithHerClick
     end
+    object MenuItemSpeechRecognition: TMenuItem
+      Caption = 'Speech Recognition'
+      OnClick = MenuItemSpeechRecognitionClick
+    end
     object MenuItemActions: TMenuItem
       Caption = 'Actions'
       object MenuItemEditor: TMenuItem
@@ -1429,9 +1432,5 @@ object FormMain: TFormMain
     Visible = False
     Left = 128
     Top = 152
-  end
-  object MainMenu1: TMainMenu
-    Left = 35
-    Top = 171
   end
 end

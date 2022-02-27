@@ -74,7 +74,7 @@ type
 
   TFormMain = class(TForm)
     CastleControl: TCastleControl;
-    MainMenu1: TMainMenu;
+    MenuItemSpeechRecognition: TMenuItem;
     MenuItemSilent: TMenuItem;
     MenuItemAbout: TMenuItem;
     MenuItemRefreshMenu: TMenuItem;
@@ -104,6 +104,7 @@ type
     procedure MenuItemSettingsClick(Sender: TObject);
     procedure MenuItemSilentClick(Sender: TObject);
     procedure MenuItemSitOnWindowClick(Sender: TObject);
+    procedure MenuItemSpeechRecognitionClick(Sender: TObject);
     procedure TimerMainLoopTimer(Sender: TObject);
     procedure TrayIconDblClick(Sender: TObject);
   private
@@ -138,6 +139,7 @@ uses
   Form.Chat,
   Form.evilc.editor,
   Mcdowell.chatbot.train,
+  mcdowell.speechtotext,
   State.Main;
 
 {$define unit_implmentation}
@@ -167,6 +169,8 @@ begin
 
     MenuItemSitOnWindow.Checked := Save.SitOnWindow;
     MenuItemSilent.Checked := Save.Silent;
+    if SataniaSpeechToText.IsLoaded then
+      MenuItemSpeechRecognition.Checked := Save.SpeechToText;
 
     {$if defined(WINDOWS)}
     TCastleControl.MainControl := CastleControl;
@@ -192,6 +196,8 @@ begin
 
     TimerMainLoop.Enabled := true;
     FormTouch.Show;
+    if Save.SpeechToText then
+      SataniaSpeechToText.Enable;
 
     // Generate script menu
     Satania.UpdateMenuItems;
@@ -266,6 +272,20 @@ begin
   MenuItemSitOnWindow.Checked := Save.SitOnWindow;
   if not Save.SitOnWindow then
     Satania.DefaultPosition;
+end;
+
+procedure TFormMain.MenuItemSpeechRecognitionClick(Sender: TObject);
+begin
+  if SataniaSpeechToText.IsLoaded then
+  begin
+    Save.SpeechToText := not Save.SpeechToText;
+    MenuItemSpeechRecognition.Checked := Save.SpeechToText;
+    if Save.SpeechToText then
+      SataniaSpeechToText.Enable
+    else
+      SataniaSpeechToText.Disable;
+  end else
+    Satania.Talk('You haven''t installed CMU Sphinx''s libraries.'#10#10'Please install <font color="#0000ff">libsphinxad</font>, <font color="#0000ff">libsphinxbase</font> and <font color="#0000ff">libpocketsphinx</font>.');
 end;
 
 procedure TFormMain.TimerMainLoopTimer(Sender: TObject);

@@ -58,6 +58,9 @@
           </Other>
         </CompilerOptions>
       </Item>
+      <SharedMatrixOptions Count="1">
+        <Item1 ID="959895603909" Modes="linux64-qt5" Type="IDEMacro" MacroName="LCLWidgetType" Value="qt5"/>
+      </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -191,6 +194,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Mcdowell.EvilC"/>
       </Unit>
+      <Unit>
+        <Filename Value="satania/mcdowell.speechtotext.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Mcdowell.SpeechToText"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -223,9 +231,6 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dCASTLE_SLIM_NODES"/>
-      <OtherDefines Count="1">
-        <Define0 Value="CASTLE_SLIM_NODES"/>
-      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>

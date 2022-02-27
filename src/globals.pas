@@ -123,7 +123,8 @@ type
     FSpriteDefaultLocationX: Single;
     FSpriteDefaultLocationY: Single;
     FSettings: TSaveSettings;
-    FSilent: Boolean;
+    FSilent,
+    FSpeechToText: Boolean;
   public
     constructor Create;
     destructor Destroy; override;
@@ -137,7 +138,8 @@ type
     property SitOnWindow: Boolean read FSitOnWindow write FSitOnWindow default false;
     property SpriteDefaultLocationX: Single read FSpriteDefaultLocationX write FSpriteDefaultLocationX;
     property SpriteDefaultLocationY: Single read FSpriteDefaultLocationY write FSpriteDefaultLocationY;
-    property Silent: Boolean read FSilent write FSilent;
+    property Silent: Boolean read FSilent write FSilent default False;
+    property SpeechToText: Boolean read FSpeechToText write FSpeechToText default False;
   end;
 
   TMethod = procedure of object;
