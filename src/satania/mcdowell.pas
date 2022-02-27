@@ -70,6 +70,7 @@ type
     function SEIsSoW(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsLewd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsSilent(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEIsSpeechToText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELoadScheme(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDelta(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELoadEmails(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -193,8 +194,12 @@ begin
           end;
         end else
         begin
-          ChatResponse := 'Sorry I don''t understand.';
-          ChatType := 'chat';
+          if not Save.SpeechToText then
+          begin
+            ChatType := 'chat';
+            ChatResponse := 'Sorry I don''t understand.';
+          end else
+            ChatType := '';
         end;
       end else
         ChatType := 'script';
@@ -394,6 +399,11 @@ begin
   Result := Save.Silent
 end;
 
+function TSatania.SEIsSpeechToText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := Save.SpeechToText
+end;
+
 function TSatania.SESetScale(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   SetScale(Args[0].VarNumber);
@@ -417,6 +427,7 @@ begin
   Script.RegisterFunc('is_sow', @SEIsSoW, 0);
   Script.RegisterFunc('is_lewd', @SEIsLewd, 0);
   Script.RegisterFunc('is_silent', @SEIsSilent, 0);
+  Script.RegisterFunc('is_speech_to_text', @SEIsSpeechToText, 0);
   Script.RegisterFunc('sprite_scale_set', @SESetScale, 1);
   Script.RegisterFunc('flag_get', @Save.SEGetFlag, 1);
   Script.RegisterFunc('flag_set', @Save.SESetFlag, 2);
