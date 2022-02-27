@@ -37,11 +37,11 @@ type
     FIsRunning: Boolean;
     FIsSuccess: Boolean;
     procedure GetMessagesParallel;
-  public              
+  public
     MailList: TMailList;
     constructor Create;
     destructor Destroy; override;
-    procedure Connect;         
+    procedure Connect;
     procedure Disconnect;
     procedure GetMessages;
     function IsEmailConfigured: Boolean;
@@ -57,7 +57,7 @@ implementation
 procedure TSataniaIMAP.GetMessagesParallel;
 var
   I, J, Count, SubPartCount: Integer;
-  Mail: TMailRec;    
+  Mail: TMailRec;
   MimePart: TMimePart;
   S: String;
 begin
@@ -120,7 +120,7 @@ begin
 end;
 
 procedure TSataniaIMAP.GetMessages;
-begin  
+begin
   if FIsRunning then
     Exit;
   FIsRunning := True;

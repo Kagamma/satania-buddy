@@ -320,9 +320,9 @@ uses
 type
   TBuiltInFunction = class
     class function SEWrite(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEWriteln(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+    class function SEWriteln(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SERandom(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SERnd(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    class function SERnd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SERound(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -335,13 +335,13 @@ type
     class function SESLerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESign(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESin(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SECos(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    class function SECos(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SETan(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SECot(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMin(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMax(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEPow(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEStringGrep(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+    class function SEStringGrep(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringSplit(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -350,7 +350,7 @@ type
     class function SEEaseInOutQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInCubic(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseOutCubic(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEEaseInOutCubic(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+    class function SEEaseInOutCubic(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGetTickCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   end;
 
@@ -375,7 +375,7 @@ var
 begin
   TBuiltInFunction.SEWrite(VM, Args);
   Writeln;
-end;   
+end;
 
 class function TBuiltInFunction.SERandom(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
@@ -526,7 +526,7 @@ begin
   {$if defined(WINDOWS)}
   Exit('windows');
   {$elseif defined(LINUX)}
-  Exit('linux');    
+  Exit('linux');
   {$elseif defined(DARWIN)}
   Exit('darwin');
   {$else}
@@ -901,7 +901,7 @@ begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
     sevkSingle:
-      R := V1.VarNumber = V2.VarNumber; 
+      R := V1.VarNumber = V2.VarNumber;
   {$ifdef SE_STRING}
     sevkString:
       R := V1.VarString = V2.VarString;
@@ -1185,7 +1185,7 @@ begin
             if IsDone then
             begin
               Exit;
-            end;   
+            end;
             Push(TV);
             Inc(CodePtrLocal, 3);
           end;
@@ -1290,7 +1290,7 @@ begin
   Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, 2);
   Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 2);
   Self.RegisterFunc('pow', @TBuiltInFunction(nil).SEPow, 2);
-  Self.RegisterFunc('string_grep', @TBuiltInFunction(nil).SEStringGrep, 2);       
+  Self.RegisterFunc('string_grep', @TBuiltInFunction(nil).SEStringGrep, 2);
   Self.RegisterFunc('string_split', @TBuiltInFunction(nil).SEStringSplit, 2);
   Self.RegisterFunc('string_find', @TBuiltInFunction(nil).SEStringFind, 2);
   Self.RegisterFunc('lerp', @TBuiltInFunction(nil).SELerp, 3);
@@ -1306,9 +1306,9 @@ begin
   Self.RegisterFunc('ticks', @TBuiltInFunction(nil).SEGetTickCount, 0);
   Self.RegisterFunc('random', @TBuiltInFunction(nil).SERandom, 1);
   Self.RegisterFunc('rnd', @TBuiltInFunction(nil).SERnd, 0);
-  Self.RegisterFunc('round', @TBuiltInFunction(nil).SERound, 1);   
+  Self.RegisterFunc('round', @TBuiltInFunction(nil).SERound, 1);
   Self.RegisterFunc('sin', @TBuiltInFunction(nil).SESin, 1);
-  Self.RegisterFunc('cos', @TBuiltInFunction(nil).SECos, 1);   
+  Self.RegisterFunc('cos', @TBuiltInFunction(nil).SECos, 1);
   Self.RegisterFunc('tan', @TBuiltInFunction(nil).SETan, 1);
   Self.RegisterFunc('cot', @TBuiltInFunction(nil).SECot, 1);
   Self.RegisterFunc('os', @TBuiltInFunction(nil).SEOS, 0);

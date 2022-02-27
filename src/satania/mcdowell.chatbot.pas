@@ -60,7 +60,7 @@ begin
   WordList.LoadFromFile('data/nn/chatbot/model.word');
   TagList.LoadFromFile('data/nn/chatbot/model.tag');
 
-  OutputSize := TagList.Count;  
+  OutputSize := TagList.Count;
   NN := TNNet.Create;
   NN.LoadFromFile('data/nn/chatbot/model.nn');
   Output := TNNetVolume.Create(OutputSize);

@@ -119,17 +119,17 @@ begin
   CheckBoxLewd.Checked := Save.Settings.Lewd;
   EditBotServer.Text := Save.Settings.BotServer;
   EditFPS.Value := Save.Settings.FPS;
-  EditChatBubbleDelay.Value := Save.Settings.ChatBubbleDelay;   
-  EditSoWRightMargin.Value := Save.Settings.SitOnWindowRightMargin;  
-  EditTextSpeed.Value := Save.Settings.TextSpeed;                          
+  EditChatBubbleDelay.Value := Save.Settings.ChatBubbleDelay;
+  EditSoWRightMargin.Value := Save.Settings.SitOnWindowRightMargin;
+  EditTextSpeed.Value := Save.Settings.TextSpeed;
   EditDefaultEvilScheme.Text := Save.Settings.DefaultEvilScheme;
-  EditBaseScaling.Value := Save.Settings.BaseScaling;    
+  EditBaseScaling.Value := Save.Settings.BaseScaling;
   EditFrameSkip.Value := Save.Settings.FrameSkip;
   EditSkin.Text := Save.Settings.Skin;
 
   EditEmailServer.Text := Save.Settings.EmailServer;
   EditEmailPort.Value := Save.Settings.EmailPort;
-  EditEmailUsername.Text := Save.Settings.EmailUsername;   
+  EditEmailUsername.Text := Save.Settings.EmailUsername;
   EditEmailFetchFrom.Text := Save.Settings.EmailFetchFrom;
 
   EditFontName.Text := Save.Settings.Font;
@@ -165,7 +165,7 @@ end;
 
 procedure TFormSettings.ButtonOkClick(Sender: TObject);
 begin
-  try                                          
+  try
     Save.Settings.Lewd := CheckBoxLewd.Checked;
     Save.Settings.BotServer := EditBotServer.Text;
     Save.Settings.FPS := EditFPS.Value;
@@ -175,7 +175,7 @@ begin
     Save.Settings.BaseScaling := EditBaseScaling.Value;
     Save.Settings.DefaultEvilScheme := EditDefaultEvilScheme.Text;
     Save.Settings.ImageQuality := ComboBoxImageQuality.Items[ComboBoxImageQuality.ItemIndex];
-    Save.Settings.FrameSkip := EditFrameSkip.Value;                                           
+    Save.Settings.FrameSkip := EditFrameSkip.Value;
     Save.Settings.Skin := EditSkin.Text;
 
     Save.Settings.EmailServer := EditEmailServer.Text;

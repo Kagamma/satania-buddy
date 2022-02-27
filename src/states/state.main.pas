@@ -19,7 +19,7 @@ type
     procedure UpdateChatBubblePosition;
   public
     ChatText: TCastleTypingLabel;
-    ChatBubble: TCastleRectangleControl;  
+    ChatBubble: TCastleRectangleControl;
     ChatBubbleArrow: TCastleImageControl;
     FontSystem: TCastleFont;
     Sprite: TCastleScene;
@@ -98,7 +98,7 @@ begin
     Position := Sprite.WorldTransform.MultPoint(Satania.TouchBone.Translation)
   else
     Position := Sprite.Translation;
-  ScreenPosition := UIToScreenCoord(Position); 
+  ScreenPosition := UIToScreenCoord(Position);
   FormTouch.Left := ScreenPosition.X - FormTouch.Width div 2;
   {$ifdef LINUX_X11}
   FormTouch.Top := ScreenPosition.Y - FormTouch.Height div 2;
@@ -112,7 +112,7 @@ var
   Position: TVector3;
   Box: TBox3D;
   R, RA: TFloatRectangle;
-begin  
+begin
   if ChatText.Text.Text <> '' then
     ChatBubble.Exists := True and Sprite.Visible
   else
@@ -121,14 +121,14 @@ begin
   if not ChatBubble.Exists then Exit;
 
   Box := Satania.LocalBoundingBoxSnapshot;
-  Box.Data[0] := Box.Data[0] + Sprite.Translation; 
+  Box.Data[0] := Box.Data[0] + Sprite.Translation;
   Box.Data[1] := Box.Data[1] + Sprite.Translation;
   R := ChatBubble.EffectiveRect;
   RA := ChatBubbleArrow.EffectiveRect;
-  case BubbleSideX of 
+  case BubbleSideX of
     0:
       begin
-        ChatBubble.Left := Box.Min.X - R.Width;  
+        ChatBubble.Left := Box.Min.X - R.Width;
         ChatBubbleArrow.Left := ChatBubble.Left + R.Width - RA.Width - 4;
         ChatBubbleArrow.FlipHorizontal := False;
         if R.Left < 0 then
@@ -136,17 +136,17 @@ begin
       end;
     1:
       begin
-        ChatBubble.Left := Box.Max.X;            
+        ChatBubble.Left := Box.Max.X;
         ChatBubbleArrow.Left := ChatBubble.Left + 4;
         ChatBubbleArrow.FlipHorizontal := True;
         if R.Left + R.Width > R.Width * 2 + (Box.Max.X - Box.Min.X) then
           BubbleSideX := 0;
       end;
-  end;                         
+  end;
   case BubbleSideY of
     0:
       begin
-        ChatBubble.Bottom := Box.Min.Y - R.Height;     
+        ChatBubble.Bottom := Box.Min.Y - R.Height;
         ChatBubbleArrow.Bottom := ChatBubble.Bottom + R.Height - 4;
         ChatBubbleArrow.FlipVertical := True;
         if R.Bottom + R.Height * 2 + (Box.Max.Y - Box.Min.Y) < Application.ScreenHeight then

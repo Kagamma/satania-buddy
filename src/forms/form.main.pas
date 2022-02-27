@@ -114,7 +114,7 @@ type
     {$define unit_public}
     {$I form.main_windows.inc}
     {$I form.main_linux_x11.inc}
-    {$undef unit_public}  
+    {$undef unit_public}
     procedure DoExecuteScriptFromMenu(Sender: TObject);
   end;
 
@@ -159,13 +159,13 @@ var
   I: Integer;
 begin
   if UtilActiveWindow = nil then
-  begin           
+  begin
     Ticks := GetTickCount64;
     UtilActiveWindow := TUtilActiveWindow.Create;
     Satania.Form := Self;
     Satania.FormTouch := FormTouch;
 
-    MenuItemSitOnWindow.Checked := Save.SitOnWindow;     
+    MenuItemSitOnWindow.Checked := Save.SitOnWindow;
     MenuItemSilent.Checked := Save.Silent;
 
     {$if defined(WINDOWS)}
@@ -183,7 +183,7 @@ begin
     ScreenWidth := CastleWindow.Application.ScreenWidth;
     ScreenHeight := CastleWindow.Application.ScreenHeight;
     {$endif}
-     
+
     ApplicationProperties.LimitFPS := Save.Settings.FPS;
     // OptimizeExtensiveTransformations := True;
     DynamicBatching := True;
@@ -227,7 +227,7 @@ begin
     FormTouch.Hide;
   end else
   begin
-    MenuItemHideShow.Caption := 'Hide'; 
+    MenuItemHideShow.Caption := 'Hide';
     Satania.Sprite.Visible := True;
     FormTouch.Show;
   end;

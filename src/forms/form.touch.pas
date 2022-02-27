@@ -24,9 +24,9 @@ unit Form.Touch;
 
 interface
 
-uses               
+uses
   {$define unit_declare_interface}
-  {$I form.touch_linux_x11.inc}           
+  {$I form.touch_linux_x11.inc}
   {$I form.touch_windows.inc}
   {$undef unit_declare_interface}
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, Menus,
@@ -72,7 +72,7 @@ uses
 { TFormTouch }
 
 {$define unit_implmentation}
-{$I form.touch_linux_x11.inc}  
+{$I form.touch_linux_x11.inc}
 {$I form.touch_windows.inc}
 {$undef unit_implmentation}
 
@@ -103,7 +103,7 @@ end;
 
 procedure TFormTouch.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
-var     
+var
   P: TPoint;
   DeltaX, DeltaY: Integer;
 begin

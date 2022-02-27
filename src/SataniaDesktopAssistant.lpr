@@ -32,14 +32,14 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, Form.Main, utils.activewindow,
   mcdowell, State.Main, Form.Touch, globals, form.settings, form.chat,
-  mcdowell.chatbot, mcdowell.chatbot.train, 
+  mcdowell.chatbot, mcdowell.chatbot.train,
   form.evilc.editor, mcdowell.imap;
 
 {$R *.res}
 
 begin
   RequireDerivedFormResource:=True;
-  Application.Scaled:=True;           
+  Application.Scaled:=True;
   Application.Scaled:=False;
   Application.Initialize;
   Application.CreateForm(TFormMain, FormMain);

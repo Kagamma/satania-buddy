@@ -68,7 +68,7 @@ uses
 procedure TFormChat.EditChatKeyPress(Sender: TObject; var Key: char);
 begin
   if Key = #13 then
-  begin       
+  begin
     Satania.Log('(you)', FormChat.EditChat.Text);
     Satania.Chat(EditChat.Text);
     EditChat.Text := '';
@@ -81,7 +81,7 @@ end;
 
 procedure TFormChat.FormCreate(Sender: TObject);
 begin
-  Height := 45; 
+  Height := 45;
   PanelChatlog.Visible := IsShowHistory;
 end;
 

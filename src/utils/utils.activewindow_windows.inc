@@ -43,7 +43,7 @@ begin
   Result := Point(-999999, -999999);
   Window := GetForegroundWindow;
   if IgnoreHandleList.Contains(QWord(Window)) then
-    Exit;   
+    Exit;
   // A bit delay so that GetForegroundWindow has a chance to update
   if PreviousWindow <> Window then
   begin

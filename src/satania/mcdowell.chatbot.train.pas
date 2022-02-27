@@ -80,7 +80,7 @@ begin
   TagList.Free;
   WordList.Free;
   PairList.Free;
-  SetLength(RuleArray, 0);   
+  SetLength(RuleArray, 0);
   SetLength(XData, 0);
   SetLength(YData, 0);
 end;
@@ -222,7 +222,7 @@ begin
   NN.AddLayer(TNNetFullConnectReLU.Create(HiddenSize));
   NN.AddLayer(TNNetFullConnectReLU.Create(HiddenSize));
   NN.AddLayer(TNNetFullConnectLinear.Create(OutputSize));
-    
+
   Satania.Talk('I am learning new rules, please wait...');
   Ticks := GetTickCount64;
   for Y := Low(XData) to High(XData) do
@@ -233,7 +233,7 @@ begin
         TNNetVolume.Create(YData[Y])
       )
     );
-  end;                 
+  end;
   NFit.FileNameBase := 'data/nn/chatbot/model';
   NFit.InitialLearningRate := 0.001;
   NFit.LearningRateDecay := 0;
@@ -262,7 +262,7 @@ begin
   PrepareTrainingData;
   Train;
   Cleanup;
-  Reload;   
+  Reload;
   Satania.IsBlocked := False;
   Terminate;
 end;

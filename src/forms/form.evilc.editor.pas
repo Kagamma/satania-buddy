@@ -141,7 +141,7 @@ end;
 procedure TFormEvilCEditor.ToolButtonRunClick(Sender: TObject);
 begin
   Satania.Action('script', Editor.Lines.Text);
-  try             
+  try
     StatusBar.Panels[1].Text := '';
     Satania.Script.Exec;
   except
@@ -177,7 +177,7 @@ begin
     Caption := ExtractFileName(WorkingFile);
   end else
   if SaveDialog.Execute then
-  begin               
+  begin
     Caption := ExtractFileName(SaveDialog.FileName);
     WorkingFile := SaveDialog.FileName;
     Editor.Lines.SaveToFile(WorkingFile);

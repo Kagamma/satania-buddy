@@ -38,14 +38,14 @@ const
   PATH_FONT = 'castle-data:/fonts/';
   SECRET_KEY = 'satania_mcdowell';
 
-type 
+type
   TMailRec = record
     Sender,
     Subject,
     Body: String;
   end;
 
-  TQWordList = specialize TList<QWord>;    
+  TQWordList = specialize TList<QWord>;
   TStringDict = specialize TDictionary<String, String>;
   TStringArrayDict = specialize TDictionary<String, TStringDynArray>;
   TMailList = specialize TList<TMailRec>;
@@ -93,24 +93,24 @@ type
     FFrameSkip: Integer;
     FLewd: Boolean;
     FSkin: String;
-  published                                                        
+  published
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;
     property TextSpeed: Integer read FTextSpeed write FTextSpeed;
     property SitOnWindowRightMargin: Integer read FSitOnWindowRightMargin write FSitOnWindowRightMargin;
     property BotServer: String read FBotServer write FBotServer;
     property FPS: Integer read FFPS write FFPS;
-    property ChatBubbleDelay: Integer read FChatBubbleDelay write FChatBubbleDelay;     
+    property ChatBubbleDelay: Integer read FChatBubbleDelay write FChatBubbleDelay;
     property BaseScaling: Single read FBaseScaling write FBaseScaling;
     property ImageQuality: String read FImageQuality write FImageQuality;
     property EmailServer: String read FEmailServer write FEmailServer;
     property EmailPort: Word read FEmailPort write FEmailPort;
     property EmailUsername: String read FEmailUsername write FEmailUsername;
-    property EmailPassword: String read FEmailPassword write FEmailPassword;  
+    property EmailPassword: String read FEmailPassword write FEmailPassword;
     property EmailFetchFrom: String read FEmailFetchFrom write FEmailFetchFrom;
     property EmailUseSSL: Boolean read FEmailUseSSL write FEmailUseSSL;
     property Charset: String read FCharset write FCharset;
     property Font: String read FFont write FFont;
-    property FontSize: Integer read FFontSize write FFontSize;    
+    property FontSize: Integer read FFontSize write FFontSize;
     property FrameSkip: Integer read FFrameSkip write FFrameSkip;
     property Lewd: Boolean read FLewd write FLewd default False;
     property Skin: String read FSkin write FSkin;
@@ -128,10 +128,10 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure SaveToFile(const FileName: String);
-    procedure LoadFromFile(const FileName: String); 
+    procedure LoadFromFile(const FileName: String);
     function SEGetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-  published     
+  published
     property Flags: TSaveCollection read FFlags;
     property Settings: TSaveSettings read FSettings;
     property SitOnWindow: Boolean read FSitOnWindow write FSitOnWindow default false;
@@ -238,21 +238,21 @@ begin
   SpriteDefaultLocationY := -1;
   FFlags := TSaveCollection.Create(TSaveFlagCollectionItem);
   FSilent := False;
-  FSettings := TSaveSettings.Create; 
+  FSettings := TSaveSettings.Create;
   FSettings.ChatBubbleDelay := 5000;
-  FSettings.FPS := 16;        
+  FSettings.FPS := 16;
   FSettings.TextSpeed := 24;
   FSettings.BaseScaling := 1;
   FSettings.DefaultEvilScheme := 'main.evil';
-  FSettings.ImageQuality := 'Linear';          
+  FSettings.ImageQuality := 'Linear';
   FSettings.FontSize := 16;
   FSettings.Font := 'lightnovelpop.otf';
-  FSettings.FrameSkip := 0;        
+  FSettings.FrameSkip := 0;
   FSettings.Lewd := False;
   FSettings.Skin := 'satania';
   {$ifdef WINDOWS}
   FSettings.FSitOnWindowRightMargin := 256;
-  {$else}                
+  {$else}
   FSettings.FSitOnWindowRightMargin := 192;
   {$endif}
 end;

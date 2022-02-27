@@ -55,31 +55,31 @@ type
   end;
 
   TSatania = class
-  protected                                   
+  protected
     function SELoadModel(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESetScale(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+    function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SERun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsRunning(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    function SEIsRunning(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEGetRunResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsAnimationPlaying(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStopAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStopAllAnimations(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEStartAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
+    function SEStartAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESetAnimationSpeed(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsSoW(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsLewd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+    function SEIsLewd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsSilent(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELoadScheme(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDelta(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELoadEmails(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEGetUnseenEmailCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEGetEmailSender(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEGetEmailSubject(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+    function SEGetEmailSubject(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEGetEmailBody(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsEmailLoading(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+    function SEIsEmailLoading(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsEmailSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsEmailConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    function SEIsEmailConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDefaultScheme(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   public
     Delta: Single;
@@ -96,18 +96,18 @@ type
     ChatBubbleDelay: Integer;
     Form,
     FormTouch: TForm;
-    Name: String; 
-    Script: TEvilC; 
+    Name: String;
+    Script: TEvilC;
     { Where we should move our touch panel to }
     TouchBone: TTransformNode;
     constructor Create;
     destructor Destroy; override;
-    procedure DefaultPosition;     
-    procedure LoadModel(S: String);                                   
+    procedure DefaultPosition;
+    procedure LoadModel(S: String);
     procedure SetAnimationSpeed(AnimName: String; Speed: Single);
     procedure StartAnimation(AnimName: String; IsRepeat: Boolean = True); overload;
     procedure StartAnimation(URL, AnimName: String; IsRepeat: Boolean = True); overload;
-    procedure StopAnimation(AnimName: String);  
+    procedure StopAnimation(AnimName: String);
     procedure StopAllAnimations;
     procedure Log(LogName, S: String);
     procedure Talk(S: String);
@@ -115,7 +115,7 @@ type
     procedure TalkWithoutBlock(S: String);
     function Exec(S: String): String;
     procedure Chat(S: String);
-    procedure Action(Typ, Message: String);   
+    procedure Action(Typ, Message: String);
     procedure ActionFromFile(FileName: String);
     procedure SetScale(Scale: Single);
     procedure ResetScript;
@@ -192,7 +192,7 @@ begin
             FreeAndNil(FormData);
           end;
         end else
-        begin 
+        begin
           ChatResponse := 'Sorry I don''t understand.';
           ChatType := 'chat';
         end;
@@ -234,7 +234,7 @@ end;
 function TSatania.SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   if Length(Args) = 1 then
-  begin  
+  begin
     Satania.Talk(Args[0]);
     VM.IsPaused := True;
   end else
@@ -248,7 +248,7 @@ begin
       VM.IsPaused := True;
     end;
   end;
-end;   
+end;
 
 function TSatania.SERun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
@@ -293,7 +293,7 @@ begin
     on E: Exception do
       TalkWithoutBlock(E.Message);
   end;
-end;  
+end;
 
 function TSatania.SEStartAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
@@ -357,7 +357,7 @@ begin
   else
     Result := 0;
 end;
-            
+
 function TSatania.SEIsEmailSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   if SataniaIMAP.IsSuccess then
@@ -414,7 +414,7 @@ begin
   Script.RegisterFunc('sprite_animation_play', @SEStartAnimation, 2);
   Script.RegisterFunc('sprite_animation_is_playing', @SEIsAnimationPlaying, 1);
   Script.RegisterFunc('sprite_animation_stop', @SEStopAnimation, 1);
-  Script.RegisterFunc('is_sow', @SEIsSoW, 0);                         
+  Script.RegisterFunc('is_sow', @SEIsSoW, 0);
   Script.RegisterFunc('is_lewd', @SEIsLewd, 0);
   Script.RegisterFunc('is_silent', @SEIsSilent, 0);
   Script.RegisterFunc('sprite_scale_set', @SESetScale, 1);
@@ -444,7 +444,7 @@ begin
   begin
     Save.SpriteDefaultLocationX := ScreenWidth - 150;
     Save.SpriteDefaultLocationY := 150;
-  end;                   
+  end;
   Sprite.Translation := Vector3(Save.SpriteDefaultLocationX, Save.SpriteDefaultLocationY, 0);
 end;
 
@@ -469,12 +469,12 @@ begin
   end;
   try
     TouchBone := nil;
-    TouchBone := Sprite.RootNode.FindNode('Bone_touch') as TTransformNode;  
+    TouchBone := Sprite.RootNode.FindNode('Bone_touch') as TTransformNode;
   except
   end;
 end;
 
-procedure TSatania.SetAnimationSpeed(AnimName: String; Speed: Single);  
+procedure TSatania.SetAnimationSpeed(AnimName: String; Speed: Single);
 var
   TimeSensor: TTimeSensorNode;
 begin
@@ -511,7 +511,7 @@ end;
 procedure TSatania.StopAnimation(AnimName: String);
 var
   TimeSensor: TTimeSensorNode;
-begin  
+begin
   try
     TimeSensor := Sprite.Node(AnimName) as TTimeSensorNode;
     TimeSensor.Start(False, True, 0);
@@ -565,7 +565,7 @@ procedure TSatania.ActionFromFile(FileName: String);
 var
   FS: TFileStream;
   SS: TStringStream;
-begin                
+begin
   SS := TStringStream.Create('');
   try
     try
@@ -631,11 +631,11 @@ begin
   FormChat.MemoChatLog.Lines.BeginUpdate;
   FormChat.MemoChatLog.Text := FormChat.MemoChatLog.Text + LogName + ': ' + S + #13;
   while FormChat.MemoChatLog.Lines.Count > 2000 do
-    FormChat.MemoChatLog.Lines.Delete(0);  
+    FormChat.MemoChatLog.Lines.Delete(0);
   FormChat.MemoChatLog.Lines.EndUpdate;
 end;
 
-procedure TSatania.Chat(S: String);  
+procedure TSatania.Chat(S: String);
 var
   ChatThread: TSataniaChatThread;
 begin
@@ -701,9 +701,9 @@ begin
   case S of
     'Linear':
       begin
-        Sprite.RenderOptions.MinificationFilter := minLinear;     
+        Sprite.RenderOptions.MinificationFilter := minLinear;
         Sprite.RenderOptions.MagnificationFilter := magLinear;
-      end;     
+      end;
     'Nicest':
       begin
         Sprite.RenderOptions.MinificationFilter := minNicest;
