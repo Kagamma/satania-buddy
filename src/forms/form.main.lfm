@@ -1,12 +1,12 @@
 object FormMain: TFormMain
   Left = -8
-  Height = 443
+  Height = 482
   Top = -8
-  Width = 539
+  Width = 555
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 420
-  ClientWidth = 539
+  ClientHeight = 459
+  ClientWidth = 555
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -17,9 +17,9 @@ object FormMain: TFormMain
   WindowState = wsMaximized
   object CastleControl: TCastleControl
     Left = 0
-    Height = 420
+    Height = 459
     Top = 0
-    Width = 539
+    Width = 555
     Align = alClient
     AlphaBits = 8
     Options = []
@@ -1386,6 +1386,10 @@ object FormMain: TFormMain
       object MenuItemRefreshMenu: TMenuItem
         Caption = 'Refresh Action Menu'
         OnClick = MenuItemRefreshMenuClick
+      end
+      object MenuItemOpenRules: TMenuItem
+        Caption = 'Open rules.json'
+        OnClick = MenuItemOpenRulesClick
       end
       object MenuItemLearn: TMenuItem
         Caption = 'Learn Rules Again'

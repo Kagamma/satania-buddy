@@ -14,9 +14,9 @@ object FormSettings: TFormSettings
     Height = 436
     Top = 0
     Width = 644
-    ActivePage = TabSheet1
+    ActivePage = TabSheetSpeechRecognition
     Align = alClient
-    TabIndex = 0
+    TabIndex = 4
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
@@ -400,6 +400,7 @@ object FormSettings: TFormSettings
         Width = 400
         ItemHeight = 15
         OnChange = ComboBoxSTTBackendChange
+        ReadOnly = True
         TabOrder = 0
       end
       object GroupBoxSTTPocketSphinx: TGroupBox
@@ -428,28 +429,28 @@ object FormSettings: TFormSettings
         object LabelSTTDict: TLabel
           Left = 24
           Height = 15
-          Top = 44
+          Top = 48
           Width = 21
           Caption = 'Dict'
         end
         object EditSTTDict: TEdit
           Left = 165
           Height = 23
-          Top = 44
+          Top = 48
           Width = 395
           TabOrder = 1
         end
         object LabelSTTNgram: TLabel
-          Left = 24
+          Left = 21
           Height = 15
-          Top = 72
+          Top = 80
           Width = 37
           Caption = 'Ngram'
         end
         object EditSTTNgram: TEdit
           Left = 165
           Height = 23
-          Top = 72
+          Top = 80
           Width = 395
           TabOrder = 2
         end

@@ -59,7 +59,8 @@ type
   end;
 
   TMessage = class
-    class procedure NoMessageProc(const S: string);
+    class procedure NoMessageProc(const S: string);  
+    class procedure EpochMessageProc(const S: string);
   end;
 
 var
@@ -68,10 +69,17 @@ var
   PairList: TPairList;
   RuleArray: array of TRuleData;
   InputSize, OutputSize, HiddenSize: Integer;
-  XData, YData: TNeuralData;
+  XData, YData: TNeuralData;  
+  NFit: TNeuralFit;
 
 class procedure TMessage.NoMessageProc(const S: string);
 begin
+end;
+
+class procedure TMessage.EpochMessageProc(const S: string);
+begin
+  if (NFit.CurrentEpoch <> 0) and (NFit.CurrentEpoch mod 100 = 0) then
+    Satania.Talk(IntToStr(NFit.CurrentEpoch) + ' epochs');
 end;
 
 procedure Prepare;
@@ -218,7 +226,6 @@ procedure Train;
 var
   NN: TNNet;
   Y: Integer;
-  NFit: TNeuralFit;
   TrainingPairs: TNNetVolumePairList;
   Ticks: QWord;
 begin
@@ -231,7 +238,7 @@ begin
   NN.AddLayer(TNNetFullConnectReLU.Create(HiddenSize));
   NN.AddLayer(TNNetFullConnectLinear.Create(OutputSize));
 
-  Satania.ActionFromFile('loading-start.evil');
+  Satania.ActionFromFile('system/loading-start.evil');
   Satania.Talk('I am learning. please wait...');
   Ticks := GetTickCount64;
   for Y := Low(XData) to High(XData) do
@@ -250,13 +257,13 @@ begin
   NFit.Verbose := False;
   NFit.InferHitFn := @MonopolarCompare;
   {$ifdef WINDOWS}
-  NFit.HideMessages;
+  // NFit.HideMessages;
   {$endif}
-  NFit.MessageProc := @TMessage(nil).NoMessageProc;
+  NFit.MessageProc := @TMessage(nil).EpochMessageProc;
   NFit.ErrorProc := @TMessage(nil).NoMessageProc;
   NFit.Fit(NN, TrainingPairs, nil, nil, 8, 1000);
 
-  Satania.ActionFromFile('loading-stop.evil');
+  Satania.ActionFromFile('system/loading-stop.evil');
   Satania.Talk(
     'Learning completed in ' + IntToStr((GetTickCount64 - Ticks) div 1000) + ' seconds!' + #10#10 +
     DebugErrors(NN) + #13 +
@@ -272,12 +279,20 @@ end;
 procedure TTrainThread.Execute;
 begin
   Satania.IsBlocked := True;
-  Prepare;
-  ReadRules;
-  PrepareTrainingData;
-  Train;
-  Cleanup;
-  Reload;
+  try
+    try
+      Prepare;
+      ReadRules;
+      PrepareTrainingData;
+      Train;
+    except
+      on E: Exception do
+        Satania.Talk(E.Message);
+    end;
+  finally
+    Cleanup; 
+    Reload;
+  end;
   Satania.IsBlocked := False;
   Terminate;
 end;

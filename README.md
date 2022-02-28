@@ -18,7 +18,7 @@ You also need a compositor, or else the app will show black screen.
 
 ##### Q: Why X11? Where's wayland support?
 
-A: Wayland's "security" measurements makes this kind of software impossible to develope.
+A: Wayland's "security" measurements makes this kind of software impossible to develop.
 
 ##### Q: OS X support when
 

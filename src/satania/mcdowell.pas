@@ -57,7 +57,9 @@ type
   TSatania = class
   protected
     function SELoadModel(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESetScale(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESetScale(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    function SESetVisible(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEGetVisible(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SERun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsRunning(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -124,6 +126,7 @@ type
     procedure SetImageQuality(S: String);
     function Expression(const S: String): String;
     procedure UpdateMenuItems;
+    procedure SetVisible(const V: Boolean);
   end;
 
 var
@@ -357,26 +360,17 @@ end;
 
 function TSatania.SEIsEmailLoading(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  if SataniaIMAP.IsRunning then
-    Result := 1
-  else
-    Result := 0;
+  Result := SataniaIMAP.IsRunning;
 end;
 
 function TSatania.SEIsEmailSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  if SataniaIMAP.IsSuccess then
-    Result := 1
-  else
-    Result := 0;
+  Result := SataniaIMAP.IsSuccess;
 end;
 
 function TSatania.SEIsEmailConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  if SataniaIMAP.IsEmailConfigured then
-    Result := 1
-  else
-    Result := 0;
+  Result := SataniaIMAP.IsEmailConfigured;
 end;
 
 function TSatania.SEDefaultScheme(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -407,6 +401,19 @@ end;
 function TSatania.SESetScale(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   SetScale(Args[0].VarNumber);
+end;   
+
+function TSatania.SESetVisible(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  if Args[0].VarNumber = 0 then
+    SetVisible(False)
+  else
+    SetVisible(True);
+end;
+
+function TSatania.SEGetVisible(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := Sprite.Visible;
 end;
 
 constructor TSatania.Create;
@@ -418,6 +425,8 @@ begin
   Script.RegisterFunc('process_run', @SERun, 1);
   Script.RegisterFunc('process_is_running', @SEIsRunning, 1);
   Script.RegisterFunc('process_result_get', @SEGetRunResult, 1);
+  Script.RegisterFunc('sprite_visible_set', @SESetVisible, 1);    
+  Script.RegisterFunc('sprite_visible_get', @SEGetVisible, 0);
   Script.RegisterFunc('sprite_animation_stop_all', @SEStopAllAnimations, 0);
   Script.RegisterFunc('sprite_load', @SELoadModel, 1);
   Script.RegisterFunc('sprite_animation_speed_set', @SESetAnimationSpeed, 2);
@@ -789,6 +798,21 @@ begin
   FormMain.PopupNotifier.Text := S;
   FormMain.PopupNotifier.Visible := True;
   Log('System', S);
+end;
+
+procedure TSatania.SetVisible(const V: Boolean);
+begin
+  if V then
+  begin                  
+    FormMain.MenuItemHideShow.Caption := 'Hide';
+    Satania.Sprite.Visible := True;
+    FormTouch.Show;
+  end else
+  begin           
+    FormMain.MenuItemHideShow.Caption := 'Show';
+    Satania.Sprite.Visible := False;
+    FormTouch.Hide;
+  end;
 end;
 
 initialization    

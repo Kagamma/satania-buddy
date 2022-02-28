@@ -74,6 +74,7 @@ type
 
   TFormMain = class(TForm)
     CastleControl: TCastleControl;
+    MenuItemOpenRules: TMenuItem;
     MenuItemSpeechRecognition: TMenuItem;
     MenuItemSilent: TMenuItem;
     MenuItemAbout: TMenuItem;
@@ -99,6 +100,7 @@ type
     procedure MenuItemEditorClick(Sender: TObject);
     procedure MenuItemHideShowClick(Sender: TObject);
     procedure MenuItemLearnClick(Sender: TObject);
+    procedure MenuItemOpenRulesClick(Sender: TObject);
     procedure MenuItemQuitClick(Sender: TObject);
     procedure MenuItemRefreshMenuClick(Sender: TObject);
     procedure MenuItemSettingsClick(Sender: TObject);
@@ -137,7 +139,8 @@ uses
   Form.Touch,
   Form.Settings,
   Form.Chat,
-  Form.evilc.editor,
+  Form.evilc.editor,    
+  Mcdowell.chatbot,
   Mcdowell.chatbot.train,
   mcdowell.speechtotext,
   State.Main;
@@ -201,6 +204,7 @@ begin
 
     // Generate script menu
     Satania.UpdateMenuItems;
+    Mcdowell.Chatbot.Reload;
   end;
 end;
 
@@ -226,22 +230,18 @@ end;
 
 procedure TFormMain.MenuItemHideShowClick(Sender: TObject);
 begin
-  if Satania.Sprite.Visible then
-  begin
-    MenuItemHideShow.Caption := 'Show';
-    Satania.Sprite.Visible := False;
-    FormTouch.Hide;
-  end else
-  begin
-    MenuItemHideShow.Caption := 'Hide';
-    Satania.Sprite.Visible := True;
-    FormTouch.Show;
-  end;
+  Satania.SetVisible(not Satania.Sprite.Visible);
 end;
 
 procedure TFormMain.MenuItemLearnClick(Sender: TObject);
 begin
   RunTrain;
+end;
+
+procedure TFormMain.MenuItemOpenRulesClick(Sender: TObject);
+begin
+  FormEvilCEditor.Show;     
+  FormEvilCEditor.OpenRules;
 end;
 
 procedure TFormMain.MenuItemQuitClick(Sender: TObject);

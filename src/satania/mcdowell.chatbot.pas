@@ -39,6 +39,9 @@ function Inference(S: String): String;
 
 implementation
 
+uses
+  Mcdowell;
+
 type
   TNeuralData = array of array of TNeuralFloat;
 
@@ -68,11 +71,16 @@ end;
 
 procedure Cleanup;
 begin
-  NN.Free;
-  Output.Free;
-  TagList.Free;
-  WordList.Free;
-  RuleDict.Free;
+  if NN <> nil then
+    FreeAndNil(NN); 
+  if Output <> nil then
+    FreeAndNil(Output);
+  if TagList <> nil then
+    FreeAndNil(TagList);
+  if WordList <> nil then
+    FreeAndNil(WordList);
+  if RuleDict <> nil then
+    FreeAndNil(RuleDict);
 end;
 
 function CreateWordMap(Sentence: String): TNeuralFloatDynArr;
@@ -165,14 +173,15 @@ end;
 
 procedure Reload;
 begin
-  Cleanup;
-  Prepare;
-  ReadRules;
+  try
+    Cleanup;
+    Prepare;
+    ReadRules;
+  except
+    on E: Exception do
+      Satania.Talk(E.Message);
+  end;
 end;
-
-initialization
-  Prepare;
-  ReadRules;
 
 finalization
   Cleanup;

@@ -58,6 +58,7 @@ type
     procedure ToolButtonRunClick(Sender: TObject);
     procedure ToolButtonSaveAsClick(Sender: TObject);
     procedure ToolButtonSaveClick(Sender: TObject);
+    procedure OpenRules;
   private
 
   public
@@ -185,6 +186,14 @@ begin
     WorkingFile := SaveDialog.FileName;
     Editor.Lines.SaveToFile(WorkingFile);
   end;
+end;
+
+procedure TFormEvilCEditor.OpenRules;
+begin
+  Caption := ExtractFileName('data/nn/chatbot/rules.json');
+  WorkingFile := 'data/nn/chatbot/rules.json';
+  Editor.Lines.LoadFromFile('data/nn/chatbot/rules.json');
+  StatusBar.Panels[1].Text := '';
 end;
 
 end.
