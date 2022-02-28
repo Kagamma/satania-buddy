@@ -133,6 +133,7 @@ var
   Satania: TSatania;
   RunList: TStringList;
   RunResultList: TStringDict;
+  CSAction: TRTLCriticalSection;
 
 implementation
 
@@ -565,6 +566,7 @@ end;
 
 procedure TSatania.Action(Typ, Message: String);
 begin
+  EnterCriticalSection(CSAction);
   case Typ of
     'chat':
       Talk(Message);
@@ -579,6 +581,7 @@ begin
         raise Exception.Create('Type unknown "' + Typ + '"');
       end;
   end;
+  LeaveCriticalSection(CSAction);
 end;
 
 procedure TSatania.ActionFromFile(FileName: String);
@@ -815,7 +818,8 @@ begin
   end;
 end;
 
-initialization    
+initialization
+  InitCriticalSection(CSAction);
   Save := TSave.Create;
   if FileExists('configs.json') then
     Save.LoadFromFile('configs.json');
@@ -829,6 +833,7 @@ finalization
   FreeAndNil(Satania);
   FreeAndNil(RunList);
   FreeAndNil(RunResultList);
+  DoneCriticalSection(CSAction);
 
 end.
 
