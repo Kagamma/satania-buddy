@@ -12,7 +12,7 @@ A: Windows Vista or above with Aero enabled.
 
 A: x11, qt5, qt5pas, freetype, openssl (for IMAP)
 
-Optional dependencies: fortune, sensors, metar
+Optional dependencies: fortune, sensors, metar, pocketsphinx
 
 You also need a compositor, or else the app will show black screen.
 

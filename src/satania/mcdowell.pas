@@ -640,9 +640,9 @@ end;
 procedure TSatania.Log(LogName, S: String);
 begin
   FormChat.MemoChatLog.Lines.BeginUpdate;
-  FormChat.MemoChatLog.Text := FormChat.MemoChatLog.Text + LogName + ': ' + S + #13;
+  FormChat.MemoChatLog.Text := LogName + ': ' + S + #13 + FormChat.MemoChatLog.Text;
   while FormChat.MemoChatLog.Lines.Count > 2000 do
-    FormChat.MemoChatLog.Lines.Delete(0);
+    FormChat.MemoChatLog.Lines.Pop;
   FormChat.MemoChatLog.Lines.EndUpdate;
 end;
 
