@@ -26,7 +26,7 @@ A:![Gt999+dollars+for+a+stand+itoddlers+btfo+_954ed86b58d371154ab7f95a68054faf](
 
 ##### Q: Scripting API?
 
-A: Not available right now, I am working on it.
+A: https://github.com/Kagamma/satania-buddy/wiki/Scripting-APIs
 
 ##### Q: How to make her speaks in my language? She only shows `?` in her chat bubble.
 
