@@ -89,7 +89,7 @@ type
     EditCharsetFrom: TLabeledEdit;
     ListBoxCharset: TListBox;
     MenuItemDeleteCharset: TMenuItem;
-    PageControl1: TPageControl;
+    PageControl: TPageControl;
     Panel1: TPanel;
     PopupMenuCharset: TPopupMenu;
     TabSheet1: TTabSheet;
@@ -127,6 +127,7 @@ var
   L: TStringDynArray;
   S: String;
 begin
+  PageControl.TabIndex := 0;
   ComboBoxSTTBackend.Items.Clear;
   ComboBoxSTTBackend.Items.Add('PocketSphinx');   
   ComboBoxSTTBackend.Items.Add('Microsoft Speech Object Library');

@@ -9,14 +9,14 @@ object FormSettings: TFormSettings
   ClientWidth = 644
   OnShow = FormShow
   Position = poScreenCenter
-  object PageControl1: TPageControl
+  object PageControl: TPageControl
     Left = 0
     Height = 436
     Top = 0
     Width = 644
-    ActivePage = TabSheetSpeechRecognition
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 4
+    TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'

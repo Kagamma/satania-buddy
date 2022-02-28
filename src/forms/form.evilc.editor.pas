@@ -89,6 +89,9 @@ end;
 procedure TFormEvilCEditor.FormShow(Sender: TObject);
 begin
   ToolButtonNewClick(Sender);
+  {$ifdef WINDOWS}
+  Editor.Font.Name := 'Consolas';
+  {$endif}
 end;
 
 procedure TFormEvilCEditor.FormCreate(Sender: TObject);
