@@ -94,9 +94,10 @@ type
     FFrameSkip: Integer;
     FLewd: Boolean;
     FSkin: String;
-    FSSTModel,
-    FSSTDict,
-    FSSTNgram: String;
+    FSTTModel,
+    FSTTDict,
+    FSTTNgram: String;
+    FSTTBackend: Integer;
   published
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;
     property TextSpeed: Integer read FTextSpeed write FTextSpeed;
@@ -118,9 +119,10 @@ type
     property FrameSkip: Integer read FFrameSkip write FFrameSkip;
     property Lewd: Boolean read FLewd write FLewd default False;
     property Skin: String read FSkin write FSkin;         
-    property STTModel: String read FSSTModel write FSSTModel;
-    property STTDict: String read FSSTDict write FSSTDict;
-    property STTNgram: String read FSSTNgram write FSSTNgram;
+    property STTModel: String read FSTTModel write FSTTModel;
+    property STTDict: String read FSTTDict write FSTTDict;
+    property STTNgram: String read FSTTNgram write FSTTNgram;
+    property STTBackend: Integer read FSTTBackend write FSTTBackend default 0;
   end;
 
   TSave = class(TPersistent)

@@ -25,13 +25,19 @@ unit Mcdowell.SpeechToText;
 interface
 
 uses
+  {$define unit_declare_interface}
+  {$I mcdowell.speechtotext_windows.inc} 
+  {$undef unit_declare_interface}
   Classes, SysUtils, uPocketSphinx, uPocketSphinxDefaultAudioSource,
   ad, cmd_ln, ps_search, pocketsphinx;
 
 type
   TSataniaSpeechToText = class
   protected
-    FPocketSphinx: TPocketSphinx;
+    FPocketSphinx: TPocketSphinx; 
+    {$define unit_protected}
+    {$I mcdowell.speechtotext_windows.inc}
+    {$undef unit_protected}
     procedure OnPocketSphinxStateChange(Sender: TObject; AState: TPocketSphinxState);
     procedure OnPocketSphinxHypothesis(Sender: TObject; AScore: Integer; AHypothesis: String);
   public
@@ -50,6 +56,10 @@ implementation
 uses
   Mcdowell,
   Globals;
+
+{$define unit_implmentation}
+{$I mcdowell.speechtotext_windows.inc}
+{$undef unit_implmentation}
 
 constructor TSataniaSpeechToText.Create;
 begin
@@ -87,33 +97,47 @@ procedure TSataniaSpeechToText.Disable;
 begin
   if FPocketSphinx <> nil then
     FreeAndNil(FPocketSphinx);
+  {$ifdef WINDOWS}
+  SpDisable;
+  {$endif}
 end;
 
 function TSataniaSpeechToText.Enable: Boolean;
 begin
   if not IsLoaded then exit(False);
   Disable;
-  FPocketSphinx := TPocketSphinx.Create;
+  {$ifdef WINDOWS}
+  if Save.Settings.STTBackend = 0 then
+  begin  
+  {$endif}
+    FPocketSphinx := TPocketSphinx.Create;
 
-  FPocketSphinx.OnStateChange := @OnPocketSphinxStateChange;
-  FPocketSphinx.OnHypothesis := @OnPocketSphinxHypothesis;
+    FPocketSphinx.OnStateChange := @OnPocketSphinxStateChange;
+    FPocketSphinx.OnHypothesis := @OnPocketSphinxHypothesis;
 
-  FPocketSphinx.AcousticModelPath := PATH_SPHINX + Save.Settings.STTModel;
-  FPocketSphinx.Threshold := 0;
+    FPocketSphinx.AcousticModelPath := PATH_SPHINX + Save.Settings.STTModel;
+    FPocketSphinx.Threshold := 0;
 
-  FPocketSphinx.Init;
-  if FPocketSphinx.State = rsInitialized then
-  begin
-    if FPocketSphinx.LoadDictionary(PATH_SPHINX + Save.Settings.STTDict) then
+    FPocketSphinx.Init;
+    if FPocketSphinx.State = rsInitialized then
     begin
-      FPocketSphinx.AddNgramSearch('ngram', PATH_SPHINX + Save.Settings.STTNgram);
-      FPocketSphinx.ActiveSearch := 'ngram';
+      if FPocketSphinx.LoadDictionary(PATH_SPHINX + Save.Settings.STTDict) then
+      begin
+        FPocketSphinx.AddNgramSearch('ngram', PATH_SPHINX + Save.Settings.STTNgram);
+        FPocketSphinx.ActiveSearch := 'ngram';
+      end;
+
+      FPocketSphinx.AudioSource := TAudioSourceDefaultDevice.Create;
+
+      FPocketSphinx.Active := True;
     end;
-
-    FPocketSphinx.AudioSource := TAudioSourceDefaultDevice.Create;
-
-    FPocketSphinx.Active := True;
-  end;
+  {$ifdef WINDOWS}
+  end else
+  if Save.Settings.STTBackend = 1 then
+  begin
+    SpEnable;
+  end;  
+  {$endif}
   exit(True);
 end;
 

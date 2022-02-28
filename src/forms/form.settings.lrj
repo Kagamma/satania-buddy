@@ -29,6 +29,8 @@
 {"hash":211245100,"name":"tformsettings.labelemailusessl.caption","sourcebytes":[85,115,101,32,83,83,76],"value":"Use SSL"},
 {"hash":161486333,"name":"tformsettings.labelfetchfrom.caption","sourcebytes":[70,101,116,99,104,32,70,114,111,109],"value":"Fetch From"},
 {"hash":63876510,"name":"tformsettings.tabsheetspeechrecognition.caption","sourcebytes":[83,112,101,101,99,104,32,82,101,99,111,103,110,105,116,105,111,110],"value":"Speech Recognition"},
+{"hash":142220292,"name":"tformsettings.labelsttbackend.caption","sourcebytes":[66,97,99,107,101,110,100],"value":"Backend"},
+{"hash":215175064,"name":"tformsettings.groupboxsttpocketsphinx.caption","sourcebytes":[80,111,99,107,101,116,83,112,104,105,110,120],"value":"PocketSphinx"},
 {"hash":5528252,"name":"tformsettings.labelsttmodel.caption","sourcebytes":[77,111,100,101,108],"value":"Model"},
 {"hash":307108,"name":"tformsettings.labelsttdict.caption","sourcebytes":[68,105,99,116],"value":"Dict"},
 {"hash":5564541,"name":"tformsettings.labelsttngram.caption","sourcebytes":[78,103,114,97,109],"value":"Ngram"},

@@ -71,6 +71,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="LazActiveX"/>
+      </Item>
+      <Item>
         <PackageName Value="SynEdit"/>
       </Item>
       <Item>
@@ -198,6 +201,10 @@
         <Filename Value="satania/mcdowell.speechtotext.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Mcdowell.SpeechToText"/>
+      </Unit>
+      <Unit>
+        <Filename Value="satania/mcdowell.speechtotext_windows.inc"/>
+        <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
   </ProjectOptions>

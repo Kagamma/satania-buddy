@@ -39,14 +39,12 @@ type
     ButtonOk: TBitBtn;
     CheckBoxEmailUseSSL: TCheckBox;
     CheckBoxLewd: TCheckBox;
+    ComboBoxSTTBackend: TComboBox;
     ComboBoxImageQuality: TComboBox;
     EditBotServer: TEdit;
     EditCharsetTo: TLabeledEdit;
     EditDefaultEvilScheme: TEdit;
     EditChatBubbleDelay: TSpinEdit;
-    EditSTTModel: TEdit;
-    EditSTTDict: TEdit;
-    EditSTTNgram: TEdit;
     EditSkin: TEdit;
     EditFrameSkip: TSpinEdit;
     EditFontName: TEdit;
@@ -58,12 +56,14 @@ type
     EditEmailPort: TSpinEdit;
     EditSoWRightMargin: TSpinEdit;
     EditFontSize: TSpinEdit;
+    EditSTTDict: TEdit;
+    EditSTTModel: TEdit;
+    EditSTTNgram: TEdit;
     EditTextSpeed: TSpinEdit;
     EditBaseScaling: TFloatSpinEdit;
+    GroupBoxSTTPocketSphinx: TGroupBox;
     LabelChatbotServer: TLabel;
-    LabelSTTModel: TLabel;
-    LabelSTTDict: TLabel;
-    LabelSTTNgram: TLabel;
+    LabelSTTBackend: TLabel;
     LabelEmailUsername: TLabel;
     LabelEmailPassword: TLabel;
     LabelEmailUseSSL: TLabel;
@@ -78,6 +78,9 @@ type
     LabelFPS: TLabel;
     LabelChatBubbleDelay: TLabel;
     LabelSoWRightMargin: TLabel;
+    LabelSTTDict: TLabel;
+    LabelSTTModel: TLabel;
+    LabelSTTNgram: TLabel;
     LabelTextSpeed: TLabel;
     LabelDefaultEvilScheme: TLabel;
     LabelImageQuality: TLabel;
@@ -97,6 +100,7 @@ type
     procedure ButtonCancelClick(Sender: TObject);
     procedure ButtonCharsetAddClick(Sender: TObject);
     procedure ButtonOkClick(Sender: TObject);
+    procedure ComboBoxSTTBackendChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure MenuItemDeleteCharsetClick(Sender: TObject);
   private
@@ -123,6 +127,16 @@ var
   L: TStringDynArray;
   S: String;
 begin
+  ComboBoxSTTBackend.Items.Clear;
+  ComboBoxSTTBackend.Items.Add('PocketSphinx');   
+  ComboBoxSTTBackend.Items.Add('Microsoft Speech Object Library');
+  {$ifdef WINDOWS}
+  ComboBoxSTTBackend.ItemIndex := Save.Settings.STTBackend;
+  {$else}
+  ComboBoxSTTBackend.ItemIndex := 0;
+  ComboBoxSTTBackend.Enabled := False;
+  {$endif}
+
   CheckBoxLewd.Checked := Save.Settings.Lewd;
   EditBotServer.Text := Save.Settings.BotServer;
   EditFPS.Value := Save.Settings.FPS;
@@ -221,8 +235,10 @@ begin
 
     if (EditSTTModel.Text <> Save.Settings.STTModel)
       or (EditSTTDict.Text <> Save.Settings.STTDict)
-      or (EditSTTNgram.Text <> Save.Settings.STTNgram) then
-    begin
+      or (EditSTTNgram.Text <> Save.Settings.STTNgram)
+      or (ComboBoxSTTBackend.ItemIndex <> Save.Settings.STTBackend) then
+    begin                             
+      Save.Settings.STTBackend := ComboBoxSTTBackend.ItemIndex;
       Save.Settings.STTModel := EditSTTModel.Text;
       Save.Settings.STTDict := EditSTTDict.Text;
       Save.Settings.STTNgram := EditSTTNgram.Text;
@@ -235,6 +251,14 @@ begin
     on E: Exception do
       Satania.Talk(E.Message);
   end;
+end;
+
+procedure TFormSettings.ComboBoxSTTBackendChange(Sender: TObject);
+begin
+  if ComboBoxSTTBackend.ItemIndex <> 0 then
+    GroupBoxSTTPocketSphinx.Enabled := False
+  else
+    GroupBoxSTTPocketSphinx.Enabled := True;
 end;
 
 procedure TFormSettings.ButtonCancelClick(Sender: TObject);
