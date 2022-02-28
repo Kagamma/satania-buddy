@@ -58,6 +58,10 @@ type
     procedure Execute; override;
   end;
 
+  TMessage = class
+    class procedure NoMessageProc(const S: string);
+  end;
+
 var
   TagList: TStringList;
   WordList: TStringList;
@@ -65,6 +69,10 @@ var
   RuleArray: array of TRuleData;
   InputSize, OutputSize, HiddenSize: Integer;
   XData, YData: TNeuralData;
+
+class procedure TMessage.NoMessageProc(const S: string);
+begin
+end;
 
 procedure Prepare;
 begin
@@ -223,7 +231,8 @@ begin
   NN.AddLayer(TNNetFullConnectReLU.Create(HiddenSize));
   NN.AddLayer(TNNetFullConnectLinear.Create(OutputSize));
 
-  Satania.Talk('I am learning new rules, please wait...');
+  Satania.ActionFromFile('loading-start.evil');
+  Satania.Talk('I am learning. please wait...');
   Ticks := GetTickCount64;
   for Y := Low(XData) to High(XData) do
   begin
@@ -240,8 +249,14 @@ begin
   NFit.L2Decay := 0;
   NFit.Verbose := False;
   NFit.InferHitFn := @MonopolarCompare;
+  {$ifdef WINDOWS}
+  NFit.HideMessages;
+  {$endif}
+  NFit.MessageProc := @TMessage(nil).NoMessageProc;
+  NFit.ErrorProc := @TMessage(nil).NoMessageProc;
   NFit.Fit(NN, TrainingPairs, nil, nil, 8, 1000);
 
+  Satania.ActionFromFile('loading-stop.evil');
   Satania.Talk(
     'Learning completed in ' + IntToStr((GetTickCount64 - Ticks) div 1000) + ' seconds!' + #10#10 +
     DebugErrors(NN) + #13 +
