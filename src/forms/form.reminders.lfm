@@ -39,6 +39,7 @@ object FormReminders: TFormReminders
       BorderSpacing.Around = 8
       Caption = 'Cancel'
       Images = FormEvilCEditor.ImageList
+      ImageIndex = 10
       OnClick = ButtonCancelClick
       TabOrder = 0
     end

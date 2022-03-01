@@ -474,6 +474,8 @@ object FormSettings: TFormSettings
       Align = alRight
       BorderSpacing.Around = 8
       Caption = 'Cancel'
+      Images = FormEvilCEditor.ImageList
+      ImageIndex = 10
       OnClick = ButtonCancelClick
       TabOrder = 0
     end
@@ -485,6 +487,8 @@ object FormSettings: TFormSettings
       Align = alRight
       BorderSpacing.Around = 8
       Caption = 'Ok'
+      Images = FormEvilCEditor.ImageList
+      ImageIndex = 11
       OnClick = ButtonOkClick
       TabOrder = 1
     end

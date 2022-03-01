@@ -26,6 +26,7 @@ object FormRules: TFormRules
       BorderSpacing.Around = 8
       Caption = 'Cancel'
       Images = FormEvilCEditor.ImageList
+      ImageIndex = 10
       OnClick = ButtonCancelClick
       TabOrder = 0
     end
@@ -77,6 +78,7 @@ object FormRules: TFormRules
       BorderSpacing.Around = 8
       Caption = 'Help'
       Images = FormEvilCEditor.ImageList
+      ImageIndex = 5
       OnClick = ButtonHelpClick
       TabOrder = 4
     end
