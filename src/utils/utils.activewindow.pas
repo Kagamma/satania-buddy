@@ -62,7 +62,7 @@ procedure AddFormToIgnoreHandleList(F: TForm);
 implementation
 
 uses
-  Form.Main, Mcdowell;
+  mcdowell;
 
 procedure AddFormToIgnoreHandleList(F: TForm);
 begin

@@ -26,7 +26,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  SynEdit, SynHighlighterCpp, SynEditMarkupSpecialLine, LCLTranslator;
+  SynEdit, SynHighlighterCpp, SynEditMarkupSpecialLine, LCLTranslator, lclintf;
 
 type
 
@@ -40,6 +40,7 @@ type
     StatusBar: TStatusBar;
     SynCppSyn: TSynCppSyn;
     ToolBar1: TToolBar;
+    ToolButton1: TToolButton;
     ToolButtonSeparator1: TToolButton;
     ToolButtonSaveAs: TToolButton;
     ToolButtonNew: TToolButton;
@@ -47,12 +48,14 @@ type
     ToolButtonSeparator2: TToolButton;
     ToolButtonRun: TToolButton;
     ToolButtonOpen: TToolButton;
+    ToolButtonSeparator3: TToolButton;
     procedure EditorChange(Sender: TObject);
     procedure EditorKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure EditorSpecialLineColors(Sender: TObject; Line: integer;
       var Special: boolean; var FG, BG: TColor);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure ToolButton1Click(Sender: TObject);
     procedure ToolButtonNewClick(Sender: TObject);
     procedure ToolButtonOpenClick(Sender: TObject);
     procedure ToolButtonRunClick(Sender: TObject);
@@ -93,6 +96,11 @@ begin
   {$ifdef WINDOWS}
   Editor.Font.Name := 'Consolas';
   {$endif}
+end;
+
+procedure TFormEvilCEditor.ToolButton1Click(Sender: TObject);
+begin
+  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Scripting-References-&-APIs');
 end;
 
 procedure TFormEvilCEditor.FormCreate(Sender: TObject);

@@ -25,12 +25,13 @@ unit Mcdowell;
 interface
 
 uses
-  Classes, SysUtils,
+  Classes, SysUtils, syncobjs,
   Forms, Menus, FileUtil,
   fphttpclient, fpjson, jsonparser, Process,
   CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
   CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts,
+  CastleBehaviors,
   Mcdowell.EvilC, Globals;
 
 type
@@ -60,7 +61,8 @@ type
     function SESetScale(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
     function SESetVisible(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEGetVisible(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;          
+    function SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SERun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsRunning(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEGetRunResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -83,7 +85,11 @@ type
     function SEIsEmailLoading(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsEmailSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsEmailConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEDefaultScheme(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEDefaultScheme(const VM: TSEVM; const Args: array of TSEValue): TSEValue;      
+    function SESoundPlay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+  private
+    PreviousMinute: Integer;
+    PreviousDay: Integer;
   public
     Delta: Single;
     MenuItems: array of TMenuItem;
@@ -100,7 +106,8 @@ type
     Form,
     FormTouch: TForm;
     Name: String;
-    Script: TEvilC;
+    Script: TEvilC;     
+    UsedRemindersList: TStringList;
     { Where we should move our touch panel to }
     TouchBone: TTransformNode;
     constructor Create;
@@ -114,7 +121,7 @@ type
     procedure StopAllAnimations;
     procedure Log(LogName, S: String);
     procedure Talk(S: String);
-    procedure Notify(S: String);
+    procedure Notify(C, S: String);
     procedure TalkWithoutBlock(S: String);
     function Exec(S: String): String;
     procedure Chat(S: String);
@@ -127,18 +134,26 @@ type
     function Expression(const S: String): String;
     procedure UpdateMenuItems;
     procedure SetVisible(const V: Boolean);
+    procedure UpdateReminders;
   end;
 
 var
   Satania: TSatania;
   RunList: TStringList;
   RunResultList: TStringDict;
-  CSAction: TRTLCriticalSection;
+  CSAction,
+  CSTalk: TCriticalSection;
 
 implementation
 
 uses
-  Form.Chat, Form.Main, mcdowell.chatbot, mcdowell.imap;
+  form.reminders,
+  form.chat,
+  form.touch,
+  mcdowell.chatbot,
+  mcdowell.sound,
+  form.main,
+  mcdowell.imap;
 
 procedure TSataniaChatThread.SendChatSendToHer;
 begin
@@ -244,19 +259,24 @@ function TSatania.SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEVal
 begin
   if Length(Args) = 1 then
   begin
-    Satania.Talk(Args[0]);
+    Talk(Args[0]);
     VM.IsPaused := True;
   end else
   begin
     if Args[1] = 0 then
     begin
-      Satania.TalkWithoutBlock(Args[0]);
+      TalkWithoutBlock(Args[0]);
     end else
     begin
-      Satania.Talk(Args[0]);
+      Talk(Args[0]);
       VM.IsPaused := True;
     end;
   end;
+end;
+
+function TSatania.SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Notify(Name, Args[0]);
 end;
 
 function TSatania.SERun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -379,6 +399,15 @@ begin
   Result := Save.Settings.DefaultEvilScheme;
 end;
 
+function TSatania.SESoundPlay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  B: TSataniaSoundBehavior;
+begin
+  B := TSataniaSoundBehavior.Create(Sprite);
+  B.URL := Args[0];
+  Sprite.AddBehavior(B);
+end;
+
 function TSatania.SEIsSoW(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Save.SitOnWindow
@@ -421,8 +450,13 @@ constructor TSatania.Create;
 begin
   inherited;
   Name := 'Satania';
+  PreviousMinute := -1;
+  PreviousDay := -1;
+  UsedRemindersList := TStringList.Create;
+  UsedRemindersList.Sorted := True;
   Script := TEvilC.Create;
-  Script.RegisterFunc('talk', @SETalk, -1);
+  Script.RegisterFunc('talk', @SETalk, -1);    
+  Script.RegisterFunc('notify', @SENotify, 1);
   Script.RegisterFunc('process_run', @SERun, 1);
   Script.RegisterFunc('process_is_running', @SEIsRunning, 1);
   Script.RegisterFunc('process_result_get', @SEGetRunResult, 1);
@@ -452,10 +486,13 @@ begin
   Script.RegisterFunc('email_is_loading', @SEIsEmailLoading, 0);
   Script.RegisterFunc('email_is_success', @SEIsEmailSuccess, 0);
   Script.RegisterFunc('email_is_configured', @SEIsEmailConfigured, 0);
+  Script.RegisterFunc('sound_play', @SESoundPlay, 1);
+  Script.ConstMap.Add('name', Name);
 end;
 
 destructor TSatania.Destroy;
 begin
+  UsedRemindersList.Free;
   inherited;
 end;
 
@@ -566,22 +603,25 @@ end;
 
 procedure TSatania.Action(Typ, Message: String);
 begin
-  EnterCriticalSection(CSAction);
-  case Typ of
-    'chat':
-      Talk(Message);
-    'script':
-      begin
-        ResetScript;
-        Script.Source := Message;
-        IsAction := True;
-      end
-    else
-      begin
-        raise Exception.Create('Type unknown "' + Typ + '"');
-      end;
+  CSAction.Enter;
+  try
+    case Typ of
+      'chat':
+        Talk(Message);
+      'script':
+        begin
+          ResetScript;
+          Script.Source := Message + ' scheme_load(scheme_default)';
+          IsAction := True;
+        end
+      else
+        begin
+          raise Exception.Create('Type unknown "' + Typ + '"');
+        end;
+    end;
+  finally
+    CSAction.Leave;
   end;
-  LeaveCriticalSection(CSAction);
 end;
 
 procedure TSatania.ActionFromFile(FileName: String);
@@ -607,46 +647,56 @@ begin
 end;
 
 procedure TSatania.Talk(S: String);
-begin
-  LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
-  LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
-  LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
-  ChatText.ResetText;
-  ChatText.MaxDisplayChars := 0;
-  ChatText.Text.Text := S;
-  if ChatText.Text.Count > 25 then
-  begin
-    ChatText.Text.Text := 'too much words... please check the history instead!';
-  end;
-  ChatBubbleDelay := 1;
-  IsTalking := True;
-  if S <> '' then
-  begin
-    Log(Name, S);
-    Satania.StartAnimation('talk_loop');
-    ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
+begin      
+  CSTalk.Enter;
+  try
+    LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
+    LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
+    LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
+    ChatText.ResetText;
+    ChatText.MaxDisplayChars := 0;
+    ChatText.Text.Text := S;
+    if ChatText.Text.Count > 25 then
+    begin
+      ChatText.Text.Text := 'too much words... please check the history instead!';
+    end;
+    ChatBubbleDelay := 1;
+    IsTalking := True;
+    if S <> '' then
+    begin
+      Log(Name, S);
+      Satania.StartAnimation('talk_loop');
+      ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
+    end;
+  finally
+    CSTalk.Leave;
   end;
 end;
 
 procedure TSatania.TalkWithoutBlock(S: String);
 begin
-  LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
-  LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
-  LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
-  ChatText.ResetText;
-  ChatText.MaxDisplayChars := 0;
-  ChatText.Text.Text := S;
-  if ChatText.Text.Count > 25 then
-  begin
-    ChatText.Text.Text := 'too much words... please check the history instead!';
+  CSTalk.Enter;
+  try
+    LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
+    LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
+    LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
+    ChatText.ResetText;
+    ChatText.MaxDisplayChars := 0;
+    ChatText.Text.Text := S;
+    if ChatText.Text.Count > 25 then
+    begin
+      ChatText.Text.Text := 'too much words... please check the history instead!';
+    end;
+    ChatBubbleDelay := 1;
+    if S <> '' then
+    begin
+      Log(Name, S);
+      ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
+    end;
+    IsTalking := False;
+  finally
+    CSTalk.Leave;
   end;
-  ChatBubbleDelay := 1;
-  if S <> '' then
-  begin
-    Log(Name, S);
-    ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
-  end;
-  IsTalking := False;
 end;
 
 procedure TSatania.Log(LogName, S: String);
@@ -796,8 +846,9 @@ begin
   end;
 end;
 
-procedure TSatania.Notify(S: String);
+procedure TSatania.Notify(C, S: String);
 begin
+  FormMain.PopupNotifier.Title := C;
   FormMain.PopupNotifier.Text := S;
   FormMain.PopupNotifier.Visible := True;
   Log('System', S);
@@ -818,8 +869,66 @@ begin
   end;
 end;
 
+procedure TSatania.UpdateReminders;
+var
+  Year, Month, Day, Hour, Minute, Second, Mili: Word;
+  Current: TDateTime;
+  I, L: Integer;
+  Q1, Q2: QWord;
+  Item: TReminderCollectionItem;
+  IsAlarm: Boolean;
+begin
+  Current := Now;
+  DecodeTime(Current, Hour, Minute, Second, Mili);
+  if Minute <> PreviousMinute then
+  begin
+    PreviousMinute := Minute;
+    DecodeDate(Current, Year, Month, Day);
+    Q1 := StrToQWord(Format('%.4d%.2d%.2d%.2d%.2d', [Year, Month, Day, Hour, Minute]));
+    if PreviousDay <> Day then
+    begin
+      UsedRemindersList.Clear;
+      PreviousDay := Day;
+    end;
+    for I := Save.Reminders.Count - 1 downto 0 do
+    begin
+      Item := TReminderCollectionItem(Save.Reminders.Items[I]);
+      IsAlarm := False;
+      if (Item.Enabled) and (not UsedRemindersList.Find(Item.Name, L)) then
+      begin
+        case Item.Kind of
+          0:
+            begin
+              if (Item.Minute = Minute) and (Item.Hour = Hour) then
+                IsAlarm := True;
+            end;
+          1:
+            begin
+              Q2 := StrToQWord(Format('%.4d%.2d%.2d%.2d%.2d', [Item.Year, Item.Month, Item.Day, Item.Hour, Item.Minute]));
+              if Q1 >= Q2 then
+              begin
+                IsAlarm := True;
+              end;
+            end;
+        end;
+      end;
+      if IsAlarm then
+      begin
+        UsedRemindersList.Add(Item.Name);
+        Satania.Action('script', Item.Script);
+        if Item.Kind = 1 then
+        begin
+          Save.Reminders.Delete(I);
+          Save.SaveToFile('configs.json');
+        end;
+      end;
+    end;
+  end;
+end;
+
 initialization
-  InitCriticalSection(CSAction);
+  CSAction := TCriticalSection.Create;
+  CSTalk := TCriticalSection.Create;
   Save := TSave.Create;
   if FileExists('configs.json') then
     Save.LoadFromFile('configs.json');
@@ -832,8 +941,9 @@ finalization
   FreeAndNil(Save);
   FreeAndNil(Satania);
   FreeAndNil(RunList);
-  FreeAndNil(RunResultList);
-  DoneCriticalSection(CSAction);
+  FreeAndNil(RunResultList);      
+  CSTalk.Free;
+  CSAction.Free;
 
 end.
 

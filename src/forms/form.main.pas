@@ -33,7 +33,7 @@ uses
   CastleSceneCore, CastleScene,
   CastleVectors, {$ifdef WINDOWS}CastleControl,{$else}OpenGLContext,{$endif} CastleWindow,
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, Menus,
-  LCLType, StdCtrls, PopupNotifier, Globals,
+  LCLType, StdCtrls, PopupNotifier, Globals, LCLintf,
   Mcdowell, LCLTranslator;
 
 type
@@ -74,6 +74,9 @@ type
 
   TFormMain = class(TForm)
     CastleControl: TCastleControl;
+    MenuItem1: TMenuItem;
+    MenuItemAlarmsAndReminders: TMenuItem;
+    MenuItemScriptingAPIs: TMenuItem;
     MenuItemOpenRules: TMenuItem;
     MenuItemSpeechRecognition: TMenuItem;
     MenuItemSilent: TMenuItem;
@@ -90,12 +93,14 @@ type
     PopupNotifier: TPopupNotifier;
     Separator1: TMenuItem;
     TimerMainLoop: TTimer;
+    TimerReminders: TTimer;
     TrayMenu: TPopupMenu;
     TrayIcon: TTrayIcon;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure MenuItemAboutClick(Sender: TObject);
+    procedure MenuItemAlarmsAndRemindersClick(Sender: TObject);
     procedure MenuItemChatWithHerClick(Sender: TObject);
     procedure MenuItemEditorClick(Sender: TObject);
     procedure MenuItemHideShowClick(Sender: TObject);
@@ -103,11 +108,13 @@ type
     procedure MenuItemOpenRulesClick(Sender: TObject);
     procedure MenuItemQuitClick(Sender: TObject);
     procedure MenuItemRefreshMenuClick(Sender: TObject);
+    procedure MenuItemScriptingAPIsClick(Sender: TObject);
     procedure MenuItemSettingsClick(Sender: TObject);
     procedure MenuItemSilentClick(Sender: TObject);
     procedure MenuItemSitOnWindowClick(Sender: TObject);
     procedure MenuItemSpeechRecognitionClick(Sender: TObject);
     procedure TimerMainLoopTimer(Sender: TObject);
+    procedure TimerRemindersTimer(Sender: TObject);
     procedure TrayIconDblClick(Sender: TObject);
   private
     { private declarations }
@@ -136,10 +143,11 @@ implementation
 
 uses
   Utils.ActiveWindow,
-  Form.Touch,
-  Form.Settings,
-  Form.Chat,
-  Form.evilc.editor,    
+  form.touch,
+  form.chat,
+  form.reminders,
+  form.settings,
+  form.evilc.editor,
   Mcdowell.chatbot,
   Mcdowell.chatbot.train,
   mcdowell.speechtotext,
@@ -218,6 +226,11 @@ begin
   Satania.Talk('Satania Buddy'#10'Homepage: https://kgm.itch.io/satania-buddy');
 end;
 
+procedure TFormMain.MenuItemAlarmsAndRemindersClick(Sender: TObject);
+begin
+  FormReminders.Show;
+end;
+
 procedure TFormMain.MenuItemChatWithHerClick(Sender: TObject);
 begin
   FormChat.Show;
@@ -252,6 +265,11 @@ end;
 procedure TFormMain.MenuItemRefreshMenuClick(Sender: TObject);
 begin
   Satania.UpdateMenuItems;
+end;
+
+procedure TFormMain.MenuItemScriptingAPIsClick(Sender: TObject);
+begin
+  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Scripting-References-&-APIs');
 end;
 
 procedure TFormMain.MenuItemSettingsClick(Sender: TObject);
@@ -308,6 +326,11 @@ begin
     end;
   end;
   Ticks := GetTickCount64;
+end;
+
+procedure TFormMain.TimerRemindersTimer(Sender: TObject);
+begin
+  Satania.UpdateReminders;
 end;
 
 procedure TFormMain.TrayIconDblClick(Sender: TObject);

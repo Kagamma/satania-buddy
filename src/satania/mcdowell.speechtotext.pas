@@ -81,7 +81,11 @@ begin
     rsInitialized: Satania.Talk('I''m listening.');
     rsReady: ;
     rsListening: ;
-    rsAnalyze: ; // Satania.Talk('...');
+    rsAnalyze:
+      begin
+        if not Satania.IsTalking then
+          Satania.Talk('...');
+      end;
     rsError: Satania.Talk('Sphinx: Error - ' + (Sender as TPocketSphinx).LastErrorMsg);
   end;
 end;

@@ -35,7 +35,8 @@ uses
 const
   PATH_SCRIPTS = 'castle-data:/scripts/';
   PATH_SPRITES = 'castle-data:/sprites/';
-  PATH_FONT = 'castle-data:/fonts/';   
+  PATH_FONT = 'castle-data:/fonts/';         
+  PATH_SOUND = 'castle-data:/sounds/';
   PATH_SPHINX = 'data/nn/sphinx/';
   SECRET_KEY = 'satania_mcdowell';
 
@@ -63,6 +64,27 @@ type
     FValue: String;
   published
     property Value: String read FValue write FValue;
+  end;
+
+  TReminderCollectionItem = class(TSaveCollectionItem)
+  private
+    FKind,
+    FYear,
+    FMonth,
+    FDay,
+    FHour,
+    FMinute: Integer;  
+    FScript: String;
+    FEnabled: Boolean;
+  published
+    property Kind: Integer read FKind write FKind;   
+    property Year: Integer read FYear write FYear;
+    property Month: Integer read FMonth write FMonth;
+    property Day: Integer read FDay write FDay;
+    property Hour: Integer read FHour write FHour;
+    property Minute: Integer read FMinute write FMinute;  
+    property Script: String read FScript write FScript;
+    property Enabled: Boolean read FEnabled write FEnabled;
   end;
 
   TSaveCollection = class(TCollection)
@@ -127,7 +149,8 @@ type
 
   TSave = class(TPersistent)
   protected
-    FFlags: TSaveCollection;
+    FFlags,
+    FReminders: TSaveCollection;
     FSitOnWindow: Boolean;
     FSpriteDefaultLocationX: Single;
     FSpriteDefaultLocationY: Single;
@@ -142,7 +165,8 @@ type
     function SEGetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   published
-    property Flags: TSaveCollection read FFlags;
+    property Flags: TSaveCollection read FFlags;      
+    property Reminders: TSaveCollection read FReminders;
     property Settings: TSaveSettings read FSettings;
     property SitOnWindow: Boolean read FSitOnWindow write FSitOnWindow default false;
     property SpriteDefaultLocationX: Single read FSpriteDefaultLocationX write FSpriteDefaultLocationX;
@@ -173,6 +197,8 @@ procedure CommonThread(Method: TMethod);
 
 function Encrypt(S: String): String;
 function Decrypt(S: String): String;
+function GUID: String;               
+function GUIDName: String;
 
 {$ifdef LINUX_X11}
 function FindTopWindow(Window: TWindow): TWindow;
@@ -247,7 +273,8 @@ begin
   SitOnWindow := False;
   SpriteDefaultLocationX := -1;
   SpriteDefaultLocationY := -1;
-  FFlags := TSaveCollection.Create(TSaveFlagCollectionItem);
+  FFlags := TSaveCollection.Create(TSaveFlagCollectionItem);   
+  FReminders := TSaveCollection.Create(TReminderCollectionItem);
   FSilent := False;
   FSettings := TSaveSettings.Create;
   FSettings.ChatBubbleDelay := 5000;
@@ -401,6 +428,19 @@ begin
   Result := DecrytpStream.ReadAnsiString;
   DecrytpStream.Free;
   StringStream.Free;
+end;
+
+function GUID: String;
+var
+  GUIDRec: TGUID;
+begin
+  CreateGUID(GUIDRec);
+  Result := GUIDToString(GUIDRec);
+end; 
+
+function GUIDName: String;
+begin
+  Result := 'G' + StringsReplace(GUID, ['{', '}', '-'], ['', '', ''], [rfReplaceAll]);
 end;
 
 function CharsetToSettings(S: String): TStringDynArray;

@@ -51,12 +51,13 @@ begin
     FreeAndNil(FSpSharedRecoContext);
 end;
 
-procedure TSataniaSpeechToText.SpSharedRecoContextHypothesis(Sender: TObject;StreamNumber:Integer;StreamPosition:OleVariant;R:ISpeechRecoResult);
+procedure TSataniaSpeechToText.SpSharedRecoContextHypothesis(Sender: TObject; StreamNumber: Integer; StreamPosition: OleVariant; R: ISpeechRecoResult);
 begin
-  Satania.Talk('...');
+  if not Satania.IsTalking then
+    Satania.Talk('...');
 end;
 
-procedure TSataniaSpeechToText.SpSharedRecoContextRecognition(Sender: TObject;StreamNumber:Integer;StreamPosition:OleVariant;RecognitionType:SpeechRecognitionType;R:ISpeechRecoResult);
+procedure TSataniaSpeechToText.SpSharedRecoContextRecognition(Sender: TObject; StreamNumber: Integer; StreamPosition: OleVariant; RecognitionType: SpeechRecognitionType; R: ISpeechRecoResult);
 var
   S: String;
 begin

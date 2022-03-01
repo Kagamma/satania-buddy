@@ -1,12 +1,12 @@
 object FormMain: TFormMain
   Left = -8
-  Height = 482
+  Height = 599
   Top = -8
-  Width = 555
+  Width = 603
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 459
-  ClientWidth = 555
+  ClientHeight = 576
+  ClientWidth = 603
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -17,9 +17,9 @@ object FormMain: TFormMain
   WindowState = wsMaximized
   object CastleControl: TCastleControl
     Left = 0
-    Height = 459
+    Height = 576
     Top = 0
-    Width = 555
+    Width = 603
     Align = alClient
     AlphaBits = 8
     Options = []
@@ -1359,7 +1359,7 @@ object FormMain: TFormMain
     Top = 152
   end
   object TrayMenu: TPopupMenu
-    Left = 64
+    Left = 96
     Top = 152
     object MenuItemChatWithHer: TMenuItem
       Caption = 'Chat'
@@ -1376,6 +1376,10 @@ object FormMain: TFormMain
     object MenuItemSilent: TMenuItem
       Caption = 'Silent'
       OnClick = MenuItemSilentClick
+    end
+    object MenuItemHideShow: TMenuItem
+      Caption = 'Hide'
+      OnClick = MenuItemHideShowClick
     end
     object MenuItemActions: TMenuItem
       Caption = 'Actions'
@@ -1399,13 +1403,20 @@ object FormMain: TFormMain
         Caption = '-'
       end
     end
-    object MenuItemHideShow: TMenuItem
-      Caption = 'Hide'
-      OnClick = MenuItemHideShowClick
+    object MenuItemAlarmsAndReminders: TMenuItem
+      Caption = 'Alarms and Reminders'
+      OnClick = MenuItemAlarmsAndRemindersClick
     end
     object MenuItemSettings: TMenuItem
       Caption = 'Settings'
       OnClick = MenuItemSettingsClick
+    end
+    object MenuItem1: TMenuItem
+      Caption = 'Help'
+      object MenuItemScriptingAPIs: TMenuItem
+        Caption = 'Scripting APIs'
+        OnClick = MenuItemScriptingAPIsClick
+      end
     end
     object MenuItemAbout: TMenuItem
       Caption = 'About'
@@ -1421,7 +1432,7 @@ object FormMain: TFormMain
     Interval = 16
     OnTimer = TimerMainLoopTimer
     Left = 24
-    Top = 109
+    Top = 96
   end
   object PopupNotifier: TPopupNotifier
     Color = clInfoBk
@@ -1434,7 +1445,13 @@ object FormMain: TFormMain
     TitleFont.Color = clInfoText
     TitleFont.Style = [fsBold]
     Visible = False
-    Left = 128
+    Left = 160
     Top = 152
+  end
+  object TimerReminders: TTimer
+    Interval = 5000
+    OnTimer = TimerRemindersTimer
+    Left = 96
+    Top = 96
   end
 end

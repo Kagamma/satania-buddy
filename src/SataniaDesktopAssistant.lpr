@@ -30,10 +30,11 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  globals,
-  Forms, Form.Main, utils.activewindow, mcdowell, State.Main, Form.Touch,
-  form.settings, form.chat, mcdowell.chatbot, mcdowell.chatbot.train,
-  form.evilc.editor, mcdowell.imap, Mcdowell.SpeechToText;
+  globals, Forms, datetimectrls, utils.activewindow, mcdowell,
+  State.Main, form.settings, form.chat, mcdowell.chatbot,
+  mcdowell.chatbot.train, form.evilc.editor, mcdowell.imap,
+  Mcdowell.SpeechToText, frame.reminderitem, form.reminders, form.Main,
+  form.touch, mcdowell.sound;
 
 {$R *.res}
 
@@ -47,6 +48,7 @@ begin
   Application.CreateForm(TFormSettings, FormSettings);
   Application.CreateForm(TFormChat, FormChat);
   Application.CreateForm(TFormEvilCEditor, FormEvilCEditor);
+  Application.CreateForm(TFormReminders, FormReminders);
   Application.Run;
 end.
 

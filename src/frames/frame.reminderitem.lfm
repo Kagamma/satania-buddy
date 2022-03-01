@@ -1,0 +1,119 @@
+object FrameReminderItem: TFrameReminderItem
+  Left = 0
+  Height = 26
+  Top = 0
+  Width = 883
+  ClientHeight = 26
+  ClientWidth = 883
+  TabOrder = 0
+  DesignLeft = 349
+  DesignTop = 28
+  object Panel1: TPanel
+    Left = 0
+    Height = 26
+    Top = 0
+    Width = 240
+    Align = alLeft
+    ClientHeight = 26
+    ClientWidth = 240
+    TabOrder = 0
+    object DateTimePicker: TDateTimePicker
+      Left = 88
+      Height = 24
+      Top = 1
+      Width = 151
+      CenturyFrom = 1941
+      MaxDate = 2958465
+      MinDate = -53780
+      TabOrder = 0
+      TrailingSeparator = False
+      TextForNullDate = 'NULL'
+      LeadingZeros = True
+      Align = alClient
+      Kind = dtkTime
+      TimeFormat = tf24
+      TimeDisplay = tdHM
+      DateMode = dmComboBox
+      Date = 44562
+      UseDefaultSeparators = True
+      HideDateTimeParts = []
+      MonthNames = 'Long'
+    end
+    object ComboBoxKind: TComboBox
+      Left = 1
+      Height = 23
+      Top = 1
+      Width = 87
+      Align = alLeft
+      ItemHeight = 15
+      ItemIndex = 0
+      Items.Strings = (
+        'Alarm'
+        'Reminder'
+      )
+      OnChange = ComboBoxKindChange
+      ReadOnly = True
+      TabOrder = 1
+      Text = 'Alarm'
+    end
+  end
+  object Panel2: TPanel
+    Left = 832
+    Height = 26
+    Top = 0
+    Width = 51
+    Align = alRight
+    ClientHeight = 26
+    ClientWidth = 51
+    TabOrder = 1
+    object CheckBoxEnable: TCheckBox
+      Left = 9
+      Height = 24
+      Hint = 'Enable'
+      Top = 1
+      Width = 18
+      Align = alRight
+      Checked = True
+      State = cbChecked
+      TabOrder = 0
+    end
+    object ButtonDelete: TSpeedButton
+      Left = 27
+      Height = 24
+      Top = 1
+      Width = 23
+      Align = alRight
+      Images = FormEvilCEditor.ImageList
+      ImageIndex = 9
+    end
+  end
+  object Panel3: TPanel
+    Left = 240
+    Height = 26
+    Top = 0
+    Width = 592
+    Align = alClient
+    ClientHeight = 26
+    ClientWidth = 592
+    TabOrder = 2
+    object EditScript: TEdit
+      Left = 1
+      Height = 24
+      Top = 1
+      Width = 567
+      Align = alClient
+      TabOrder = 0
+      Text = 's ="It''s time!" notify(s) talk(s) sound_play("beep.ogg")'
+    end
+    object ButtonRun: TSpeedButton
+      Left = 568
+      Height = 24
+      Top = 1
+      Width = 23
+      Align = alRight
+      Images = FormEvilCEditor.ImageList
+      ImageIndex = 2
+      OnClick = ButtonRunClick
+    end
+  end
+end
