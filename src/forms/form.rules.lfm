@@ -8,6 +8,7 @@ object FormRules: TFormRules
   ClientWidth = 851
   OnShow = FormShow
   Position = poScreenCenter
+  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 42
