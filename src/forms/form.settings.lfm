@@ -11,7 +11,7 @@ object FormSettings: TFormSettings
   Position = poScreenCenter
   object PageControl: TPageControl
     Left = 0
-    Height = 436
+    Height = 444
     Top = 0
     Width = 644
     ActivePage = TabSheetSpeechRecognition
@@ -20,7 +20,7 @@ object FormSettings: TFormSettings
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
-      ClientHeight = 408
+      ClientHeight = 416
       ClientWidth = 636
       object LabelChatBubbleDelay: TLabel
         Left = 24
@@ -193,7 +193,7 @@ object FormSettings: TFormSettings
     end
     object TabSheetGraphics: TTabSheet
       Caption = 'Graphics'
-      ClientHeight = 408
+      ClientHeight = 416
       ClientWidth = 636
       object EditFPS: TSpinEdit
         Left = 192
@@ -272,7 +272,7 @@ object FormSettings: TFormSettings
     end
     object TabSheetBot: TTabSheet
       Caption = 'Chatbot'
-      ClientHeight = 408
+      ClientHeight = 416
       ClientWidth = 636
       object LabelChatbotServer: TLabel
         Left = 23
@@ -291,7 +291,7 @@ object FormSettings: TFormSettings
     end
     object TabSheetEmail: TTabSheet
       Caption = 'IMAP'
-      ClientHeight = 408
+      ClientHeight = 416
       ClientWidth = 636
       object EditEmailServer: TEdit
         Left = 192
@@ -384,7 +384,7 @@ object FormSettings: TFormSettings
     end
     object TabSheetSpeechRecognition: TTabSheet
       Caption = 'Speech Recognition'
-      ClientHeight = 408
+      ClientHeight = 416
       ClientWidth = 636
       object LabelSTTBackend: TLabel
         Left = 24
@@ -459,27 +459,31 @@ object FormSettings: TFormSettings
   end
   object Panel1: TPanel
     Left = 0
-    Height = 50
-    Top = 436
+    Height = 42
+    Top = 444
     Width = 644
     Align = alBottom
-    ClientHeight = 50
+    ClientHeight = 42
     ClientWidth = 644
     TabOrder = 1
     object ButtonCancel: TBitBtn
-      Left = 400
-      Height = 25
-      Top = 14
+      Left = 413
+      Height = 24
+      Top = 9
       Width = 107
+      Align = alRight
+      BorderSpacing.Around = 8
       Caption = 'Cancel'
       OnClick = ButtonCancelClick
       TabOrder = 0
     end
     object ButtonOk: TBitBtn
-      Left = 520
-      Height = 25
-      Top = 14
+      Left = 528
+      Height = 24
+      Top = 9
       Width = 107
+      Align = alRight
+      BorderSpacing.Around = 8
       Caption = 'Ok'
       OnClick = ButtonOkClick
       TabOrder = 1

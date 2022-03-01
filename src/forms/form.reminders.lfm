@@ -29,10 +29,12 @@ object FormReminders: TFormReminders
     ClientWidth = 763
     TabOrder = 1
     object ButtonAddNew: TBitBtn
-      Left = 528
-      Height = 25
-      Top = 8
+      Left = 532
+      Height = 24
+      Top = 9
       Width = 107
+      Align = alRight
+      BorderSpacing.Around = 8
       Caption = 'Add'
       Images = FormEvilCEditor.ImageList
       ImageIndex = 8
@@ -40,10 +42,12 @@ object FormReminders: TFormReminders
       TabOrder = 0
     end
     object ButtonSave: TBitBtn
-      Left = 648
-      Height = 25
-      Top = 8
+      Left = 647
+      Height = 24
+      Top = 9
       Width = 107
+      Align = alRight
+      BorderSpacing.Around = 8
       Caption = 'Save'
       Images = FormEvilCEditor.ImageList
       ImageIndex = 1
