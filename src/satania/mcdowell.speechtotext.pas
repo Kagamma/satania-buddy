@@ -28,7 +28,7 @@ uses
   {$define unit_declare_interface}
   {$I mcdowell.speechtotext_windows.inc} 
   {$undef unit_declare_interface}
-  Classes, SysUtils, uPocketSphinx, uPocketSphinxBassAudioSource,
+  Classes, SysUtils, uPocketSphinx, {$ifdef WINDOWS}uPocketSphinxBassAudioSource{$else}uPocketSphinxDefaultAudioSource{$endif},
   ad, cmd_ln, ps_search, pocketsphinx;
 
 type
@@ -130,8 +130,11 @@ begin
         FPocketSphinx.AddNgramSearch('ngram', PATH_SPHINX + Save.Settings.STTNgram);
         FPocketSphinx.ActiveSearch := 'ngram';
       end;
-
+      {$ifdef WINDOWS}
       FPocketSphinx.AudioSource := TBassAudioSource.Create(FPocketSphinx, GetMicrophoneDeviceIdx);
+      {$else}
+      FPocketSphinx.AudioSource := TAudioSourceDefaultDevice.Create;
+      {$endif}
 
       FPocketSphinx.Active := True;
     end;
