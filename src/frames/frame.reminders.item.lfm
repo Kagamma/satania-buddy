@@ -12,16 +12,16 @@ object FrameRemindersItem: TFrameRemindersItem
     Left = 0
     Height = 26
     Top = 0
-    Width = 240
+    Width = 264
     Align = alLeft
     ClientHeight = 26
-    ClientWidth = 240
+    ClientWidth = 264
     TabOrder = 0
     object DateTimePicker: TDateTimePicker
       Left = 88
       Height = 24
       Top = 1
-      Width = 151
+      Width = 175
       CenturyFrom = 1941
       MaxDate = 2958465
       MinDate = -53780
@@ -89,25 +89,25 @@ object FrameRemindersItem: TFrameRemindersItem
     end
   end
   object Panel3: TPanel
-    Left = 240
+    Left = 264
     Height = 26
     Top = 0
-    Width = 592
+    Width = 568
     Align = alClient
     ClientHeight = 26
-    ClientWidth = 592
+    ClientWidth = 568
     TabOrder = 2
     object EditScript: TEdit
       Left = 1
       Height = 24
       Top = 1
-      Width = 567
+      Width = 543
       Align = alClient
       TabOrder = 0
       Text = 's ="It''s time!" notify(s) talk(s) sound_play("beep.ogg")'
     end
     object ButtonRun: TSpeedButton
-      Left = 568
+      Left = 544
       Height = 24
       Top = 1
       Width = 23
