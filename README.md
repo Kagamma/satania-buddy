@@ -10,7 +10,7 @@ A: Windows Vista or above with Aero enabled.
 
 ##### Q: Linux requirements?
 
-A: x11, qt5, qt5pas, freetype, openssl (for IMAP)
+A: x11, qt5, qt5pas, freetype, openssl (for IMAP), openal, vorbis
 
 Optional dependencies: fortune, sensors, metar, pocketsphinx
 
