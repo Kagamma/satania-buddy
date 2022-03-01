@@ -63,7 +63,7 @@ object FormRules: TFormRules
       Width = 107
       Align = alRight
       BorderSpacing.Around = 8
-      Caption = 'Learn Rules'
+      Caption = 'Learn'
       Images = FormEvilCEditor.ImageList
       ImageIndex = 6
       OnClick = ButtonLearnRulesClick
