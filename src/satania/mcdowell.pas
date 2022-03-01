@@ -30,7 +30,7 @@ uses
   fphttpclient, fpjson, jsonparser, Process,
   CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
-  CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts,
+  CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts, LCLIntf,
   CastleBehaviors,
   Mcdowell.EvilC, Globals;
 
@@ -87,6 +87,7 @@ type
     function SEIsEmailConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDefaultScheme(const VM: TSEVM; const Args: array of TSEValue): TSEValue;      
     function SESoundPlay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   private
     PreviousMinute: Integer;
     PreviousDay: Integer;
@@ -408,6 +409,11 @@ begin
   Sprite.AddBehavior(B);
 end;
 
+function TSatania.SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  OpenURL(Args[0]);
+end;
+
 function TSatania.SEIsSoW(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Save.SitOnWindow
@@ -486,7 +492,8 @@ begin
   Script.RegisterFunc('email_is_loading', @SEIsEmailLoading, 0);
   Script.RegisterFunc('email_is_success', @SEIsEmailSuccess, 0);
   Script.RegisterFunc('email_is_configured', @SEIsEmailConfigured, 0);
-  Script.RegisterFunc('sound_play', @SESoundPlay, 1);
+  Script.RegisterFunc('sound_play', @SESoundPlay, 1);          
+  Script.RegisterFunc('url_open', @SEOpenURL, 1);
   Script.ConstMap.Add('name', Name);
 end;
 
