@@ -1,5 +1,7 @@
 {"version":1,"strings":[
 {"hash":40795795,"name":"tformreminders.caption","sourcebytes":[65,108,97,114,109,115,32,38,32,82,101,109,105,110,100,101,114,115],"value":"Alarms & Reminders"},
-{"hash":18340,"name":"tformreminders.buttonaddnew.caption","sourcebytes":[65,100,100],"value":"Add"},
-{"hash":366789,"name":"tformreminders.buttonsave.caption","sourcebytes":[83,97,118,101],"value":"Save"}
+{"hash":77089212,"name":"tformreminders.buttoncancel.caption","sourcebytes":[67,97,110,99,101,108],"value":"Cancel"},
+{"hash":366789,"name":"tformreminders.buttonsave.caption","sourcebytes":[83,97,118,101],"value":"Save"},
+{"hash":18340,"name":"tformreminders.buttonaddnew1.caption","sourcebytes":[65,100,100],"value":"Add"},
+{"hash":322608,"name":"tformreminders.buttoncancel1.caption","sourcebytes":[72,101,108,112],"value":"Help"}
 ]}

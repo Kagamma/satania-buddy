@@ -1,0 +1,5 @@
+{"version":1,"strings":[
+{"hash":23159,"name":"tframerulesitem.label1.caption","sourcebytes":[84,97,103],"value":"Tag"},
+{"hash":146460211,"name":"tframerulesitem.groupboxpatterns.caption","sourcebytes":[80,97,116,116,101,114,110,115],"value":"Patterns"},
+{"hash":175505667,"name":"tframerulesitem.groupboxresponses.caption","sourcebytes":[82,101,115,112,111,110,115,101,115],"value":"Responses"}
+]}

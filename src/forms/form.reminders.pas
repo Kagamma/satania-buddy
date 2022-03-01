@@ -6,17 +6,21 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls,
-  StdCtrls, Buttons, StrUtils, DateTimePicker;
+  StdCtrls, Buttons, StrUtils, DateTimePicker, LCLIntf;
 
 type
 
   { TFormReminders }
 
   TFormReminders = class(TForm)
-    ButtonAddNew: TBitBtn;
+    ButtonCancel: TBitBtn;
+    ButtonAddNew1: TBitBtn;
+    ButtonCancel1: TBitBtn;
     ButtonSave: TBitBtn;
     Panel1: TPanel;
     ScrollBoxReminders: TScrollBox;
+    procedure ButtonCancel1Click(Sender: TObject);
+    procedure ButtonCancelClick(Sender: TObject);
     procedure ButtonSaveClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ToolButtonAddNewClick(Sender: TObject);
@@ -37,15 +41,15 @@ implementation
 uses
   globals,
   mcdowell,
-  Frame.reminderitem;
+  frame.reminders.item;
 
 { TFormReminders }
 
 function TFormReminders.AddFrame: TFrame;
 var
-  Frame: TFrameReminderItem;
+  Frame: TFrameRemindersItem;
 begin
-  Frame := TFrameReminderItem.Create(Self);
+  Frame := TFrameRemindersItem.Create(Self);
   Frame.Name := GUIDName;
   Frame.ButtonDelete.OnClick := @DoDelete;
   Frame.DateTimePicker.Date := Now;   
@@ -64,13 +68,13 @@ procedure TFormReminders.ButtonSaveClick(Sender: TObject);
 var
   I: Integer;
   A, B, C, D: Word;
-  Frame: TFrameReminderItem;
+  Frame: TFrameRemindersItem;
   Item: TReminderCollectionItem;
 begin
   Save.Reminders.Clear;
   for I := 0 to ScrollBoxReminders.ControlCount - 1 do
   begin
-    Frame := ScrollBoxReminders.Controls[I] as TFrameReminderItem;
+    Frame := ScrollBoxReminders.Controls[I] as TFrameRemindersItem;
     Item := Save.Reminders.Add as TReminderCollectionItem;
     Item.Kind := Frame.ComboBoxKind.ItemIndex;
     if Item.Kind = 1 then
@@ -91,10 +95,20 @@ begin
   Satania.UsedRemindersList.Clear;
 end;
 
+procedure TFormReminders.ButtonCancelClick(Sender: TObject);
+begin
+  Hide;
+end;
+
+procedure TFormReminders.ButtonCancel1Click(Sender: TObject);
+begin
+  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Alarms-and-Reminders');
+end;
+
 procedure TFormReminders.FormShow(Sender: TObject);
 var
   I, J: Integer;
-  Frame: TFrameReminderItem;
+  Frame: TFrameRemindersItem;
   A: array of TReminderCollectionItem;
   Item, Item2: TReminderCollectionItem;
   S1, S2: QWord;
@@ -128,7 +142,7 @@ begin
   end;
   for I := 0 to Save.Reminders.Count - 1 do
   begin
-    Frame := AddFrame as TFrameReminderItem;
+    Frame := AddFrame as TFrameRemindersItem;
     Item := A[I];
     Frame.ComboBoxKind.ItemIndex := Item.Kind;
     if Item.Kind = 1 then

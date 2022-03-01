@@ -33,8 +33,9 @@ uses
   globals, Forms, datetimectrls, utils.activewindow, mcdowell,
   State.Main, form.settings, form.chat, mcdowell.chatbot,
   mcdowell.chatbot.train, form.evilc.editor, mcdowell.imap,
-  Mcdowell.SpeechToText, frame.reminderitem, form.reminders, form.Main,
-  form.touch, mcdowell.sound;
+  Mcdowell.SpeechToText, frame.reminders.item, form.reminders, form.Main,
+  form.touch, mcdowell.sound, form.rules, frame.rules.item, 
+frame.rules.edititem;
 
 {$R *.res}
 
@@ -49,6 +50,7 @@ begin
   Application.CreateForm(TFormChat, FormChat);
   Application.CreateForm(TFormEvilCEditor, FormEvilCEditor);
   Application.CreateForm(TFormReminders, FormReminders);
+  Application.CreateForm(TFormRules, FormRules);
   Application.Run;
 end.
 

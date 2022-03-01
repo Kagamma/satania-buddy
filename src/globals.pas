@@ -47,10 +47,16 @@ type
     Body: String;
   end;
 
+  TRuleRec = record
+    Patterns: TStringDynArray;
+    Responses: TStringDynArray;
+  end;
+
   TQWordList = specialize TList<QWord>;
   TStringDict = specialize TDictionary<String, String>;
   TStringArrayDict = specialize TDictionary<String, TStringDynArray>;
   TMailList = specialize TList<TMailRec>;
+  TRuleDict = specialize TDictionary<String, TRuleRec>;
 
   TSaveCollectionItem = class(TCollectionItem)
   private

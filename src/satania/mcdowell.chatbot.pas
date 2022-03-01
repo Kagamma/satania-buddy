@@ -34,8 +34,12 @@ uses
   fpjson, jsonparser,
   globals;
 
+procedure ReadRules;
 procedure Reload;
 function Inference(S: String): String;
+
+var
+  RuleDict: TRuleDict;
 
 implementation
 
@@ -48,7 +52,6 @@ type
 var
   TagList: TStringList;
   WordList: TStringList;
-  RuleDict: TStringArrayDict;
   OutputSize: Integer;
   NN: TNNet;
   Output: TNNetVolume;
@@ -57,7 +60,6 @@ procedure Prepare;
 begin
   TagList := TStringList.Create;
   WordList := TStringList.Create;
-  RuleDict := TStringArrayDict.Create;
   TagList.Sorted := True;
   WordList.Sorted := True;
   WordList.LoadFromFile('data/nn/chatbot/model.word');
@@ -79,8 +81,6 @@ begin
     FreeAndNil(TagList);
   if WordList <> nil then
     FreeAndNil(WordList);
-  if RuleDict <> nil then
-    FreeAndNil(RuleDict);
 end;
 
 function CreateWordMap(Sentence: String): TNeuralFloatDynArr;
@@ -111,23 +111,32 @@ var
   JSONItem: TJSONObject;
   S: TStringList;
   Tag: String;
-  Responses: TStringDynArray;
+  Rule: TRuleRec;
   I, J: Integer;
 begin
+  RuleDict.Clear;
   S := TStringList.Create;
   S.LoadFromFile('data/nn/chatbot/rules.json');
   JSONArray := GetJSON(S.Text) as TJSONArray;
   for I := 0 to JSONArray.Count - 1 do
-  begin
+  begin         
+    SetLength(Rule.Patterns, 0);
+    SetLength(Rule.Responses, 0);
     JSONItem := JSONArray[I] as TJSONObject;
     Tag := JSONItem['tag'].AsString;
-    JSONArraySub := JSONItem['responses'] as TJSONArray;
-    SetLength(Responses, JSONArraySub.Count);
+    JSONArraySub := JSONItem['patterns'] as TJSONArray;
+    SetLength(Rule.Patterns, JSONArraySub.Count);
     for J := 0 to JSONArraySub.Count - 1 do
     begin
-      Responses[J] := JSONArraySub[J].AsString;
+      Rule.Patterns[J] := JSONArraySub[J].AsString;
     end;
-    RuleDict.Add(Tag, Responses);
+    JSONArraySub := JSONItem['responses'] as TJSONArray;
+    SetLength(Rule.Responses, JSONArraySub.Count);
+    for J := 0 to JSONArraySub.Count - 1 do
+    begin
+      Rule.Responses[J] := JSONArraySub[J].AsString;
+    end;
+    RuleDict.Add(Tag, Rule);
   end;
   S.Free;
 end;
@@ -165,7 +174,7 @@ begin
   if Score >= 0 then
   begin
     Tag := TagList[Score];
-    Responses := RuleDict[Tag];
+    Responses := RuleDict[Tag].Responses;
     Result := Responses[Random(Length(Responses))];
   end else
     Result := '';
@@ -183,7 +192,11 @@ begin
   end;
 end;
 
+initialization
+  RuleDict := TRuleDict.Create;
+
 finalization
+  RuleDict.Free;
   Cleanup;
 
 end.

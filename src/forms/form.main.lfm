@@ -1,12 +1,12 @@
 object FormMain: TFormMain
   Left = -8
-  Height = 599
+  Height = 716
   Top = -8
-  Width = 603
+  Width = 651
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 576
-  ClientWidth = 603
+  ClientHeight = 693
+  ClientWidth = 651
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -17,9 +17,9 @@ object FormMain: TFormMain
   WindowState = wsMaximized
   object CastleControl: TCastleControl
     Left = 0
-    Height = 576
+    Height = 693
     Top = 0
-    Width = 603
+    Width = 651
     Align = alClient
     AlphaBits = 8
     Options = []
@@ -1382,26 +1382,22 @@ object FormMain: TFormMain
       OnClick = MenuItemHideShowClick
     end
     object MenuItemActions: TMenuItem
-      Caption = 'Actions'
+      Caption = 'Scripts'
       object MenuItemEditor: TMenuItem
         Caption = 'Evil Scheme Editor'
         OnClick = MenuItemEditorClick
       end
       object MenuItemRefreshMenu: TMenuItem
-        Caption = 'Refresh Action Menu'
+        Caption = 'Refresh Scripts Menu'
         OnClick = MenuItemRefreshMenuClick
-      end
-      object MenuItemOpenRules: TMenuItem
-        Caption = 'Open rules.json'
-        OnClick = MenuItemOpenRulesClick
-      end
-      object MenuItemLearn: TMenuItem
-        Caption = 'Learn Rules Again'
-        OnClick = MenuItemLearnClick
       end
       object Separator1: TMenuItem
         Caption = '-'
       end
+    end
+    object MenuItemRules: TMenuItem
+      Caption = 'Add/Remove Rules'
+      OnClick = MenuItemRulesClick
     end
     object MenuItemAlarmsAndReminders: TMenuItem
       Caption = 'Alarms and Reminders'
@@ -1416,6 +1412,14 @@ object FormMain: TFormMain
       object MenuItemScriptingAPIs: TMenuItem
         Caption = 'Scripting APIs'
         OnClick = MenuItemScriptingAPIsClick
+      end
+      object MenuItemHelpAlarmsAndReminders: TMenuItem
+        Caption = 'Alarms and Reminders'
+        OnClick = MenuItemHelpAlarmsAndRemindersClick
+      end
+      object MenuItemHelpRules: TMenuItem
+        Caption = 'Rules'
+        OnClick = MenuItemHelpRulesClick
       end
     end
     object MenuItemAbout: TMenuItem

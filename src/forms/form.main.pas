@@ -75,16 +75,17 @@ type
   TFormMain = class(TForm)
     CastleControl: TCastleControl;
     MenuItem1: TMenuItem;
+    MenuItemHelpAlarmsAndReminders: TMenuItem;
+    MenuItemHelpRules: TMenuItem;
+    MenuItemRules: TMenuItem;
     MenuItemAlarmsAndReminders: TMenuItem;
     MenuItemScriptingAPIs: TMenuItem;
-    MenuItemOpenRules: TMenuItem;
     MenuItemSpeechRecognition: TMenuItem;
     MenuItemSilent: TMenuItem;
     MenuItemAbout: TMenuItem;
     MenuItemRefreshMenu: TMenuItem;
     MenuItemEditor: TMenuItem;
     MenuItemActions: TMenuItem;
-    MenuItemLearn: TMenuItem;
     MenuItemHideShow: TMenuItem;
     MenuItemChatWithHer: TMenuItem;
     MenuItemSettings: TMenuItem;
@@ -103,11 +104,12 @@ type
     procedure MenuItemAlarmsAndRemindersClick(Sender: TObject);
     procedure MenuItemChatWithHerClick(Sender: TObject);
     procedure MenuItemEditorClick(Sender: TObject);
+    procedure MenuItemHelpAlarmsAndRemindersClick(Sender: TObject);
+    procedure MenuItemHelpRulesClick(Sender: TObject);
     procedure MenuItemHideShowClick(Sender: TObject);
-    procedure MenuItemLearnClick(Sender: TObject);
-    procedure MenuItemOpenRulesClick(Sender: TObject);
     procedure MenuItemQuitClick(Sender: TObject);
     procedure MenuItemRefreshMenuClick(Sender: TObject);
+    procedure MenuItemRulesClick(Sender: TObject);
     procedure MenuItemScriptingAPIsClick(Sender: TObject);
     procedure MenuItemSettingsClick(Sender: TObject);
     procedure MenuItemSilentClick(Sender: TObject);
@@ -148,6 +150,7 @@ uses
   form.reminders,
   form.settings,
   form.evilc.editor,
+  form.rules,
   Mcdowell.chatbot,
   Mcdowell.chatbot.train,
   mcdowell.speechtotext,
@@ -241,20 +244,19 @@ begin
   FormEvilCEditor.Show;
 end;
 
+procedure TFormMain.MenuItemHelpAlarmsAndRemindersClick(Sender: TObject);
+begin
+  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Alarms-and-Reminders');
+end;
+
+procedure TFormMain.MenuItemHelpRulesClick(Sender: TObject);
+begin
+  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Rules');
+end;
+
 procedure TFormMain.MenuItemHideShowClick(Sender: TObject);
 begin
   Satania.SetVisible(not Satania.Sprite.Visible);
-end;
-
-procedure TFormMain.MenuItemLearnClick(Sender: TObject);
-begin
-  RunTrain;
-end;
-
-procedure TFormMain.MenuItemOpenRulesClick(Sender: TObject);
-begin
-  FormEvilCEditor.Show;     
-  FormEvilCEditor.OpenRules;
 end;
 
 procedure TFormMain.MenuItemQuitClick(Sender: TObject);
@@ -265,6 +267,11 @@ end;
 procedure TFormMain.MenuItemRefreshMenuClick(Sender: TObject);
 begin
   Satania.UpdateMenuItems;
+end;
+
+procedure TFormMain.MenuItemRulesClick(Sender: TObject);
+begin
+  FormRules.Show;
 end;
 
 procedure TFormMain.MenuItemScriptingAPIsClick(Sender: TObject);

@@ -1,0 +1,44 @@
+object FrameRulesEditItem: TFrameRulesEditItem
+  Left = 0
+  Height = 32
+  Top = 0
+  Width = 490
+  Align = alTop
+  ClientHeight = 32
+  ClientWidth = 490
+  TabOrder = 0
+  DesignLeft = 348
+  DesignTop = 27
+  object ButtonDelete: TSpeedButton
+    Left = 463
+    Height = 24
+    Top = 4
+    Width = 23
+    Align = alRight
+    BorderSpacing.Around = 4
+    Images = FormEvilCEditor.ImageList
+    ImageIndex = 9
+  end
+  object ButtonRun: TSpeedButton
+    Left = 436
+    Height = 24
+    Top = 4
+    Width = 23
+    Align = alRight
+    BorderSpacing.Around = 4
+    Images = FormEvilCEditor.ImageList
+    ImageIndex = 2
+    OnClick = ButtonRunClick
+  end
+  object EditText: TEdit
+    Left = 4
+    Height = 24
+    Top = 4
+    Width = 424
+    Align = alClient
+    BorderSpacing.Right = 4
+    BorderSpacing.Around = 4
+    TabOrder = 0
+    Text = 'talk(''Response'')'
+  end
+end

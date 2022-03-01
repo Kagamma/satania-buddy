@@ -213,9 +213,9 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="frames/frame.reminderitem.pas"/>
+        <Filename Value="frames/frame.reminders.item.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="FrameReminderItem"/>
+        <ComponentName Value="FrameRemindersItem"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
       </Unit>
@@ -230,6 +230,27 @@
         <Filename Value="satania/mcdowell.sound.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Mcdowell.Sound"/>
+      </Unit>
+      <Unit>
+        <Filename Value="forms/form.rules.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormRules"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frames/frame.rules.item.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FrameRulesItem"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit>
+      <Unit>
+        <Filename Value="frames/frame.rules.edititem.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FrameRulesEditItem"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit>
     </Units>
   </ProjectOptions>

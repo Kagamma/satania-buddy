@@ -266,7 +266,7 @@ begin
   Satania.ActionFromFile('system/loading-stop.evil');
   Satania.Talk(
     'Learning completed in ' + IntToStr((GetTickCount64 - Ticks) div 1000) + ' seconds!' + #10#10 +
-    DebugErrors(NN) + #13 +
+    // DebugErrors(NN) + #13 +
     'See "' + NFit.FileNameBase + '.csv" for details.'
   );
   TagList.SaveToFile('data/nn/chatbot/model.tag');

@@ -1,6 +1,0 @@
-{"version":1,"strings":[
-{"hash":342540,"name":"tframereminderitem.datetimepicker.textfornulldate","sourcebytes":[78,85,76,76],"value":"NULL"},
-{"hash":4728973,"name":"tframereminderitem.comboboxkind.text","sourcebytes":[65,108,97,114,109],"value":"Alarm"},
-{"hash":79984933,"name":"tframereminderitem.checkboxenable.hint","sourcebytes":[69,110,97,98,108,101],"value":"Enable"},
-{"hash":106564265,"name":"tframereminderitem.editscript.text","sourcebytes":[115,32,61,34,73,116,39,115,32,116,105,109,101,33,34,32,110,111,116,105,102,121,40,115,41,32,116,97,108,107,40,115,41,32,115,111,117,110,100,95,112,108,97,121,40,34,98,101,101,112,46,111,103,103,34,41],"value":"s =\"It's time!\" notify(s) talk(s) sound_play(\"beep.ogg\")"}
-]}

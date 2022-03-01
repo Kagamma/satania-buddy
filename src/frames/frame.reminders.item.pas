@@ -1,4 +1,4 @@
-unit frame.reminderitem;
+unit frame.reminders.item;
 
 {$mode ObjFPC}{$H+}
 
@@ -10,9 +10,9 @@ uses
 
 type
 
-  { TFrameReminderItem }
+  { TFrameRemindersItem }
 
-  TFrameReminderItem = class(TFrame)
+  TFrameRemindersItem = class(TFrame)
     CheckBoxEnable: TCheckBox;
     ComboBoxKind: TComboBox;
     DateTimePicker: TDateTimePicker;
@@ -37,9 +37,9 @@ uses
 
 {$R *.lfm}
 
-{ TFrameReminderItem }
+{ TFrameRemindersItem }
 
-procedure TFrameReminderItem.ComboBoxKindChange(Sender: TObject);
+procedure TFrameRemindersItem.ComboBoxKindChange(Sender: TObject);
 begin
   case ComboBoxKind.ItemIndex of
     0: DateTimePicker.Kind := dtkTime;
@@ -47,7 +47,7 @@ begin
   end;
 end;
 
-procedure TFrameReminderItem.ButtonRunClick(Sender: TObject);
+procedure TFrameRemindersItem.ButtonRunClick(Sender: TObject);
 begin
   Satania.Action('script', EditScript.Text);
 end;

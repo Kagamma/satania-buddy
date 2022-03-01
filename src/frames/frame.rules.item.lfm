@@ -1,0 +1,128 @@
+object FrameRulesItem: TFrameRulesItem
+  Left = 0
+  Height = 211
+  Top = 0
+  Width = 722
+  Align = alTop
+  ClientHeight = 211
+  ClientWidth = 722
+  TabOrder = 0
+  DesignLeft = 348
+  DesignTop = 27
+  object Panel1: TPanel
+    Left = 4
+    Height = 32
+    Top = 4
+    Width = 714
+    Align = alTop
+    BorderSpacing.Around = 4
+    ClientHeight = 32
+    ClientWidth = 714
+    Color = clInactiveCaption
+    ParentColor = False
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 5
+      Height = 22
+      Top = 5
+      Width = 18
+      Align = alLeft
+      BorderSpacing.Around = 4
+      Caption = 'Tag'
+    end
+    object EditTag: TEdit
+      Left = 35
+      Height = 22
+      Top = 5
+      Width = 304
+      Align = alLeft
+      BorderSpacing.Left = 8
+      BorderSpacing.Around = 4
+      TabOrder = 0
+    end
+    object ButtonDelete: TSpeedButton
+      Left = 686
+      Height = 22
+      Top = 5
+      Width = 23
+      Align = alRight
+      BorderSpacing.Around = 4
+      Images = FormEvilCEditor.ImageList
+      ImageIndex = 9
+    end
+  end
+  object GroupBoxPatterns: TGroupBox
+    Left = 4
+    Height = 167
+    Top = 40
+    Width = 335
+    Align = alLeft
+    BorderSpacing.Around = 4
+    Caption = 'Patterns'
+    ClientHeight = 147
+    ClientWidth = 331
+    TabOrder = 1
+    object ButtonAddPattern: TSpeedButton
+      Left = 0
+      Height = 22
+      Top = 0
+      Width = 331
+      Align = alTop
+      Images = FormEvilCEditor.ImageList
+      ImageIndex = 8
+      OnClick = ButtonAddPatternClick
+    end
+    object ScrollBoxPatterns: TScrollBox
+      Left = 0
+      Height = 125
+      Top = 22
+      Width = 331
+      HorzScrollBar.Page = 1
+      VertScrollBar.Increment = 1
+      VertScrollBar.Page = 1
+      VertScrollBar.Smooth = True
+      Align = alClient
+      TabOrder = 0
+    end
+  end
+  object Splitter1: TSplitter
+    Left = 343
+    Height = 171
+    Top = 40
+    Width = 5
+  end
+  object GroupBoxResponses: TGroupBox
+    Left = 352
+    Height = 167
+    Top = 40
+    Width = 366
+    Align = alClient
+    BorderSpacing.Around = 4
+    Caption = 'Responses'
+    ClientHeight = 147
+    ClientWidth = 362
+    TabOrder = 3
+    object ButtonAddResponse: TSpeedButton
+      Left = 0
+      Height = 22
+      Top = 0
+      Width = 362
+      Align = alTop
+      Images = FormEvilCEditor.ImageList
+      ImageIndex = 8
+      OnClick = ButtonAddResponseClick
+    end
+    object ScrollBoxResponses: TScrollBox
+      Left = 0
+      Height = 125
+      Top = 22
+      Width = 362
+      HorzScrollBar.Page = 1
+      VertScrollBar.Increment = 1
+      VertScrollBar.Page = 1
+      VertScrollBar.Smooth = True
+      Align = alClient
+      TabOrder = 0
+    end
+  end
+end
