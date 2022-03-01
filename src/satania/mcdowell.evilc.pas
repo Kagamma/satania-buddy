@@ -1430,7 +1430,13 @@ begin
             NextChar;
             Token.Kind := tkNotEqual;
           end else
-            Token.Kind := tkNot;
+          if Pos > 1 then
+          begin
+            PC := Self.Source[Pos - 1];
+            NC := PeekAtNextChar;
+            if ((PC = ' ') or (PC = '(') or (PC = '=') or (PC = ',')) and (NC <> ' ') then
+              Token.Kind := tkNot;
+          end;
         end;
       ',':
         Token.Kind := tkComma;
@@ -1734,7 +1740,7 @@ var
       if IsString then
         PeekAtNextTokenExpected([tkBracketOpen, tkNumber, tkString, tkNegative, tkIdent])
       else
-        PeekAtNextTokenExpected([tkBracketOpen, tkNumber, tkNegative, tkIdent]);
+        PeekAtNextTokenExpected([tkBracketOpen, tkNumber, tkNegative, tkNot, tkIdent]);
       Func;
       EmitExpr([Pointer({$ifdef CPU64}Int64(Op){$else}Op{$endif})]);
     end;
@@ -1760,12 +1766,12 @@ var
     begin
       Token := PeekAtNextTokenExpected([
         tkBracketOpen, tkBracketClose, tkNumber, tkEOF,
-        tkNegative, tkString, tkIdent]);
+        tkNegative, tkNot, tkString, tkIdent]);
       case Token.Kind of
         tkBracketOpen:
           begin
             NextToken;
-            PeekAtNextTokenExpected([tkNegative, tkBracketOpen, tkNumber, tkIdent]);
+            PeekAtNextTokenExpected([tkNegative, tkNot, tkBracketOpen, tkNumber, tkIdent]);
             Logic();
             NextTokenExpected([tkBracketClose]);
           end;
