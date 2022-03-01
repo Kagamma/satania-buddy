@@ -1396,7 +1396,7 @@ object FormMain: TFormMain
       end
     end
     object MenuItemRules: TMenuItem
-      Caption = 'Add/Remove Rules'
+      Caption = 'Rules'
       OnClick = MenuItemRulesClick
     end
     object MenuItemAlarmsAndReminders: TMenuItem
