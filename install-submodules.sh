@@ -3,6 +3,7 @@ rm -rf src/components/neural-api
 rm -rf src/components/typing-label
 rm -rf src/components/synalist
 rm -rf src/components/TPocketSphinx
+rm -rf src/components/internettools
 
 cd src/components
 git clone --depth 1 https://github.com/castle-engine/castle-engine.git
@@ -16,5 +17,7 @@ cd ..
 git clone https://gitlab.com/EugeneLoza/typing-label.git
 svn checkout https://svn.code.sf.net/p/synalist/code/trunk synalist
 git clone --depth 1 https://github.com/Kagamma/TPocketSphinx.git
+git clone --depth 1 https://github.com/Kagamma/TPocketSphinx.git
+git clone --depth 1 https://github.com/Kagamma/internettools.git
 cd ..
 

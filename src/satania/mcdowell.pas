@@ -26,8 +26,8 @@ interface
 
 uses
   Classes, SysUtils, syncobjs,
-  Forms, Menus, FileUtil,
-  fphttpclient, fpjson, jsonparser, Process,
+  Forms, Menus, FileUtil, simpleinternet,
+  fpjson, jsonparser, Process,
   CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
   CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts, LCLIntf,
@@ -197,7 +197,7 @@ begin
           try
             try
               FormData.Add('message=' + S);
-              JsonString := TFPHTTPClient.SimpleFormPost(Save.Settings.BotServer, FormData);
+              JsonString := httpRequest(Save.Settings.BotServer, FormData);
               JsonObject := GetJSON(JsonString) as TJSONObject;
               ChatType := JsonObject['type'].AsString;
               ChatResponse := JsonObject['message'].AsString;

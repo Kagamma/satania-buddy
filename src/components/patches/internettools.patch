@@ -1,0 +1,55 @@
+diff --git a/data/bbutils.pas b/data/bbutils.pas
+index 403e84e..7935554 100644
+--- a/data/bbutils.pas
++++ b/data/bbutils.pas
+@@ -162,7 +162,7 @@ type
+ 
+ //-----------------------Pointer functions------------------------
+ type TProcedureOfObject=procedure () of object;
+-     TStreamLikeWrite = procedure(const Buffer; Count: Longint) of object;
++     TStreamLikeWrite = procedure(const Buffer; Count: NativeInt) of object;
+ function procedureToMethod(proc: TProcedure): TMethod;
+ function makeMethod(code, data: pointer): TMethod; {$IFDEF HASINLINE} inline; {$ENDIF}
+ 
+diff --git a/internet/internetaccess_inflater_paszlib.pas b/internet/internetaccess_inflater_paszlib.pas
+index ac88442..64dc557 100644
+--- a/internet/internetaccess_inflater_paszlib.pas
++++ b/internet/internetaccess_inflater_paszlib.pas
+@@ -18,7 +18,7 @@ TTransferContentInflaterZlib = class(TTransferContentInflater)
+   expectGZIP: boolean;
+ 
+   headerBuffer: string;
+-  procedure writeCompressedBlock(const abuffer; Count: Longint);
++  procedure writeCompressedBlock(const abuffer; Count: NativeInt);
+   procedure endTransfer; override;
+   constructor Create;
+   destructor Destroy; override;
+@@ -80,7 +80,7 @@ begin
+   headerLength := skipLength;
+ end;
+ 
+-procedure TTransferContentInflaterZlib.writeCompressedBlock(const abuffer; Count: Longint);
++procedure TTransferContentInflaterZlib.writeCompressedBlock(const abuffer; Count: NativeInt);
+ var err:smallint;
+   headerLength: cardinal;
+   header: THeader;
+diff --git a/internettoolsconfig.inc b/internettoolsconfig.inc
+index 2ebb94d..656f451 100644
+--- a/internettoolsconfig.inc
++++ b/internettoolsconfig.inc
+@@ -1,12 +1,12 @@
+ //Here you can choose which regex library to use
+ {$if not defined(USE_SOROKINS_REGEX) and not defined(USE_SOROKINS_DREGEX) and not defined(USE_FLRE) and not defined(USE_FLRE_WITH_CACHE)}
+-//{$DEFINE USE_SOROKINS_REGEX}         //Sorokins' regex library included in FPC. It is quite reliable
++{$DEFINE USE_SOROKINS_REGEX}         //Sorokins' regex library included in FPC. It is quite reliable
+ //{$DEFINE USE_FLRE}                   //Bero's "Fast Light Regular Expressions" library. It is required for proper UTF-8 support in regex
+-{$DEFINE USE_FLRE_WITH_CACHE}          //As above, but parse every regex only once
++//{$DEFINE USE_FLRE_WITH_CACHE}          //As above, but parse every regex only once
+ {$endif}
+ 
+ //here you can choose which string to double converter to use
+-{$DEFINE USE_PASDBLSTRUTILS_FOR_JSON}
++//{$DEFINE USE_PASDBLSTRUTILS_FOR_JSON}
+ 
+ //{$define USE_PASDBLSTRUTILS}
+ 
