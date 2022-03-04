@@ -51,7 +51,6 @@ type
     OldMousePosX, OldMousePosY, LastVirtualDesktop: Integer;
     IsMouseDown: Boolean;
   public
-
   end;
 
 var
@@ -82,6 +81,8 @@ begin
   AlphaBlendValue := 1;
   AddFormToIgnoreHandleList(Self);
   LastVirtualDesktop := 1;
+  Width := 60;
+  Height := 38;
 end;
 
 procedure TFormTouch.FormDblClick(Sender: TObject);
@@ -94,7 +95,7 @@ procedure TFormTouch.FormMouseDown(Sender: TObject; Button: TMouseButton;
 var
   P: TPoint;
 begin
-  if (Button <> mbLeft) or (Save.SitOnWindow) or (Satania.IsBlocked) then Exit;
+  if (Button <> mbLeft) or (Satania.IsBlocked) then Exit;
   P := ClientToScreen(Point(X, Y));
   OldMousePosX := P.X;
   OldMousePosY := P.Y;
@@ -117,6 +118,11 @@ begin
     OldMousePosY := P.Y;
     Left := Left + DeltaX;
     Top := Top + DeltaY;
+    if Save.SitOnWindow then
+    begin
+      Save.SitOnWindow := False;
+      FormMain.MenuItemSitOnWindow.Checked := False;
+    end;
   end;
 end;
 

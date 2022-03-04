@@ -44,6 +44,13 @@ begin
       Show;
     end;
     XFree(Data);
+  end;  
+  M := Screen.MonitorFromWindow(Handle, mdNearest);
+  if Monitor <> FormMain.Monitor then
+  begin
+    FormMain.Left := Monitor.Left;
+    FormMain.Top := Monitor.Top;
+    FormMain.MakeFullyVisible(Monitor);
   end;
 end;
 {$endif}

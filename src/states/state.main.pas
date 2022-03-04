@@ -7,7 +7,7 @@ interface
 uses Classes,
   Forms,
   CastleVectors, CastleUIState, CastleComponentSerialize,
-  CastleUIControls, CastleControls, CastleKeysMouse, CastleScene,
+  CastleUIControls, CastleControls, CastleKeysMouse, CastleScene, CastleTransform,
   X3DNodes, CastleBoxes, CastleRectangles, CastleTypingLabel, CastleViewport,
   CastleFonts, LCLTranslator,
   Globals;
@@ -17,11 +17,13 @@ type
   private
     procedure UpdateTouchPanelPosition;
     procedure UpdateChatBubblePosition;
+    procedure UpdateSataniaPosition;
   public
     ChatText: TCastleTypingLabel;
     ChatBubble: TCastleRectangleControl;
     ChatBubbleArrow: TCastleImageControl;
     FontSystem: TCastleFont;
+    SpriteTransform: TCastleTransform;
     Sprite: TCastleScene;
     Viewport: TCastleViewport;
     BubbleSideX, BubbleSideY: Integer;
@@ -40,6 +42,7 @@ uses
   SysUtils,
   CastleWindow,
   Form.Touch,
+  Form.Main,
   Mcdowell;
 
 { TStateMain ----------------------------------------------------------------- }
@@ -64,6 +67,7 @@ begin
   FontSystem := DesignedComponent('FontSystem') as TCastleFont;
 
   Sprite := DesignedComponent('Sprite') as TCastleScene;
+  SpriteTransform := DesignedComponent('SpriteTransform') as TCastleTransform;
   Viewport := DesignedComponent('Viewport') as TCastleViewport;
   ChatText.TypingSpeed := Save.Settings.TextSpeed;
 
@@ -89,6 +93,18 @@ begin
   end;
 end;
 
+procedure TStateMain.UpdateSataniaPosition;
+var
+  V: TVector3;
+begin
+  V := TVector3.Zero;
+  if FormMain.Monitor.Left > 0 then
+  begin
+    V.X := V.X - FormMain.Monitor.Left;
+  end; 
+  SpriteTransform.Translation := V;
+end;
+
 procedure TStateMain.UpdateTouchPanelPosition;
 var
   Position: TVector3;
@@ -99,7 +115,7 @@ begin
   else
     Position := Sprite.Translation;
   ScreenPosition := UIToScreenCoord(Position);
-  FormTouch.Left := ScreenPosition.X - FormTouch.Width div 2;
+  FormTouch.Left := ScreenPosition.X - FormTouch.Width div 2 - Round(SpriteTransform.Translation.X);
   {$ifdef LINUX_X11}
   FormTouch.Top := ScreenPosition.Y - FormTouch.Height div 2;
   {$else}
@@ -121,8 +137,8 @@ begin
   if not ChatBubble.Exists then Exit;
 
   Box := Satania.LocalBoundingBoxSnapshot;
-  Box.Data[0] := Box.Data[0] + Sprite.Translation;
-  Box.Data[1] := Box.Data[1] + Sprite.Translation;
+  Box.Data[0] := Box.Data[0] + Sprite.Translation + SpriteTransform.Translation;
+  Box.Data[1] := Box.Data[1] + Sprite.Translation + SpriteTransform.Translation;
   R := ChatBubble.EffectiveRect;
   RA := ChatBubbleArrow.EffectiveRect;
   case BubbleSideX of
@@ -173,6 +189,7 @@ begin
   inherited;
   { This virtual method is executed every frame.}
   // LabelFps.Caption := 'FPS: ' + Container.Fps.ToString;
+  UpdateSataniaPosition;
   UpdateTouchPanelPosition;
   UpdateChatBubblePosition;
   Satania.Update(SecondsPassed);

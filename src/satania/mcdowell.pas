@@ -232,6 +232,7 @@ begin
     RunCommand(S, ChatResponse);
   end;
   Synchronize(@SendChatSendToHer);
+  freeThreadVars;
   Terminate;
 end;
 

@@ -21,12 +21,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {$if defined(WINDOWS)}
 
 {$ifdef unit_declare_interface}
+  Windows,
 {$endif unit_declare_interface}
 
 {$ifdef unit_implmentation}
 procedure TFormTouch.TimerTimer(Sender: TObject);
 begin
-  Timer.Enabled := False;
+  if Monitor <> FormMain.Monitor then
+  begin
+    FormMain.Left := Monitor.Left;
+    FormMain.Top := Monitor.Top;
+    FormMain.MakeFullyVisible(Monitor);
+  end;
 end;
 {$endif}
 

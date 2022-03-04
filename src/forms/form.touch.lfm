@@ -1,9 +1,9 @@
 object FormTouch: TFormTouch
   Cursor = crHandPoint
   Left = 0
-  Height = 34
+  Height = 38
   Top = 0
-  Width = 32
+  Width = 60
   BorderStyle = bsNone
   Caption = 'Touch (Do not close)'
   FormStyle = fsSystemStayOnTop
@@ -15,6 +15,7 @@ object FormTouch: TFormTouch
   OnShow = FormShow
   PopupMenu = FormMain.TrayMenu
   ShowInTaskBar = stNever
+  LCLVersion = '2.3.0.0'
   object Timer: TTimer
     OnTimer = TimerTimer
     Left = 4
