@@ -17,7 +17,7 @@ type
   private
     procedure UpdateTouchPanelPosition;
     procedure UpdateChatBubblePosition;
-    procedure UpdateSataniaPosition;
+    procedure UpdateSataniaPositionBasedOnMonitor;
   public
     ChatText: TCastleTypingLabel;
     ChatBubble: TCastleRectangleControl;
@@ -93,7 +93,7 @@ begin
   end;
 end;
 
-procedure TStateMain.UpdateSataniaPosition;
+procedure TStateMain.UpdateSataniaPositionBasedOnMonitor;
 var
   V: TVector3;
 begin
@@ -189,7 +189,7 @@ begin
   inherited;
   { This virtual method is executed every frame.}
   // LabelFps.Caption := 'FPS: ' + Container.Fps.ToString;
-  UpdateSataniaPosition;
+  UpdateSataniaPositionBasedOnMonitor;
   UpdateTouchPanelPosition;
   UpdateChatBubblePosition;
   Satania.Update(SecondsPassed);

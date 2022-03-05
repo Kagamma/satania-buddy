@@ -51,6 +51,7 @@ type
     OldMousePosX, OldMousePosY, LastVirtualDesktop: Integer;
     IsMouseDown: Boolean;
   public
+    procedure UpdateMonitor;
   end;
 
 var
@@ -81,8 +82,18 @@ begin
   AlphaBlendValue := 1;
   AddFormToIgnoreHandleList(Self);
   LastVirtualDesktop := 1;
-  Width := 60;
+  Width := 38;
   Height := 38;
+end;
+
+procedure TFormTouch.UpdateMonitor;
+begin
+  if Monitor <> FormMain.Monitor then
+  begin
+    FormMain.Left := Monitor.Left;
+    FormMain.Top := Monitor.Top;
+    FormMain.MakeFullyVisible(Monitor);
+  end;
 end;
 
 procedure TFormTouch.FormDblClick(Sender: TObject);
@@ -129,6 +140,7 @@ begin
       FormMain.Top := Monitor.Top;
       FormMain.MakeFullyVisible(Monitor);
     end;
+    UpdateMonitor;
   end;
 end;
 
