@@ -122,6 +122,12 @@ begin
     begin
       Save.SitOnWindow := False;
       FormMain.MenuItemSitOnWindow.Checked := False;
+    end;  
+    if Monitor <> FormMain.Monitor then
+    begin
+      FormMain.Left := Monitor.Left;
+      FormMain.Top := Monitor.Top;
+      FormMain.MakeFullyVisible(Monitor);
     end;
   end;
 end;
