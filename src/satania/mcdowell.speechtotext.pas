@@ -28,19 +28,18 @@ uses
   {$define unit_declare_interface}
   {$I mcdowell.speechtotext_windows.inc} 
   {$undef unit_declare_interface}
-  Classes, SysUtils, uPocketSphinx, uPocketSphinxBassAudioSource,
-  ad, cmd_ln, ps_search, pocketsphinx, vosk, voskthread;
+  Classes, SysUtils,
+  ad, cmd_ln, ps_search, vosk, voskthread, voskbassaudiosource;
 
 type
   TSataniaSpeechToText = class
   protected
-    FPocketSphinx: TPocketSphinx;
     FVoskThread: TVoskThread;
     {$define unit_protected}
     {$I mcdowell.speechtotext_windows.inc}
     {$undef unit_protected}
-    procedure OnPocketSphinxStateChange(Sender: TObject; AState: TPocketSphinxState);
-    procedure OnPocketSphinxHypothesis(Sender: TObject; AScore: Integer; AHypothesis: String);
+    procedure OnVoskStateChange(Sender: TObject; AState: TVoskState);
+    procedure OnVoskHypothesis(Sender: TObject; AScore: Integer; AHypothesis: String);
   public
     constructor Create;
     destructor Destroy; override;
@@ -65,7 +64,6 @@ uses
 constructor TSataniaSpeechToText.Create;
 begin
   inherited;
-  FPocketSphinx := nil;
   FVoskThread := nil;
 end;
 
@@ -75,8 +73,8 @@ begin
   inherited;
 end;
 
-procedure TSataniaSpeechToText.OnPocketSphinxStateChange(Sender: TObject;
-  AState: TPocketSphinxState);
+procedure TSataniaSpeechToText.OnVoskStateChange(Sender: TObject;
+  AState: TVoskState);
 begin
   case AState of
     rsNotInitialized: ;
@@ -88,11 +86,10 @@ begin
         if not Satania.IsTalking then
           Satania.Talk('...');
       end;
-    rsError: Satania.Talk('Sphinx: Error - ' + (Sender as TPocketSphinx).LastErrorMsg);
   end;
 end;
 
-procedure TSataniaSpeechToText.OnPocketSphinxHypothesis(Sender: TObject;
+procedure TSataniaSpeechToText.OnVoskHypothesis(Sender: TObject;
   AScore: Integer; AHypothesis: String);
 begin
   Satania.Log('(you)', AHypothesis);
@@ -101,8 +98,6 @@ end;
 
 procedure TSataniaSpeechToText.Disable;
 begin
-  if FPocketSphinx <> nil then
-    FreeAndNil(FPocketSphinx);       
   if FVoskThread <> nil then
     FreeAndNil(FVoskThread);
   {$ifdef WINDOWS}
@@ -114,29 +109,6 @@ function TSataniaSpeechToText.Enable: Boolean;
 begin
   if not IsLoaded then exit(False);
   Disable;
-  {if Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_POCKETSPHINX then
-  begin
-    FPocketSphinx := TPocketSphinx.Create;
-
-    FPocketSphinx.OnStateChange := @OnPocketSphinxStateChange;
-    FPocketSphinx.OnHypothesis := @OnPocketSphinxHypothesis;
-
-    FPocketSphinx.AcousticModelPath := PATH_SPHINX + Save.Settings.STTSphinxModel;
-    FPocketSphinx.Threshold := 0;
-
-    FPocketSphinx.Init;
-    if FPocketSphinx.State = rsInitialized then
-    begin
-      if FPocketSphinx.LoadDictionary(PATH_SPHINX + Save.Settings.STTSphinxDict) then
-      begin
-        FPocketSphinx.AddNgramSearch('ngram', PATH_SPHINX + Save.Settings.STTSphinxNgram);
-        FPocketSphinx.ActiveSearch := 'ngram';
-      end;
-      FPocketSphinx.AudioSource := TBassAudioSource.Create(FPocketSphinx, GetMicrophoneDeviceIdx);
-
-      FPocketSphinx.Active := True;
-    end;
-  end else}
   {$ifdef WINDOWS}
   if Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_SAPI then
   begin
@@ -147,15 +119,15 @@ begin
   begin
     FVoskThread := TVoskThread.Create;
 
-    FVoskThread.OnStateChange := @OnPocketSphinxStateChange;
-    FVoskThread.OnHypothesis := @OnPocketSphinxHypothesis;
+    FVoskThread.OnStateChange := @OnVoskStateChange;
+    FVoskThread.OnHypothesis := @OnVoskHypothesis;
 
     FVoskThread.ModelPath := PATH_VOSK + Save.Settings.STTVoskModel;
 
     FVoskThread.Init;
     if FVoskThread.State = rsInitialized then
     begin
-      FVoskThread.AudioSource := TBassAudioSource.Create(FPocketSphinx, GetMicrophoneDeviceIdx);
+      FVoskThread.AudioSource := TBassAudioSource.Create(GetMicrophoneDeviceIdx);
       FVoskThread.Active := True;
     end;
   end;
@@ -165,9 +137,6 @@ end;
 function TSataniaSpeechToText.IsLoaded: Boolean;
 begin
   Result := True;
-  {if Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_POCKETSPHINX then
-    Result := (ad.Lib <> 0) and (cmd_ln.Lib <> 0) and (ps_search.Lib <> 0) and (pocketsphinx.Lib <> 0)
-  else}
   if Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_VOSK then
     Result := vosk.Lib <> 0;
 end;

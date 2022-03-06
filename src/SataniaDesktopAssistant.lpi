@@ -258,6 +258,10 @@
         <Filename Value="components/vosk/voskthread.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="components/vosk/voskbassaudiosource.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

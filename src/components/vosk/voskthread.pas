@@ -25,23 +25,46 @@ unit voskthread;
 interface
 
 uses
-  Classes, SysUtils, Vosk, uPocketSphinx, fpjson, jsonparser;
+  Classes, SysUtils, Vosk, fpjson, jsonparser;
+
+type
+  TVoskState = (
+    rsNotInitialized, // Initial state
+    rsInitialized, // Indicates both decoder and audio device initialized successfully
+    rsReady, // Waiting for audio input
+    rsListening, // "In-speech"
+    rsAnalyze, // Recognizer is analyzing provided audio data
+    rsError // Error state, LastErrorMsg property stores the error message
+  );
+
+type
+  TOnVoskStateChange = procedure(Sender: TObject; AState: TVoskState) of object;
+  TOnVoskHypothesis = procedure(Sender: TObject; AScore: Integer; AHypothesis: String) of object;
+
+type
+  TVoskAudioSource = class
+  protected
+    FReady: Boolean;
+  public
+    property Ready: Boolean read FReady;
+    function GetData(buffer: Pointer; nmax: Cardinal): Integer; virtual; abstract;
+  end;
 
 type
   TVoskThread = class(TThread)
   private            
-    FOnStateChange: TOnPocketSphinxStateChange;
-    FOnHypothesis: TOnPocketSphinxHypothesis;
-    FState: TPocketSphinxState;
+    FOnStateChange: TOnVoskStateChange;
+    FOnHypothesis: TOnVoskHypothesis;
+    FState: TVoskState;
     FActive: Boolean;
-    FAudioSource: TPocketSphinxAudioSource;
+    FAudioSource: TVoskAudioSource;
     FModel: PVoskModel;
     FRec: PVoskRecognizer;
     FRecentHypothesis: String;
     procedure SendHypothesis;   
     procedure SendState;   
-    procedure SetState(S: TPocketSphinxState);
-    procedure SetAudioSource(AudioSource: TPocketSphinxAudioSource);
+    procedure SetState(S: TVoskState);
+    procedure SetAudioSource(AudioSource: TVoskAudioSource);
     procedure SetActive(V: Boolean);
   public
     ModelPath: String;
@@ -52,10 +75,10 @@ type
     procedure Execute; override;
 
     property Active: Boolean read FActive write SetActive;
-    property AudioSource: TPocketSphinxAudioSource read FAudioSource write SetAudioSource;
-    property State: TPocketSphinxState read FState write SetState;
-    property OnStateChange: TOnPocketSphinxStateChange read FOnStateChange write FOnStateChange;
-    property OnHypothesis: TOnPocketSphinxHypothesis read FOnHypothesis write FOnHypothesis;
+    property AudioSource: TVoskAudioSource read FAudioSource write SetAudioSource;
+    property State: TVoskState read FState write SetState;
+    property OnStateChange: TOnVoskStateChange read FOnStateChange write FOnStateChange;
+    property OnHypothesis: TOnVoskHypothesis read FOnHypothesis write FOnHypothesis;
   end;
 
 implementation
@@ -169,14 +192,14 @@ begin
   end;
 end;
 
-procedure TVoskThread.SetAudioSource(AudioSource: TPocketSphinxAudioSource);
+procedure TVoskThread.SetAudioSource(AudioSource: TVoskAudioSource);
 begin
   if Assigned(FAudioSource) then
     FAudioSource.Free;
   FAudioSource := AudioSource;
 end;
 
-procedure TVoskThread.SetState(S: TPocketSphinxState);
+procedure TVoskThread.SetState(S: TVoskState);
 begin
   if FState <> S then
   begin

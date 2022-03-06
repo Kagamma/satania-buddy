@@ -261,7 +261,7 @@ begin
   {$endif}
   NFit.MessageProc := @TMessage(nil).EpochMessageProc;
   NFit.ErrorProc := @TMessage(nil).NoMessageProc;
-  NFit.Fit(NN, TrainingPairs, nil, nil, 8, 1000);
+  NFit.Fit(NN, TrainingPairs, nil, nil, 16, 1000);
 
   Satania.ActionFromFile('system/loading-stop.evil');
   Satania.Talk(
