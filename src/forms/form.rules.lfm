@@ -8,7 +8,6 @@ object FormRules: TFormRules
   ClientWidth = 851
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 42
@@ -86,13 +85,24 @@ object FormRules: TFormRules
   end
   object ScrollBoxRules: TScrollBox
     Left = 8
-    Height = 484
-    Top = 8
+    Height = 449
+    Top = 43
     Width = 835
     HorzScrollBar.Page = 1
     VertScrollBar.Page = 1
     Align = alClient
     BorderSpacing.Around = 8
     TabOrder = 1
+  end
+  object EditSearch: TEdit
+    Left = 8
+    Height = 27
+    Top = 8
+    Width = 835
+    Align = alTop
+    BorderSpacing.Around = 8
+    OnChange = EditSearchChange
+    TabOrder = 2
+    TextHint = 'Search for tags...'
   end
 end

@@ -87,7 +87,8 @@ type
     function SEIsEmailConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDefaultScheme(const VM: TSEVM; const Args: array of TSEValue): TSEValue;      
     function SESoundPlay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+    function SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   private
     PreviousMinute: Integer;
     PreviousDay: Integer;
@@ -100,6 +101,7 @@ type
     Sprite: TCastleScene;
     Viewport: TCastleViewport;
     LocalBoundingBoxSnapshot: TBox3D;
+    ChatMode: Integer;
     ChatText: TCastleTypingLabel;
     ChatBubble: TCastleUserInterface;
     FontSystem: TCastleFont;
@@ -188,41 +190,51 @@ begin
       Satania.ActionFromFile(S);
     end else
     begin
-      ChatResponse := Inference(S);
-      if ChatResponse = '' then
+      if Satania.ChatMode = CHATMODE_CHAT then
       begin
-        if Save.Settings.BotServer <> '' then
+        ChatResponse := Inference(S);
+        if ChatResponse = '' then
         begin
-          FormData := TStringList.Create;
-          try
+          if Save.Settings.BotServer <> '' then
+          begin
+            FormData := TStringList.Create;
             try
-              FormData.Add('message=' + S);
-              JsonString := httpRequest(Save.Settings.BotServer, FormData);
-              JsonObject := GetJSON(JsonString) as TJSONObject;
-              ChatType := JsonObject['type'].AsString;
-              ChatResponse := JsonObject['message'].AsString;
-              FreeAndNil(JsonObject);
-            except
-              on E: Exception do
-              begin
-                ChatResponse := E.Message;
-                ChatType := 'chat';
+              try
+                FormData.Add('message=' + S);
+                JsonString := httpRequest(Save.Settings.BotServer, FormData);
+                JsonObject := GetJSON(JsonString) as TJSONObject;
+                ChatType := JsonObject['type'].AsString;
+                ChatResponse := JsonObject['message'].AsString;
+                FreeAndNil(JsonObject);
+              except
+                on E: Exception do
+                begin
+                  ChatResponse := E.Message;
+                  ChatType := 'chat';
+                end;
               end;
+            finally
+              FreeAndNil(FormData);
             end;
-          finally
-            FreeAndNil(FormData);
+          end else
+          begin
+            if not Save.SpeechToText then
+            begin
+              ChatType := 'chat';
+              ChatResponse := 'Sorry I don''t understand.';
+            end else
+              ChatType := '';
           end;
         end else
-        begin
-          if not Save.SpeechToText then
-          begin
-            ChatType := 'chat';
-            ChatResponse := 'Sorry I don''t understand.';
-          end else
-            ChatType := '';
-        end;
+          ChatType := 'script';
       end else
-        ChatType := 'script';
+      if Satania.ChatMode = CHATMODE_SEARCH then
+      begin
+        OpenURL(Format(Save.Settings.SearchEngine, [S]));
+        ChatResponse := S;
+        ChatType := '';
+        Satania.ChatMode := CHATMODE_CHAT;
+      end;
     end;
   end else
   if (Length(S) > 0) and ((Save.Settings.BotServer = '') or (S[1] = '>')) then
@@ -415,6 +427,11 @@ begin
   OpenURL(Args[0]);
 end;
 
+function TSatania.SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  ChatMode := Round(Args[0].VarNumber);
+end;
+
 function TSatania.SEIsSoW(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Save.SitOnWindow
@@ -495,7 +512,10 @@ begin
   Script.RegisterFunc('email_is_configured', @SEIsEmailConfigured, 0);
   Script.RegisterFunc('sound_play', @SESoundPlay, 1);          
   Script.RegisterFunc('url_open', @SEOpenURL, 1);
-  Script.ConstMap.Add('name', Name);
+  Script.RegisterFunc('chatmode_set', @SEChatModeSet, 1);
+  Script.ConstMap.Add('name', Name);                        
+  Script.ConstMap.Add('CHATMODE_CHAT', CHATMODE_CHAT);
+  Script.ConstMap.Add('CHATMODE_SEARCH', CHATMODE_SEARCH);
 end;
 
 destructor TSatania.Destroy;

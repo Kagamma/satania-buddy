@@ -41,6 +41,8 @@ const
   SECRET_KEY = 'satania_mcdowell';
   SPEECH_RECOGNIZER_BACKEND_VOSK = 0;
   SPEECH_RECOGNIZER_BACKEND_SAPI = 1;
+  CHATMODE_SEARCH = 1;
+  CHATMODE_CHAT = 0;
 
 type
   TMailRec = record
@@ -105,6 +107,7 @@ type
   TSaveSettings = class(TPersistent)
   protected
     FDefaultEvilScheme: String;
+    FSearchEngine,
     FBotServer: String;
     FChatBubbleDelay: Integer;
     FFPS: Integer;
@@ -129,7 +132,8 @@ type
   published
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;
     property TextSpeed: Integer read FTextSpeed write FTextSpeed;
-    property SitOnWindowRightMargin: Integer read FSitOnWindowRightMargin write FSitOnWindowRightMargin;
+    property SitOnWindowRightMargin: Integer read FSitOnWindowRightMargin write FSitOnWindowRightMargin;    
+    property SearchEngine: String read FSearchEngine write FSearchEngine;
     property BotServer: String read FBotServer write FBotServer;
     property FPS: Integer read FFPS write FFPS;
     property ChatBubbleDelay: Integer read FChatBubbleDelay write FChatBubbleDelay;
@@ -281,6 +285,7 @@ begin
   FReminders := TSaveCollection.Create(TReminderCollectionItem);
   FSilent := False;
   FSettings := TSaveSettings.Create;
+  FSettings.SearchEngine := 'https://www.google.com/search?q=%s';
   FSettings.ChatBubbleDelay := 5000;
   FSettings.FPS := 16;
   FSettings.TextSpeed := 24;

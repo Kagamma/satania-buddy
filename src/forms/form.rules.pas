@@ -26,7 +26,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons,
-  LCLIntf;
+  LCLIntf, StdCtrls;
 
 type
 
@@ -38,6 +38,7 @@ type
     ButtonLearnRules: TBitBtn;
     ButtonCancel: TBitBtn;
     ButtonSave: TBitBtn;
+    EditSearch: TEdit;
     Panel1: TPanel;
     ScrollBoxRules: TScrollBox;
     procedure ButtonAddRuleClick(Sender: TObject);
@@ -45,6 +46,7 @@ type
     procedure ButtonHelpClick(Sender: TObject);
     procedure ButtonLearnRulesClick(Sender: TObject);
     procedure ButtonSaveClick(Sender: TObject);
+    procedure EditSearchChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     IsSaved: Boolean;
@@ -144,10 +146,31 @@ begin
   end;
 end;
 
+procedure TFormRules.EditSearchChange(Sender: TObject);
+var
+  I: Integer;
+  S: String;
+  Frame: TFrameRulesItem;
+begin
+  S := LowerCase(EditSearch.Text);
+  for I := 0 to ScrollBoxRules.ControlCount - 1 do
+  begin
+    Frame := TFrameRulesItem(ScrollBoxRules.Controls[I]);
+    if (S = '') or (LowerCase(Frame.EditTag.Text).IndexOf(S) >= 0) then
+    begin
+      Frame.Show;
+    end else
+    begin
+      Frame.Hide;
+    end;
+  end;
+end;
+
 procedure TFormRules.FormShow(Sender: TObject);
 var
   Frame: TFrameRulesItem;
   EditFrame: TFrameRulesEditItem;
+  KeyList: TStringList;
   Rule: TRuleRec;
   I, J: Integer;
   key: String;
@@ -155,8 +178,13 @@ begin
   ReadRules;                    
   for I := ScrollBoxRules.ControlCount - 1 downto 0 do
     ScrollBoxRules.RemoveControl(ScrollBoxRules.Controls[I]);
+  KeyList := TStringList.Create;
+  KeyList.Sorted := True;
   for Key in RuleDict.Keys do
+    KeyList.Add(Key);
+  for I := KeyList.Count - 1 downto 0 do
   begin
+    Key := KeyList[I];
     Rule := RuleDict[Key];
     Frame := TFrameRulesItem.Create(Self);
     Frame.Name := GUIDName;
@@ -172,6 +200,7 @@ begin
     end;
     ScrollBoxRules.InsertControl(Frame);
   end;
+  KeyList.Free;
 end;
 
 procedure TFormRules.ButtonAddRuleClick(Sender: TObject);

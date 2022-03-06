@@ -4,5 +4,6 @@
 {"hash":366789,"name":"tformrules.buttonsave.caption","sourcebytes":[83,97,118,101],"value":"Save"},
 {"hash":174432341,"name":"tformrules.buttonaddrule.caption","sourcebytes":[65,100,100,32,82,117,108,101],"value":"Add Rule"},
 {"hash":5421198,"name":"tformrules.buttonlearnrules.caption","sourcebytes":[76,101,97,114,110],"value":"Learn"},
-{"hash":322608,"name":"tformrules.buttonhelp.caption","sourcebytes":[72,101,108,112],"value":"Help"}
+{"hash":322608,"name":"tformrules.buttonhelp.caption","sourcebytes":[72,101,108,112],"value":"Help"},
+{"hash":92720622,"name":"tformrules.editsearch.texthint","sourcebytes":[83,101,97,114,99,104,32,102,111,114,32,116,97,103,115,46,46,46],"value":"Search for tags..."}
 ]}

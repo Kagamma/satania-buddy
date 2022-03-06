@@ -151,17 +151,9 @@ begin
         else
           S := vosk_recognizer_result(FRec);
         JSObject := GetJSON(S) as TJSONObject;
-        try
-          Text := JSObject['partial'].AsString;
-        except
-          on E: Exception do;
-        end;
+        try Text := JSObject['partial'].AsString; except on E: Exception do; end;
         if Text = '' then
-          try
-            Text := JSObject['text'].AsString;
-          except
-            on E: Exception do;
-          end;
+          try Text := JSObject['text'].AsString; except on E: Exception do; end;
         if Text <> '' then
         begin
           FRecentHypothesis := Text;

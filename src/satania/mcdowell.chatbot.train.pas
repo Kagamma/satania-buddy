@@ -278,10 +278,10 @@ end;
 
 procedure TTrainThread.Execute;
 begin
-  Satania.IsBlocked := True;
+  Satania.IsBlocked := True;    
+  Prepare;
   try
     try
-      Prepare;
       ReadRules;
       PrepareTrainingData;
       Train;
