@@ -30,7 +30,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);components/neural-api/neural;components/internettools"/>
-            <OtherUnitFiles Value="forms;utils;satania;states;components;components/neural-api/neural;components/synalist;components/typing-label/typinglabel;components/TPocketSphinx/src;components/TPocketSphinx/src/pocketsphinx;frames;components/internettools/internet;components/internettools/data"/>
+            <OtherUnitFiles Value="forms;utils;satania;states;components;components/neural-api/neural;components/synalist;components/typing-label/typinglabel;components/TPocketSphinx/src;components/TPocketSphinx/src/pocketsphinx;frames;components/internettools/internet;components/internettools/data;components/vosk"/>
             <UnitOutputDirectory Value="../lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -75,9 +75,6 @@
       </Item>
       <Item>
         <PackageName Value="DateTimeCtrls"/>
-      </Item>
-      <Item>
-        <PackageName Value="LazActiveX"/>
       </Item>
       <Item>
         <PackageName Value="SynEdit"/>
@@ -252,6 +249,15 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
       </Unit>
+      <Unit>
+        <Filename Value="components/vosk/vosk.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Vosk"/>
+      </Unit>
+      <Unit>
+        <Filename Value="components/vosk/voskthread.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -261,7 +267,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);components/neural-api/neural;components/internettools"/>
-      <OtherUnitFiles Value="forms;utils;satania;states;components;components/neural-api/neural;components/synalist;components/typing-label/typinglabel;components/TPocketSphinx/src;components/TPocketSphinx/src/pocketsphinx;frames;components/internettools/internet;components/internettools/data"/>
+      <OtherUnitFiles Value="forms;utils;satania;states;components;components/neural-api/neural;components/synalist;components/typing-label/typinglabel;components/TPocketSphinx/src;components/TPocketSphinx/src/pocketsphinx;frames;components/internettools/internet;components/internettools/data;components/vosk"/>
       <UnitOutputDirectory Value="../lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
@@ -285,9 +291,6 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dCASTLE_SLIM_NODES"/>
-      <OtherDefines Count="1">
-        <Define0 Value="CASTLE_SLIM_NODES"/>
-      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>
@@ -300,6 +303,9 @@
       </Item>
       <Item>
         <Name Value="EFOpenError"/>
+      </Item>
+      <Item>
+        <Name Value="EJSON"/>
       </Item>
     </Exceptions>
   </Debugging>

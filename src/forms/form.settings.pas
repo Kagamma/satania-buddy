@@ -56,12 +56,10 @@ type
     EditEmailPort: TSpinEdit;
     EditSoWRightMargin: TSpinEdit;
     EditFontSize: TSpinEdit;
-    EditSTTDict: TEdit;
-    EditSTTModel: TEdit;
-    EditSTTNgram: TEdit;
+    EditSTTVoskModel: TEdit;
     EditTextSpeed: TSpinEdit;
     EditBaseScaling: TFloatSpinEdit;
-    GroupBoxSTTPocketSphinx: TGroupBox;
+    GroupBoxSTTVosk: TGroupBox;
     LabelChatbotServer: TLabel;
     LabelSTTBackend: TLabel;
     LabelEmailUsername: TLabel;
@@ -78,9 +76,7 @@ type
     LabelFPS: TLabel;
     LabelChatBubbleDelay: TLabel;
     LabelSoWRightMargin: TLabel;
-    LabelSTTDict: TLabel;
-    LabelSTTModel: TLabel;
-    LabelSTTNgram: TLabel;
+    LabelSTTModel1: TLabel;
     LabelTextSpeed: TLabel;
     LabelDefaultEvilScheme: TLabel;
     LabelImageQuality: TLabel;
@@ -129,14 +125,12 @@ var
 begin
   PageControl.TabIndex := 0;
   ComboBoxSTTBackend.Items.Clear;
-  ComboBoxSTTBackend.Items.Add('PocketSphinx');   
-  ComboBoxSTTBackend.Items.Add('Microsoft Speech Object Library');
+  ComboBoxSTTBackend.Items.Add('Vosk');
   {$ifdef WINDOWS}
-  ComboBoxSTTBackend.ItemIndex := Save.Settings.STTBackend;
-  {$else}
-  ComboBoxSTTBackend.ItemIndex := 0;
-  ComboBoxSTTBackend.Enabled := False;
+  ComboBoxSTTBackend.Items.Add('Microsoft Speech Object Library');
   {$endif}
+  ComboBoxSTTBackend.ItemIndex := Save.Settings.STTBackend;
+  ComboBoxSTTBackendChange(Self);
 
   CheckBoxLewd.Checked := Save.Settings.Lewd;
   EditBotServer.Text := Save.Settings.BotServer;
@@ -154,9 +148,7 @@ begin
   EditEmailUsername.Text := Save.Settings.EmailUsername;
   EditEmailFetchFrom.Text := Save.Settings.EmailFetchFrom;
 
-  EditSTTModel.Text := Save.Settings.STTModel;
-  EditSTTDict.Text := Save.Settings.STTDict;
-  EditSTTNgram.Text := Save.Settings.STTNgram;
+  EditSTTVoskModel.Text := Save.Settings.STTVoskModel;
 
   EditFontName.Text := Save.Settings.Font;
   EditFontSize.Value := Save.Settings.FontSize;
@@ -234,15 +226,11 @@ begin
     Satania.Sprite.AnimateSkipTicks := Save.Settings.FrameSkip;
     Satania.UpdateMenuItems;
 
-    if (EditSTTModel.Text <> Save.Settings.STTModel)
-      or (EditSTTDict.Text <> Save.Settings.STTDict)
-      or (EditSTTNgram.Text <> Save.Settings.STTNgram)
+    if (EditSTTVoskModel.Text <> Save.Settings.STTVoskModel)
       or (ComboBoxSTTBackend.ItemIndex <> Save.Settings.STTBackend) then
     begin                             
       Save.Settings.STTBackend := ComboBoxSTTBackend.ItemIndex;
-      Save.Settings.STTModel := EditSTTModel.Text;
-      Save.Settings.STTDict := EditSTTDict.Text;
-      Save.Settings.STTNgram := EditSTTNgram.Text;
+      Save.Settings.STTVoskModel := EditSTTVoskModel.Text;
       if Save.SpeechToText then
         SataniaSpeechToText.Enable;
     end;
@@ -256,10 +244,10 @@ end;
 
 procedure TFormSettings.ComboBoxSTTBackendChange(Sender: TObject);
 begin
-  if ComboBoxSTTBackend.ItemIndex <> 0 then
-    GroupBoxSTTPocketSphinx.Enabled := False
+  if ComboBoxSTTBackend.ItemIndex <> SPEECH_RECOGNIZER_BACKEND_VOSK then
+    GroupBoxSTTVosk.Enabled := False
   else
-    GroupBoxSTTPocketSphinx.Enabled := True;
+    GroupBoxSTTVosk.Enabled := True;
 end;
 
 procedure TFormSettings.ButtonCancelClick(Sender: TObject);

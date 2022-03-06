@@ -35,7 +35,7 @@ uses
   mcdowell.chatbot.train, form.evilc.editor, mcdowell.imap,
   Mcdowell.SpeechToText, frame.reminders.item, form.reminders, form.Main,
   form.touch, mcdowell.sound, form.rules, frame.rules.item, 
-frame.rules.edititem;
+frame.rules.edititem, vosk, voskthread;
 
 {$R *.res}
 

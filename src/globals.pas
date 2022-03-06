@@ -37,8 +37,10 @@ const
   PATH_SPRITES = 'castle-data:/sprites/';
   PATH_FONT = 'castle-data:/fonts/';         
   PATH_SOUND = 'castle-data:/sounds/';
-  PATH_SPHINX = 'data/nn/sphinx/';
+  PATH_VOSK = 'data/nn/vosk/';
   SECRET_KEY = 'satania_mcdowell';
+  SPEECH_RECOGNIZER_BACKEND_VOSK = 0;
+  SPEECH_RECOGNIZER_BACKEND_SAPI = 1;
 
 type
   TMailRec = record
@@ -122,9 +124,7 @@ type
     FFrameSkip: Integer;
     FLewd: Boolean;
     FSkin: String;
-    FSTTModel,
-    FSTTDict,
-    FSTTNgram: String;
+    FSTTVoskModel: String;
     FSTTBackend: Integer;
   published
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;
@@ -146,10 +146,8 @@ type
     property FontSize: Integer read FFontSize write FFontSize;
     property FrameSkip: Integer read FFrameSkip write FFrameSkip;
     property Lewd: Boolean read FLewd write FLewd default False;
-    property Skin: String read FSkin write FSkin;         
-    property STTModel: String read FSTTModel write FSTTModel;
-    property STTDict: String read FSTTDict write FSTTDict;
-    property STTNgram: String read FSTTNgram write FSTTNgram;
+    property Skin: String read FSkin write FSkin;
+    property STTVoskModel: String read FSTTVoskModel write FSTTVoskModel;
     property STTBackend: Integer read FSTTBackend write FSTTBackend default 0;
   end;
 
@@ -294,9 +292,8 @@ begin
   FSettings.FrameSkip := 0;
   FSettings.Lewd := False;
   FSettings.Skin := 'satania';
-  FSettings.STTModel := 'english/model';  
-  FSettings.STTDict := 'english/cmudict-en-us.dict';
-  FSettings.STTNgram := 'english/en-us.lm.bin';
+  FSettings.STTVoskModel := 'english';
+  FSettings.STTBackend := SPEECH_RECOGNIZER_BACKEND_VOSK;
   {$ifdef WINDOWS}
   FSettings.FSitOnWindowRightMargin := 256;
   {$else}

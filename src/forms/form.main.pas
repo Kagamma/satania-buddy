@@ -313,7 +313,7 @@ begin
       Satania.Talk('Speech recognition disabled.');
     end;
   end else
-    Satania.Talk('You haven''t installed <font color="#0000ff">pocketsphinx</font>.');
+    Satania.Talk('You haven''t installed necessary speech library.');
 end;
 
 procedure TFormMain.TimerMainLoopTimer(Sender: TObject);

@@ -3,6 +3,7 @@
 *.exe
 *.csv
 *.dll
+*.so
 satania-buddy*
 link*.res
 lib
