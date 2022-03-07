@@ -46,7 +46,7 @@ A: Type `>app_name` to execute external applications, for example: `>echo Hello`
 
 Type an expression, for example `5+3*2` and she will answer with `11`
 
-By default she has a simple rule-based chat system, you can configure patterns and responses in `data/nn/chatbot/rules.json`, then tell her to learn the rules in `Actions>Learn Rules Again` menu
+By default she has a simple rule-based chat system, you can configure patterns and responses in `Rules`, then tell her to learn the rules by pressing the `Learn` button.
 
 ##### Q: What is Chatbot in Settings?
 
