@@ -19,7 +19,7 @@ You also need a compositor, or else the app will show black screen.
 ##### Q: Why X11? Where's wayland support?
 
 A: Wayland's "security" measurements makes this kind of software impossible to develop. Things you just can't do in wayland:
-- Ability to manually control Satania's position on screen. This is needed if we want to drag her around, or put her onto other windows.
+- Ability to manually control Satania's position on screen. This is needed if we want to drag her around, move her to other monitor/virtual desktop, or put her onto other windows.
 - Can't access to other applications's window position (so no `Sit On Window`).
 - Can we even be able to tell wayland to make Satania's window always stay on top of everything else?
 
