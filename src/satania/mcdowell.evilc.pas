@@ -1420,9 +1420,21 @@ begin
       '.':
         Token.Kind := tkDot;
       '&':
-        Token.Kind := tkAnd;
+        begin
+          if PeekAtNextChar = '&' then
+          begin
+            NextChar;
+          end;
+          Token.Kind := tkAnd;
+        end;
       '|':
-        Token.Kind := tkOr;
+        begin
+          if PeekAtNextChar = '|' then
+          begin
+            NextChar;
+          end;
+          Token.Kind := tkOr;
+        end;
       '!':
         begin
           if PeekAtNextChar = '=' then
@@ -1511,7 +1523,13 @@ begin
           end;
         end;
       '=':
-        Token.Kind := tkEqual;
+        begin
+          if PeekAtNextChar = '=' then
+          begin
+            NextChar;
+          end;
+          Token.Kind := tkEqual;
+        end;
       '<':
         begin
           if PeekAtNextChar = '=' then
