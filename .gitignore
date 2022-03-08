@@ -13,6 +13,7 @@ src/components/neural-api
 src/components/synalist
 src/components/typing-label
 src/components/TPocketSphinx
+data
 data-source
 ppas.sh
 configs.json

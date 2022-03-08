@@ -1,3 +1,4 @@
+rm -rf data
 rm -rf src/components/castle-engine
 rm -rf src/components/neural-api
 rm -rf src/components/typing-label
@@ -5,6 +6,7 @@ rm -rf src/components/synalist
 rm -rf src/components/TPocketSphinx
 rm -rf src/components/internettools
 
+git clone --depth 1 https://github.com/Kagamma/satania-buddy-data.git data
 cd src/components
 git clone --depth 1 https://github.com/castle-engine/castle-engine.git
 cd castle-engine
