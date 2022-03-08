@@ -40,6 +40,7 @@ type
     ButtonOk: TBitBtn;
     CheckBoxEmailUseSSL: TCheckBox;
     CheckBoxLewd: TCheckBox;
+    ComboBoxSTTVoskModel: TComboBox;
     ComboBoxSkin: TComboBox;
     ComboBoxSTTBackend: TComboBox;
     ComboBoxImageQuality: TComboBox;
@@ -58,7 +59,6 @@ type
     EditEmailPort: TSpinEdit;
     EditSoWRightMargin: TSpinEdit;
     EditFontSize: TSpinEdit;
-    EditSTTVoskModel: TEdit;
     EditTextSpeed: TSpinEdit;
     EditBaseScaling: TFloatSpinEdit;
     GroupBoxSTTVosk: TGroupBox;
@@ -166,8 +166,19 @@ begin
   EditEmailPort.Value := Save.Settings.EmailPort;
   EditEmailUsername.Text := Save.Settings.EmailUsername;
   EditEmailFetchFrom.Text := Save.Settings.EmailFetchFrom;
-
-  EditSTTVoskModel.Text := Save.Settings.STTVoskModel;
+                                                  
+  SL := TStringList.Create;
+  FindAllDirectories(SL, 'data/nn/vosk', False);
+  for I := 0 to SL.Count - 1 do
+  begin
+    S := ExtractFileName(SL[I]);
+    ComboBoxSTTVoskModel.Items.Add(S);
+    if S = Save.Settings.STTVoskModel then
+    begin
+      ComboBoxSTTVoskModel.ItemIndex := ComboBoxSTTVoskModel.Items.Count - 1;
+    end;
+  end;
+  SL.Free;
 
   EditFontName.Text := Save.Settings.Font;
   EditFontSize.Value := Save.Settings.FontSize;
@@ -246,11 +257,11 @@ begin
     Satania.Sprite.AnimateSkipTicks := Save.Settings.FrameSkip;
     Satania.UpdateMenuItems;
 
-    if (EditSTTVoskModel.Text <> Save.Settings.STTVoskModel)
+    if (ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex] <> Save.Settings.STTVoskModel)
       or (ComboBoxSTTBackend.ItemIndex <> Save.Settings.STTBackend) then
     begin                             
-      Save.Settings.STTBackend := ComboBoxSTTBackend.ItemIndex;
-      Save.Settings.STTVoskModel := EditSTTVoskModel.Text;
+      Save.Settings.STTBackend := ComboBoxSTTBackend.ItemIndex;  
+      Save.Settings.STTVoskModel := ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex];
       if Save.SpeechToText then
         SataniaSpeechToText.Enable;
     end;
