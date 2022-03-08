@@ -26,6 +26,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
+  FileUtil,
   ExtCtrls, Buttons, Spin, MaskEdit, Menus, CastleApplicationProperties,
   Types, LCLTranslator;
 
@@ -39,6 +40,7 @@ type
     ButtonOk: TBitBtn;
     CheckBoxEmailUseSSL: TCheckBox;
     CheckBoxLewd: TCheckBox;
+    ComboBoxSkin: TComboBox;
     ComboBoxSTTBackend: TComboBox;
     ComboBoxImageQuality: TComboBox;
     EditBotServer: TEdit;
@@ -46,7 +48,6 @@ type
     EditDefaultEvilScheme: TEdit;
     EditChatBubbleDelay: TSpinEdit;
     EditSearchEngine: TEdit;
-    EditSkin: TEdit;
     EditFrameSkip: TSpinEdit;
     EditFontName: TEdit;
     EditEmailFetchFrom: TEdit;
@@ -125,6 +126,7 @@ var
   I: Integer;
   L: TStringDynArray;
   S: String;
+  SL: TStringList;
 begin
   PageControl.TabIndex := 0;
   ComboBoxSTTBackend.Items.Clear;
@@ -145,7 +147,20 @@ begin
   EditDefaultEvilScheme.Text := Save.Settings.DefaultEvilScheme;
   EditBaseScaling.Value := Save.Settings.BaseScaling;
   EditFrameSkip.Value := Save.Settings.FrameSkip;
-  EditSkin.Text := Save.Settings.Skin;
+
+  ComboBoxSkin.Items.Clear;
+  SL := TStringList.Create;
+  FindAllDirectories(SL, 'data/scripts', False);
+  for I := 0 to SL.Count - 1 do
+  begin
+    S := ExtractFileName(SL[I]);
+    ComboBoxSkin.Items.Add(S);
+    if S = Save.Settings.Skin then
+    begin
+      ComboBoxSkin.ItemIndex := ComboBoxSkin.Items.Count - 1;
+    end;
+  end;
+  SL.Free;
 
   EditEmailServer.Text := Save.Settings.EmailServer;
   EditEmailPort.Value := Save.Settings.EmailPort;
@@ -199,7 +214,7 @@ begin
     Save.Settings.DefaultEvilScheme := EditDefaultEvilScheme.Text;
     Save.Settings.ImageQuality := ComboBoxImageQuality.Items[ComboBoxImageQuality.ItemIndex];
     Save.Settings.FrameSkip := EditFrameSkip.Value;
-    Save.Settings.Skin := EditSkin.Text;
+    Save.Settings.Skin := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
 
     Save.Settings.EmailServer := EditEmailServer.Text;
     Save.Settings.EmailPort := EditEmailPort.Value;

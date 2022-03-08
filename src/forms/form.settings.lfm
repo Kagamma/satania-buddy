@@ -14,9 +14,9 @@ object FormSettings: TFormSettings
     Height = 444
     Top = 0
     Width = 644
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 3
+    TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
@@ -177,19 +177,21 @@ object FormSettings: TFormSettings
         Width = 21
         TabOrder = 10
       end
-      object EditSkin: TEdit
-        Left = 192
-        Height = 27
-        Top = 176
-        Width = 400
-        TabOrder = 11
-      end
       object LabelFontSkin: TLabel
         Left = 24
         Height = 19
         Top = 176
         Width = 32
         Caption = 'Skin'
+      end
+      object ComboBoxSkin: TComboBox
+        Left = 192
+        Height = 29
+        Top = 176
+        Width = 400
+        ItemHeight = 0
+        ReadOnly = True
+        TabOrder = 11
       end
     end
     object TabSheetGraphics: TTabSheet
@@ -429,7 +431,7 @@ object FormSettings: TFormSettings
         Top = 51
         Width = 593
         Caption = 'Vosk'
-        ClientHeight = 68
+        ClientHeight = 86
         ClientWidth = 591
         TabOrder = 1
         object LabelSTTModel1: TLabel
