@@ -25,7 +25,8 @@ A: Wayland's "security" measurements makes this kind of software impossible to d
 
 ##### Q: OS X support when
 
-A:![Gt999+dollars+for+a+stand+itoddlers+btfo+_954ed86b58d371154ab7f95a68054faf](https://user-images.githubusercontent.com/7451778/155552903-936f2ff1-a32b-4fe2-bbbd-0403d169808a.gif)
+A:![Gt999+dollars+for+a+stand+itoddlers+btfo+_954ed86b58d371154ab7f95a68054faf](https://user-images.githubusercontent.com/7451778/155552903-936f2ff1-a32b-4fe2-bbbd-0403d169808a.gif)\
+_(Joking aside OS X has a much higher chance to get ported over compare to Linux's wayland)_
 
 ##### Q: Scripting API?
 
