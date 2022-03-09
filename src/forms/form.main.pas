@@ -288,6 +288,8 @@ procedure TFormMain.MenuItemSilentClick(Sender: TObject);
 begin
   Save.Silent := not Save.Silent;
   MenuItemSilent.Checked := Save.Silent;
+  if Save.Silent then
+    Satania.Talk(''); // Tell Satania to shut up by letting it blank
   Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
 end;
 
@@ -297,6 +299,7 @@ begin
   MenuItemSitOnWindow.Checked := Save.SitOnWindow;
   if not Save.SitOnWindow then
     Satania.DefaultPosition;
+  Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
 end;
 
 procedure TFormMain.MenuItemSpeechRecognitionClick(Sender: TObject);

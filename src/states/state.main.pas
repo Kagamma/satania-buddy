@@ -189,11 +189,16 @@ begin
   inherited;
   { This virtual method is executed every frame.}
   // LabelFps.Caption := 'FPS: ' + Container.Fps.ToString;
-  UpdateSataniaPositionBasedOnMonitor;
-  UpdateTouchPanelPosition;
-  UpdateChatBubblePosition;
-  Satania.Update(SecondsPassed);
-  Forms.Application.ProcessMessages;
+  try
+    UpdateSataniaPositionBasedOnMonitor;
+    UpdateTouchPanelPosition;
+    UpdateChatBubblePosition;
+    Satania.Update(SecondsPassed);
+    Forms.Application.ProcessMessages;
+  except
+    on E: Exception do
+      Satania.Log('System', E.Message);
+  end;
 end;
 
 function TStateMain.Press(const Event: TInputPressRelease): Boolean;

@@ -80,10 +80,15 @@ procedure TUtilActiveWindow.Update;
 var
   Position: TPoint;
 begin
-  Position := LookForSuitablePosition;
-  if Position.X <> -999999 then
-  begin
-    Satania.Sprite.Translation := Vector3(ScreenCoordToUI(Vector2(Position.X, Position.Y)), 0);
+  try
+    Position := LookForSuitablePosition;
+    if Position.X <> -999999 then
+    begin
+      Satania.Sprite.Translation := Vector3(ScreenCoordToUI(Vector2(Position.X, Position.Y)), 0);
+    end;
+  except
+    on E: Exception do
+      Satania.Talk(E.Message);
   end;
   //if IsWindowChanged then
   //  Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
