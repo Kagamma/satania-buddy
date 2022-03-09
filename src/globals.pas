@@ -501,7 +501,7 @@ end;
 function CharsetToCharacters(S: String): String;
 var
   X, Y, I: Cardinal;
-  W: WideString;
+  W: String;
   SS: String = '';
   L, P: TStringDynArray;
 begin
@@ -517,9 +517,9 @@ begin
         W := '';
         for I := X to Y do
         begin
-          W := W + WideChar(I);
+          W := W + UnicodeToUTF8(I);
         end;
-        SS := SS + UTF8Encode(W);
+        SS := SS + W;
       end;
     end;
   Result := SS;
