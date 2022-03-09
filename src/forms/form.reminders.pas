@@ -108,6 +108,13 @@ begin
     Item.Hour := A;
     Item.Minute := B;
     Item.Enabled := Frame.CheckBoxEnable.Checked;
+    Item.Monday := Frame.CheckBoxMonday.Checked;
+    Item.Tuesday := Frame.CheckBoxTuesday.Checked;
+    Item.Wednesday := Frame.CheckBoxWednesday.Checked;
+    Item.Thursday := Frame.CheckBoxThursday.Checked;
+    Item.Friday := Frame.CheckBoxFriday.Checked;
+    Item.Saturday := Frame.CheckBoxSaturday.Checked;
+    Item.Sunday := Frame.CheckBoxSunday.Checked;
     Item.Name := GUIDName;
     Item.Script := Frame.EditScript.Text; 
     Save.SaveToFile('configs.json');
@@ -173,6 +180,14 @@ begin
     Frame.DateTimePicker.Time := EncodeTime(Item.Hour, Item.Minute, 0, 0);
     Frame.CheckBoxEnable.Checked := Item.Enabled;
     Frame.EditScript.Text := Item.Script;
+
+    Frame.CheckBoxMonday.Checked := Item.Monday;
+    Frame.CheckBoxTuesday.Checked := Item.Tuesday;
+    Frame.CheckBoxWednesday.Checked := Item.Wednesday;
+    Frame.CheckBoxThursday.Checked := Item.Thursday;
+    Frame.CheckBoxFriday.Checked := Item.Friday;
+    Frame.CheckBoxSaturday.Checked := Item.Saturday;
+    Frame.CheckBoxSunday.Checked := Item.Sunday;
   end;
 end;
 

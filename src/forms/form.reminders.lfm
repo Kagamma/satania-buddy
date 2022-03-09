@@ -1,18 +1,18 @@
 object FormReminders: TFormReminders
   Left = 352
-  Height = 423
+  Height = 493
   Top = 31
-  Width = 763
+  Width = 926
   Caption = 'Alarms & Reminders'
-  ClientHeight = 423
-  ClientWidth = 763
+  ClientHeight = 493
+  ClientWidth = 926
   OnShow = FormShow
   Position = poScreenCenter
   object ScrollBoxReminders: TScrollBox
     Left = 8
-    Height = 365
+    Height = 435
     Top = 8
-    Width = 747
+    Width = 910
     HorzScrollBar.Page = 1
     VertScrollBar.Increment = 1
     VertScrollBar.Page = 1
@@ -24,14 +24,14 @@ object FormReminders: TFormReminders
   object Panel1: TPanel
     Left = 0
     Height = 42
-    Top = 381
-    Width = 763
+    Top = 451
+    Width = 926
     Align = alBottom
     ClientHeight = 42
-    ClientWidth = 763
+    ClientWidth = 926
     TabOrder = 1
     object ButtonCancel: TBitBtn
-      Left = 302
+      Left = 465
       Height = 24
       Top = 9
       Width = 107
@@ -44,7 +44,7 @@ object FormReminders: TFormReminders
       TabOrder = 0
     end
     object ButtonSave: TBitBtn
-      Left = 647
+      Left = 810
       Height = 24
       Top = 9
       Width = 107
@@ -57,7 +57,7 @@ object FormReminders: TFormReminders
       TabOrder = 1
     end
     object ButtonAddNew1: TBitBtn
-      Left = 532
+      Left = 695
       Height = 24
       Top = 9
       Width = 107
@@ -70,7 +70,7 @@ object FormReminders: TFormReminders
       TabOrder = 2
     end
     object ButtonCancel1: TBitBtn
-      Left = 417
+      Left = 580
       Height = 24
       Top = 9
       Width = 107

@@ -85,7 +85,16 @@ type
     FHour,
     FMinute: Integer;  
     FScript: String;
+    FMonday,
+    FTuesday,
+    FWednesday,
+    FThursday,
+    FFriday,
+    FSaturday,
+    FSunday,
     FEnabled: Boolean;
+  public
+    constructor Create;
   published
     property Kind: Integer read FKind write FKind;   
     property Year: Integer read FYear write FYear;
@@ -94,7 +103,14 @@ type
     property Hour: Integer read FHour write FHour;
     property Minute: Integer read FMinute write FMinute;  
     property Script: String read FScript write FScript;
-    property Enabled: Boolean read FEnabled write FEnabled;
+    property Monday: Boolean read FMonday write FMonday default True;
+    property Tuesday: Boolean read FTuesday write FTuesday default True;
+    property Wednesday: Boolean read FWednesday write FWednesday default True;
+    property Thursday: Boolean read FThursday write FThursday default True;
+    property Friday: Boolean read FFriday write FFriday default True;
+    property Saturday: Boolean read FSaturday write FSaturday default True;
+    property Sunday: Boolean read FSunday write FSunday default True;
+    property Enabled: Boolean read FEnabled write FEnabled default True;
   end;
 
   TSaveCollection = class(TCollection)
@@ -245,6 +261,19 @@ begin
   T.FreeOnTerminate := True;
   T.Method := Method;
   T.Start;
+end;
+
+constructor TReminderCollectionItem.Create;
+begin
+  inherited;
+  Monday := True;   
+  Tuesday := True;
+  Wednesday := True;
+  Thursday := True;
+  Friday := True;
+  Saturday := True;
+  Sunday := True;
+  Enabled := True;
 end;
 
 function TSaveCollection.FindByName(const AName: String): TSaveCollectionItem;

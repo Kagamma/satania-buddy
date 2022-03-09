@@ -33,7 +33,14 @@ type
   { TFrameRemindersItem }
 
   TFrameRemindersItem = class(TFrame)
+    CheckBoxSunday: TCheckBox;
     CheckBoxEnable: TCheckBox;
+    CheckBoxMonday: TCheckBox;
+    CheckBoxSaturday: TCheckBox;
+    CheckBoxFriday: TCheckBox;
+    CheckBoxThursday: TCheckBox;
+    CheckBoxWednesday: TCheckBox;
+    CheckBoxTuesday: TCheckBox;
     ComboBoxKind: TComboBox;
     DateTimePicker: TDateTimePicker;
     EditScript: TEdit;
@@ -42,8 +49,11 @@ type
     Panel3: TPanel;
     ButtonDelete: TSpeedButton;
     ButtonRun: TSpeedButton;
+    PanelDateSize: TPanel;
+    PanelDate: TPanel;
     procedure ComboBoxKindChange(Sender: TObject);
     procedure ButtonRunClick(Sender: TObject);
+    procedure PanelDateSizePaint(Sender: TObject);
   private
 
   public
@@ -62,14 +72,27 @@ uses
 procedure TFrameRemindersItem.ComboBoxKindChange(Sender: TObject);
 begin
   case ComboBoxKind.ItemIndex of
-    0: DateTimePicker.Kind := dtkTime;
-    1: DateTimePicker.Kind := dtkDateTime;
+    0:
+      begin
+        DateTimePicker.Kind := dtkTime;
+        PanelDate.Enabled := True;
+      end;
+    1:
+      begin
+        DateTimePicker.Kind := dtkDateTime;
+        PanelDate.Enabled := False;
+      end;
   end;
 end;
 
 procedure TFrameRemindersItem.ButtonRunClick(Sender: TObject);
 begin
   Satania.Action('script', EditScript.Text);
+end;
+
+procedure TFrameRemindersItem.PanelDateSizePaint(Sender: TObject);
+begin
+  PanelDate.Width := PanelDateSize.Left + 1;
 end;
 
 end.

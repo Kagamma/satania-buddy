@@ -2,5 +2,13 @@
 {"hash":342540,"name":"tframeremindersitem.datetimepicker.textfornulldate","sourcebytes":[78,85,76,76],"value":"NULL"},
 {"hash":4728973,"name":"tframeremindersitem.comboboxkind.text","sourcebytes":[65,108,97,114,109],"value":"Alarm"},
 {"hash":79984933,"name":"tframeremindersitem.checkboxenable.hint","sourcebytes":[69,110,97,98,108,101],"value":"Enable"},
-{"hash":106564265,"name":"tframeremindersitem.editscript.text","sourcebytes":[115,32,61,34,73,116,39,115,32,116,105,109,101,33,34,32,110,111,116,105,102,121,40,115,41,32,116,97,108,107,40,115,41,32,115,111,117,110,100,95,112,108,97,121,40,34,98,101,101,112,46,111,103,103,34,41],"value":"s =\"It's time!\" notify(s) talk(s) sound_play(\"beep.ogg\")"}
+{"hash":106564265,"name":"tframeremindersitem.editscript.text","sourcebytes":[115,32,61,34,73,116,39,115,32,116,105,109,101,33,34,32,110,111,116,105,102,121,40,115,41,32,116,97,108,107,40,115,41,32,115,111,117,110,100,95,112,108,97,121,40,34,98,101,101,112,46,111,103,103,34,41],"value":"s =\"It's time!\" notify(s) talk(s) sound_play(\"beep.ogg\")"},
+{"hash":95177353,"name":"tframeremindersitem.checkboxsunday.hint","sourcebytes":[83,117,110,100,97,121],"value":"Sunday"},
+{"hash":88492681,"name":"tframeremindersitem.checkboxmonday.hint","sourcebytes":[77,111,110,100,97,121],"value":"Monday"},
+{"hash":146575129,"name":"tframeremindersitem.checkboxsaturday.hint","sourcebytes":[83,97,116,117,114,100,97,121],"value":"Saturday"},
+{"hash":22916,"name":"tframeremindersitem.checkboxsaturday.caption","sourcebytes":[83,97,116],"value":"Sat"},
+{"hash":81328777,"name":"tframeremindersitem.checkboxfriday.hint","sourcebytes":[70,114,105,100,97,121],"value":"Friday"},
+{"hash":264871721,"name":"tframeremindersitem.checkboxthursday.hint","sourcebytes":[84,104,117,114,115,100,97,121],"value":"Thursday"},
+{"hash":189581113,"name":"tframeremindersitem.checkboxwednesday.hint","sourcebytes":[87,101,100,110,101,115,100,97,121],"value":"Wednesday"},
+{"hash":196909785,"name":"tframeremindersitem.checkboxtuesday.hint","sourcebytes":[84,117,101,115,100,97,121],"value":"Tuesday"}
 ]}

@@ -905,6 +905,7 @@ var
   Q1, Q2: QWord;
   Item: TReminderCollectionItem;
   IsAlarm: Boolean;
+  DOW: Integer;
 begin
   Current := Now;
   DecodeTime(Current, Hour, Minute, Second, Mili);
@@ -927,7 +928,15 @@ begin
         case Item.Kind of
           0:
             begin
-              if (Item.Minute = Minute) and (Item.Hour = Hour) then
+              DOW := DayOfWeek(Current);
+              if (Item.Minute = Minute) and (Item.Hour = Hour) and
+               (((DOW = 1) and (Item.Sunday)) or
+                ((DOW = 2) and (Item.Monday)) or
+                ((DOW = 3) and (Item.Tuesday)) or
+                ((DOW = 4) and (Item.Wednesday)) or
+                ((DOW = 5) and (Item.Thursday)) or
+                ((DOW = 6) and (Item.Friday)) or
+                ((DOW = 7) and (Item.Saturday))) then
                 IsAlarm := True;
             end;
           1:

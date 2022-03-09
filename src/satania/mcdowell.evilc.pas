@@ -344,6 +344,7 @@ type
     class function SEStringGrep(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringSplit(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseOutQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -519,6 +520,15 @@ end;
 class function TBuiltInFunction.SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Args[0].VarString.IndexOf(Args[1]);
+end;        
+
+class function TBuiltInFunction.SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  S: String;
+begin
+  S := Args[0].VarString;
+  Delete(S, Round(Args[1].VarNumber + 1), Round(Args[2].VarNumber));
+  Result := S;
 end;
 
 class function TBuiltInFunction.SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1292,7 +1302,8 @@ begin
   Self.RegisterFunc('pow', @TBuiltInFunction(nil).SEPow, 2);
   Self.RegisterFunc('string_grep', @TBuiltInFunction(nil).SEStringGrep, 2);
   Self.RegisterFunc('string_split', @TBuiltInFunction(nil).SEStringSplit, 2);
-  Self.RegisterFunc('string_find', @TBuiltInFunction(nil).SEStringFind, 2);
+  Self.RegisterFunc('string_find', @TBuiltInFunction(nil).SEStringFind, 2);   
+  Self.RegisterFunc('string_delete', @TBuiltInFunction(nil).SEStringDelete, 3);
   Self.RegisterFunc('lerp', @TBuiltInFunction(nil).SELerp, 3);
   Self.RegisterFunc('slerp', @TBuiltInFunction(nil).SESLerp, 3);
   Self.RegisterFunc('write', @TBuiltInFunction(nil).SEWrite, -1);

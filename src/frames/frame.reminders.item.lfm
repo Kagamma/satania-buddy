@@ -2,9 +2,9 @@ object FrameRemindersItem: TFrameRemindersItem
   Left = 0
   Height = 26
   Top = 0
-  Width = 883
+  Width = 1041
   ClientHeight = 26
-  ClientWidth = 883
+  ClientWidth = 1041
   TabOrder = 0
   DesignLeft = 348
   DesignTop = 27
@@ -12,16 +12,16 @@ object FrameRemindersItem: TFrameRemindersItem
     Left = 0
     Height = 26
     Top = 0
-    Width = 264
+    Width = 296
     Align = alLeft
     ClientHeight = 26
-    ClientWidth = 264
+    ClientWidth = 296
     TabOrder = 0
     object DateTimePicker: TDateTimePicker
-      Left = 88
+      Left = 104
       Height = 24
       Top = 1
-      Width = 175
+      Width = 191
       CenturyFrom = 1941
       MaxDate = 2958465
       MinDate = -53780
@@ -42,11 +42,11 @@ object FrameRemindersItem: TFrameRemindersItem
     end
     object ComboBoxKind: TComboBox
       Left = 1
-      Height = 23
+      Height = 24
       Top = 1
-      Width = 87
+      Width = 103
       Align = alLeft
-      ItemHeight = 15
+      ItemHeight = 0
       ItemIndex = 0
       Items.Strings = (
         'Alarm'
@@ -59,7 +59,7 @@ object FrameRemindersItem: TFrameRemindersItem
     end
   end
   object Panel2: TPanel
-    Left = 832
+    Left = 990
     Height = 26
     Top = 0
     Width = 51
@@ -68,11 +68,11 @@ object FrameRemindersItem: TFrameRemindersItem
     ClientWidth = 51
     TabOrder = 1
     object CheckBoxEnable: TCheckBox
-      Left = 9
+      Left = 6
       Height = 24
       Hint = 'Enable'
       Top = 1
-      Width = 18
+      Width = 21
       Align = alRight
       Checked = True
       State = cbChecked
@@ -89,25 +89,25 @@ object FrameRemindersItem: TFrameRemindersItem
     end
   end
   object Panel3: TPanel
-    Left = 264
+    Left = 480
     Height = 26
     Top = 0
-    Width = 568
+    Width = 510
     Align = alClient
     ClientHeight = 26
-    ClientWidth = 568
+    ClientWidth = 510
     TabOrder = 2
     object EditScript: TEdit
       Left = 1
       Height = 24
       Top = 1
-      Width = 543
+      Width = 485
       Align = alClient
       TabOrder = 0
       Text = 's ="It''s time!" notify(s) talk(s) sound_play("beep.ogg")'
     end
     object ButtonRun: TSpeedButton
-      Left = 544
+      Left = 486
       Height = 24
       Top = 1
       Width = 23
@@ -115,6 +115,103 @@ object FrameRemindersItem: TFrameRemindersItem
       Images = FormEvilCEditor.ImageList
       ImageIndex = 2
       OnClick = ButtonRunClick
+    end
+  end
+  object PanelDate: TPanel
+    Left = 296
+    Height = 26
+    Top = 0
+    Width = 184
+    Align = alLeft
+    ClientHeight = 26
+    ClientWidth = 184
+    TabOrder = 3
+    object CheckBoxSunday: TCheckBox
+      Left = 1
+      Height = 24
+      Hint = 'Sunday'
+      Top = 1
+      Width = 21
+      Align = alLeft
+      Checked = True
+      State = cbChecked
+      TabOrder = 0
+    end
+    object CheckBoxMonday: TCheckBox
+      Left = 22
+      Height = 24
+      Hint = 'Monday'
+      Top = 1
+      Width = 21
+      Align = alLeft
+      Checked = True
+      State = cbChecked
+      TabOrder = 1
+    end
+    object CheckBoxSaturday: TCheckBox
+      Left = 127
+      Height = 24
+      Hint = 'Saturday'
+      Top = 1
+      Width = 47
+      Align = alLeft
+      Caption = 'Sat'
+      Checked = True
+      State = cbChecked
+      TabOrder = 2
+    end
+    object CheckBoxFriday: TCheckBox
+      Left = 106
+      Height = 24
+      Hint = 'Friday'
+      Top = 1
+      Width = 21
+      Align = alLeft
+      Checked = True
+      State = cbChecked
+      TabOrder = 3
+    end
+    object CheckBoxThursday: TCheckBox
+      Left = 85
+      Height = 24
+      Hint = 'Thursday'
+      Top = 1
+      Width = 21
+      Align = alLeft
+      Checked = True
+      State = cbChecked
+      TabOrder = 4
+    end
+    object CheckBoxWednesday: TCheckBox
+      Left = 64
+      Height = 24
+      Hint = 'Wednesday'
+      Top = 1
+      Width = 21
+      Align = alLeft
+      Checked = True
+      State = cbChecked
+      TabOrder = 5
+    end
+    object CheckBoxTuesday: TCheckBox
+      Left = 43
+      Height = 24
+      Hint = 'Tuesday'
+      Top = 1
+      Width = 21
+      Align = alLeft
+      Checked = True
+      State = cbChecked
+      TabOrder = 6
+    end
+    object PanelDateSize: TPanel
+      Left = 174
+      Height = 24
+      Top = 1
+      Width = 1
+      Align = alLeft
+      TabOrder = 7
+      OnPaint = PanelDateSizePaint
     end
   end
 end
