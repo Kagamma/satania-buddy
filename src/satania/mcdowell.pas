@@ -106,6 +106,7 @@ uses
   form.touch,
   mcdowell.chatbot,
   mcdowell.sound,
+  mcdowell.net,
   form.main,
   mcdowell.imap;
 
@@ -155,6 +156,10 @@ begin
   Script.RegisterFunc('email_is_configured', @SEIsEmailConfigured, 0);
   Script.RegisterFunc('sound_play', @SESoundPlay, 1);          
   Script.RegisterFunc('url_open', @SEOpenURL, 1);
+  Script.RegisterFunc('url_get', @SEURLGet, 1);
+  Script.RegisterFunc('url_is_success', @SEURLIsSuccess, 1); 
+  Script.RegisterFunc('url_result_get', @SEURLGetResult, 1);
+  Script.RegisterFunc('url_query', @SEURLProcess, 2);
   Script.RegisterFunc('chatmode_set', @SEChatModeSet, 1);
   Script.ConstMap.Add('name', Name);                        
   Script.ConstMap.Add('CHATMODE_CHAT', CHATMODE_CHAT);
@@ -499,6 +504,7 @@ begin
   end;
   // Generate script menu
   ScriptFiles := TStringList.Create;
+  ScriptFiles.Sorted := True;
   try
     FindAllFiles(ScriptFiles, 'data/scripts/' + Save.Settings.Skin + '/menu', '*.evil', False);
     SetLength(MenuItems, ScriptFiles.Count);

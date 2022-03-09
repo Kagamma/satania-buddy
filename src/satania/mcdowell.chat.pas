@@ -1,3 +1,23 @@
+{
+
+satania-buddy
+Copyright (C) 2022-2022 kagamma
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+}
+
 unit mcdowell.chat;
 
 {$mode ObjFPC}{$H+}
@@ -5,13 +25,13 @@ unit mcdowell.chat;
 interface
 
 uses
-  Classes, SysUtils, fpjson, jsonparser, internetaccess, CastleURIUtils,
+  Classes, SysUtils, fpjson, jsonparser, fphttpclient, CastleURIUtils,
   Process, LCLIntf;
 
 type
   TSataniaChatThread = class(TThread)
   protected
-    procedure SendChatSendToHer;
+    procedure SendToHer;
   public   
     ChatSend,
     ChatResponse,
@@ -21,7 +41,7 @@ type
 
   TSataniaExecThread = class(TThread)
   protected
-    procedure SendChatSendToHer;
+    procedure SendToHer;
   public     
     ChatSend,
     ChatResponse: String;
@@ -34,7 +54,7 @@ implementation
 uses
   mcdowell, globals, mcdowell.chatbot;
 
-procedure TSataniaChatThread.SendChatSendToHer;
+procedure TSataniaChatThread.SendToHer;
 begin
   if ChatType = '' then Exit;
   if ChatResponse = '' then
@@ -77,7 +97,7 @@ begin
             try
               try
                 FormData.Add('message=' + S);
-                JsonString := httpRequest(Save.Settings.BotServer, FormData);
+                JsonString := TFPHTTPClient.SimpleFormPost(Save.Settings.BotServer, FormData);
                 JsonObject := GetJSON(JsonString) as TJSONObject;
                 ChatType := JsonObject['type'].AsString;
                 ChatResponse := JsonObject['message'].AsString;
@@ -119,12 +139,11 @@ begin
     ChatType := 'chat';
     RunCommand(S, ChatResponse);
   end;
-  Synchronize(@SendChatSendToHer);
-  freeThreadVars;
+  Synchronize(@SendToHer);
   Terminate;
 end;
 
-procedure TSataniaExecThread.SendChatSendToHer;
+procedure TSataniaExecThread.SendToHer;
 begin
   // Satania.Action('chat', ChatResponse);
   RunList.Delete(RunList.IndexOf(RunName));
@@ -141,7 +160,7 @@ begin
   begin
     RunCommand(S, ChatResponse);
   end;
-  Synchronize(@SendChatSendToHer);
+  Synchronize(@SendToHer);
   Terminate;
 end;
 

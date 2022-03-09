@@ -75,10 +75,12 @@ type
     sevkArray,
     sevkPointer
   );
+  {$mode delphi}
   TSEValue = record
     {$ifdef SE_STRING}
     VarString: String;
     {$endif}
+    VarArray: array of TSEValue;
     case Kind: TSEValueKind of
       sevkSingle:
         (
@@ -94,13 +96,14 @@ type
         );
       sevkArray:
         (
-          VarArray: Pointer;
+          VarArrayDummy: Pointer;
         );
       sevkPointer:
         (
           VarPointer: Pointer;
         );
   end;
+  {$mode objfpc}
   TSEValueArray = array of TSEValue;
   PSEValue = ^TSEValue;
 
@@ -344,7 +347,8 @@ type
     class function SEStringGrep(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringSplit(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    class function SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseOutQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -434,11 +438,9 @@ begin
 end;
 
 class function TBuiltInFunction.SEArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-var
-  A: TSEValueArray;
 begin
-  SetLength(A, Args[0]);
-  Exit(Pointer(A));
+  Result.Kind := sevkArray;
+  SetLength(Result.VarArray, Args[0]);
 end;
 
 class function TBuiltInFunction.SELerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -514,7 +516,7 @@ begin
   SetLength(A, Length(D));
   for I := 0 to Length(D) - 1 do
     A[I] := D[I];
-  Result.VarArray := Pointer(A);
+  Result.VarArray := A;
 end;
 
 class function TBuiltInFunction.SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -528,6 +530,14 @@ var
 begin
   S := Args[0].VarString;
   Delete(S, Round(Args[1].VarNumber + 1), Round(Args[2].VarNumber));
+  Result := S;
+end;
+
+class function TBuiltInFunction.SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  S: String;
+begin
+  S := StringReplace(Args[0], Args[1], Args[2], [rfReplaceAll]);
   Result := S;
 end;
 
@@ -665,7 +675,7 @@ end;
 operator := (V: TSEValueArray) R: TSEValue; inline;
 begin
   R.Kind := sevkArray;
-  R.VarArray := Pointer(V);
+  R.VarArray := V;
 end;
 operator := (V: Pointer) R: TSEValue; inline;
 begin
@@ -1304,6 +1314,7 @@ begin
   Self.RegisterFunc('string_split', @TBuiltInFunction(nil).SEStringSplit, 2);
   Self.RegisterFunc('string_find', @TBuiltInFunction(nil).SEStringFind, 2);   
   Self.RegisterFunc('string_delete', @TBuiltInFunction(nil).SEStringDelete, 3);
+  Self.RegisterFunc('string_replace', @TBuiltInFunction(nil).SEStringReplace, 3);
   Self.RegisterFunc('lerp', @TBuiltInFunction(nil).SELerp, 3);
   Self.RegisterFunc('slerp', @TBuiltInFunction(nil).SESLerp, 3);
   Self.RegisterFunc('write', @TBuiltInFunction(nil).SEWrite, -1);

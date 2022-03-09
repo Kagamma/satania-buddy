@@ -1,3 +1,23 @@
+{
+
+satania-buddy
+Copyright (C) 2022-2022 kagamma
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+}
+
 {$ifdef unit_protected}
     function SELoadModel(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESetScale(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -31,6 +51,10 @@
     function SESoundPlay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEURLGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    function SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEURLProcess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
@@ -66,9 +90,9 @@ end;
 function TSatania.SEIsRunning(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   if RunList.IndexOf(Args[0]) >= 0 then
-    Result := 1
+    Result := True
   else
-    Result := 0;
+    Result := False;
 end;
 
 function TSatania.SEGetRunResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -234,4 +258,58 @@ function TSatania.SEGetVisible(const VM: TSEVM; const Args: array of TSEValue): 
 begin
   Result := Sprite.Visible;
 end;
+
+function TSatania.SEURLGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Thread: TSataniaNetThread;
+begin  
+  RunList.Add(Args[0]);
+  Thread := TSataniaNetThread.Create(True);
+  Thread.FreeOnTerminate := True;
+  Thread.URL := Args[0];
+  Thread.Start;
+  Result := Args[0].VarString;
+end;
+
+function TSatania.SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  if RunList.IndexOf(Args[0]) >= 0 then
+    Result := False
+  else
+    Result := True;
+end;
+
+function TSatania.SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := '';
+  try
+    Result := RunResultList[Args[0].VarString];
+    RunResultList.Remove(Args[0].VarString);
+  except
+  end;
+end;
+
+function TSatania.SEURLProcess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  X: IXQValue;
+  SL: TStrings;
+  I: Integer;
+  A: TSEValueArray;
+begin
+  SL := TStringList.Create;
+  try
+    for X in simpleinternet.process(Args[0], Args[1]) do
+    begin
+      SL.Add(X.ToString);
+    end;
+    Result.Kind := sevkArray;
+    SetLength(A, SL.Count);
+    for I := 0 to SL.Count - 1 do
+      A[I] := SL[I];
+    Result.VarArray := Pointer(A);
+  finally
+    SL.Free;
+  end;
+end;
+
 {$endif}
