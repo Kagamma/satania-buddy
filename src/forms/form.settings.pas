@@ -48,7 +48,6 @@ type
     EditCharsetTo: TLabeledEdit;
     EditDefaultEvilScheme: TEdit;
     EditChatBubbleDelay: TSpinEdit;
-    EditSearchEngine: TEdit;
     EditFrameSkip: TSpinEdit;
     EditFontName: TEdit;
     EditEmailFetchFrom: TEdit;
@@ -63,7 +62,6 @@ type
     EditBaseScaling: TFloatSpinEdit;
     GroupBoxSTTVosk: TGroupBox;
     LabelChatbotServer: TLabel;
-    LabelChatbotServer1: TLabel;
     LabelSTTBackend: TLabel;
     LabelEmailUsername: TLabel;
     LabelEmailPassword: TLabel;
@@ -92,7 +90,6 @@ type
     Panel1: TPanel;
     PopupMenuCharset: TPopupMenu;
     TabSheet1: TTabSheet;
-    TabSheet2: TTabSheet;
     TabSheetSpeechRecognition: TTabSheet;
     TabSheetEmail: TTabSheet;
     TabSheetGraphics: TTabSheet;
@@ -138,8 +135,7 @@ begin
   ComboBoxSTTBackendChange(Self);
 
   CheckBoxLewd.Checked := Save.Settings.Lewd;
-  EditBotServer.Text := Save.Settings.BotServer;            
-  EditSearchEngine.Text := Save.Settings.SearchEngine;
+  EditBotServer.Text := Save.Settings.BotServer;
   EditFPS.Value := Save.Settings.FPS;
   EditChatBubbleDelay.Value := Save.Settings.ChatBubbleDelay;
   EditSoWRightMargin.Value := Save.Settings.SitOnWindowRightMargin;
@@ -215,8 +211,7 @@ procedure TFormSettings.ButtonOkClick(Sender: TObject);
 begin
   try
     Save.Settings.Lewd := CheckBoxLewd.Checked;
-    Save.Settings.BotServer := EditBotServer.Text;  
-    Save.Settings.SearchEngine := EditSearchEngine.Text;
+    Save.Settings.BotServer := EditBotServer.Text;
     Save.Settings.FPS := EditFPS.Value;
     Save.Settings.ChatBubbleDelay := EditChatBubbleDelay.Value;
     Save.Settings.SitOnWindowRightMargin := EditSoWRightMargin.Value;

@@ -86,51 +86,41 @@ begin
       Satania.ActionFromFile(S);
     end else
     begin
-      if Satania.ChatMode = CHATMODE_CHAT then
+      ChatResponse := Inference(S);
+      if ChatResponse = '' then
       begin
-        ChatResponse := Inference(S);
-        if ChatResponse = '' then
+        if Save.Settings.BotServer <> '' then
         begin
-          if Save.Settings.BotServer <> '' then
-          begin
-            FormData := TStringList.Create;
+          FormData := TStringList.Create;
+          try
             try
-              try
-                FormData.Add('message=' + S);
-                JsonString := TFPHTTPClient.SimpleFormPost(Save.Settings.BotServer, FormData);
-                JsonObject := GetJSON(JsonString) as TJSONObject;
-                ChatType := JsonObject['type'].AsString;
-                ChatResponse := JsonObject['message'].AsString;
-                FreeAndNil(JsonObject);
-              except
-                on E: Exception do
-                begin
-                  ChatResponse := E.Message;
-                  ChatType := 'chat';
-                end;
+              FormData.Add('message=' + S);
+              JsonString := TFPHTTPClient.SimpleFormPost(Save.Settings.BotServer, FormData);
+              JsonObject := GetJSON(JsonString) as TJSONObject;
+              ChatType := JsonObject['type'].AsString;
+              ChatResponse := JsonObject['message'].AsString;
+              FreeAndNil(JsonObject);
+            except
+              on E: Exception do
+              begin
+                ChatResponse := E.Message;
+                ChatType := 'chat';
               end;
-            finally
-              FreeAndNil(FormData);
             end;
-          end else
-          begin
-            if not Save.SpeechToText then
-            begin
-              ChatType := 'chat';
-              ChatResponse := 'Sorry I don''t understand.';
-            end else
-              ChatType := '';
+          finally
+            FreeAndNil(FormData);
           end;
         end else
-          ChatType := 'script';
+        begin
+          if not Save.SpeechToText then
+          begin
+            ChatType := 'chat';
+            ChatResponse := 'Sorry I don''t understand.';
+          end else
+            ChatType := '';
+        end;
       end else
-      if Satania.ChatMode = CHATMODE_SEARCH then
-      begin
-        OpenURL(Format(Save.Settings.SearchEngine, [S]));
-        ChatResponse := S;
-        ChatType := '';
-        Satania.ChatMode := CHATMODE_CHAT;
-      end;
+        ChatType := 'script';
     end;
   end else
   if (Length(S) > 0) and ((Save.Settings.BotServer = '') or (S[1] = '>')) then

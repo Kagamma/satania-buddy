@@ -49,6 +49,7 @@ type
     IsAction: Boolean;
     IsTalking: Boolean;
     IsBlocked: Boolean;
+    ChatResult: String;
     Sprite: TCastleScene;
     Viewport: TCastleViewport;
     LocalBoundingBoxSnapshot: TBox3D;
@@ -160,10 +161,11 @@ begin
   Script.RegisterFunc('url_is_success', @SEURLIsSuccess, 1); 
   Script.RegisterFunc('url_result_get', @SEURLGetResult, 1);
   Script.RegisterFunc('url_query', @SEURLProcess, 2);
-  Script.RegisterFunc('chatmode_set', @SEChatModeSet, 1);
+  Script.RegisterFunc('chat_mode_set', @SEChatModeSet, 1);      
+  Script.RegisterFunc('chat_result_get', @SEChatResultGet, 0);
   Script.ConstMap.Add('name', Name);                        
   Script.ConstMap.Add('CHATMODE_CHAT', CHATMODE_CHAT);
-  Script.ConstMap.Add('CHATMODE_SEARCH', CHATMODE_SEARCH);
+  Script.ConstMap.Add('CHATMODE_SCRIPT', CHATMODE_SCRIPT);
 end;
 
 destructor TSatania.Destroy;
@@ -388,10 +390,16 @@ procedure TSatania.Chat(S: String);
 var
   ChatThread: TSataniaChatThread;
 begin
-  ChatThread := TSataniaChatThread.Create(True);
-  ChatThread.ChatSend := S;
-  ChatThread.FreeOnTerminate := True;
-  ChatThread.Start;
+  if ChatMode = CHATMODE_CHAT then
+  begin
+    ChatThread := TSataniaChatThread.Create(True);
+    ChatThread.ChatSend := S;
+    ChatThread.FreeOnTerminate := True;
+    ChatThread.Start;
+  end else
+  begin
+    ChatResult := S;
+  end;
 end;
 
 procedure TSatania.Update(const Dt: Single);
@@ -423,6 +431,8 @@ end;
 
 procedure TSatania.ResetScript;
 begin
+  ChatMode := CHATMODE_CHAT;
+  ChatResult := '';
   Script.Reset;
   Script.Source := '';
 end;

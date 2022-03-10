@@ -50,7 +50,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEDefaultScheme(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESoundPlay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    function SEChatResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
     function SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -219,6 +220,12 @@ end;
 function TSatania.SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   ChatMode := Round(Args[0].VarNumber);
+end;
+
+function TSatania.SEChatResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := ChatResult;
+  ChatResult := '';
 end;
 
 function TSatania.SEIsSoW(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
