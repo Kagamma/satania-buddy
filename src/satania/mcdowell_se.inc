@@ -56,6 +56,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLProcess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SENumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
+    function SEDates(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEReminderCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEReminderTodayGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
@@ -316,6 +320,84 @@ begin
     Result.VarArray := Pointer(A);
   finally
     SL.Free;
+  end;
+end;
+
+function TSatania.SENumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  A: TDoubleDynArray;
+  I: Integer;
+begin
+  A := WordsToNumbers(Args[0]);
+  Result.Kind := sevkArray;
+  SetLength(Result.VarArray, Length(A));
+  for I := 0 to Length(A) - 1 do
+  begin
+    Result.VarArray[I] := A[I];
+  end;
+end;
+
+function TSatania.SEDates(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  A: TDoubleDynArray;
+  I: Integer;
+begin
+  A := WordsToDates(Args[0]);
+  Result.Kind := sevkArray;
+  SetLength(Result.VarArray, Length(A));
+  for I := 0 to Length(A) - 1 do
+  begin
+    Result.VarArray[I] := A[I];
+  end;
+end;
+
+function TSatania.SEReminderCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Reminder: TReminderCollectionItem;
+  DD, TT: TDateTime;
+  Y, M, D, H, MM, S, MS: Word;
+begin
+  DD := Args[0].VarNumber;
+  TT := Args[1].VarNumber;
+  DecodeDate(DD, Y, M, D);    
+  DecodeTime(TT, H, MM, S, MS);
+  Reminder := Save.Reminders.Add as TReminderCollectionItem;
+  Reminder.Kind := 1;
+  Reminder.Enabled := True;
+  Reminder.Year := Y;
+  Reminder.Month := M;
+  Reminder.Day := D;
+  Reminder.Hour := H;
+  Reminder.Minute := MM;
+  Reminder.Script := Args[2];
+  Save.SaveToFile('configs.json');
+end;
+
+function TSatania.SEReminderTodayGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Reminder: TReminderCollectionItem;
+  Count, I, J: Integer;
+  Y, M, D: Word;
+  V: TSEValue;
+begin
+  Result.Kind := sevkArray;
+  DecodeDate(Now, Y, M, D);
+  Count := 0;
+  for I := Save.Reminders.Count - 1 downto 0 do
+  begin
+    Reminder := TReminderCollectionItem(Save.Reminders.Items[I]);
+    if (Reminder.Year = Y) and
+      (Reminder.Month = M) and
+      (Reminder.Day = D) then
+    begin
+      SetLength(V.VarArray, 5);    
+      SetLength(Result.VarArray, Count + 1);
+      Result.VarArray[Count].Kind := sevkArray;
+      SetLength(Result.VarArray[Count].VarArray, 2);
+      Result.VarArray[Count].VarArray[0] := Reminder.Hour;      
+      Result.VarArray[Count].VarArray[1] := Reminder.Minute;
+      Inc(Count);
+    end;
   end;
 end;
 

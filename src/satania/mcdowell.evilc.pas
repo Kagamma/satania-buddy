@@ -32,7 +32,7 @@ unit Mcdowell.EvilC;
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections, StrUtils, Types;
+  SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils;
 
 type
   TSENumber = {$ifdef SE_PRECISION}Double{$else}Single{$endif};
@@ -195,7 +195,10 @@ type
     tkSquareBracketClose,
     tkAnd,
     tkOr,
-    tkNot
+    tkNot,
+    tkFor,
+    tkTo,
+    tkDownto
   );
 TSETokenKinds = set of TSETokenKind;
 
@@ -204,7 +207,7 @@ const TokenNames: array[TSETokenKind] of String = (
   '>', '<=', '>=', '{', '}', '(', ')', 'neg', 'number', 'string',
   ',', 'if', 'identity', 'function', 'variable', 'const',
   'unknown', 'else', 'while', 'break', 'continue', 'pause', 'yield',
-  '[', ']', 'and', 'or', 'not'
+  '[', ']', 'and', 'or', 'not', 'for', 'to', 'downto'
 );
 
 type
@@ -349,6 +352,7 @@ type
     class function SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
     class function SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringFormat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseOutQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -357,6 +361,15 @@ type
     class function SEEaseOutCubic(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInOutCubic(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGetTickCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEDTNow(const VM: TSEVM; const Args: array of TSEValue): TSEValue;         
+    class function SEDTSetDate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEDTSetTime(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    class function SEDTDayAdd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEDTGetYear(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    class function SEDTGetMonth(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEDTGetDay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    class function SEDTGetHour(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEDTGetMinute(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   end;
 
 class function TBuiltInFunction.SEWrite(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -490,19 +503,21 @@ end;
 
 class function TBuiltInFunction.SEStringGrep(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
+  I: Integer;
   A: TStringDynArray;
   V: String;
 begin
   Result := '';
   A := SplitString(Args[0], #10);
   for V in A do
-    if V.IndexOf(Args[1]) >= 0 then
-    begin
-      if Result = '' then
-        Result.VarString := V
-      else
-        Result.VarString := Result.VarString + #10 + V;
-    end;
+    for I := 1 to Length(Args) - 1 do
+      if V.IndexOf(Args[I]) >= 0 then
+      begin
+        if Result = '' then
+          Result.VarString := V
+        else
+          Result.VarString := Result.VarString + #10 + V;
+      end;
 end;
 
 class function TBuiltInFunction.SEStringSplit(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -538,6 +553,25 @@ var
   S: String;
 begin
   S := StringReplace(Args[0], Args[1], Args[2], [rfReplaceAll]);
+  Result := S;
+end;
+
+class function TBuiltInFunction.SEStringFormat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  I: Integer;
+  S, V: String;
+begin
+  S := Args[0].VarString;
+  for I := 1 to Length(Args) - 1 do
+  begin
+    V := '';
+    if Args[I].Kind = sevkSingle then
+      V := FloatToStr(Args[I].VarNumber)
+    else
+    if Args[I].Kind = sevkString then
+      V := Args[I].VarString;
+    S := StringReplace(S, '{' + IntToStr(I - 1) + '}', V, [rfReplaceAll]);
+  end;
   Result := S;
 end;
 
@@ -632,6 +666,66 @@ var
   S: TSENumber;
 begin
   Exit(GetTickCount64);
+end;
+
+class function TBuiltInFunction.SEDTNow(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := Now;
+end;
+
+class function TBuiltInFunction.SEDTSetDate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := EncodeDate(Round(Args[0].VarNumber), Round(Args[1].VarNumber), Round(Args[2].VarNumber));
+end;
+
+class function TBuiltInFunction.SEDTSetTime(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := EncodeTime(Round(Args[0].VarNumber), Round(Args[1].VarNumber), Round(Args[2].VarNumber), Round(Args[3].VarNumber));
+end;
+
+class function TBuiltInFunction.SEDTDayAdd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := IncDay(Args[0].VarNumber, Round(Args[1].VarNumber));
+end;
+
+class function TBuiltInFunction.SEDTGetYear(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Y, M, D: Word;
+begin
+  DecodeDate(Args[0].VarNumber, Y, M, D);
+  Result := Y;
+end;
+
+class function TBuiltInFunction.SEDTGetMonth(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Y, M, D: Word;
+begin
+  DecodeDate(Args[0].VarNumber, Y, M, D);
+  Result := M;
+end;
+
+class function TBuiltInFunction.SEDTGetDay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Y, M, D: Word;
+begin
+  DecodeDate(Args[0].VarNumber, Y, M, D);
+  Result := D;
+end;
+
+class function TBuiltInFunction.SEDTGetHour(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  H, M ,S, MS: Word;
+begin
+  DecodeTime(Args[0].VarNumber, H, M, S, MS);
+  Result := H;
+end;
+
+class function TBuiltInFunction.SEDTGetMinute(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  H, M ,S, MS: Word;
+begin
+  DecodeTime(Args[0].VarNumber, H, M, S, MS);
+  Result := M;
 end;
 
 function TSEFuncList.Ptr(const P: Integer): PSEFuncInfo; inline;
@@ -1310,7 +1404,8 @@ begin
   Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, 2);
   Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 2);
   Self.RegisterFunc('pow', @TBuiltInFunction(nil).SEPow, 2);
-  Self.RegisterFunc('string_grep', @TBuiltInFunction(nil).SEStringGrep, 2);
+  Self.RegisterFunc('string_grep', @TBuiltInFunction(nil).SEStringGrep, -1);   
+  Self.RegisterFunc('string_format', @TBuiltInFunction(nil).SEStringFormat, -1);
   Self.RegisterFunc('string_split', @TBuiltInFunction(nil).SEStringSplit, 2);
   Self.RegisterFunc('string_find', @TBuiltInFunction(nil).SEStringFind, 2);   
   Self.RegisterFunc('string_delete', @TBuiltInFunction(nil).SEStringDelete, 3);
@@ -1325,7 +1420,16 @@ begin
   Self.RegisterFunc('ease_in_cubic', @TBuiltInFunction(nil).SEEaseInCubic, 1);
   Self.RegisterFunc('ease_out_cubic', @TBuiltInFunction(nil).SEEaseOutCubic, 1);
   Self.RegisterFunc('ease_in_out_cubic', @TBuiltInFunction(nil).SEEaseInOutQuad, 1);
-  Self.RegisterFunc('ticks', @TBuiltInFunction(nil).SEGetTickCount, 0);
+  Self.RegisterFunc('ticks', @TBuiltInFunction(nil).SEGetTickCount, 0);                
+  Self.RegisterFunc('dt_now', @TBuiltInFunction(nil).SEDTNow, 0);
+  Self.RegisterFunc('dt_year_get', @TBuiltInFunction(nil).SEDTGetYear, 1);
+  Self.RegisterFunc('dt_month_get', @TBuiltInFunction(nil).SEDTGetMonth, 1);
+  Self.RegisterFunc('dt_day_get', @TBuiltInFunction(nil).SEDTGetDay, 1);
+  Self.RegisterFunc('dt_hour_get', @TBuiltInFunction(nil).SEDTGetHour, 1);
+  Self.RegisterFunc('dt_minute_get', @TBuiltInFunction(nil).SEDTGetMinute, 1);
+  Self.RegisterFunc('dt_date_set', @TBuiltInFunction(nil).SEDTSetDate, 3);
+  Self.RegisterFunc('dt_time_set', @TBuiltInFunction(nil).SEDTSetTime, 4);
+  Self.RegisterFunc('dt_day_add', @TBuiltInFunction(nil).SEDTDayAdd, 2);
   Self.RegisterFunc('random', @TBuiltInFunction(nil).SERandom, 1);
   Self.RegisterFunc('rnd', @TBuiltInFunction(nil).SERnd, 0);
   Self.RegisterFunc('round', @TBuiltInFunction(nil).SERound, 1);
@@ -1604,6 +1708,12 @@ begin
               Token.Kind := tkIf;
             'else':
               Token.Kind := tkElse;
+            'for':
+              Token.Kind := tkFor;      
+            'to':
+              Token.Kind := tkTo;
+            'downto':
+              Token.Kind := tkDownto;
             'while':
               Token.Kind := tkWhile;
             'continue':
@@ -1656,7 +1766,7 @@ var
   var
     I: Integer;
   begin
-    for I := 0 to Self.LocalVarList.Count - 1 do
+    for I := Self.LocalVarList.Count - 1 downto 0 do
     begin
       Result := Self.LocalVarList.Ptr(I);
       if Result^.Name = Name then
@@ -2042,6 +2152,83 @@ var
     end;
   end;
 
+  procedure ParseFor;  
+  var
+    StartBlock,
+    EndBlock,
+    JumpBlock,
+    JumpEnd: Integer;
+    BreakList,
+    ContinueList: TList;
+    I: Integer;  
+    Token: TSEToken;
+    VarName: String;
+    VarAddr: Integer;
+  begin
+    ContinueList := TList.Create;
+    BreakList := TList.Create;
+    try
+      ContinueStack.Push(ContinueList);
+      BreakStack.Push(BreakList);
+
+      Token := NextTokenExpected([tkVariable, tkIdent]);
+      if Token.Kind = tkIdent then
+      begin
+        Self.LocalVarList.Add(CreateIdent(ikAtom, Token));
+      end;
+      VarName := Token.Value;
+      VarAddr := FindVar(VarName)^.Addr;
+      NextTokenExpected([tkEqual]);
+      ParseExpr;
+      Emit([Pointer(opAssignLocal), VarName, VarAddr]);
+
+      Token := NextTokenExpected([tkTo, tkDownto]);
+      StartBlock := Self.VM.Binary.Count; 
+      Emit([Pointer(opPushLocalVar), VarAddr]);
+      ParseExpr;
+      if Token.Kind = tkTo then
+      begin
+        Emit([Pointer(opPushConst), 1]);
+        Emit([Pointer(opOperatorAdd)]);
+      end else
+      if Token.Kind = tkDownto then
+      begin
+        Emit([Pointer(opPushConst), 1]);
+        Emit([Pointer(opOperatorSub)]);
+      end;
+
+      JumpEnd := Emit([Pointer(opJumpEqual), 0]);
+      ParseBlock;
+
+      Emit([Pointer(opPushLocalVar), VarAddr]);
+      if Token.Kind = tkTo then
+      begin                            
+        Emit([Pointer(opPushConst), 1]);
+        Emit([Pointer(opOperatorAdd)]);
+      end else
+      if Token.Kind = tkDownto then
+      begin
+        Emit([Pointer(opPushConst), 1]);
+        Emit([Pointer(opOperatorSub)]);
+      end;
+      Emit([Pointer(opAssignLocal), VarName, VarAddr]);
+      JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
+      EndBLock := JumpBlock;
+
+      ContinueList := ContinueStack.Pop;
+      BreakList := BreakStack.Pop;
+      for I := 0 to ContinueList.Count - 1 do
+        Patch(Integer(ContinueList[I]), StartBlock);
+      for I := 0 to BreakList.Count - 1 do
+        Patch(Integer(BreakList[I]), EndBlock);
+      Patch(JumpBlock - 1, StartBlock);
+      Patch(JumpEnd - 1, EndBlock);
+    finally
+      ContinueList.Free;
+      BreakList.Free;
+    end;
+  end;
+
   procedure ParseIf;
   var
     StartBlock1,
@@ -2107,6 +2294,11 @@ var
         begin
           NextToken;
           ParseIf;
+        end;
+      tkFor:
+        begin
+          NextToken;
+          ParseFor;
         end;
       tkWhile:
         begin

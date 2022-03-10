@@ -8,6 +8,7 @@ object FormReminders: TFormReminders
   ClientWidth = 926
   OnShow = FormShow
   Position = poScreenCenter
+  LCLVersion = '2.3.0.0'
   object ScrollBoxReminders: TScrollBox
     Left = 8
     Height = 435

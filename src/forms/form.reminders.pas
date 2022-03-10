@@ -176,6 +176,7 @@ begin
     begin
       Frame.DateTimePicker.Date := EncodeDate(Item.Year, Item.Month, Item.Day);
       Frame.DateTimePicker.Kind := dtkDateTime;
+      Frame.PanelDate.Enabled := False;
     end;
     Frame.DateTimePicker.Time := EncodeTime(Item.Hour, Item.Minute, 0, 0);
     Frame.CheckBoxEnable.Checked := Item.Enabled;

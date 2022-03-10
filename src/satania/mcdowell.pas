@@ -27,7 +27,7 @@ interface
 uses
   Classes, SysUtils, syncobjs,
   Forms, Menus, FileUtil, simpleinternet,
-  fpjson, jsonparser, Process,
+  fpjson, jsonparser, Process, Types,
   CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
   CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts, LCLIntf,
@@ -108,6 +108,7 @@ uses
   mcdowell.chatbot,
   mcdowell.sound,
   mcdowell.net,
+  mcdowell.numbers,
   form.main,
   mcdowell.imap;
 
@@ -123,7 +124,9 @@ begin
   PreviousDay := -1;
   UsedRemindersList := TStringList.Create;
   UsedRemindersList.Sorted := True;
-  Script := TEvilC.Create;
+  Script := TEvilC.Create;        
+  Script.RegisterFunc('numbers', @SENumbers, 1);     
+  Script.RegisterFunc('months', @SEDates, 1);
   Script.RegisterFunc('talk', @SETalk, -1);    
   Script.RegisterFunc('notify', @SENotify, 1);
   Script.RegisterFunc('process_run', @SERun, 1);
@@ -162,7 +165,9 @@ begin
   Script.RegisterFunc('url_result_get', @SEURLGetResult, 1);
   Script.RegisterFunc('url_query', @SEURLProcess, 2);
   Script.RegisterFunc('chat_mode_set', @SEChatModeSet, 1);      
-  Script.RegisterFunc('chat_result_get', @SEChatResultGet, 0);
+  Script.RegisterFunc('chat_result_get', @SEChatResultGet, 0);         
+  Script.RegisterFunc('reminder_create', @SEReminderCreate, 3);
+  Script.RegisterFunc('reminder_today_get', @SEReminderTodayGet, 0);
   Script.ConstMap.Add('name', Name);                        
   Script.ConstMap.Add('CHATMODE_CHAT', CHATMODE_CHAT);
   Script.ConstMap.Add('CHATMODE_SCRIPT', CHATMODE_SCRIPT);

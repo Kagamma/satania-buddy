@@ -1,11 +1,11 @@
 object FormEvilCEditor: TFormEvilCEditor
   Left = 256
-  Height = 469
+  Height = 556
   Top = 256
-  Width = 693
+  Width = 927
   Caption = 'EvilC'
-  ClientHeight = 469
-  ClientWidth = 693
+  ClientHeight = 556
+  ClientWidth = 927
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poDefault
@@ -14,7 +14,7 @@ object FormEvilCEditor: TFormEvilCEditor
     Left = 0
     Height = 26
     Top = 0
-    Width = 693
+    Width = 927
     Caption = 'ToolBar1'
     Images = ImageList
     TabOrder = 0
@@ -89,9 +89,9 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   inline Editor: TSynEdit
     Left = 0
-    Height = 419
+    Height = 509
     Top = 26
-    Width = 693
+    Width = 927
     Align = alClient
     Font.Height = 16
     Font.Name = 'Liberation Mono'
@@ -101,7 +101,7 @@ object FormEvilCEditor: TFormEvilCEditor
     ParentFont = False
     TabOrder = 1
     OnKeyDown = EditorKeyDown
-    Gutter.Width = 59
+    Gutter.Width = 61
     Gutter.MouseActions = <>
     RightGutter.Width = 0
     RightGutter.MouseActions = <>
@@ -560,7 +560,7 @@ object FormEvilCEditor: TFormEvilCEditor
         MouseActions = <>
       end
       object SynGutterLineNumber1: TSynGutterLineNumber
-        Width = 19
+        Width = 21
         MouseActions = <>
         MarkupInfo.Background = clBtnFace
         MarkupInfo.Foreground = clNone
@@ -592,9 +592,9 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   object StatusBar: TStatusBar
     Left = 0
-    Height = 24
-    Top = 445
-    Width = 693
+    Height = 21
+    Top = 535
+    Width = 927
     Panels = <    
       item
         Width = 1
