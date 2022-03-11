@@ -126,7 +126,7 @@ begin
   UsedRemindersList.Sorted := True;
   Script := TEvilC.Create;        
   Script.RegisterFunc('numbers', @SENumbers, 1);     
-  Script.RegisterFunc('months', @SEDates, 1);
+  Script.RegisterFunc('months_to_numbers', @SEDates, 1);
   Script.RegisterFunc('talk', @SETalk, -1);    
   Script.RegisterFunc('notify', @SENotify, 1);
   Script.RegisterFunc('process_run', @SERun, 1);

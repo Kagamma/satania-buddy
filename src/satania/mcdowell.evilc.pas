@@ -352,7 +352,9 @@ type
     class function SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
     class function SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEStringFormat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringFormat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
+    class function SEStringUpperCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringLowerCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseOutQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -365,6 +367,8 @@ type
     class function SEDTSetDate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTSetTime(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
     class function SEDTDayAdd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEDTMonthAdd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+    class function SEDTYearAdd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTGetYear(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
     class function SEDTGetMonth(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTGetDay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
@@ -575,6 +579,28 @@ begin
   Result := S;
 end;
 
+class function TBuiltInFunction.SEStringUpperCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  S: String;
+begin
+  Result := '';
+  case Args[0].Kind of
+    sevkString: Result := UpperCase(Args[0].VarString);
+    sevkSingle: Result := UpperCase(Char(Round(Args[0].VarNumber)));
+  end;
+end;
+
+class function TBuiltInFunction.SEStringLowerCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  S: String;
+begin
+  Result := '';
+  case Args[0].Kind of
+    sevkString: Result := LowerCase(Args[0].VarString);
+    sevkSingle: Result := LowerCase(Char(Round(Args[0].VarNumber)));
+  end;
+end;
+
 class function TBuiltInFunction.SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   {$if defined(WINDOWS)}
@@ -686,6 +712,16 @@ end;
 class function TBuiltInFunction.SEDTDayAdd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := IncDay(Args[0].VarNumber, Round(Args[1].VarNumber));
+end;
+
+class function TBuiltInFunction.SEDTMonthAdd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := IncMonth(Args[0].VarNumber, Round(Args[1].VarNumber));
+end;
+
+class function TBuiltInFunction.SEDTYearAdd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := IncYear(Args[0].VarNumber, Round(Args[1].VarNumber));
 end;
 
 class function TBuiltInFunction.SEDTGetYear(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1319,11 +1355,28 @@ begin
                 begin
                   if V^.Kind = sevkString then
                   begin
-                    S := V^.VarString;
                     {$ifdef SE_STRING}
-                    S[Integer(C^)] := B^.VarString[1];
-                    {$else}
+                    V^.VarString[Integer(C^) + 1] := B^.VarString[1]
+                    {$else}  
+                    S := V^.VarString;
                     S[C^] := B^.VarString[0];
+                    {$endif}
+                    // Self.Stack[A] := S;
+                  end else
+                  begin
+                    TSEValueArray(V^.VarArray)[Integer(C^)] := B^;
+                    Self.Stack[Integer(A^)] := V^;
+                  end;
+                end;
+              sevkSingle:
+                begin
+                  if V^.Kind = sevkString then
+                  begin
+                    {$ifdef SE_STRING}
+                    V^.VarString[Integer(C^) + 1] := Char(Round(B^.VarNumber));
+                    {$else}   
+                    S := V^.VarString;
+                    S[C^] := Char(Round(B^.VarNumber));
                     {$endif}
                     // Self.Stack[A] := S;
                   end else
@@ -1410,6 +1463,8 @@ begin
   Self.RegisterFunc('string_find', @TBuiltInFunction(nil).SEStringFind, 2);   
   Self.RegisterFunc('string_delete', @TBuiltInFunction(nil).SEStringDelete, 3);
   Self.RegisterFunc('string_replace', @TBuiltInFunction(nil).SEStringReplace, 3);
+  Self.RegisterFunc('string_uppercase', @TBuiltInFunction(nil).SEStringUpperCase, 1);
+  Self.RegisterFunc('string_lowercase', @TBuiltInFunction(nil).SEStringLowerCase, 1);
   Self.RegisterFunc('lerp', @TBuiltInFunction(nil).SELerp, 3);
   Self.RegisterFunc('slerp', @TBuiltInFunction(nil).SESLerp, 3);
   Self.RegisterFunc('write', @TBuiltInFunction(nil).SEWrite, -1);
@@ -1429,7 +1484,9 @@ begin
   Self.RegisterFunc('dt_minute_get', @TBuiltInFunction(nil).SEDTGetMinute, 1);
   Self.RegisterFunc('dt_date_set', @TBuiltInFunction(nil).SEDTSetDate, 3);
   Self.RegisterFunc('dt_time_set', @TBuiltInFunction(nil).SEDTSetTime, 4);
-  Self.RegisterFunc('dt_day_add', @TBuiltInFunction(nil).SEDTDayAdd, 2);
+  Self.RegisterFunc('dt_day_add', @TBuiltInFunction(nil).SEDTDayAdd, 2);   
+  Self.RegisterFunc('dt_month_add', @TBuiltInFunction(nil).SEDTMonthAdd, 2);
+  Self.RegisterFunc('dt_year_add', @TBuiltInFunction(nil).SEDTYearAdd, 2);
   Self.RegisterFunc('random', @TBuiltInFunction(nil).SERandom, 1);
   Self.RegisterFunc('rnd', @TBuiltInFunction(nil).SERnd, 0);
   Self.RegisterFunc('round', @TBuiltInFunction(nil).SERound, 1);

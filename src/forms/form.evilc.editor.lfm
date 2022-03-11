@@ -10,6 +10,7 @@ object FormEvilCEditor: TFormEvilCEditor
   OnShow = FormShow
   Position = poDefault
   ShowInTaskBar = stAlways
+  LCLVersion = '2.3.0.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
@@ -36,7 +37,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator2: TToolButton
       Left = 101
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator2'
       Style = tbsSeparator
@@ -59,7 +60,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator1: TToolButton
       Left = 24
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator1'
       Style = tbsSeparator
@@ -73,7 +74,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator3: TToolButton
       Left = 132
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator3'
       Style = tbsSeparator
@@ -96,7 +97,7 @@ object FormEvilCEditor: TFormEvilCEditor
     Font.Height = 16
     Font.Name = 'Liberation Mono'
     Font.Pitch = fpFixed
-    Font.Quality = fqNonAntialiased
+    Font.Quality = fqAntialiased
     ParentColor = False
     ParentFont = False
     TabOrder = 1

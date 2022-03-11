@@ -43,7 +43,6 @@ uses
 begin
   RequireDerivedFormResource:=True;
   Application.Scaled:=True;
-  Application.Scaled:=False;
   Application.Initialize;
   Application.CreateForm(TFormMain, FormMain);
   Application.CreateForm(TFormTouch, FormTouch);
