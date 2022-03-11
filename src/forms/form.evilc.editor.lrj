@@ -16,5 +16,8 @@
 {"hash":322608,"name":"tformevilceditor.toolbutton1.hint","sourcebytes":[72,101,108,112],"value":"Help"},
 {"hash":322608,"name":"tformevilceditor.toolbutton1.caption","sourcebytes":[72,101,108,112],"value":"Help"},
 {"hash":97534741,"name":"tformevilceditor.opendialog.title","sourcebytes":[79,112,101,110,32,69,118,105,108,32,83,99,104,101,109,101],"value":"Open Evil Scheme"},
-{"hash":47234325,"name":"tformevilceditor.savedialog.title","sourcebytes":[83,97,118,101,32,69,118,105,108,32,83,99,104,101,109,101],"value":"Save Evil Scheme"}
+{"hash":47234325,"name":"tformevilceditor.savedialog.title","sourcebytes":[83,97,118,101,32,69,118,105,108,32,83,99,104,101,109,101],"value":"Save Evil Scheme"},
+{"hash":19140,"name":"tformevilceditor.menuitemeditorcut.caption","sourcebytes":[67,117,116],"value":"Cut"},
+{"hash":304761,"name":"tformevilceditor.menuitemeditorcopy.caption","sourcebytes":[67,111,112,121],"value":"Copy"},
+{"hash":5671589,"name":"tformevilceditor.menuitemeditorpaste.caption","sourcebytes":[80,97,115,116,101],"value":"Paste"}
 ]}

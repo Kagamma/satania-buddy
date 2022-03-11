@@ -10,7 +10,6 @@ object FormEvilCEditor: TFormEvilCEditor
   OnShow = FormShow
   Position = poDefault
   ShowInTaskBar = stAlways
-  LCLVersion = '2.3.0.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
@@ -37,7 +36,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator2: TToolButton
       Left = 101
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator2'
       Style = tbsSeparator
@@ -60,7 +59,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator1: TToolButton
       Left = 24
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator1'
       Style = tbsSeparator
@@ -74,7 +73,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator3: TToolButton
       Left = 132
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator3'
       Style = tbsSeparator
@@ -732,5 +731,21 @@ object FormEvilCEditor: TFormEvilCEditor
     SymbolAttri.Foreground = clRed
     Left = 344
     Top = 64
+  end
+  object PopupMenuEditor: TPopupMenu
+    Left = 344
+    Top = 147
+    object MenuItemEditorCut: TMenuItem
+      Caption = 'Cut'
+      OnClick = MenuItemEditorCutClick
+    end
+    object MenuItemEditorCopy: TMenuItem
+      Caption = 'Copy'
+      OnClick = MenuItemEditorCopyClick
+    end
+    object MenuItemEditorPaste: TMenuItem
+      Caption = 'Paste'
+      OnClick = MenuItemEditorPasteClick
+    end
   end
 end

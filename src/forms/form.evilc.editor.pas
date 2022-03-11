@@ -26,7 +26,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  SynEdit, SynHighlighterCpp, SynEditMarkupSpecialLine, LCLTranslator, lclintf;
+  SynEdit, SynHighlighterCpp, SynEditMarkupSpecialLine, LCLTranslator, lclintf,
+  Menus;
 
 type
 
@@ -34,7 +35,11 @@ type
 
   TFormEvilCEditor = class(TForm)
     ImageList: TImageList;
+    MenuItemEditorCut: TMenuItem;
+    MenuItemEditorCopy: TMenuItem;
+    MenuItemEditorPaste: TMenuItem;
     OpenDialog: TOpenDialog;
+    PopupMenuEditor: TPopupMenu;
     SaveDialog: TSaveDialog;
     Editor: TSynEdit;
     StatusBar: TStatusBar;
@@ -55,6 +60,9 @@ type
       var Special: boolean; var FG, BG: TColor);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MenuItemEditorCopyClick(Sender: TObject);
+    procedure MenuItemEditorCutClick(Sender: TObject);
+    procedure MenuItemEditorPasteClick(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButtonNewClick(Sender: TObject);
     procedure ToolButtonOpenClick(Sender: TObject);
@@ -96,6 +104,21 @@ begin
   {$ifdef WINDOWS}
   Editor.Font.Name := 'Consolas';
   {$endif}
+end;
+
+procedure TFormEvilCEditor.MenuItemEditorCopyClick(Sender: TObject);
+begin
+  Editor.CopyToClipboard;
+end;
+
+procedure TFormEvilCEditor.MenuItemEditorCutClick(Sender: TObject);
+begin
+  Editor.CutToClipboard;
+end;
+
+procedure TFormEvilCEditor.MenuItemEditorPasteClick(Sender: TObject);
+begin
+  Editor.PasteFromClipboard;
 end;
 
 procedure TFormEvilCEditor.ToolButton1Click(Sender: TObject);
