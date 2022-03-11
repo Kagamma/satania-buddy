@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {$if defined(LINUX_X11)}
 
 {$ifdef unit_declare_interface}
-  X, Xlib, glx, qt5,
+  X, Xlib, glx, qt5, qtwidgets,
 {$endif unit_declare_interface}
 
 {$ifdef unit_public}
@@ -49,6 +49,8 @@ begin
     Exit;
   XGetInputFocus(XDisplay, @Window, @I);
   XGetWindowAttributes(XDisplay, Window, @Attrib);
+  if Window = QWidget_winId(TQtMainWindow(FormTouch.Handle).Widget) then
+    Exit;
   // Find the actual top window
   Window := FindTopWindow(Window);
   // A bit delay so that GetForegroundWindow has a chance to update

@@ -62,6 +62,7 @@ procedure AddFormToIgnoreHandleList(F: TForm);
 implementation
 
 uses
+  form.touch,
   mcdowell;
 
 procedure AddFormToIgnoreHandleList(F: TForm);

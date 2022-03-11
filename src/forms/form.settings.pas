@@ -162,7 +162,8 @@ begin
   EditEmailPort.Value := Save.Settings.EmailPort;
   EditEmailUsername.Text := Save.Settings.EmailUsername;
   EditEmailFetchFrom.Text := Save.Settings.EmailFetchFrom;
-                                                  
+
+  ComboBoxSTTVoskModel.Clear;
   SL := TStringList.Create;
   FindAllDirectories(SL, 'data/nn/vosk', False);
   for I := 0 to SL.Count - 1 do

@@ -51,7 +51,7 @@ begin
     IsWindowChanged := True;
     Exit;
   end;
-  if Window <> Satania.Form.Handle then
+  if (Window <> Satania.Form.Handle) and (Window <> FormTouch.Handle) then
   begin
     GetWindowRect(Window, Rect);
     Result := Point(Max(Rect.Location.X, Rect.Location.X + Rect.Width - Save.Settings.SitOnWindowRightMargin), Rect.Location.Y);

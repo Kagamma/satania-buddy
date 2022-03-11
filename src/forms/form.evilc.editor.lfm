@@ -99,6 +99,7 @@ object FormEvilCEditor: TFormEvilCEditor
     Font.Quality = fqAntialiased
     ParentColor = False
     ParentFont = False
+    PopupMenu = PopupMenuEditor
     TabOrder = 1
     OnKeyDown = EditorKeyDown
     Gutter.Width = 61
