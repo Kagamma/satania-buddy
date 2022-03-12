@@ -99,7 +99,10 @@ end;
 procedure TSataniaSpeechToText.Disable;
 begin
   if FVoskThread <> nil then
-    FreeAndNil(FVoskThread);
+  begin
+    FVoskThread.Terminate;
+    FVoskThread := nil;
+  end;
   {$ifdef WINDOWS}
   SpDisable;
   {$endif}

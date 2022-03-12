@@ -83,6 +83,9 @@ type
 
 implementation
 
+var
+  IsRunning: Boolean = False;
+
 procedure TVoskThread.SendHypothesis;
 begin
   if Assigned(FOnHypothesis) then
@@ -98,6 +101,7 @@ end;
 constructor TVoskThread.Create;
 begin
   inherited Create(True);
+  FreeOnTerminate := True;
 end;
 
 destructor TVoskThread.Destroy;
@@ -108,6 +112,7 @@ begin
     vosk_recognizer_free(FRec);
   if FModel <> nil then
     vosk_model_free(FModel);
+  IsRunning := False;
   inherited;
 end;
 
@@ -135,6 +140,13 @@ var
   Text: String;
   JSObject: TJSONObject;
 begin
+  while IsRunning do
+  begin
+    if Terminated then
+      Exit;
+    Sleep(256);
+  end;
+  IsRunning := True;
   while not Terminated do
   begin
     if FActive then

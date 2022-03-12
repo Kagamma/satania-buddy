@@ -68,9 +68,6 @@
     </RunParams>
     <RequiredPackages>
       <Item>
-        <PackageName Value="lazactivex"/>
-      </Item>
-      <Item>
         <PackageName Value="DateTimeCtrlsDsgn"/>
       </Item>
       <Item>
