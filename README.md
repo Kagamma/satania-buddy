@@ -8,9 +8,9 @@ Download page: https://kgm.itch.io/satania-buddy
 ##### Q: Overall system requirements?
 
 A:
-- Any decent x86_64 CPU should be able to run. I personally run it on an i7-6700HQ and it barely reach 1% CPU usage (around 2% - 3% with Speech Recognition enable).
+- CPU: Any decent x86_64 CPU should be able to run. I personally run it on an i7-6700HQ and it barely reach 1% CPU usage (around 2% - 3% with Speech Recognition enable).
 - RAM: The app consumes 100MB without Speech Recognition enable, and 300MB with Speech Recognition enable.
-- Any decent intel iGPU with support for OpenGL 2.0 should be enough to run the app.
+- GPU: Any decent intel iGPU with support for OpenGL 2.0 should be enough to run the app.
 
 ##### Q: Windows requirements?
 
@@ -42,7 +42,7 @@ A: Satania Buddy works completely offline without any connections to remote serv
 
 ##### Q: Scripting API?
 
-A: https://github.com/Kagamma/satania-buddy/wiki/Scripting-APIs
+A: https://github.com/Kagamma/satania-buddy/wiki/Scripting-References-&-APIs
 
 ##### Q: How to make her speaks in my language? She only shows `?` in her chat bubble.
 
