@@ -325,11 +325,7 @@ begin
   FSettings.Skin := 'satania';
   FSettings.STTVoskModel := 'english';
   FSettings.STTBackend := SPEECH_RECOGNIZER_BACKEND_VOSK;
-  {$ifdef WINDOWS}
-  FSettings.FSitOnWindowRightMargin := 256;
-  {$else}
-  FSettings.FSitOnWindowRightMargin := 192;
-  {$endif}
+  FSettings.FSitOnWindowRightMargin := 86;
 end;
 
 destructor TSave.Destroy;
