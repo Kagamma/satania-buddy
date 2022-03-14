@@ -336,7 +336,8 @@ type
     class function SENumber(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEWait(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SELength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;      
+    class function SEArrayCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SELerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESLerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESign(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -458,6 +459,18 @@ class function TBuiltInFunction.SEArray(const VM: TSEVM; const Args: array of TS
 begin
   Result.Kind := sevkArray;
   SetLength(Result.VarArray, Args[0]);
+end;
+
+class function TBuiltInFunction.SEArrayCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  I: Integer;
+begin
+  Result.Kind := sevkArray;
+  SetLength(Result.VarArray, Length(Args));
+  for I := 0 to Length(Args) - 1 do
+  begin
+    Result.VarArray[I] := Args[I];
+  end;
 end;
 
 class function TBuiltInFunction.SELerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1452,7 +1465,8 @@ begin
   Self.RegisterFunc('number', @TBuiltInFunction(nil).SENumber, 1);
   Self.RegisterFunc('wait', @TBuiltInFunction(nil).SEWait, 1);
   Self.RegisterFunc('length', @TBuiltInFunction(nil).SELength, 1);
-  Self.RegisterFunc('array', @TBuiltInFunction(nil).SEArray, 1);
+  Self.RegisterFunc('array', @TBuiltInFunction(nil).SEArray, 1);  
+  Self.RegisterFunc('array_create', @TBuiltInFunction(nil).SEArrayCreate, -1);
   Self.RegisterFunc('sign', @TBuiltInFunction(nil).SESign, 1);
   Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, 2);
   Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 2);

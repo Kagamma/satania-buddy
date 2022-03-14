@@ -160,7 +160,9 @@ begin
   Script.RegisterFunc('email_is_configured', @SEIsEmailConfigured, 0);
   Script.RegisterFunc('sound_play', @SESoundPlay, 1);          
   Script.RegisterFunc('url_open', @SEOpenURL, 1);
-  Script.RegisterFunc('url_get', @SEURLGet, 1);
+  Script.RegisterFunc('url_get', @SEURLGet, 1);    
+  Script.RegisterFunc('url_post', @SEURLPost, 2);
+  Script.RegisterFunc('url_upload', @SEURLUpload, 4);
   Script.RegisterFunc('url_is_success', @SEURLIsSuccess, 1); 
   Script.RegisterFunc('url_result_get', @SEURLGetResult, 1);
   Script.RegisterFunc('url_query', @SEURLProcess, 2);

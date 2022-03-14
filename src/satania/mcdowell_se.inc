@@ -52,7 +52,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
     function SEChatResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    function SEURLGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;        
+    function SEURLPost(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLProcess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -272,12 +274,54 @@ end;
 
 function TSatania.SEURLGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
-  Thread: TSataniaNetThread;
+  Thread: TSataniaHttpGetThread;
 begin  
   RunList.Add(Args[0]);
-  Thread := TSataniaNetThread.Create(True);
+  Thread := TSataniaHttpGetThread.Create(True);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
+  Thread.Start;
+  Result := Args[0].VarString;
+end;
+
+function TSatania.SEURLPost(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Thread: TSataniaHttpPostThread;
+  I: Integer;
+begin
+  RunList.Add(Args[0]);
+  Thread := TSataniaHttpPostThread.Create(True);
+  Thread.FreeOnTerminate := True;
+  Thread.URL := Args[0];
+  for I := 0 to Length(Args[1].VarArray) do
+  begin
+    if Args[1].VarArray[I].Kind = sevkSingle then
+      Thread.FormData.Add(FloatToStr(Args[1].VarArray[I].VarNumber))
+    else
+      Thread.FormData.Add(Args[1].VarArray[I].VarString);
+  end;
+  Thread.Start;
+  Result := Args[0].VarString;
+end;
+
+function TSatania.SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Thread: TSataniaHttpPostThread;
+  I: Integer;
+begin
+  RunList.Add(Args[0]);
+  Thread := TSataniaHttpPostThread.Create(True);
+  Thread.FreeOnTerminate := True;
+  Thread.URL := Args[0];
+  for I := 0 to Length(Args[1].VarArray) do
+  begin
+    if Args[1].VarArray[I].Kind = sevkSingle then
+      Thread.FormData.Add(FloatToStr(Args[1].VarArray[I].VarNumber))
+    else
+      Thread.FormData.Add(Args[1].VarArray[I].VarString);
+  end;
+  Thread.FieldName := Args[2];
+  Thread.FileName := Args[3];
   Thread.Start;
   Result := Args[0].VarString;
 end;
