@@ -61,7 +61,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SENumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
     function SEDates(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEReminderCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEReminderTodayGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEReminderTodayGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    function SEClipboardGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEClipboardToFile(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
@@ -307,18 +311,19 @@ end;
 function TSatania.SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   Thread: TSataniaHttpPostThread;
-  I: Integer;
+  I, P: Integer;
 begin
   RunList.Add(Args[0]);
   Thread := TSataniaHttpPostThread.Create(True);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
-  for I := 0 to Length(Args[1].VarArray) do
+  for I := 0 to Length(Args[1].VarArray) div 2 - 1 do
   begin
+    P := I * 2;
     if Args[1].VarArray[I].Kind = sevkSingle then
-      Thread.FormData.Add(FloatToStr(Args[1].VarArray[I].VarNumber))
+      Thread.FormData.Values[Args[1].VarArray[P].VarString] := FloatToStr(Args[1].VarArray[P + 1].VarNumber)
     else
-      Thread.FormData.Add(Args[1].VarArray[I].VarString);
+      Thread.FormData.Values[Args[1].VarArray[P].VarString] := Args[1].VarArray[P + 1].VarString;
   end;
   Thread.FieldName := Args[2];
   Thread.FileName := Args[3];
@@ -443,6 +448,57 @@ begin
       Inc(Count);
     end;
   end;
+end;
+
+function TSatania.SEClipboardGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+begin
+  if Clipboard.HasFormat(PredefinedClipboardFormat(pcfText)) then
+    Result := StringReplace(Clipboard.AsText, 'file://', '', [rfReplaceAll])
+  else
+    Result := '';
+end;    
+
+function TSatania.SEClipboardToFile(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  S: String;
+  Jpeg: TJPEGImage;
+  FS: TFileStream;
+  B: TBitmap;
+begin
+  if Clipboard.HasFormat(PredefinedClipboardFormat(pcfBitmap)) then
+  begin
+    Jpeg := TJPEGImage.Create;
+    B := TBitmap.Create;
+    try
+      B.LoadFromClipboardFormat(PredefinedClipboardFormat(pcfBitmap));
+      Jpeg.CompressionQuality := 80;
+      Jpeg.Assign(B);
+      Jpeg.SaveToFile(Args[0]);
+    finally
+      Jpeg.Free;
+      B.Free;
+    end;
+  end else
+  if Clipboard.HasFormat(PredefinedClipboardFormat(pcfBitmap)) then
+  begin
+    FS := TFileStream.Create(Args[0], fmCreate);
+    try
+      S := Clipboard.AsText;
+      FS.WriteAnsiString(S);
+    finally   
+      FS.Free;
+    end;
+  end;
+end;
+
+function TSatania.SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := FileExists(Args[0].VarString);
+end;
+
+function TSatania.SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+begin
+  DeleteFile(Args[0].VarString);
 end;
 
 {$endif}

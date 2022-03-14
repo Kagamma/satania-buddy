@@ -73,9 +73,13 @@ begin
     try
       if (FieldName <> '') and (FileName <> '') then
       begin
-        HTTP.FileFormPost(URL, FormData, FieldName, FileName, Response);
-        Data := Response.DataString;       
-        Response.Free;
+        Response := TStringStream.Create('');
+        try
+          HTTP.FileFormPost(URL, FormData, FieldName, FileName, Response);
+          Data := Response.DataString;
+        finally
+          Response.Free;
+        end;
       end else
         Data := HTTP.FormPost(URL, FormData);
       Synchronize(@SendToHer);

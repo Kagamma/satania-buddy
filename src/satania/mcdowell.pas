@@ -25,13 +25,13 @@ unit Mcdowell;
 interface
 
 uses
-  Classes, SysUtils, syncobjs,
+  Classes, SysUtils,
   Forms, Menus, FileUtil, simpleinternet,
-  fpjson, jsonparser, Process, Types,
+  fpjson, jsonparser, Process, LCLType, Types, LCLIntf, Graphics, syncobjs,
   CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
-  CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts, LCLIntf,
-  CastleBehaviors,
+  CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts,
+  CastleBehaviors, Clipbrd,
   Mcdowell.EvilC, Mcdowell.Chat, Globals;
 
 type
@@ -170,6 +170,10 @@ begin
   Script.RegisterFunc('chat_result_get', @SEChatResultGet, 0);         
   Script.RegisterFunc('reminder_create', @SEReminderCreate, 3);
   Script.RegisterFunc('reminder_today_get', @SEReminderTodayGet, 0);
+  Script.RegisterFunc('clipboard_get', @SEClipboardGet, 0);  
+  Script.RegisterFunc('clipboard_to_file', @SEClipboardToFile, 1);
+  Script.RegisterFunc('fs_file_delete', @SEFileDelete, 1);    
+  Script.RegisterFunc('fs_file_exists', @SEFileExists, 1);
   Script.ConstMap.Add('name', Name);                        
   Script.ConstMap.Add('CHATMODE_CHAT', CHATMODE_CHAT);
   Script.ConstMap.Add('CHATMODE_SCRIPT', CHATMODE_SCRIPT);
