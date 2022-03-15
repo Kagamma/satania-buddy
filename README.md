@@ -92,10 +92,6 @@ A: Nah just a tourist.
 
 A: I suck at C/Rust/whatever shiny, "modern" programming languages out there. I also suck at pixel arts.
 
-##### Q: I want to nakadashi! Where's the lewd!
-
-A: There's limited fanservice, just enable it in `Settings`. If you want more than that, feel free to create it yourself ;)
-
 ##### Q: Uoooooooohhh?
 
 A: Uoooooooohhh?
