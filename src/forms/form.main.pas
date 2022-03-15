@@ -75,6 +75,7 @@ type
   TFormMain = class(TForm)
     CastleControl: TCastleControl;
     MenuItem1: TMenuItem;
+    MenuItemHelpVoiceCommand: TMenuItem;
     MenuItemHelpAlarmsAndReminders: TMenuItem;
     MenuItemHelpRules: TMenuItem;
     MenuItemRules: TMenuItem;
@@ -106,6 +107,7 @@ type
     procedure MenuItemEditorClick(Sender: TObject);
     procedure MenuItemHelpAlarmsAndRemindersClick(Sender: TObject);
     procedure MenuItemHelpRulesClick(Sender: TObject);
+    procedure MenuItemHelpVoiceCommandClick(Sender: TObject);
     procedure MenuItemHideShowClick(Sender: TObject);
     procedure MenuItemQuitClick(Sender: TObject);
     procedure MenuItemRefreshMenuClick(Sender: TObject);
@@ -252,6 +254,11 @@ end;
 procedure TFormMain.MenuItemHelpRulesClick(Sender: TObject);
 begin
   OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Rules');
+end;
+
+procedure TFormMain.MenuItemHelpVoiceCommandClick(Sender: TObject);
+begin
+  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Default-voice-commands');
 end;
 
 procedure TFormMain.MenuItemHideShowClick(Sender: TObject);

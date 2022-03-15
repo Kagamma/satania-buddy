@@ -174,6 +174,8 @@ begin
   Script.RegisterFunc('clipboard_to_file', @SEClipboardToFile, 1);
   Script.RegisterFunc('fs_file_delete', @SEFileDelete, 1);    
   Script.RegisterFunc('fs_file_exists', @SEFileExists, 1);
+  Script.RegisterFunc('fs_file_read', @SEFileRead, 1);
+  Script.RegisterFunc('fs_file_write', @SEFileWrite, 2);
   Script.ConstMap.Add('name', Name);                        
   Script.ConstMap.Add('CHATMODE_CHAT', CHATMODE_CHAT);
   Script.ConstMap.Add('CHATMODE_SCRIPT', CHATMODE_SCRIPT);

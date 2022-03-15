@@ -64,6 +64,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEReminderTodayGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
     function SEClipboardGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEClipboardToFile(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEFileRead(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    function SEFileWrite(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
@@ -488,6 +490,32 @@ begin
     finally   
       FS.Free;
     end;
+  end;
+end;   
+
+function TSatania.SEFileRead(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  SL: TStrings;
+begin
+  SL := TStringList.Create;
+  try
+    SL.LoadFromFile(Args[0]);
+    Result := SL.Text;
+  finally
+    SL.Free;
+  end;
+end;
+
+function TSatania.SEFileWrite(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  SL: TStrings;
+begin
+  SL := TStringList.Create;
+  try
+    SL.Text := Args[1]; 
+    SL.SaveToFile(Args[0]);
+  finally
+    SL.Free;
   end;
 end;
 
