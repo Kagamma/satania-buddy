@@ -258,6 +258,7 @@ type
     IsDone: Boolean;
     constructor Create;
     destructor Destroy; override;
+    procedure AddDefaultConsts;
     function IsWaited: Boolean;
     function GetIsPaused: Boolean;
     procedure SetIsPaused(V: Boolean);
@@ -1509,12 +1510,7 @@ begin
   Self.RegisterFunc('tan', @TBuiltInFunction(nil).SETan, 1);
   Self.RegisterFunc('cot', @TBuiltInFunction(nil).SECot, 1);
   Self.RegisterFunc('os', @TBuiltInFunction(nil).SEOS, 0);
-  Self.ConstMap.Add('pi', PI);
-  Self.ConstMap.Add('nl', #10);
-  Self.ConstMap.Add('width', 1600);
-  Self.ConstMap.Add('height', 900);
-  Self.ConstMap.Add('true', True);
-  Self.ConstMap.Add('false', False);
+  Self.AddDefaultConsts;
   Self.Source := '';
   Self.Reset;
 end;
@@ -1529,6 +1525,16 @@ begin
   FreeAndNil(Self.ScopeStack);
   FreeAndNil(Self.LineOfCodeList);
   inherited;
+end;
+
+procedure TEvilC.AddDefaultConsts;
+begin
+  Self.ConstMap.Add('pi', PI);
+  Self.ConstMap.Add('nl', #10);
+  Self.ConstMap.Add('width', 1600);
+  Self.ConstMap.Add('height', 900);
+  Self.ConstMap.Add('true', True);
+  Self.ConstMap.Add('false', False);
 end;
 
 procedure TEvilC.SetSource(V: String);

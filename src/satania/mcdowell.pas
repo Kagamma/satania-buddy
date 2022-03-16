@@ -90,6 +90,7 @@ type
     procedure UpdateMenuItems;
     procedure SetVisible(const V: Boolean);
     procedure UpdateReminders;
+    procedure UpdateMeta;
   end;
 
 var
@@ -176,9 +177,7 @@ begin
   Script.RegisterFunc('fs_file_exists', @SEFileExists, 1);
   Script.RegisterFunc('fs_file_read', @SEFileRead, 1);
   Script.RegisterFunc('fs_file_write', @SEFileWrite, 2);
-  Script.ConstMap.Add('name', Name);                        
-  Script.ConstMap.Add('CHATMODE_CHAT', CHATMODE_CHAT);
-  Script.ConstMap.Add('CHATMODE_SCRIPT', CHATMODE_SCRIPT);
+  UpdateMeta;
 end;
 
 destructor TSatania.Destroy;
@@ -633,6 +632,44 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TSatania.UpdateMeta;
+var
+  JSON: TJSONObject;
+  SL: TStrings;
+  MetaPath: String;
+  IsNamed: Boolean = False;
+  I: Integer;
+begin
+  Script.ConstMap.Clear;
+  Script.AddDefaultConsts;
+  Script.ConstMap.Add('CHATMODE_CHAT', CHATMODE_CHAT);
+  Script.ConstMap.Add('CHATMODE_SCRIPT', CHATMODE_SCRIPT);
+  MetaPath := 'data/scripts/' + Save.Settings.Skin + '/meta.json';
+  Name := 'Satania';
+  if FileExists(MetaPath) then
+  begin
+    SL := TStringList.Create;
+    try
+      SL.LoadFromFile(MetaPath);
+      JSON := GetJSON(SL.Text) as TJSONObject;
+      for I := 0 to JSON.Count - 1 do
+      begin
+        Script.ConstMap.Add(JSON.Names[I], JSON.Items[I].AsString);
+        if JSON.Names[I] = 'name' then
+        begin
+          IsNamed := True;
+          Name := JSON.Items[I].AsString;
+        end;
+      end;
+      JSON.Free;
+    finally
+      SL.Free;
+    end;
+  end;
+  if not IsNamed then
+    Script.ConstMap.Add('name', Name);
 end;
 
 initialization

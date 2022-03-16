@@ -244,7 +244,8 @@ begin
     //
     ApplicationProperties.LimitFPS := Save.Settings.FPS;
     Satania.ChatText.TypingSpeed := Save.Settings.TextSpeed;
-    Satania.SetImageQuality(Save.Settings.ImageQuality);
+    Satania.SetImageQuality(Save.Settings.ImageQuality);   
+    Satania.UpdateMeta;
     Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
     Satania.FontSystem.URL := PATH_FONT + Save.Settings.Font;
     Satania.FontSystem.OptimalSize := Save.Settings.FontSize;
