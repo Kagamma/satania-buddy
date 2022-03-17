@@ -19,15 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
 {$ifdef unit_protected}
-    function SELoadModel(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESetScale(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESetVisible(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEGetVisible(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESpriteLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESpriteVisibleSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESpriteVisibleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SERun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsRunning(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEGetRunResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEProcessRun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEProcessIsRunning(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEProcessResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsAnimationPlaying(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStopAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStopAllAnimations(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEIsLewd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsSilent(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsSpeechToText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SELoadScheme(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESchemeLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDelta(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELoadEmails(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEGetUnseenEmailCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEIsEmailLoading(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsEmailSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsEmailConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEDefaultScheme(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESchemeDefault(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESoundPlay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLProcess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SENumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
-    function SEDates(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEMonthsToNumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEReminderCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEReminderTodayGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
     function SEClipboardGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -95,12 +95,12 @@ begin
   Notify(Name, Args[0]);
 end;
 
-function TSatania.SERun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEProcessRun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Exec(Args[0]);
 end;
 
-function TSatania.SEIsRunning(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEProcessIsRunning(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   if RunList.IndexOf(Args[0]) >= 0 then
     Result := True
@@ -108,7 +108,7 @@ begin
     Result := False;
 end;
 
-function TSatania.SEGetRunResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEProcessResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := '';
   try
@@ -118,7 +118,7 @@ begin
   end;
 end;
 
-function TSatania.SELoadModel(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESpriteLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   LoadModel(Args[0]);
 end;
@@ -160,7 +160,7 @@ begin
   StopAllAnimations;
 end;
 
-function TSatania.SELoadScheme(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESchemeLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Satania.ActionFromFile(Args[0]);
 end;
@@ -210,7 +210,7 @@ begin
   Result := SataniaIMAP.IsEmailConfigured;
 end;
 
-function TSatania.SEDefaultScheme(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESchemeDefault(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Save.Settings.DefaultEvilScheme;
 end;
@@ -260,12 +260,12 @@ begin
   Result := Save.SpeechToText
 end;
 
-function TSatania.SESetScale(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   SetScale(Args[0].VarNumber);
 end;
 
-function TSatania.SESetVisible(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESpriteVisibleSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   if Args[0].VarNumber = 0 then
     SetVisible(False)
@@ -273,7 +273,7 @@ begin
     SetVisible(True);
 end;
 
-function TSatania.SEGetVisible(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESpriteVisibleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Sprite.Visible;
 end;
@@ -388,7 +388,7 @@ begin
   end;
 end;
 
-function TSatania.SEDates(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEMonthsToNumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   A: TDoubleDynArray;
   I: Integer;
