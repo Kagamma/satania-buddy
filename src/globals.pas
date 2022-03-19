@@ -222,10 +222,6 @@ function Decrypt(S: String): String;
 function GUID: String;               
 function GUIDName: String;
 
-{$ifdef LINUX_X11}
-function FindTopWindow(Window: TWindow): TWindow;
-{$endif}
-
 function CharsetToSettings(S: String): TStringDynArray;
 function SettingsToCharset(L: TStringList): String;
 function CharsetToCharacters(S: String): String;
@@ -402,26 +398,6 @@ begin
   end;
   Flag.Value := Args[1].VarString;
 end;
-
-{$ifdef LINUX_X11}
-function FindTopWindow(Window: TWindow): TWindow;
-var
-  Root, Parent: TWindow;
-  Children: PWindow;
-  I: Integer;
-begin
-  while true do
-  begin
-    if XQueryTree(XDisplay, Window, @Root, @Parent, @Children, @I) = 0 then
-      Exit;
-    if (Window = Root) or (Parent = Root) then
-      break
-    else
-      Window := Parent;
-  end;
-  Result := Window;
-end;
-{$endif}
 
 procedure TCommonThread.Execute;
 begin

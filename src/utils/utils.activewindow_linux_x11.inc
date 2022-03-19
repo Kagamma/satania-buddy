@@ -32,6 +32,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 var
   PreviousWindow: TWindow;
 
+function FindTopWindow(Window: TWindow): TWindow;
+var
+  Root, Parent: TWindow;
+  Children: PWindow;
+  I: Integer;
+begin
+  while true do
+  begin
+    if XQueryTree(XDisplay, Window, @Root, @Parent, @Children, @I) = 0 then
+      Exit;
+    if (Window = Root) or (Parent = Root) then
+      break
+    else
+      Window := Parent;
+  end;
+  Result := Window;
+end;
+
 constructor TUtilActiveWindow.Create;
 begin
   inherited;
