@@ -16,6 +16,7 @@
 {"hash":88847859,"name":"tformmain.menuitemhelpalarmsandreminders.caption","sourcebytes":[65,108,97,114,109,115,32,97,110,100,32,82,101,109,105,110,100,101,114,115],"value":"Alarms and Reminders"},
 {"hash":5882563,"name":"tformmain.menuitemhelprules.caption","sourcebytes":[82,117,108,101,115],"value":"Rules"},
 {"hash":152952355,"name":"tformmain.menuitemhelpvoicecommand.caption","sourcebytes":[68,101,102,97,117,108,116,32,86,111,105,99,101,32,67,111,109,109,97,110,100,115],"value":"Default Voice Commands"},
+{"hash":83247314,"name":"tformmain.menuitemhelpcreatenewcharacter.caption","sourcebytes":[67,114,101,97,116,101,32,78,101,119,32,67,104,97,114,97,99,116,101,114],"value":"Create New Character"},
 {"hash":4691652,"name":"tformmain.menuitemabout.caption","sourcebytes":[65,98,111,117,116],"value":"About"},
 {"hash":363524,"name":"tformmain.menuitemquit.caption","sourcebytes":[81,117,105,116],"value":"Quit"}
 ]}

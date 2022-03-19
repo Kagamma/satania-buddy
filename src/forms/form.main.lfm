@@ -13,6 +13,7 @@ object FormMain: TFormMain
   OnShow = FormShow
   PopupMenu = TrayMenu
   ShowInTaskBar = stNever
+  LCLVersion = '2.3.0.0'
   Scaled = False
   Visible = True
   WindowState = wsMaximized
@@ -1425,6 +1426,10 @@ object FormMain: TFormMain
       object MenuItemHelpVoiceCommand: TMenuItem
         Caption = 'Default Voice Commands'
         OnClick = MenuItemHelpVoiceCommandClick
+      end
+      object MenuItemHelpCreateNewCharacter: TMenuItem
+        Caption = 'Create New Character'
+        OnClick = MenuItemHelpCreateNewCharacterClick
       end
     end
     object MenuItemAbout: TMenuItem
