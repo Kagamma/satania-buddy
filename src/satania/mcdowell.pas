@@ -60,6 +60,8 @@ type
     ChatBubbleDelay: Integer;
     Form,
     FormTouch: TForm;
+    AnimTalkLoop,
+    AnimTalkFinish,
     Name: String;
     Script: TEvilC;     
     UsedRemindersList: TStringList;
@@ -125,7 +127,9 @@ begin
   PreviousDay := -1;
   UsedRemindersList := TStringList.Create;
   UsedRemindersList.Sorted := True;
-  Script := TEvilC.Create;        
+  Script := TEvilC.Create;
+  AnimTalkLoop := 'talk_loop';   
+  AnimTalkFinish := 'talk_finish';
   Script.RegisterFunc('numbers', @SENumbers, 1);     
   Script.RegisterFunc('months_to_numbers', @SEMonthsToNumbers, 1);
   Script.RegisterFunc('talk', @SETalk, -1);    
@@ -140,7 +144,9 @@ begin
   Script.RegisterFunc('sprite_animation_speed_set', @SESetAnimationSpeed, 2);
   Script.RegisterFunc('sprite_animation_play', @SEStartAnimation, 2);
   Script.RegisterFunc('sprite_animation_is_playing', @SEIsAnimationPlaying, 1);
-  Script.RegisterFunc('sprite_animation_stop', @SEStopAnimation, 1);
+  Script.RegisterFunc('sprite_animation_stop', @SEStopAnimation, 1); 
+  Script.RegisterFunc('sprite_talk_loop_set', @SESpriteTalkLoopSet, 1);      
+  Script.RegisterFunc('sprite_talk_finish_set', @SESpriteTalkFinishSet, 1);
   Script.RegisterFunc('is_sow', @SEIsSoW, 0);
   Script.RegisterFunc('is_lewd', @SEIsLewd, 0);
   Script.RegisterFunc('is_silent', @SEIsSilent, 0);
@@ -218,6 +224,13 @@ begin
   try
     TouchBone := nil;
     TouchBone := Sprite.RootNode.FindNode('Bone_touch') as TTransformNode;
+
+    LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
+    LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
+    LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
+
+    AnimTalkLoop := 'talk_loop';
+    AnimTalkFinish := 'talk_finish';
   except
   end;
 end;
@@ -355,7 +368,8 @@ begin
     if S <> '' then
     begin
       Log(Name, S);
-      Satania.StartAnimation('talk_loop');
+      if AnimTalkLoop <> '' then
+        Satania.StartAnimation(AnimTalkLoop);
       ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
     end;
   finally
@@ -420,8 +434,11 @@ begin
   try
     if IsTalking and ChatText.FinishedTyping then
     begin
-      Satania.StopAnimation('talk_loop');
-      Satania.StartAnimation('talk_finish', False);
+      if AnimTalkLoop <> '' then
+      begin
+        Satania.StopAnimation(AnimTalkLoop);
+        Satania.StartAnimation(AnimTalkFinish, False);
+      end;
       IsTalking := False;
       Script.IsPaused := False;
     end;

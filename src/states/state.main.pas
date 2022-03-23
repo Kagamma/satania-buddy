@@ -116,11 +116,7 @@ begin
     Position := Sprite.Translation;
   ScreenPosition := UIToScreenCoord(Position);
   FormTouch.Left := ScreenPosition.X - FormTouch.Width div 2 - Round(SpriteTransform.Translation.X);
-  {$ifdef LINUX_X11}
   FormTouch.Top := ScreenPosition.Y - FormTouch.Height div 2;
-  {$else}
-  FormTouch.Top := ScreenPosition.Y - FormTouch.Height div 2;
-  {$endif}
 end;
 
 procedure TStateMain.UpdateChatBubblePosition;
