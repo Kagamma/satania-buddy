@@ -125,14 +125,10 @@ begin
   LoadModel(Args[0]);
 end;
 
-function TSatania.SESpriteTalkLoopSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  AnimTalkLoop := Args[0];
-end;
-
-function TSatania.SESpriteTalkFinishSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-begin
-  AnimTalkFinish := Args[0];
+  AnimTalkLoop := Args[0];        
+  AnimFinishLoop := Args[1];
 end;
 
 function TSatania.SEIsAnimationPlaying(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

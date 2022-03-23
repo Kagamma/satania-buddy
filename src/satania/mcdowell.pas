@@ -145,8 +145,7 @@ begin
   Script.RegisterFunc('sprite_animation_play', @SEStartAnimation, 2);
   Script.RegisterFunc('sprite_animation_is_playing', @SEIsAnimationPlaying, 1);
   Script.RegisterFunc('sprite_animation_stop', @SEStopAnimation, 1); 
-  Script.RegisterFunc('sprite_talk_loop_set', @SESpriteTalkLoopSet, 1);      
-  Script.RegisterFunc('sprite_talk_finish_set', @SESpriteTalkFinishSet, 1);
+  Script.RegisterFunc('sprite_animation_talk_set', @SESpriteTalkSet, 2);
   Script.RegisterFunc('is_sow', @SEIsSoW, 0);
   Script.RegisterFunc('is_lewd', @SEIsLewd, 0);
   Script.RegisterFunc('is_silent', @SEIsSilent, 0);
