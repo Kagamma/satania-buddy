@@ -208,7 +208,8 @@ type
     tkNot,
     tkFor,
     tkTo,
-    tkDownto
+    tkDownto,
+    tkReturn
   );
 TSETokenKinds = set of TSETokenKind;
 
@@ -217,7 +218,7 @@ const TokenNames: array[TSETokenKind] of String = (
   '>', '<=', '>=', '{', '}', '(', ')', 'neg', 'number', 'string',
   ',', 'if', 'identity', 'function', 'fn', 'variable', 'const',
   'unknown', 'else', 'while', 'break', 'continue', 'pause', 'yield',
-  '[', ']', 'and', 'or', 'not', 'for', 'to', 'downto'
+  '[', ']', 'and', 'or', 'not', 'for', 'to', 'downto', 'return'
 );
 
 type
@@ -266,6 +267,7 @@ type
     LineOfCodeList: TIntegerList;
     IsParsed: Boolean;
     IsDone: Boolean;
+    FuncTraversal: Integer;
     constructor Create;
     destructor Destroy; override;
     procedure AddDefaultConsts;
@@ -1821,7 +1823,7 @@ begin
 
           Token.Value := '';
           C := PeekAtNextChar;
-          while (C <> '''') and (C <> '"') and (C <> #10) do
+          while (C <> '''') and (C <> '"') and (C <> #10) and (C <> #0) do
           begin
             Token.Value := Token.Value + NextChar;
             C := PeekAtNextChar;
@@ -1891,6 +1893,8 @@ begin
               Token.Kind := tkPause;
             'yield':
               Token.Kind := tkYield;
+            'return':
+              Token.Kind := tkReturn;
             'fn':
               Token.Kind := tkFunctionDecl;
             else
@@ -2300,42 +2304,55 @@ var
     Token: TSEToken;
     Name: String;
     ArgCount: Integer = 0;
+    I,
     JumpBlock,
     Addr, StackAddr: Integer;
-  begin
-    Token := NextTokenExpected([tkIdent]);     
-    Name := Token.Value;
-    if FindFunc(Name) <> nil then
-      Error(Format('Duplicate function declaration "%s"', [Token.Value]), Token);
+    BreakList: TList;
+  begin           
+    BreakList := TList.Create;
+    try            
+      BreakStack.Push(BreakList);
+      Token := NextTokenExpected([tkIdent]);
+      Name := Token.Value;
+      if FindFunc(Name) <> nil then
+        Error(Format('Duplicate function declaration "%s"', [Token.Value]), Token);
 
-    StackAddr := Self.LocalVarList.Count - 1;
+      StackAddr := Self.LocalVarList.Count - 1;
 
-    Token.Value := 'result';
-    Token.Kind := tkIdent;
-    Self.LocalVarList.Add(CreateIdent(ikAtom, Token));
+      Token.Value := 'result';
+      Token.Kind := tkIdent;
+      Self.LocalVarList.Add(CreateIdent(ikAtom, Token));
 
-    if PeekAtNextToken.Kind = tkBracketOpen then
-    begin
-      NextTokenExpected([tkBracketOpen]);
-      repeat
-        if PeekAtNextToken.Kind = tkIdent then
-        begin
-          Token := NextTokenExpected([tkIdent]);
-          Self.LocalVarList.Add(CreateIdent(ikAtom, Token));
-          Inc(ArgCount);
-        end;
-        Token := NextTokenExpected([tkComma, tkBracketClose]);
-      until Token.Kind = tkBracketClose;
+      if PeekAtNextToken.Kind = tkBracketOpen then
+      begin
+        NextTokenExpected([tkBracketOpen]);
+        repeat
+          if PeekAtNextToken.Kind = tkIdent then
+          begin
+            Token := NextTokenExpected([tkIdent]);
+            Self.LocalVarList.Add(CreateIdent(ikAtom, Token));
+            Inc(ArgCount);
+          end;
+          Token := NextTokenExpected([tkComma, tkBracketClose]);
+        until Token.Kind = tkBracketClose;
+      end;
+
+      JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
+      Addr := JumpBlock;
+      ParseBlock;     
+
+      BreakList := BreakStack.Pop;
+      for I := 0 to BreakList.Count - 1 do
+        Patch(Integer(BreakList[I]), Self.VM.Binary.Count);
+
+      Emit([Pointer(opPushLocalVar), StackAddr]);
+      Emit([Pointer(opPopFrame)]);
+      Patch(JumpBlock - 1, Self.VM.Binary.Count);
+
+      RegisterScriptFunc(Name, Addr, StackAddr, ArgCount);  
+    finally
+      BreakList.Free;
     end;
-
-    JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
-    Addr := JumpBlock;
-    ParseBlock;
-    Emit([Pointer(opPushLocalVar), StackAddr]);
-    Emit([Pointer(opPopFrame)]);
-    Patch(JumpBlock - 1, Self.VM.Binary.Count);
-
-    RegisterScriptFunc(Name, Addr, StackAddr, ArgCount);
   end;
 
   procedure ParseWhile;
@@ -2548,13 +2565,23 @@ var
           NextToken;
           Emit([Pointer(opPause)]);
         end;
+      tkReturn:
+        begin                                 
+          NextToken;
+          if FuncTraversal = 0 then
+            Error('Not in a function', Token);
+          List := BreakStack.Peek;
+          List.Add(Pointer(Emit([Pointer(opJumpUnconditional), 0]) - 1));
+        end;
       tkFunctionDecl:
         begin
+          Inc(FuncTraversal);
           NextToken;
           Self.ScopeStack.Push(Self.LocalVarList.Count);
           ParseFuncDecl;     
           I := Self.ScopeStack.Pop;
           Self.LocalVarList.DeleteRange(I, Self.LocalVarList.Count - I);
+          Dec(FuncTraversal);
         end;
       tkYield:
         begin
@@ -2646,6 +2673,7 @@ begin
   Self.LocalVarList.Add(Ident);
   ErrorLn := -1;
   ErrorCol := -1;
+  FuncTraversal := 0;
 end;
 
 function TEvilC.Exec: TSEValue;
