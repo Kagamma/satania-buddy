@@ -461,7 +461,6 @@ procedure TSatania.ResetScript;
 begin
   ChatMode := CHATMODE_CHAT;
   ChatResult := '';
-  Script.Reset;
   Script.Source := '';
 end;
 
@@ -511,7 +510,6 @@ var
 begin
   Result := '';
   SE := TEvilC.Create;
-  SE.Reset;
   SE.Source := 'result=' + S;
   try
     try
