@@ -47,7 +47,9 @@ type
     opAssignLocal,
     opAssignLocalArray,
     opJumpEqual,
-    opJumpUnconditional,
+    opJumpUnconditional,  
+    opJumpEqualOrGreater,
+    opJumpEqualOrLesser,
     opOperatorAdd,
     opOperatorSub,
     opOperatorMul,
@@ -1350,6 +1352,24 @@ begin
         opJumpUnconditional:
           begin
             CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
+          end;  
+        opJumpEqualOrGreater:
+          begin
+            B := Pop;
+            A := Pop;
+            if A^ >= B^ then
+              CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
+            else
+              Inc(CodePtrLocal, 2);
+          end;        
+        opJumpEqualOrLesser:
+          begin
+            B := Pop;
+            A := Pop;
+            if A^ <= B^ then
+              CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
+            else
+              Inc(CodePtrLocal, 2);
           end;
         opCallNative:
           begin
@@ -2428,15 +2448,16 @@ var
       if Token.Kind = tkTo then
       begin
         Emit([Pointer(opPushConst), 1]);
-        Emit([Pointer(opOperatorAdd)]);
+        Emit([Pointer(opOperatorAdd)]);  
+        JumpEnd := Emit([Pointer(opJumpEqualOrGreater), 0]);
       end else
       if Token.Kind = tkDownto then
       begin
         Emit([Pointer(opPushConst), 1]);
-        Emit([Pointer(opOperatorSub)]);
+        Emit([Pointer(opOperatorSub)]);     
+        JumpEnd := Emit([Pointer(opJumpEqualOrLesser), 0]);
       end;
 
-      JumpEnd := Emit([Pointer(opJumpEqual), 0]);
       ParseBlock;
 
       Emit([Pointer(opPushLocalVar), VarAddr]);
