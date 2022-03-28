@@ -273,7 +273,7 @@ type
     function GetIsPaused: Boolean;
     procedure SetIsPaused(V: Boolean);
     function IsYielded: Boolean;
-    procedure Lex;
+    procedure Lex(const IsIncluded: Boolean = False);
     procedure Parse;
     procedure Reset;
     function Exec: TSEValue;
@@ -1595,7 +1595,7 @@ begin
   Exit(Self.VM.IsYielded);
 end;
 
-procedure TEvilC.Lex;
+procedure TEvilC.Lex(const IsIncluded: Boolean = False);
 var
   Ln, Col: Integer;
   Pos: Integer = 0;
@@ -1636,6 +1636,8 @@ var
 var
   IsLoopDone: Boolean;
   PrevQuote: Char;
+  SL: TStrings;
+  BackupSource: String;
 
 begin
   Ln := 1;
@@ -1651,7 +1653,10 @@ begin
     Token.Col := Col;
     case C of
       #0:
-        Token.Kind := tkEOF;
+        if not IsIncluded then
+          Token.Kind := tkEOF
+        else
+          continue;
       '.':
         Token.Kind := tkDot;
       '&':
@@ -1790,6 +1795,59 @@ begin
         end;
       '%':
         Token.Kind := tkMod;
+      '#':
+        begin             
+          Token.Value := '';
+          C := PeekAtNextChar;
+          while C in ['0'..'9', 'A'..'Z', 'a'..'z', '_'] do
+          begin
+            Token.Value := Token.Value + NextChar;
+            C := PeekAtNextChar;
+          end;
+
+          if Token.Value <> 'include' then
+            Error('Expected "include"');
+                
+          C := PeekAtNextChar;
+          while C = ' ' do
+          begin
+            NextChar;
+            C := PeekAtNextChar;
+          end;
+
+          C := NextChar;
+          if not (C in ['''', '"']) then
+            Error('Expected "''"');
+
+          Token.Value := '';
+          C := PeekAtNextChar;
+          while (C <> '''') and (C <> '"') and (C <> #10) do
+          begin
+            Token.Value := Token.Value + NextChar;
+            C := PeekAtNextChar;
+          end;
+
+          C := NextChar;
+          if not (C in ['''', '"']) then
+            Error('Expected "''"');
+
+          Token.Value := Trim(Token.Value);
+          if not FileExists(Token.Value) then
+          begin
+            Error(Format('"%s" not found', [Token.Value]));
+          end;
+          BackupSource := Source;
+          SL := TStringList.Create;
+          try
+            SL.LoadFromFile(Token.Value);
+            Source := SL.Text;
+            Self.Lex(True);
+          finally
+            SL.Free;
+          end;
+          FSource := BackupSource;
+          continue;
+        end;
       '0'..'9':
         begin
           Token.Kind := tkNumber;
@@ -1842,7 +1900,7 @@ begin
       else
         Error('Unhandled symbol ' + C);
     end;
-    Self.TokenList.Add(Token);
+    TokenList.Add(Token);
   until C = #0;
 end;
 
