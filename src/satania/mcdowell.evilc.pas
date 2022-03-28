@@ -2536,9 +2536,12 @@ var
   begin
     FuncInfo := FindFunc('array_create');
     repeat
-      ParseExpr;
+      if PeekAtNextToken.Kind <> tkSquareBracketClose then
+      begin
+        ParseExpr;         
+        Inc(ArgCount);
+      end;
       Token := NextTokenExpected([tkComma, tkSquareBracketClose]);
-      Inc(ArgCount);
     until Token.Kind = tkSquareBracketClose;
     Emit([Pointer(opCallNative), Pointer(FuncInfo), ArgCount]);
   end;
