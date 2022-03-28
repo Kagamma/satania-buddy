@@ -1784,6 +1784,14 @@ begin
               NextChar;
             until (PeekAtNextChar = #10) or (PeekAtNextChar = #0);
             continue;
+          end else
+          if PeekAtNextChar = '*' then
+          begin
+            repeat
+              C := NextChar;
+            until ((C = '*') and (PeekAtNextChar = '/')) or (C = #0);
+            NextChar;
+            continue;
           end;
         end;
       '=':
