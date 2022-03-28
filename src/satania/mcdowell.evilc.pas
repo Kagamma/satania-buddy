@@ -916,6 +916,8 @@ begin
 end;
 
 operator + (V1, V2: TSEValue) R: TSEValue; inline;
+var
+  I, Len: Integer;
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
@@ -928,6 +930,16 @@ begin
       begin
         R.Kind := sevkPointer;
         R.VarPointer := V1.VarPointer + V2.VarPointer;
+      end;   
+    sevkArray:
+      begin
+        R.Kind := sevkArray;
+        SetLength(R.VarArray, Length(V1.VarArray) + Length(V2.VarArray));
+        Len := Length(V1.VarArray);
+        for I := 0 to Len - 1 do
+          R.VarArray[I] := V1.VarArray[I];    
+        for I := Len to Len + Length(V2.VarArray) - 1 do
+          R.VarArray[I] := V2.VarArray[I - Len];
       end;
     {$ifdef SE_STRING}
     sevkString:
@@ -2092,9 +2104,9 @@ var
     begin
       NextToken;
       if IsString then
-        PeekAtNextTokenExpected([tkBracketOpen, tkNumber, tkString, tkNegative, tkIdent])
+        PeekAtNextTokenExpected([tkBracketOpen, tkSquareBracketOpen, tkNumber, tkString, tkNegative, tkIdent])
       else
-        PeekAtNextTokenExpected([tkBracketOpen, tkNumber, tkNegative, tkNot, tkIdent]);
+        PeekAtNextTokenExpected([tkBracketOpen, tkSquareBracketOpen, tkNumber, tkNegative, tkNot, tkIdent]);
       Func;
       EmitExpr([Pointer({$ifdef CPU64}Int64(Op){$else}Op{$endif})]);
     end;
@@ -2119,7 +2131,7 @@ var
       Ident: PSEIdent;
     begin
       Token := PeekAtNextTokenExpected([
-        tkBracketOpen, tkBracketClose, tkNumber, tkEOF,
+        tkBracketOpen, tkBracketClose, tkSquareBracketOpen, tkNumber, tkEOF,
         tkNegative, tkNot, tkString, tkIdent]);
       case Token.Kind of
         tkBracketOpen:
@@ -2128,6 +2140,11 @@ var
             PeekAtNextTokenExpected([tkNegative, tkNot, tkBracketOpen, tkNumber, tkIdent]);
             Logic();
             NextTokenExpected([tkBracketClose]);
+          end; 
+        tkSquareBracketOpen:
+          begin
+            NextToken;
+            ParseArrayAssign;
           end;
         tkNumber:
           begin
@@ -2279,11 +2296,6 @@ var
       end;
     end;
   begin
-    if PeekAtNextToken.Kind = tkSquareBracketOpen then
-    begin
-      NextToken;
-      ParseArrayAssign;
-    end else
     begin
       ExprStack := TList.Create;
       try
