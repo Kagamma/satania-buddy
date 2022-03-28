@@ -19,8 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
 {$ifdef unit_protected}                                 
-    function SESpriteTalkLoopSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESpriteTalkFinishSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteVisibleSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -128,7 +127,7 @@ end;
 function TSatania.SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   AnimTalkLoop := Args[0];        
-  AnimFinishLoop := Args[1];
+  AnimTalkFinish := Args[1];
 end;
 
 function TSatania.SEIsAnimationPlaying(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

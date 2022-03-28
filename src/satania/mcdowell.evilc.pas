@@ -42,7 +42,8 @@ type
     opPushLocalVar,
     opPushLocalArray,
     opPushLocalArrayPop,
-    opPopConst,
+    opPopConst,   
+    opPopFrame,
     opAssignLocal,
     opAssignLocalArray,
     opJumpEqual,
@@ -63,6 +64,7 @@ type
     opOperatorOr,
     opOperatorNot,
     opCallNative,
+    opCallScript,
     opPause,
     opYield
   );
@@ -110,7 +112,12 @@ type
   TSEVM = class;
   TSEFunc = function(const VM: TSEVM; const Args: array of TSEValue): TSEValue of object;
 
+  TSEFuncKind = (sefkNative, sefkScript);
+
   TSEFuncInfo = record
+    Kind: TSEFuncKind;
+    Addr,
+    StackAddr: Integer; // Used by parameters
     Func: TSEFunc;
     ArgCount: Integer;
     Name: String;
@@ -143,8 +150,10 @@ type
     IsDone: Boolean;
     IsYielded: Boolean;
     Stack: array of TSEValue;
+    Frame: array of Integer;
     CodePtr: Integer;
     StackPtr: PSEValue;
+    FramePtr: Integer;
     StackWorkingSize: Integer; // not count memory need for local variables
     Parent: TEvilC;
     Binary: TSEBinary;
@@ -182,6 +191,7 @@ type
     tkIf,
     tkIdent,
     tkFunction,
+    tkFunctionDecl,
     tkVariable,
     tkConst,
     tkUnknown,
@@ -205,7 +215,7 @@ TSETokenKinds = set of TSETokenKind;
 const TokenNames: array[TSETokenKind] of String = (
   'EOF', '.', '+', '-', '*', 'div', 'mod', '=', '!=', '<',
   '>', '<=', '>=', '{', '}', '(', ')', 'neg', 'number', 'string',
-  ',', 'if', 'identity', 'function', 'variable', 'const',
+  ',', 'if', 'identity', 'function', 'fn', 'variable', 'const',
   'unknown', 'else', 'while', 'break', 'continue', 'pause', 'yield',
   '[', ']', 'and', 'or', 'not', 'for', 'to', 'downto'
 );
@@ -267,7 +277,8 @@ type
     procedure Parse;
     procedure Reset;
     function Exec: TSEValue;
-    procedure RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);
+    procedure RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);   
+    procedure RegisterScriptFunc(const Name: String; const Addr, StackAddr, ArgCount: Integer);
 
     property IsPaused: Boolean read GetIsPaused write SetIsPaused;
     property Source: String read FSource write SetSource;
@@ -1115,6 +1126,8 @@ begin
   Self.Parent.IsDone := False;
   Self.WaitTime := 0;
   SetLength(Self.Stack, Self.Parent.LocalVarList.Count + 64 + StackWorkingSize);
+  SetLength(Self.Frame, 64);
+  Self.FramePtr := 0;
   Self.StackPtr := @Self.Stack[0];
   Self.StackPtr := Self.StackPtr + Self.Parent.LocalVarList.Count + 64;
 end;
@@ -1130,7 +1143,7 @@ var
   S: PChar;
   {$endif}
   FuncInfo: PSEFuncInfo;
-  I, ArgCount: Integer;
+  I, J, ArgCount: Integer;
   Args: array of TSEValue;
   CodePtrLocal: Integer;
   StackPtrLocal: PSEValue;
@@ -1352,6 +1365,25 @@ begin
             end;
             Push(TV);
             Inc(CodePtrLocal, 3);
+          end;
+        opCallScript:
+          begin
+            Self.Frame[Self.FramePtr] := CodePtrLocal + 3;
+            Inc(Self.FramePtr);
+            FuncInfo := PSEFuncInfo(Pointer(BinaryLocal.Ptr(CodePtrLocal + 1)^));
+            ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
+            J := FuncInfo^.StackAddr + ArgCount;
+            for I := ArgCount - 1 downto 0 do
+            begin
+              Self.Stack[J] := Pop^;
+              Dec(J);
+            end;
+            CodePtrLocal := FuncInfo^.Addr;
+          end;
+        opPopFrame:
+          begin      
+            Dec(Self.FramePtr);
+            CodePtrLocal := Self.Frame[Self.FramePtr];
           end;
         opAssignLocal:
           begin
@@ -1801,6 +1833,8 @@ begin
               Token.Kind := tkPause;
             'yield':
               Token.Kind := tkYield;
+            'fn':
+              Token.Kind := tkFunctionDecl;
             else
               Token.Kind := tkIdent;
           end;
@@ -2189,8 +2223,61 @@ var
         Token := NextTokenExpected([tkComma, tkBracketClose]);
         Inc(ArgCount);
       until Token.Kind = tkBracketClose;
+    end else
+    begin
+      if PeekAtNextToken.Kind = tkBracketOpen then
+      begin
+        NextTokenExpected([tkBracketOpen]);
+        NextTokenExpected([tkBracketClose]);
+      end;
     end;
-    Emit([Pointer(opCallNative), Pointer(FuncInfo), ArgCount]);
+    if FuncInfo^.Kind = sefkNative then
+      Emit([Pointer(opCallNative), Pointer(FuncInfo), ArgCount])
+    else
+      Emit([Pointer(opCallScript), Pointer(FuncInfo), ArgCount]);
+  end;
+
+  procedure ParseFuncDecl;
+  var
+    Token: TSEToken;
+    Name: String;
+    ArgCount: Integer = 0;
+    JumpBlock,
+    Addr, StackAddr: Integer;
+  begin
+    Token := NextTokenExpected([tkIdent]);     
+    Name := Token.Value;
+    if FindFunc(Name) <> nil then
+      Error(Format('Duplicate function declaration "%s"', [Token.Value]), Token);
+
+    StackAddr := Self.LocalVarList.Count - 1;
+
+    Token.Value := 'result';
+    Token.Kind := tkIdent;
+    Self.LocalVarList.Add(CreateIdent(ikAtom, Token));
+
+    if PeekAtNextToken.Kind = tkBracketOpen then
+    begin
+      NextTokenExpected([tkBracketOpen]);
+      repeat
+        if PeekAtNextToken.Kind = tkIdent then
+        begin
+          Token := NextTokenExpected([tkIdent]);
+          Self.LocalVarList.Add(CreateIdent(ikAtom, Token));
+          Inc(ArgCount);
+        end;
+        Token := NextTokenExpected([tkComma, tkBracketClose]);
+      until Token.Kind = tkBracketClose;
+    end;
+
+    JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
+    Addr := JumpBlock;
+    ParseBlock;
+    Emit([Pointer(opPushLocalVar), StackAddr]);
+    Emit([Pointer(opPopFrame)]);
+    Patch(JumpBlock - 1, Self.VM.Binary.Count);
+
+    RegisterScriptFunc(Name, Addr, StackAddr, ArgCount);
   end;
 
   procedure ParseWhile;
@@ -2403,6 +2490,14 @@ var
           NextToken;
           Emit([Pointer(opPause)]);
         end;
+      tkFunctionDecl:
+        begin
+          NextToken;
+          Self.ScopeStack.Push(Self.LocalVarList.Count);
+          ParseFuncDecl;     
+          I := Self.ScopeStack.Pop;
+          Self.LocalVarList.DeleteRange(I, Self.LocalVarList.Count - I);
+        end;
       tkYield:
         begin
           NextToken;
@@ -2472,7 +2567,13 @@ end;
 procedure TEvilC.Reset;
 var
   Ident: TSEIdent;
+  I: Integer;
 begin
+  for I := Self.FuncList.Count - 1 downto 0 do
+  begin
+    if Self.FuncList[I].Kind = sefkScript then
+      Self.FuncList.Delete(I);
+  end;
   Self.VM.Reset;
   Self.VM.Binary.Clear;
   Self.VM.IsDone := True;
@@ -2507,6 +2608,19 @@ begin
   FuncInfo.ArgCount := ArgCount;
   FuncInfo.Func := Func;
   FuncInfo.Name := Name;
+  FuncInfo.Kind := sefkNative;
+  Self.FuncList.Add(FuncInfo);
+end;
+
+procedure TEvilC.RegisterScriptFunc(const Name: String; const Addr, StackAddr, ArgCount: Integer);
+var
+  FuncInfo: TSEFuncInfo;
+begin
+  FuncInfo.ArgCount := ArgCount;
+  FuncInfo.Addr := Addr; 
+  FuncInfo.StackAddr := StackAddr;
+  FuncInfo.Name := Name;
+  FuncInfo.Kind := sefkScript;
   Self.FuncList.Add(FuncInfo);
 end;
 
