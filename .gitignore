@@ -4,6 +4,7 @@
 *.csv
 *.dll
 *.so
+*.lps
 satania-buddy*
 link*.res
 lib

@@ -443,7 +443,9 @@ end;
 
 class function TBuiltInFunction.SEString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Exit(FloatToStr(Args[0].VarNumber));
+  if Args[0].Kind = sevkSingle then
+    Exit(FloatToStr(Args[0].VarNumber));
+  Exit(Args[0].VarString);
 end;
 
 class function TBuiltInFunction.SENumber(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -2055,6 +2057,7 @@ var
 
   procedure ParseFuncCall(const Name: String); forward;
   procedure ParseBlock; forward;
+  procedure ParseArrayAssign; forward;
 
   procedure ParseExpr;
   type
@@ -2268,12 +2271,19 @@ var
       end;
     end;
   begin
-    ExprStack := TList.Create;
-    try
-      Logic;
-      ValidateExpr;
-    finally
-      FreeAndNil(ExprStack);
+    if PeekAtNextToken.Kind = tkSquareBracketOpen then
+    begin
+      NextToken;
+      ParseArrayAssign;
+    end else
+    begin
+      ExprStack := TList.Create;
+      try
+        Logic;
+        ValidateExpr;
+      finally
+        FreeAndNil(ExprStack);
+      end;
     end;
   end;
 
@@ -2515,6 +2525,22 @@ var
     Patch(JumpBlock1 - 1, StartBlock1);
     Patch(JumpBlock2 - 1, StartBlock2);
     Patch(JumpEnd - 1, EndBlock2);
+  end;    
+
+  procedure ParseArrayAssign;
+  var
+    FuncInfo: PSEFuncInfo;
+    I: Integer;
+    ArgCount: Integer = 0;
+    Token: TSEToken;
+  begin
+    FuncInfo := FindFunc('array_create');
+    repeat
+      ParseExpr;
+      Token := NextTokenExpected([tkComma, tkSquareBracketClose]);
+      Inc(ArgCount);
+    until Token.Kind = tkSquareBracketClose;
+    Emit([Pointer(opCallNative), Pointer(FuncInfo), ArgCount]);
   end;
 
   procedure ParseVarAssign(const Name: String);
