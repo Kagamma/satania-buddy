@@ -32,7 +32,7 @@ unit Mcdowell.EvilC;
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils;
+  SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr;
 
 type
   TSENumber = {$ifdef SE_PRECISION}Double{$else}Single{$endif};
@@ -372,7 +372,8 @@ type
     class function SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFormat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
     class function SEStringUpperCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEStringLowerCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringLowerCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+    class function SEStringFindRegex(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseOutQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -645,6 +646,28 @@ begin
     sevkString: Result := LowerCase(Args[0].VarString);
     sevkSingle: Result := LowerCase(Char(Round(Args[0].VarNumber)));
   end;
+end;
+
+class function TBuiltInFunction.SEStringFindRegex(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  R: TRegExpr;
+  I: Integer;
+  C: Integer = 0;
+begin
+  Result.Kind := sevkArray;
+  R := TRegExpr.Create(Args[1].VarString);
+  if R.Exec(Args[0]) then
+  repeat
+    SetLength(Result.VarArray, Length(Result.VarArray) + R.SubExprMatchCount);
+    for I := 1 to R.SubExprMatchCount do
+    begin
+      Result.VarArray[C].Kind := sevkArray;
+      SetLength(Result.VarArray[C].VarArray, 2);
+      Result.VarArray[C].VarArray[0] := R.Match[I];  
+      Result.VarArray[C].VarArray[1] := R.MatchPos[I];
+      Inc(C);
+    end;
+  until not R.ExecNext;
 end;
 
 class function TBuiltInFunction.SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1563,7 +1586,8 @@ begin
   Self.RegisterFunc('string_delete', @TBuiltInFunction(nil).SEStringDelete, 3);
   Self.RegisterFunc('string_replace', @TBuiltInFunction(nil).SEStringReplace, 3);
   Self.RegisterFunc('string_uppercase', @TBuiltInFunction(nil).SEStringUpperCase, 1);
-  Self.RegisterFunc('string_lowercase', @TBuiltInFunction(nil).SEStringLowerCase, 1);
+  Self.RegisterFunc('string_lowercase', @TBuiltInFunction(nil).SEStringLowerCase, 1);      
+  Self.RegisterFunc('string_find_regex', @TBuiltInFunction(nil).SEStringFindRegex, 2);
   Self.RegisterFunc('lerp', @TBuiltInFunction(nil).SELerp, 3);
   Self.RegisterFunc('slerp', @TBuiltInFunction(nil).SESLerp, 3);
   Self.RegisterFunc('write', @TBuiltInFunction(nil).SEWrite, -1);
@@ -1596,7 +1620,6 @@ begin
   Self.RegisterFunc('os', @TBuiltInFunction(nil).SEOS, 0);
   Self.AddDefaultConsts;
   Self.Source := '';
-  Self.Reset;
 end;
 
 destructor TEvilC.Destroy;
