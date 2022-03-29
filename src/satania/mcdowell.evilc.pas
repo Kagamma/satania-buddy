@@ -340,7 +340,8 @@ uses
   Math, Strings;
 
 type
-  TBuiltInFunction = class
+  TBuiltInFunction = class                 
+    class function SETypeOf(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEWrite(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEWriteln(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SERandom(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -391,7 +392,21 @@ type
     class function SEDTGetDay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
     class function SEDTGetHour(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTGetMinute(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+  end;  
+
+class function TBuiltInFunction.SETypeOf(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  case Args[0].Kind of
+    sevkArray:
+      Result := 'array';   
+    sevkSingle:
+      Result := 'number';
+    sevkString:
+      Result := 'string';
+    sevkPointer:
+      Result := 'pointer';
   end;
+end;
 
 class function TBuiltInFunction.SEWrite(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
@@ -1527,7 +1542,8 @@ begin
   Self.ConstMap := TSEConstMap.Create;
   Self.ScopeStack := TSEScopeStack.Create;
   Self.LineOfCodeList := TIntegerList.Create;
-  Self.VM.Parent := Self;
+  Self.VM.Parent := Self;                             
+  Self.RegisterFunc('typeof', @TBuiltInFunction(nil).SETypeOf, 1);
   Self.RegisterFunc('get', @TBuiltInFunction(nil).SEGet, 2);
   Self.RegisterFunc('set', @TBuiltInFunction(nil).SESet, 2);
   Self.RegisterFunc('string', @TBuiltInFunction(nil).SEString, 1);
