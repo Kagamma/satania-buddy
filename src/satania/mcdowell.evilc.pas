@@ -2783,6 +2783,7 @@ begin
   Self.IsParsed := False;
   Self.LocalVarList.Clear;
   Self.TokenList.Clear;
+  Self.IncludeList.Clear;
   Ident.Kind := ikAtom;
   Ident.Addr := 0;
   Ident.Name := 'result';
