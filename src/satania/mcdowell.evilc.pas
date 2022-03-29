@@ -261,6 +261,7 @@ type
   public
     ErrorLn, ErrorCol: Integer;
     VM: TSEVM;
+    IncludeList: TStrings;
     TokenList: TSETokenList;
     LocalVarList: TSEIdentList;
     FuncList: TSEFuncList;
@@ -1565,6 +1566,7 @@ begin
   Self.ConstMap := TSEConstMap.Create;
   Self.ScopeStack := TSEScopeStack.Create;
   Self.LineOfCodeList := TIntegerList.Create;
+  Self.IncludeList := TStringList.Create;
   Self.VM.Parent := Self;                             
   Self.RegisterFunc('typeof', @TBuiltInFunction(nil).SETypeOf, 1);
   Self.RegisterFunc('get', @TBuiltInFunction(nil).SEGet, 2);
@@ -1631,6 +1633,7 @@ begin
   FreeAndNil(Self.ConstMap);
   FreeAndNil(Self.ScopeStack);
   FreeAndNil(Self.LineOfCodeList);
+  FreeAndNil(Self.IncludeList);
   inherited;
 end;
 
@@ -1919,16 +1922,20 @@ begin
           begin
             Error(Format('"%s" not found', [Token.Value]));
           end;
-          BackupSource := Source;
-          SL := TStringList.Create;
-          try
-            SL.LoadFromFile(Token.Value);
-            Source := SL.Text;
-            Self.Lex(True);
-          finally
-            SL.Free;
+          if Self.IncludeList.IndexOf(Token.Value) < 0 then
+          begin
+            BackupSource := Source;
+            SL := TStringList.Create;
+            try
+              SL.LoadFromFile(Token.Value);
+              Source := SL.Text;
+              Self.Lex(True);
+            finally
+              SL.Free;
+            end;
+            FSource := BackupSource;
+            Self.IncludeList.Add(Token.Value);
           end;
-          FSource := BackupSource;
           continue;
         end;
       '0'..'9':
