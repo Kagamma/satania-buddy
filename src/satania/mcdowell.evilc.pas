@@ -665,7 +665,7 @@ begin
       Result.VarArray[C].Kind := sevkArray;
       SetLength(Result.VarArray[C].VarArray, 2);
       Result.VarArray[C].VarArray[0] := R.Match[I];  
-      Result.VarArray[C].VarArray[1] := R.MatchPos[I];
+      Result.VarArray[C].VarArray[1] := R.MatchPos[I] - 1;
       Inc(C);
     end;
   until not R.ExecNext;
