@@ -309,7 +309,7 @@ begin
   for I := 0 to Length(Args[1].VarArray) do
   begin
     if Args[1].VarArray[I].Kind = sevkSingle then
-      Thread.FormData.Add(FloatToStr(Args[1].VarArray[I].VarNumber))
+      Thread.FormData.Add(PointFloatToStr(Args[1].VarArray[I].VarNumber))
     else
       Thread.FormData.Add(Args[1].VarArray[I].VarString);
   end;
@@ -330,7 +330,7 @@ begin
   begin
     P := I * 2;
     if Args[1].VarArray[I].Kind = sevkSingle then
-      Thread.FormData.Values[Args[1].VarArray[P].VarString] := FloatToStr(Args[1].VarArray[P + 1].VarNumber)
+      Thread.FormData.Values[Args[1].VarArray[P].VarString] := PointFloatToStr(Args[1].VarArray[P + 1].VarNumber)
     else
       Thread.FormData.Values[Args[1].VarArray[P].VarString] := Args[1].VarArray[P + 1].VarString;
   end;

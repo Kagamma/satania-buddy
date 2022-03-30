@@ -38,7 +38,7 @@ procedure RunTrain;
 implementation
 
 uses
-  Mcdowell, Mcdowell.chatbot;
+  Mcdowell, Mcdowell.chatbot, Globals;
 
 type
   TPair = record
@@ -211,10 +211,10 @@ procedure Train;
       begin
         Result := Result +
             'Layer ' + IntToStr(LayerCnt) +
-            ' Max Error: ' + FloatToStr(Layers[LayerCnt].OutputError.GetMax()) +
-            ' Min Error: ' + FloatToStr(Layers[LayerCnt].OutputError.GetMin()) +
-            ' Max ErrorD: ' + FloatToStr(Layers[LayerCnt].OutputErrorDeriv.GetMax()) +
-            ' Min ErrorD: ' + FloatToStr(Layers[LayerCnt].OutputErrorDeriv.GetMin()) +
+            ' Max Error: ' + PointFloatToStr(Layers[LayerCnt].OutputError.GetMax()) +
+            ' Min Error: ' + PointFloatToStr(Layers[LayerCnt].OutputError.GetMin()) +
+            ' Max ErrorD: ' + PointFloatToStr(Layers[LayerCnt].OutputErrorDeriv.GetMax()) +
+            ' Min ErrorD: ' + PointFloatToStr(Layers[LayerCnt].OutputErrorDeriv.GetMin()) +
             ' ' + Layers[LayerCnt].ClassName + ' ' +
             IntToStr(Layers[LayerCnt].Output.SizeX) + ',' +
             IntToStr(Layers[LayerCnt].Output.SizeY) + ',' +

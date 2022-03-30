@@ -211,6 +211,8 @@ var
   XDisplay: PDisplay;
   {$endif}
 
+function PointStrToFloat(S: String): Double;
+function PointFloatToStr(X: Double): String;
 function UIToScreenCoord(const V: TVector2): TVector2Integer; overload;
 function UIToScreenCoord(const V: TVector3): TVector2Integer; overload;
 
@@ -231,6 +233,24 @@ implementation
 
 uses
   CastleWindow, Mcdowell;
+
+function PointStrToFloat(S: String): Double;
+var
+  fS: TFormatSettings;
+begin
+  FS := FormatSettings;
+  fS.DecimalSeparator := '.';
+  Result := StrToFloat(S, FS);
+end;
+
+function PointFloatToStr(X: Double): String;
+var
+  FS: TFormatSettings;
+begin
+  FS := FormatSettings;
+  FS.DecimalSeparator := '.';
+  Result := FloatToStr(X, FS);
+end;
 
 function UIToScreenCoord(const V: TVector2): TVector2Integer;
 begin

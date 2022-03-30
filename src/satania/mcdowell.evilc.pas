@@ -338,7 +338,7 @@ var
 implementation
 
 uses
-  Math, Strings;
+  Math, Strings, Globals;
 
 type
   TBuiltInFunction = class                 
@@ -461,13 +461,13 @@ end;
 class function TBuiltInFunction.SEString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   if Args[0].Kind = sevkSingle then
-    Exit(FloatToStr(Args[0].VarNumber));
+    Exit(PointFloatToStr(Args[0].VarNumber));
   Exit(Args[0].VarString);
 end;
 
 class function TBuiltInFunction.SENumber(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Exit(StrToFloat(Args[0]));
+  Exit(PointStrToFloat(Args[0]));
 end;
 
 class function TBuiltInFunction.SEWait(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -618,7 +618,7 @@ begin
   begin
     V := '';
     if Args[I].Kind = sevkSingle then
-      V := FloatToStr(Args[I].VarNumber)
+      V := PointFloatToStr(Args[I].VarNumber)
     else
     if Args[I].Kind = sevkString then
       V := Args[I].VarString;
@@ -2195,7 +2195,7 @@ var
         tkNumber:
           begin
             NextToken;
-            EmitExpr([Pointer(opPushConst), StrToFloat(Token.Value)]);
+            EmitExpr([Pointer(opPushConst), PointStrToFloat(Token.Value)]);
           end;
         tkString:
           begin
