@@ -211,18 +211,18 @@ var
   XDisplay: PDisplay;
   {$endif}
 
-function PointStrToFloat(S: String): Double;
-function PointFloatToStr(X: Double): String;
-function UIToScreenCoord(const V: TVector2): TVector2Integer; overload;
-function UIToScreenCoord(const V: TVector3): TVector2Integer; overload;
+function PointStrToFloat(S: String): Double; inline;
+function PointFloatToStr(X: Double): String; inline;
+function UIToScreenCoord(const V: TVector2): TVector2Integer; overload; inline;
+function UIToScreenCoord(const V: TVector3): TVector2Integer; overload; inline;
 
-function ScreenCoordToUI(const V: TVector2): TVector2;
-procedure CommonThread(Method: TMethod);
+function ScreenCoordToUI(const V: TVector2): TVector2; inline;
+procedure CommonThread(Method: TMethod); inline;
 
-function Encrypt(S: String): String;
-function Decrypt(S: String): String;
-function GUID: String;               
-function GUIDName: String;
+function Encrypt(S: String): String; inline;
+function Decrypt(S: String): String; inline;
+function GUID: String; inline;               
+function GUIDName: String; inline;
 
 function CharsetToSettings(S: String): TStringDynArray;
 function SettingsToCharset(L: TStringList): String;
