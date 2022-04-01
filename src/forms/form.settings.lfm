@@ -9,30 +9,29 @@ object FormSettings: TFormSettings
   ClientWidth = 644
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.3.0.0'
   object PageControl: TPageControl
     Left = 0
     Height = 444
     Top = 0
     Width = 644
-    ActivePage = TabSheetEmail
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 3
+    TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
-      ClientHeight = 405
-      ClientWidth = 634
+      ClientHeight = 416
+      ClientWidth = 636
       object LabelChatBubbleDelay: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 48
-        Width = 135
+        Width = 97
         Caption = 'Chat Bubble Delay'
       end
       object EditChatBubbleDelay: TSpinEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 48
         Width = 98
         MaxValue = 100000
@@ -42,14 +41,14 @@ object FormSettings: TFormSettings
       end
       object LabelSoWRightMargin: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 112
-        Width = 130
+        Width = 96
         Caption = 'SoW Right Margin'
       end
       object EditSoWRightMargin: TSpinEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 112
         Width = 98
         MaxValue = 10000
@@ -58,14 +57,14 @@ object FormSettings: TFormSettings
       end
       object LabelTextSpeed: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 80
-        Width = 80
+        Width = 56
         Caption = 'Text Speed'
       end
       object EditTextSpeed: TSpinEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 80
         Width = 98
         MaxValue = 100000
@@ -75,21 +74,21 @@ object FormSettings: TFormSettings
       end
       object EditDefaultEvilScheme: TEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 144
         Width = 400
         TabOrder = 3
       end
       object LabelDefaultEvilScheme: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 144
-        Width = 145
+        Width = 104
         Caption = 'Default Evil Scheme'
       end
       object EditFontSize: TSpinEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 240
         Width = 98
         MaxValue = 100
@@ -99,30 +98,30 @@ object FormSettings: TFormSettings
       end
       object LabelFontSize: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 240
-        Width = 68
+        Width = 47
         Caption = 'Font Size'
       end
       object EditFontName: TEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 208
         Width = 400
         TabOrder = 5
       end
       object LabelFontName: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 208
-        Width = 79
+        Width = 59
         Caption = 'Font Name'
       end
       object LabelFontCharset: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 272
-        Width = 100
+        Width = 72
         Caption = 'Font Charsets'
       end
       object ListBoxCharset: TListBox
@@ -133,24 +132,23 @@ object FormSettings: TFormSettings
         ItemHeight = 0
         PopupMenu = PopupMenuCharset
         TabOrder = 6
-        TopIndex = -1
       end
       object EditCharsetFrom: TLabeledEdit
         Left = 432
-        Height = 27
+        Height = 23
         Top = 296
         Width = 80
-        EditLabel.Height = 19
+        EditLabel.Height = 15
         EditLabel.Width = 80
         EditLabel.Caption = 'From'
         TabOrder = 7
       end
       object EditCharsetTo: TLabeledEdit
         Left = 528
-        Height = 27
+        Height = 23
         Top = 296
         Width = 80
-        EditLabel.Height = 19
+        EditLabel.Height = 15
         EditLabel.Width = 80
         EditLabel.Caption = 'To'
         TabOrder = 8
@@ -166,42 +164,42 @@ object FormSettings: TFormSettings
       end
       object LabelLewd: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 16
-        Width = 79
+        Width = 55
         Caption = 'Fanservice'
       end
       object CheckBoxLewd: TCheckBox
         Left = 192
-        Height = 21
+        Height = 17
         Top = 16
-        Width = 21
+        Width = 18
         TabOrder = 10
       end
       object LabelFontSkin: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 176
-        Width = 32
-        Caption = 'Skin'
+        Width = 51
+        Caption = 'Character'
       end
       object ComboBoxSkin: TComboBox
         Left = 192
-        Height = 29
+        Height = 23
         Top = 176
         Width = 400
-        ItemHeight = 0
+        ItemHeight = 15
         ReadOnly = True
         TabOrder = 11
       end
     end
     object TabSheetGraphics: TTabSheet
       Caption = 'Graphics'
-      ClientHeight = 405
-      ClientWidth = 634
+      ClientHeight = 416
+      ClientWidth = 636
       object EditFPS: TSpinEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 16
         Width = 98
         MaxValue = 60
@@ -211,24 +209,24 @@ object FormSettings: TFormSettings
       end
       object LabelFPS: TLabel
         Left = 23
-        Height = 19
+        Height = 15
         Top = 16
-        Width = 32
+        Width = 19
         Caption = 'FPS'
       end
       object LabelImageQuality: TLabel
         Left = 23
-        Height = 19
+        Height = 15
         Top = 48
-        Width = 98
+        Width = 74
         Caption = 'Image Quality'
       end
       object ComboBoxImageQuality: TComboBox
         Left = 192
-        Height = 29
+        Height = 23
         Top = 48
         Width = 194
-        ItemHeight = 0
+        ItemHeight = 15
         ItemIndex = 1
         Items.Strings = (
           'Nearest'
@@ -241,14 +239,14 @@ object FormSettings: TFormSettings
       end
       object LabelBaseScaling: TLabel
         Left = 23
-        Height = 19
+        Height = 15
         Top = 80
-        Width = 95
+        Width = 65
         Caption = 'Base Scaling'
       end
       object EditBaseScaling: TFloatSpinEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 80
         Width = 98
         Increment = 0.01
@@ -259,7 +257,7 @@ object FormSettings: TFormSettings
       end
       object EditFrameSkip: TSpinEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 112
         Width = 98
         MaxValue = 1000
@@ -268,26 +266,26 @@ object FormSettings: TFormSettings
       end
       object LabelFrameSkip: TLabel
         Left = 23
-        Height = 19
+        Height = 15
         Top = 112
-        Width = 82
+        Width = 58
         Caption = 'Frame Skip'
       end
     end
     object TabSheetBot: TTabSheet
       Caption = 'Chatbot'
-      ClientHeight = 405
-      ClientWidth = 634
+      ClientHeight = 416
+      ClientWidth = 636
       object LabelChatbotServer: TLabel
         Left = 23
-        Height = 19
+        Height = 15
         Top = 16
-        Width = 47
+        Width = 32
         Caption = 'Server'
       end
       object EditBotServer: TEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 16
         Width = 400
         TabOrder = 0
@@ -295,46 +293,46 @@ object FormSettings: TFormSettings
     end
     object TabSheetEmail: TTabSheet
       Caption = 'IMAP'
-      ClientHeight = 405
-      ClientWidth = 634
+      ClientHeight = 416
+      ClientWidth = 636
       object EditEmailServer: TEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 16
         Width = 400
         TabOrder = 0
       end
       object LabelEmailServer: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 16
-        Width = 47
+        Width = 32
         Caption = 'Server'
       end
       object LabelEmailPort: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 48
-        Width = 29
+        Width = 22
         Caption = 'Port'
       end
       object LabelEmailUsername: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 80
-        Width = 74
+        Width = 53
         Caption = 'Username'
       end
       object EditEmailUsername: TEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 80
         Width = 400
         TabOrder = 1
       end
       object EditEmailPassword: TEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 112
         Width = 400
         EchoMode = emPassword
@@ -343,42 +341,42 @@ object FormSettings: TFormSettings
       end
       object LabelEmailPassword: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 112
-        Width = 71
+        Width = 50
         Caption = 'Password'
       end
       object LabelEmailUseSSL: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 176
-        Width = 64
+        Width = 40
         Caption = 'Use SSL'
       end
       object CheckBoxEmailUseSSL: TCheckBox
         Left = 192
-        Height = 21
+        Height = 17
         Top = 176
-        Width = 21
+        Width = 18
         TabOrder = 3
       end
       object EditEmailFetchFrom: TEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 144
         Width = 400
         TabOrder = 4
       end
       object LabelFetchFrom: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 144
-        Width = 81
+        Width = 60
         Caption = 'Fetch From'
       end
       object EditEmailPort: TSpinEdit
         Left = 192
-        Height = 27
+        Height = 23
         Top = 48
         Width = 98
         MaxValue = 65535
@@ -388,21 +386,21 @@ object FormSettings: TFormSettings
     end
     object TabSheetSpeechRecognition: TTabSheet
       Caption = 'Speech Recognition'
-      ClientHeight = 405
-      ClientWidth = 634
+      ClientHeight = 416
+      ClientWidth = 636
       object LabelSTTBackend: TLabel
         Left = 24
-        Height = 19
+        Height = 15
         Top = 16
-        Width = 63
+        Width = 45
         Caption = 'Backend'
       end
       object ComboBoxSTTBackend: TComboBox
         Left = 192
-        Height = 29
+        Height = 23
         Top = 16
         Width = 400
-        ItemHeight = 0
+        ItemHeight = 15
         OnChange = ComboBoxSTTBackendChange
         ReadOnly = True
         TabOrder = 0
@@ -414,21 +412,21 @@ object FormSettings: TFormSettings
         Width = 593
         Caption = 'Vosk'
         ClientHeight = 68
-        ClientWidth = 591
+        ClientWidth = 589
         TabOrder = 1
         object LabelSTTModel1: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 16
-          Width = 44
+          Width = 34
           Caption = 'Model'
         end
         object ComboBoxSTTVoskModel: TComboBox
           Left = 168
-          Height = 29
+          Height = 23
           Top = 16
           Width = 396
-          ItemHeight = 0
+          ItemHeight = 15
           ReadOnly = True
           TabOrder = 0
         end

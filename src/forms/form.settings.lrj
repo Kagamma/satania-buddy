@@ -12,7 +12,7 @@
 {"hash":1455,"name":"tformsettings.editcharsetto.editlabel.caption","sourcebytes":[84,111],"value":"To"},
 {"hash":18340,"name":"tformsettings.buttoncharsetadd.caption","sourcebytes":[65,100,100],"value":"Add"},
 {"hash":164431813,"name":"tformsettings.labellewd.caption","sourcebytes":[70,97,110,115,101,114,118,105,99,101],"value":"Fanservice"},
-{"hash":369150,"name":"tformsettings.labelfontskin.caption","sourcebytes":[83,107,105,110],"value":"Skin"},
+{"hash":143123234,"name":"tformsettings.labelfontskin.caption","sourcebytes":[67,104,97,114,97,99,116,101,114],"value":"Character"},
 {"hash":143059779,"name":"tformsettings.tabsheetgraphics.caption","sourcebytes":[71,114,97,112,104,105,99,115],"value":"Graphics"},
 {"hash":19283,"name":"tformsettings.labelfps.caption","sourcebytes":[70,80,83],"value":"FPS"},
 {"hash":142739385,"name":"tformsettings.labelimagequality.caption","sourcebytes":[73,109,97,103,101,32,81,117,97,108,105,116,121],"value":"Image Quality"},
