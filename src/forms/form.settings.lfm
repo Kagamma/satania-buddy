@@ -294,14 +294,14 @@ object FormSettings: TFormSettings
       object EditBotVolframAlphaAppID: TEdit
         Left = 192
         Height = 23
-        Top = 44
+        Top = 48
         Width = 400
         TabOrder = 1
       end
       object LabelChatbotServer1: TLabel
         Left = 23
         Height = 15
-        Top = 44
+        Top = 48
         Width = 108
         Caption = 'VolframAlpha AppID'
       end
