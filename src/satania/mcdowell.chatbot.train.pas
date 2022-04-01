@@ -238,7 +238,7 @@ begin
   NN.AddLayer(TNNetFullConnectReLU.Create(HiddenSize));
   NN.AddLayer(TNNetFullConnectLinear.Create(OutputSize));
 
-  Satania.ActionFromFile('system/loading-start.evil');
+  Satania.ActionFromFile('system/loading-start.evil', False);
   Satania.Talk('I am learning. please wait...');
   Ticks := GetTickCount64;
   for Y := Low(XData) to High(XData) do
@@ -263,7 +263,7 @@ begin
   NFit.ErrorProc := @TMessage(nil).NoMessageProc;
   NFit.Fit(NN, TrainingPairs, nil, nil, 16, 1000);
 
-  Satania.ActionFromFile('system/loading-stop.evil');
+  Satania.ActionFromFile('system/loading-stop.evil', False);
   Satania.Talk(
     'Learning completed in ' + IntToStr((GetTickCount64 - Ticks) div 1000) + ' seconds!' + #10#10 +
     // DebugErrors(NN) + #13 +

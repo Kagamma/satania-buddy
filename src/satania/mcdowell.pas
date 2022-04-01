@@ -83,7 +83,7 @@ type
     function Exec(S: String): String;
     procedure Chat(S: String);
     procedure Action(Typ, Message: String);
-    procedure ActionFromFile(FileName: String);
+    procedure ActionFromFile(FileName: String; IsChecked: Boolean = True);
     procedure SetScale(Scale: Single);
     procedure ResetScript;
     procedure Update(const Dt: Single);
@@ -213,7 +213,7 @@ begin
   except
     on E: Exception do
     begin
-      Sprite.URL := PATH_SPRITES + 'fallback/skeleton.json';
+      Sprite.URL := PATH_SPRITES + 'template/sprites.plist';
       Talk(E.Message);
     end;
   end else
@@ -326,7 +326,7 @@ begin
   end;
 end;
 
-procedure TSatania.ActionFromFile(FileName: String);
+procedure TSatania.ActionFromFile(FileName: String; IsChecked: Boolean = True);
 var
   FS: TFileStream;
   SS: TStringStream;
@@ -334,6 +334,13 @@ begin
   SS := TStringStream.Create('');
   try
     try
+      if not IsChecked then
+      begin
+        if not FileExists('data/scripts/' + Save.Settings.Skin + '/' + FileName) then
+        begin
+          Exit;
+        end;
+      end;
       FS := Download(PATH_SCRIPTS + Save.Settings.Skin + '/' + FileName) as TFileStream;
       FS.Position := 0;
       SS.CopyFrom(FS, FS.Size);
