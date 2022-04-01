@@ -111,6 +111,24 @@ begin
             FreeAndNil(FormData);
           end;
         end else
+        if Save.Settings.BotVolframAlphaAppID <> '' then
+        begin
+          try
+            JsonString := TFPHTTPClient.SimpleGet('https://api.wolframalpha.com/v1/result?appid=' + Save.Settings.BotVolframAlphaAppID + '&i=' + StringReplace(S, ' ', '+', [rfReplaceAll]));
+            ChatType := 'chat';
+            ChatResponse := JsonString;
+            FreeAndNil(JsonObject);
+          except
+            on E: Exception do
+            begin
+              if E.Message.IndexOf('status code: 501') >= 0 then
+                ChatResponse := 'Sorry I don''t understand.'
+              else
+                ChatResponse := E.Message;
+              ChatType := 'chat';
+            end;
+          end;
+        end else
         begin
           if not Save.SpeechToText then
           begin

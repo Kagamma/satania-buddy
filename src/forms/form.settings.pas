@@ -45,6 +45,7 @@ type
     ComboBoxSTTBackend: TComboBox;
     ComboBoxImageQuality: TComboBox;
     EditBotServer: TEdit;
+    EditBotVolframAlphaAppID: TEdit;
     EditCharsetTo: TLabeledEdit;
     EditDefaultEvilScheme: TEdit;
     EditChatBubbleDelay: TSpinEdit;
@@ -62,6 +63,7 @@ type
     EditBaseScaling: TFloatSpinEdit;
     GroupBoxSTTVosk: TGroupBox;
     LabelChatbotServer: TLabel;
+    LabelChatbotServer1: TLabel;
     LabelSTTBackend: TLabel;
     LabelEmailUsername: TLabel;
     LabelEmailPassword: TLabel;
@@ -136,6 +138,7 @@ begin
 
   CheckBoxLewd.Checked := Save.Settings.Lewd;
   EditBotServer.Text := Save.Settings.BotServer;
+  EditBotVolframAlphaAppID.Text := Save.Settings.BotVolframAlphaAppID;
   EditFPS.Value := Save.Settings.FPS;
   EditChatBubbleDelay.Value := Save.Settings.ChatBubbleDelay;
   EditSoWRightMargin.Value := Save.Settings.SitOnWindowRightMargin;
@@ -213,6 +216,7 @@ begin
   try
     Save.Settings.Lewd := CheckBoxLewd.Checked;
     Save.Settings.BotServer := EditBotServer.Text;
+    Save.Settings.BotVolframAlphaAppID := EditBotVolframAlphaAppID.Text;
     Save.Settings.FPS := EditFPS.Value;
     Save.Settings.ChatBubbleDelay := EditChatBubbleDelay.Value;
     Save.Settings.SitOnWindowRightMargin := EditSoWRightMargin.Value;

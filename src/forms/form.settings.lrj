@@ -21,6 +21,7 @@
 {"hash":57760384,"name":"tformsettings.labelframeskip.caption","sourcebytes":[70,114,97,109,101,32,83,107,105,112],"value":"Frame Skip"},
 {"hash":166242596,"name":"tformsettings.tabsheetbot.caption","sourcebytes":[67,104,97,116,98,111,116],"value":"Chatbot"},
 {"hash":94149826,"name":"tformsettings.labelchatbotserver.caption","sourcebytes":[83,101,114,118,101,114],"value":"Server"},
+{"hash":9072564,"name":"tformsettings.labelchatbotserver1.caption","sourcebytes":[86,111,108,102,114,97,109,65,108,112,104,97,32,65,112,112,73,68],"value":"VolframAlpha AppID"},
 {"hash":319840,"name":"tformsettings.tabsheetemail.caption","sourcebytes":[73,77,65,80],"value":"IMAP"},
 {"hash":94149826,"name":"tformsettings.labelemailserver.caption","sourcebytes":[83,101,114,118,101,114],"value":"Server"},
 {"hash":358036,"name":"tformsettings.labelemailport.caption","sourcebytes":[80,111,114,116],"value":"Port"},

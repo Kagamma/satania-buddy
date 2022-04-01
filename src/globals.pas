@@ -123,6 +123,7 @@ type
   TSaveSettings = class(TPersistent)
   protected
     FDefaultEvilScheme: String;
+    FBotVolframAlphaAppID,
     FBotServer: String;
     FChatBubbleDelay: Integer;
     FFPS: Integer;
@@ -147,8 +148,9 @@ type
   published
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;
     property TextSpeed: Integer read FTextSpeed write FTextSpeed;
-    property SitOnWindowRightMargin: Integer read FSitOnWindowRightMargin write FSitOnWindowRightMargin;
+    property SitOnWindowRightMargin: Integer read FSitOnWindowRightMargin write FSitOnWindowRightMargin;   
     property BotServer: String read FBotServer write FBotServer;
+    property BotVolframAlphaAppID: String read FBotVolframAlphaAppID write FBotVolframAlphaAppID;
     property FPS: Integer read FFPS write FFPS;
     property ChatBubbleDelay: Integer read FChatBubbleDelay write FChatBubbleDelay;
     property BaseScaling: Single read FBaseScaling write FBaseScaling;

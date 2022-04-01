@@ -14,9 +14,9 @@ object FormSettings: TFormSettings
     Height = 444
     Top = 0
     Width = 644
-    ActivePage = TabSheet1
+    ActivePage = TabSheetBot
     Align = alClient
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
@@ -77,6 +77,7 @@ object FormSettings: TFormSettings
         Height = 23
         Top = 144
         Width = 400
+        Enabled = False
         TabOrder = 3
       end
       object LabelDefaultEvilScheme: TLabel
@@ -290,6 +291,20 @@ object FormSettings: TFormSettings
         Width = 400
         TabOrder = 0
       end
+      object EditBotVolframAlphaAppID: TEdit
+        Left = 192
+        Height = 23
+        Top = 44
+        Width = 400
+        TabOrder = 1
+      end
+      object LabelChatbotServer1: TLabel
+        Left = 23
+        Height = 15
+        Top = 44
+        Width = 108
+        Caption = 'VolframAlpha AppID'
+      end
     end
     object TabSheetEmail: TTabSheet
       Caption = 'IMAP'
@@ -470,8 +485,8 @@ object FormSettings: TFormSettings
     end
   end
   object PopupMenuCharset: TPopupMenu
-    Left = 336
-    Top = 64
+    Left = 568
+    Top = 360
     object MenuItemDeleteCharset: TMenuItem
       Caption = 'Delete'
       OnClick = MenuItemDeleteCharsetClick
