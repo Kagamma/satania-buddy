@@ -513,7 +513,7 @@ class function TBuiltInFunction.SEArrayDelete(const VM: TSEVM; const Args: array
 begin
   Result.Kind := sevkArray;
   Result.VarArray := Args[0].VarArray;
-  Delete(Result.VarArray, Round(Args[1].VarSingle), Round(Args[2].VarSingle));
+  Delete(Result.VarArray, Round(Args[1].VarNumber), Round(Args[2].VarNumber));
 end;
 
 class function TBuiltInFunction.SELerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
