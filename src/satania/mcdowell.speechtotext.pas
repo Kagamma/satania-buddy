@@ -29,7 +29,7 @@ uses
   {$I mcdowell.speechtotext_windows.inc} 
   {$undef unit_declare_interface}
   Classes, SysUtils,
-  ad, cmd_ln, ps_search, vosk, voskthread, voskbassaudiosource;
+  vosk, voskthread, voskbassaudiosource;
 
 type
   TSataniaSpeechToText = class
