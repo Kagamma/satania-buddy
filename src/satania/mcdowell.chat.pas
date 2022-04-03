@@ -114,7 +114,7 @@ begin
         if Save.Settings.BotVolframAlphaAppID <> '' then
         begin
           try
-            JsonString := TFPHTTPClient.SimpleGet('https://api.wolframalpha.com/v1/result?appid=' + Save.Settings.BotVolframAlphaAppID + '&i=' + StringReplace(S, ' ', '+', [rfReplaceAll]));
+            JsonString := TFPHTTPClient.SimpleGet('https://api.wolframalpha.com/v1/result?appid=' + Save.Settings.BotVolframAlphaAppID + '&i=' + EncodeURLElement(S));
             ChatType := 'chat';
             ChatResponse := JsonString;
             FreeAndNil(JsonObject);
