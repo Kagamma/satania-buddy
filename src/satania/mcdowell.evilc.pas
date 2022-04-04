@@ -1378,7 +1378,11 @@ begin
             case B^.Kind of
               sevkString:
                 {$ifdef SE_STRING}
-                Push(B^.VarString[Integer(Pop^) + 1]);
+                {$ifdef SE_STRING_UTF8}
+                  Push(UTF8Copy(B^.VarString, Integer(Pop^) + 1, 1));
+                {$else}            
+                  Push(B^.VarString[Integer(Pop^) + 1]);
+                {$endif}
                 {$else}
                 Push(B^.VarString[Integer(Pop^)]);
                 {$endif}
@@ -1393,8 +1397,12 @@ begin
             B := Pop;
             case B^.Kind of
               sevkString:
-                {$ifdef SE_STRING}
-                Push(B^.VarString[Integer(A^) + 1]);
+                {$ifdef SE_STRING}   
+                {$ifdef SE_STRING_UTF8}
+                  Push(UTF8Copy(B^.VarString, Integer(A^) + 1, 1));
+                {$else}
+                  Push(B^.VarString[Integer(A^) + 1]);
+                {$endif}
                 {$else}
                 Push(B^.VarString[Integer(A^)]);
                 {$endif}
