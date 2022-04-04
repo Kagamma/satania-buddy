@@ -133,7 +133,6 @@ begin
   Script.RegisterFunc('buffer_length', @SEBufferLength, 1);
   Script.RegisterFunc('buffer_get', @SEBufferGet, 2);
   Script.RegisterFunc('string_insert', @SEStringInsert, 3);
-  Script.RegisterFunc('string_delete', @SEStringDelete, 3);
   Script.RegisterFunc('numbers', @SENumbers, 1);     
   Script.RegisterFunc('months_to_numbers', @SEMonthsToNumbers, 1);
   Script.RegisterFunc('talk', @SETalk, -1);

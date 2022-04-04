@@ -21,8 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {$ifdef unit_protected}
     function SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEBufferGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;      
-    function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -93,12 +92,6 @@ function TSatania.SEStringInsert(const VM: TSEVM; const Args: array of TSEValue)
 begin
   Result := Args[0];
   UTF8Insert(Args[1].VarString, Result.VarString, Round(Args[2] + 1));
-end;
-
-function TSatania.SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-begin
-  Result := Args[0];
-  UTF8Delete(Result.VarString, Round(Args[1] + 1), Round(Args[2].VarNumber));
 end;
 
 function TSatania.SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

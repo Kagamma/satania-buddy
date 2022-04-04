@@ -607,12 +607,13 @@ begin
 end;        
 
 class function TBuiltInFunction.SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-var
-  S: String;
 begin
-  S := Args[0].VarString;
-  Delete(S, Round(Args[1].VarNumber + 1), Round(Args[2].VarNumber));
-  Result := S;
+  Result := Args[0].VarString;
+  {$ifdef SE_STRING_UTF8}
+  Delete(Result.VarString, Round(Args[1].VarNumber + 1), Round(Args[2].VarNumber));
+  {$else}
+  UTF8Delete(Result.VarString, Round(Args[1].VarNumber + 1), Round(Args[2].VarNumber));
+  {$endif}
 end;
 
 class function TBuiltInFunction.SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
