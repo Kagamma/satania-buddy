@@ -373,6 +373,7 @@ type
     class function SEStringGrep(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringSplit(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
     class function SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFormat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
@@ -613,6 +614,16 @@ begin
   Delete(Result.VarString, Round(Args[1].VarNumber + 1), Round(Args[2].VarNumber));
   {$else}
   UTF8Delete(Result.VarString, Round(Args[1].VarNumber + 1), Round(Args[2].VarNumber));
+  {$endif}
+end;  
+
+class function TBuiltInFunction.SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := Args[0]; 
+  {$ifdef SE_STRING_UTF8}
+  UTF8Insert(Args[1].VarString, Result.VarString, Round(Args[2] + 1));
+  {$else}
+  Insert(Args[1].VarString, Result.VarString, Round(Args[2] + 1));
   {$endif}
 end;
 
@@ -1622,7 +1633,8 @@ begin
   Self.RegisterFunc('string_format', @TBuiltInFunction(nil).SEStringFormat, -1);
   Self.RegisterFunc('string_split', @TBuiltInFunction(nil).SEStringSplit, 2);
   Self.RegisterFunc('string_find', @TBuiltInFunction(nil).SEStringFind, 2);   
-  Self.RegisterFunc('string_delete', @TBuiltInFunction(nil).SEStringDelete, 3);
+  Self.RegisterFunc('string_delete', @TBuiltInFunction(nil).SEStringDelete, 3);  
+  Self.RegisterFunc('string_insert', @TBuiltInFunction(nil).SEStringInsert, 3);
   Self.RegisterFunc('string_replace', @TBuiltInFunction(nil).SEStringReplace, 3);
   Self.RegisterFunc('string_uppercase', @TBuiltInFunction(nil).SEStringUpperCase, 1);
   Self.RegisterFunc('string_lowercase', @TBuiltInFunction(nil).SEStringLowerCase, 1);      
