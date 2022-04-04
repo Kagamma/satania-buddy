@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
 {$ifdef unit_protected}
-    function SEStringLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
-    function SEStringAt(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEBufferGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;      
     function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -79,14 +79,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {$ifdef unit_implementation}
 
-function TSatania.SEStringLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := UTF8Length(Args[0]);
-end;                          
+  Result := Length(Args[0].VarString);
+end;
 
-function TSatania.SEStringAt(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEBufferGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := UTF8Copy(Args[0], Round(Args[1] + 1), 1);
+  Result := Ord(Args[0].VarString[Round(Args[1] + 1)]);
 end;
 
 function TSatania.SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
