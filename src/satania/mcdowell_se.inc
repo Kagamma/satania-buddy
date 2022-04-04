@@ -58,7 +58,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLProcess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEURLProcess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+    function SEURLEncode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEURLDecode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SENumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
     function SEMonthsToNumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEReminderCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -379,6 +381,16 @@ begin
   finally
     SL.Free;
   end;
+end;
+
+function TSatania.SEURLEncode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := EncodeURLElement(Args[0]);
+end;
+
+function TSatania.SEURLDecode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := DecodeURLElement(Args[0]);
 end;
 
 function TSatania.SENumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

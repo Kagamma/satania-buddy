@@ -31,7 +31,7 @@ uses
   CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
   CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts,
-  CastleBehaviors, Clipbrd,
+  CastleBehaviors, Clipbrd, fphttpclient,
   Mcdowell.EvilC, Mcdowell.Chat, Globals;
 
 type
@@ -171,7 +171,9 @@ begin
   Script.RegisterFunc('url_upload', @SEURLUpload, 4);
   Script.RegisterFunc('url_is_success', @SEURLIsSuccess, 1); 
   Script.RegisterFunc('url_result_get', @SEURLGetResult, 1);
-  Script.RegisterFunc('url_query', @SEURLProcess, 2);
+  Script.RegisterFunc('url_query', @SEURLProcess, 2);          
+  Script.RegisterFunc('url_encode', @SEURLEncode, 1);
+  Script.RegisterFunc('url_decode', @SEURLDecode, 1);
   Script.RegisterFunc('chat_mode_set', @SEChatModeSet, 1);      
   Script.RegisterFunc('chat_result_get', @SEChatResultGet, 0);         
   Script.RegisterFunc('reminder_create', @SEReminderCreate, 3);
