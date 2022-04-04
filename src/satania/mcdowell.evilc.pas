@@ -26,13 +26,16 @@ unit Mcdowell.EvilC;
 {$modeswitch advancedrecords}
 // enable this if you want to perform string manipulation (concat, compare)
 {$define SE_STRING}
+// enable this if you want to handle UTF-8 strings
+{$define SE_STRING_UTF8}
 // enable this if you want precision (use Double instead of Single)
 {$define SE_PRECISION}
 
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr;
+  SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr
+  {$ifdef SE_STRING_UTF8},LazUTF8{$endif};
 
 type
   TSENumber = {$ifdef SE_PRECISION}Double{$else}Single{$endif};
@@ -482,7 +485,11 @@ var
 begin
   case Args[0].Kind of
     sevkString:
+      {$ifdef SE_STRING_UTF8}     
+      Exit(UTF8Length(String(Args[0].VarString)));
+      {$else}
       Exit(Length(String(Args[0].VarString)));
+      {$endif}
     else
       begin
         A := Args[0];
@@ -1485,7 +1492,13 @@ begin
                   if V^.Kind = sevkString then
                   begin
                     {$ifdef SE_STRING}
-                    V^.VarString[Integer(C^) + 1] := B^.VarString[1]
+                    {$ifdef SE_STRING_UTF8}
+                      UTF8Delete(V^.VarString, Integer(C^) + 1, 1);
+                      S := UTF8Copy(B^.VarString, 1, 1);
+                      UTF8Insert(V^.VarString, S, Integer(C^) + 1);
+                    {$else}
+                      V^.VarString[Integer(C^) + 1] := B^.VarString[1];
+                    {$endif}
                     {$else}  
                     S := V^.VarString;
                     S[C^] := B^.VarString[0];
