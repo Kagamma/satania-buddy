@@ -1503,7 +1503,7 @@ begin
                     {$ifdef SE_STRING_UTF8}
                       UTF8Delete(V^.VarString, Integer(C^) + 1, 1);
                       S := UTF8Copy(B^.VarString, 1, 1);
-                      UTF8Insert(V^.VarString, S, Integer(C^) + 1);
+                      UTF8Insert(S, V^.VarString, Integer(C^) + 1);
                     {$else}
                       V^.VarString[Integer(C^) + 1] := B^.VarString[1];
                     {$endif}
@@ -1522,8 +1522,14 @@ begin
                 begin
                   if V^.Kind = sevkString then
                   begin
-                    {$ifdef SE_STRING}
-                    V^.VarString[Integer(C^) + 1] := Char(Round(B^.VarNumber));
+                    {$ifdef SE_STRING} 
+                    {$ifdef SE_STRING_UTF8}
+                      UTF8Delete(V^.VarString, Integer(C^) + 1, 1);
+                      S := Char(Round(B^.VarNumber));
+                      UTF8Insert(S, V^.VarString, Integer(C^) + 1);
+                    {$else}
+                      V^.VarString[Integer(C^) + 1] := Char(Round(B^.VarNumber));
+                    {$endif}
                     {$else}   
                     S := V^.VarString;
                     S[C^] := Char(Round(B^.VarNumber));

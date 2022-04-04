@@ -90,12 +90,9 @@ begin
 end;
 
 function TSatania.SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-var
-  S: String;
 begin
   Result := Args[0];
-  S := Args[1];
-  UTF8Insert(Result.VarString, S, Round(Args[2] + 1));
+  UTF8Insert(Args[1].VarString, Result.VarString, Round(Args[2] + 1));
 end;
 
 function TSatania.SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
