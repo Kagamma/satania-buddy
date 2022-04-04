@@ -18,7 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 }
 
-{$ifdef unit_protected}                                 
+{$ifdef unit_protected}
+    function SEStringLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+    function SEStringAt(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -74,6 +76,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {$endif}
 
 {$ifdef unit_implementation}
+
+function TSatania.SEStringLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := UTF8Length(Args[0]);
+end;                          
+
+function TSatania.SEStringAt(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := UTF8Copy(Args[0], Round(Args[1] + 1), 1);
+end;
+
 function TSatania.SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   if Length(Args) = 1 then

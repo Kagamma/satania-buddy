@@ -31,7 +31,7 @@ uses
   CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
   CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts,
-  CastleBehaviors, Clipbrd, fphttpclient,
+  CastleBehaviors, Clipbrd, fphttpclient, LazUTF8,
   Mcdowell.EvilC, Mcdowell.Chat, Globals;
 
 type
@@ -129,7 +129,9 @@ begin
   UsedRemindersList.Sorted := True;
   Script := TEvilC.Create;
   AnimTalkLoop := 'talk_loop';   
-  AnimTalkFinish := 'talk_finish';
+  AnimTalkFinish := 'talk_finish';            
+  Script.RegisterFunc('string_length', @SEStringLength, 1);
+  Script.RegisterFunc('string_at', @SEStringAt, 2);
   Script.RegisterFunc('numbers', @SENumbers, 1);     
   Script.RegisterFunc('months_to_numbers', @SEMonthsToNumbers, 1);
   Script.RegisterFunc('talk', @SETalk, -1);
