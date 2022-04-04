@@ -611,9 +611,9 @@ class function TBuiltInFunction.SEStringDelete(const VM: TSEVM; const Args: arra
 begin
   Result := Args[0].VarString;
   {$ifdef SE_STRING_UTF8}
-  Delete(Result.VarString, Round(Args[1].VarNumber + 1), Round(Args[2].VarNumber));
-  {$else}
   UTF8Delete(Result.VarString, Round(Args[1].VarNumber + 1), Round(Args[2].VarNumber));
+  {$else}
+  Delete(Result.VarString, Round(Args[1].VarNumber + 1), Round(Args[2].VarNumber));
   {$endif}
 end;  
 
