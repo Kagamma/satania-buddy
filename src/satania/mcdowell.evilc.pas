@@ -267,7 +267,8 @@ type
     IncludeList: TStrings;
     TokenList: TSETokenList;
     LocalVarList: TSEIdentList;
-    FuncList: TSEFuncList;
+    FuncList,
+    FuncScriptList: TSEFuncList;
     ConstMap: TSEConstMap;
     ScopeStack: TSEScopeStack;
     LineOfCodeList: TIntegerList;
@@ -1609,7 +1610,8 @@ begin
   Self.VM := TSEVM.Create;
   Self.TokenList := TSETokenList.Create;
   Self.LocalVarList := TSEIdentList.Create;
-  Self.FuncList := TSEFuncList.Create;
+  Self.FuncList := TSEFuncList.Create;        
+  Self.FuncScriptList := TSEFuncList.Create;
   Self.ConstMap := TSEConstMap.Create;
   Self.ScopeStack := TSEScopeStack.Create;
   Self.LineOfCodeList := TIntegerList.Create;
@@ -1679,6 +1681,7 @@ begin
   FreeAndNil(Self.TokenList);
   FreeAndNil(Self.LocalVarList);
   FreeAndNil(Self.FuncList);
+  FreeAndNil(Self.FuncScriptList);
   FreeAndNil(Self.ConstMap);
   FreeAndNil(Self.ScopeStack);
   FreeAndNil(Self.LineOfCodeList);
@@ -2064,6 +2067,12 @@ var
     I: Integer;
   begin
     for I := 0 to Self.FuncList.Count - 1 do
+    begin
+      Result := Self.FuncList.Ptr(I);
+      if Result^.Name = Name then
+        Exit(Result);
+    end;      
+    for I := 0 to Self.FuncScriptList.Count - 1 do
     begin
       Result := Self.FuncList.Ptr(I);
       if Result^.Name = Name then
@@ -2817,13 +2826,8 @@ end;
 procedure TEvilC.Reset;
 var
   Ident: TSEIdent;
-  I: Integer;
 begin
-  for I := Self.FuncList.Count - 1 downto 0 do
-  begin
-    if Self.FuncList[I].Kind = sefkScript then
-      Self.FuncList.Delete(I);
-  end;
+  Self.FuncList.Clear;
   Self.VM.Reset;
   Self.VM.Binary.Clear;
   Self.VM.IsDone := True;
@@ -2873,7 +2877,7 @@ begin
   FuncInfo.StackAddr := StackAddr;
   FuncInfo.Name := Name;
   FuncInfo.Kind := sefkScript;
-  Self.FuncList.Add(FuncInfo);
+  Self.FuncScriptList.Add(FuncInfo);
 end;
 
 initialization
