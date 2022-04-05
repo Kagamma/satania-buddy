@@ -122,10 +122,10 @@ uses
 
 procedure TFormSettings.FormShow(Sender: TObject);
 var
-  I: Integer;
+  I, J, Tmp: Integer;
   L: TStringDynArray;
-  S: String;
-  SL: TStringList;
+  S, S2: String;
+  SL, SL2: TStringList;
 begin
   PageControl.TabIndex := 0;
   ComboBoxSTTBackend.Items.Clear;
@@ -149,17 +149,35 @@ begin
 
   ComboBoxSkin.Items.Clear;
   SL := TStringList.Create;
-  FindAllDirectories(SL, 'data/scripts', False);
+  SL2 := TStringList.Create;
+  FindAllDirectories(SL, 'data/sprites', False);
+  FindAllDirectories(SL2, 'data/scripts', False);
   for I := 0 to SL.Count - 1 do
   begin
-    S := ExtractFileName(SL[I]);
-    ComboBoxSkin.Items.Add(S);
-    if S = Save.Settings.Skin then
+    SL[I] := ExtractFileName(SL[I]);
+  end;                                              
+  for I := 0 to SL2.Count - 1 do
+  begin
+    SL2[I] := ExtractFileName(SL2[I]);
+  end;
+  for I := 0 to SL.Count - 1 do
+  begin
+    S := SL[I];
+    for J := 0 to SL2.Count - 1 do
     begin
-      ComboBoxSkin.ItemIndex := ComboBoxSkin.Items.Count - 1;
+      if S = SL2[J] then
+      begin    
+        ComboBoxSkin.Items.Add(S);
+        if S = Save.Settings.Skin then
+        begin
+          ComboBoxSkin.ItemIndex := ComboBoxSkin.Items.Count - 1;
+        end;
+        break;
+      end;
     end;
   end;
   SL.Free;
+  SL2.Free;
 
   EditEmailServer.Text := Save.Settings.EmailServer;
   EditEmailPort.Value := Save.Settings.EmailPort;

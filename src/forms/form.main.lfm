@@ -1,27 +1,26 @@
 object FormMain: TFormMain
   Left = -8
-  Height = 716
+  Height = 755
   Top = -8
-  Width = 651
+  Width = 667
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 716
-  ClientWidth = 651
+  ClientHeight = 732
+  ClientWidth = 667
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   PopupMenu = TrayMenu
   ShowInTaskBar = stNever
-  LCLVersion = '2.3.0.0'
   Scaled = False
   Visible = True
   WindowState = wsMaximized
   object CastleControl: TCastleControl
     Left = 0
-    Height = 716
+    Height = 732
     Top = 0
-    Width = 651
+    Width = 667
     Align = alClient
     AlphaBits = 8
     Options = []
@@ -1411,25 +1410,25 @@ object FormMain: TFormMain
     end
     object MenuItem1: TMenuItem
       Caption = 'Help'
-      object MenuItemScriptingAPIs: TMenuItem
-        Caption = 'Scripting APIs'
-        OnClick = MenuItemScriptingAPIsClick
-      end
       object MenuItemHelpAlarmsAndReminders: TMenuItem
         Caption = 'Alarms and Reminders'
         OnClick = MenuItemHelpAlarmsAndRemindersClick
       end
-      object MenuItemHelpRules: TMenuItem
-        Caption = 'Rules'
-        OnClick = MenuItemHelpRulesClick
+      object MenuItemHelpCreateNewCharacter: TMenuItem
+        Caption = 'Create New Character'
+        OnClick = MenuItemHelpCreateNewCharacterClick
       end
       object MenuItemHelpVoiceCommand: TMenuItem
         Caption = 'Default Voice Commands'
         OnClick = MenuItemHelpVoiceCommandClick
       end
-      object MenuItemHelpCreateNewCharacter: TMenuItem
-        Caption = 'Create New Character'
-        OnClick = MenuItemHelpCreateNewCharacterClick
+      object MenuItemHelpRules: TMenuItem
+        Caption = 'Rules'
+        OnClick = MenuItemHelpRulesClick
+      end
+      object MenuItemScriptingAPIs: TMenuItem
+        Caption = 'Scripting APIs'
+        OnClick = MenuItemScriptingAPIsClick
       end
     end
     object MenuItemAbout: TMenuItem
