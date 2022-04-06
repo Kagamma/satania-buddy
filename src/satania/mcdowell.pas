@@ -132,7 +132,6 @@ begin
   AnimTalkLoop := 'talk_loop';   
   AnimTalkFinish := 'talk_finish';
   Self.AnimTalkScriptList := TStringList.Create;
-  Self.AnimTalkScriptList.Sorted := True;
   Script.RegisterFunc('buffer_length', @SEBufferLength, 1);
   Script.RegisterFunc('buffer_get', @SEBufferGet, 2);
   Script.RegisterFunc('numbers', @SENumbers, 1);     
