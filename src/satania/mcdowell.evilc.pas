@@ -2074,7 +2074,7 @@ var
     end;      
     for I := 0 to Self.FuncScriptList.Count - 1 do
     begin
-      Result := Self.FuncList.Ptr(I);
+      Result := Self.FuncScriptList.Ptr(I);
       if Result^.Name = Name then
         Exit(Result);
     end;
@@ -2827,7 +2827,7 @@ procedure TEvilC.Reset;
 var
   Ident: TSEIdent;
 begin
-  Self.FuncList.Clear;
+  Self.FuncScriptList.Clear;
   Self.VM.Reset;
   Self.VM.Binary.Clear;
   Self.VM.IsDone := True;
