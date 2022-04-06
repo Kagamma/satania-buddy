@@ -140,9 +140,19 @@ begin
 end;
 
 function TSatania.SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  I: Integer;
 begin
   AnimTalkLoop := Args[0];        
-  AnimTalkFinish := Args[1];
+  AnimTalkFinish := Args[1];  
+  Self.AnimTalkScriptList.Clear;
+  if Length(Args) = 3 then
+  begin
+    for I := 0 to Length(Args[2].VarArray) - 1 do
+    begin
+      Self.AnimTalkScriptList.Add(Args[2].VarArray[I].VarString);
+    end;
+  end;
 end;
 
 function TSatania.SEIsAnimationPlaying(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

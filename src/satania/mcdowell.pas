@@ -63,7 +63,8 @@ type
     AnimTalkLoop,
     AnimTalkFinish,
     Name: String;
-    Script: TEvilC;     
+    Script: TEvilC;
+    AnimTalkScriptList: TStringList; // List of possible scripts to execute during talking
     UsedRemindersList: TStringList;
     { Where we should move our touch panel to }
     TouchBone: TTransformNode;
@@ -129,7 +130,9 @@ begin
   UsedRemindersList.Sorted := True;
   Script := TEvilC.Create;
   AnimTalkLoop := 'talk_loop';   
-  AnimTalkFinish := 'talk_finish';            
+  AnimTalkFinish := 'talk_finish';
+  Self.AnimTalkScriptList := TStringList.Create;
+  Self.AnimTalkScriptList.Sorted := True;
   Script.RegisterFunc('buffer_length', @SEBufferLength, 1);
   Script.RegisterFunc('buffer_get', @SEBufferGet, 2);
   Script.RegisterFunc('numbers', @SENumbers, 1);     
@@ -147,7 +150,7 @@ begin
   Script.RegisterFunc('sprite_animation_play', @SEStartAnimation, 2);
   Script.RegisterFunc('sprite_animation_is_playing', @SEIsAnimationPlaying, 1);
   Script.RegisterFunc('sprite_animation_stop', @SEStopAnimation, 1); 
-  Script.RegisterFunc('sprite_animation_talk_set', @SESpriteTalkSet, 2);
+  Script.RegisterFunc('sprite_animation_talk_set', @SESpriteTalkSet, -1);
   Script.RegisterFunc('is_sow', @SEIsSoW, 0);
   Script.RegisterFunc('is_lewd', @SEIsLewd, 0);
   Script.RegisterFunc('is_silent', @SEIsSilent, 0);
@@ -192,6 +195,7 @@ end;
 destructor TSatania.Destroy;
 begin
   UsedRemindersList.Free;
+  AnimTalkScriptList.Free;
   inherited;
 end;
 
@@ -234,6 +238,7 @@ begin
 
     AnimTalkLoop := 'talk_loop';
     AnimTalkFinish := 'talk_finish';
+    Self.AnimTalkScriptList.Clear;
   except
   end;
 end;
@@ -363,6 +368,11 @@ procedure TSatania.Talk(S: String);
 begin      
   CSTalk.Enter;
   try
+    if Self.AnimTalkScriptList.Count > 0 then
+    begin
+      // Play an animation randomly
+      Satania.StartAnimation(Self.AnimTalkScriptList.Strings[Random(Self.AnimTalkScriptList.Count)]);
+    end;
     LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
     LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
     LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;

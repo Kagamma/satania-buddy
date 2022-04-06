@@ -642,15 +642,15 @@ var
   S, V: String;
 begin
   S := Args[0].VarString;
-  for I := 1 to Length(Args) - 1 do
+  for I := 0 to Length(Args[1].VarArray) - 1 do
   begin
     V := '';
-    if Args[I].Kind = sevkSingle then
-      V := PointFloatToStr(Args[I].VarNumber)
+    if Args[1].VarArray[I].Kind = sevkSingle then
+      V := PointFloatToStr(Args[1].VarArray[I].VarNumber)
     else
-    if Args[I].Kind = sevkString then
-      V := Args[I].VarString;
-    S := StringReplace(S, '{' + IntToStr(I - 1) + '}', V, [rfReplaceAll]);
+    if Args[1].VarArray[I].Kind = sevkString then
+      V := Args[1].VarArray[I].VarString;
+    S := StringReplace(S, '{' + IntToStr(I) + '}', V, [rfReplaceAll]);
   end;
   Result := S;
 end;
@@ -1632,7 +1632,7 @@ begin
   Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 2);
   Self.RegisterFunc('pow', @TBuiltInFunction(nil).SEPow, 2);
   Self.RegisterFunc('string_grep', @TBuiltInFunction(nil).SEStringGrep, -1);   
-  Self.RegisterFunc('string_format', @TBuiltInFunction(nil).SEStringFormat, -1);
+  Self.RegisterFunc('string_format', @TBuiltInFunction(nil).SEStringFormat, 2);
   Self.RegisterFunc('string_split', @TBuiltInFunction(nil).SEStringSplit, 2);
   Self.RegisterFunc('string_find', @TBuiltInFunction(nil).SEStringFind, 2);   
   Self.RegisterFunc('string_delete', @TBuiltInFunction(nil).SEStringDelete, 3);  
