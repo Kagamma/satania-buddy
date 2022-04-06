@@ -367,11 +367,6 @@ procedure TSatania.Talk(S: String);
 begin      
   CSTalk.Enter;
   try
-    if Self.AnimTalkScriptList.Count > 0 then
-    begin
-      // Play an animation randomly
-      Satania.StartAnimation(Self.AnimTalkScriptList.Strings[Random(Self.AnimTalkScriptList.Count)]);
-    end;
     LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
     LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
     LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
@@ -389,7 +384,12 @@ begin
       Log(Name, S);
       if AnimTalkLoop <> '' then
         Satania.StartAnimation(AnimTalkLoop);
-      ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
+      ChatBubbleDelay := Save.Settings.ChatBubbleDelay; 
+      if Self.AnimTalkScriptList.Count > 0 then
+      begin
+        // Play an animation randomly
+        Satania.ActionFromFile(Self.AnimTalkScriptList.Strings[Random(Self.AnimTalkScriptList.Count)]);
+      end;
     end;
   finally
     CSTalk.Leave;
