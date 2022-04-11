@@ -45,7 +45,10 @@ type
     StatusBar: TStatusBar;
     SynCppSyn: TSynCppSyn;
     ToolBar1: TToolBar;
-    ToolButton1: TToolButton;
+    ToolButtonHelp: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButtonUndo: TToolButton;
+    ToolButtonRedo: TToolButton;
     ToolButtonSeparator1: TToolButton;
     ToolButtonSaveAs: TToolButton;
     ToolButtonNew: TToolButton;
@@ -63,13 +66,15 @@ type
     procedure MenuItemEditorCopyClick(Sender: TObject);
     procedure MenuItemEditorCutClick(Sender: TObject);
     procedure MenuItemEditorPasteClick(Sender: TObject);
-    procedure ToolButton1Click(Sender: TObject);
+    procedure ToolButtonHelpClick(Sender: TObject);
     procedure ToolButtonNewClick(Sender: TObject);
     procedure ToolButtonOpenClick(Sender: TObject);
+    procedure ToolButtonRedoClick(Sender: TObject);
     procedure ToolButtonRunClick(Sender: TObject);
     procedure ToolButtonSaveAsClick(Sender: TObject);
     procedure ToolButtonSaveClick(Sender: TObject);
     procedure OpenRules;
+    procedure ToolButtonUndoClick(Sender: TObject);
   private
 
   public
@@ -121,7 +126,7 @@ begin
   Editor.PasteFromClipboard;
 end;
 
-procedure TFormEvilCEditor.ToolButton1Click(Sender: TObject);
+procedure TFormEvilCEditor.ToolButtonHelpClick(Sender: TObject);
 begin
   OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Scripting-References-&-APIs');
 end;
@@ -171,6 +176,11 @@ begin
     Editor.Lines.LoadFromFile(OpenDialog.FileName);
     StatusBar.Panels[1].Text := '';
   end;
+end;
+
+procedure TFormEvilCEditor.ToolButtonRedoClick(Sender: TObject);
+begin
+  Editor.Redo;
 end;
 
 procedure TFormEvilCEditor.ToolButtonRunClick(Sender: TObject);
@@ -225,6 +235,11 @@ begin
   WorkingFile := 'data/nn/chatbot/rules.json';
   Editor.Lines.LoadFromFile('data/nn/chatbot/rules.json');
   StatusBar.Panels[1].Text := '';
+end;
+
+procedure TFormEvilCEditor.ToolButtonUndoClick(Sender: TObject);
+begin
+  Editor.Undo;
 end;
 
 end.
