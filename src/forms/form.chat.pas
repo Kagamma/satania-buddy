@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit form.chat;
 
-{$mode ObjFPC}{$H+}
+{$I configs.inc}
 
 interface
 

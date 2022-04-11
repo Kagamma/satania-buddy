@@ -1,6 +1,6 @@
 unit mcdowell.numbers;
 
-{$mode ObjFPC}{$H+}
+{$I configs.inc}
 
 interface
 

@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit frame.rules.item;
 
-{$mode ObjFPC}{$H+}
+{$I configs.inc}
 
 interface
 
