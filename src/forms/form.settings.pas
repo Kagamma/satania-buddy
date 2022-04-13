@@ -61,6 +61,8 @@ type
     EditFontSize: TSpinEdit;
     EditTextSpeed: TSpinEdit;
     EditBaseScaling: TFloatSpinEdit;
+    GroupBox1: TGroupBox;
+    GroupBox2: TGroupBox;
     GroupBoxSTTVosk: TGroupBox;
     LabelChatbotServer: TLabel;
     LabelChatbotServer1: TLabel;
