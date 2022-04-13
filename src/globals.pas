@@ -141,6 +141,7 @@ type
     FEmailPort: Word;
     FEmailUseSSL: Boolean;
     FFrameSkip: Integer;
+    FDeveloperMode,
     FLewd: Boolean;
     FSkin: String;
     FSTTVoskModel: String;
@@ -166,6 +167,7 @@ type
     property FontSize: Integer read FFontSize write FFontSize;
     property FrameSkip: Integer read FFrameSkip write FFrameSkip;
     property Lewd: Boolean read FLewd write FLewd default False;
+    property DeveloperMode: Boolean read FDeveloperMode write FDeveloperMode default False;
     property Skin: String read FSkin write FSkin;
     property STTVoskModel: String read FSTTVoskModel write FSTTVoskModel;
     property STTBackend: Integer read FSTTBackend write FSTTBackend default 0;

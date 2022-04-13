@@ -40,6 +40,7 @@ type
     ButtonOk: TBitBtn;
     CheckBoxEmailUseSSL: TCheckBox;
     CheckBoxLewd: TCheckBox;
+    CheckBoxDeveloperMode: TCheckBox;
     ComboBoxSTTVoskModel: TComboBox;
     ComboBoxSkin: TComboBox;
     ComboBoxSTTBackend: TComboBox;
@@ -66,6 +67,7 @@ type
     GroupBoxSTTVosk: TGroupBox;
     LabelChatbotServer: TLabel;
     LabelChatbotServer1: TLabel;
+    LabelDeveloperMode: TLabel;
     LabelSTTBackend: TLabel;
     LabelEmailUsername: TLabel;
     LabelEmailPassword: TLabel;
@@ -94,6 +96,7 @@ type
     Panel1: TPanel;
     PopupMenuCharset: TPopupMenu;
     TabSheet1: TTabSheet;
+    TabSheetOptimization: TTabSheet;
     TabSheetSpeechRecognition: TTabSheet;
     TabSheetEmail: TTabSheet;
     TabSheetGraphics: TTabSheet;
@@ -138,7 +141,8 @@ begin
   ComboBoxSTTBackend.ItemIndex := Save.Settings.STTBackend;
   ComboBoxSTTBackendChange(Self);
 
-  CheckBoxLewd.Checked := Save.Settings.Lewd;
+  CheckBoxLewd.Checked := Save.Settings.Lewd;     
+  CheckBoxDeveloperMode.Checked := Save.Settings.DeveloperMode;
   EditBotServer.Text := Save.Settings.BotServer;
   EditBotVolframAlphaAppID.Text := Save.Settings.BotVolframAlphaAppID;
   EditFPS.Value := Save.Settings.FPS;
@@ -234,7 +238,8 @@ end;
 procedure TFormSettings.ButtonOkClick(Sender: TObject);
 begin
   try
-    Save.Settings.Lewd := CheckBoxLewd.Checked;
+    Save.Settings.Lewd := CheckBoxLewd.Checked;    
+    Save.Settings.DeveloperMode := CheckBoxDeveloperMode.Checked;
     Save.Settings.BotServer := EditBotServer.Text;
     Save.Settings.BotVolframAlphaAppID := EditBotVolframAlphaAppID.Text;
     Save.Settings.FPS := EditFPS.Value;

@@ -14,9 +14,9 @@ object FormSettings: TFormSettings
     Height = 444
     Top = 0
     Width = 644
-    ActivePage = TabSheetBot
+    ActivePage = TabSheetOptimization
     Align = alClient
-    TabIndex = 2
+    TabIndex = 5
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
@@ -173,7 +173,7 @@ object FormSettings: TFormSettings
         TabOrder = 9
       end
       object LabelLewd: TLabel
-        Left = 24
+        Left = 25
         Height = 15
         Top = 16
         Width = 55
@@ -490,6 +490,26 @@ object FormSettings: TFormSettings
           ReadOnly = True
           TabOrder = 0
         end
+      end
+    end
+    object TabSheetOptimization: TTabSheet
+      Caption = 'Developer'
+      ClientHeight = 416
+      ClientWidth = 636
+      object LabelDeveloperMode: TLabel
+        Left = 25
+        Height = 15
+        Top = 16
+        Width = 87
+        Caption = 'Developer Mode'
+        ParentColor = False
+      end
+      object CheckBoxDeveloperMode: TCheckBox
+        Left = 192
+        Height = 17
+        Top = 16
+        Width = 18
+        TabOrder = 0
       end
     end
   end

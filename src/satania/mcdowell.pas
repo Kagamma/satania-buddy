@@ -211,7 +211,7 @@ end;
 procedure TSatania.LoadModel(S: String);
 begin
   S := PATH_SPRITES + Save.Settings.Skin + '/' + S;
-  if S <> Sprite.URL then
+  if (S <> Sprite.URL) or Save.Settings.DeveloperMode then
   try
     begin
       Sprite.URL := '';
