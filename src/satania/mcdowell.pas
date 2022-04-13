@@ -64,6 +64,7 @@ type
     AnimTalkFinish,
     Name: String;
     Script: TEvilC;
+    ScriptCacheMap: TSECacheMap;
     AnimTalkScriptList: TStringList; // List of possible scripts to execute during talking
     UsedRemindersList: TStringList;
     { Where we should move our touch panel to }
@@ -94,6 +95,7 @@ type
     procedure SetVisible(const V: Boolean);
     procedure UpdateReminders;
     procedure UpdateMeta;
+    procedure CleanUpCache;
   end;
 
 var
@@ -188,6 +190,7 @@ begin
   Script.RegisterFunc('fs_file_exists', @SEFileExists, 1);
   Script.RegisterFunc('fs_file_read', @SEFileRead, 1);
   Script.RegisterFunc('fs_file_write', @SEFileWrite, 2);
+  ScriptCacheMap := TSECacheMap.Create;
   UpdateMeta;
 end;
 
@@ -195,6 +198,8 @@ destructor TSatania.Destroy;
 begin
   UsedRemindersList.Free;
   AnimTalkScriptList.Free;
+  ScriptCacheMap.Free;
+  Script.Free;
   inherited;
 end;
 
@@ -338,6 +343,8 @@ procedure TSatania.ActionFromFile(FileName: String; IsChecked: Boolean = True);
 var
   FS: TFileStream;
   SS: TStringStream;
+  Path: String;
+  IsContainKey: Boolean = False;
 begin
   SS := TStringStream.Create('');
   try
@@ -349,11 +356,36 @@ begin
           Exit;
         end;
       end;
-      FS := Download(PATH_SCRIPTS + Save.Settings.Skin + '/' + FileName) as TFileStream;
-      FS.Position := 0;
-      SS.CopyFrom(FS, FS.Size);
-      Action('script', SS.DataString);
-      FreeAndNil(FS);
+      Path := PATH_SCRIPTS + Save.Settings.Skin + '/' + FileName;
+      // Clear the cache in developer mode
+      if Save.Settings.DeveloperMode then
+        Self.CleanUpCache;
+      // We always load script in developer mode    
+      IsContainKey := Self.ScriptCacheMap.ContainsKey(Path);
+      if Save.Settings.DeveloperMode or (not IsContainKey) then
+      begin
+        FS := Download(Path) as TFileStream;
+        FS.Position := 0;
+        SS.CopyFrom(FS, FS.Size);
+        FreeAndNil(FS);   
+        Action('script', SS.DataString);
+        // Parse the source beforehand to store backup
+        Self.Script.Lex;
+        Self.Script.Parse;
+        Self.ScriptCacheMap.Add(Path, Self.Script.Backup);
+      end else
+      if IsContainKey then
+      begin
+        CSAction.Enter;
+        try
+          // Restore binaries from cache
+          ResetScript;
+          Self.Script.Restore(Self.ScriptCacheMap[Path]);
+          IsAction := True;
+        finally
+          CSAction.Leave;
+        end;
+      end;
     except
       on E: Exception do
         Talk(E.Message);
@@ -704,6 +736,11 @@ begin
   end;
   if not IsNamed then
     Script.ConstMap.Add('name', Name);
+end;
+
+procedure TSatania.CleanUpCache;
+begin
+  Self.ScriptCacheMap.Clear;
 end;
 
 initialization

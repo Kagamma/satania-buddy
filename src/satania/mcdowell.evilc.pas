@@ -171,6 +171,17 @@ type
     procedure Exec;
   end;
 
+  TSECache = record
+    Binary: TSEBinary;
+    LocalVarListCount: Cardinal;
+    LineOfCodeList: TIntegerList;
+  end;
+  TSECacheMapAncestor = specialize TDictionary<String, TSECache>;
+  TSECacheMap = class(TSECacheMapAncestor)
+  public
+    procedure Clear; override;
+  end;
+
   TSETokenKind = (
     tkEOF,
     tkDot,
@@ -288,6 +299,8 @@ type
     function Exec: TSEValue;
     procedure RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);   
     procedure RegisterScriptFunc(const Name: String; const Addr, StackAddr, ArgCount: Integer);
+    function Backup: TSECache;
+    procedure Restore(const Cache: TSECache);
 
     property IsPaused: Boolean read GetIsPaused write SetIsPaused;
     property Source: String read FSource write SetSource;
@@ -2878,6 +2891,49 @@ begin
   FuncInfo.Name := Name;
   FuncInfo.Kind := sefkScript;
   Self.FuncScriptList.Add(FuncInfo);
+end;
+
+function TEvilC.Backup: TSECache;
+var
+  I: Integer;
+begin
+  Result.Binary := TSEBinary.Create;
+  Result.LineOfCodeList := TIntegerList.Create;
+  for I := 0 to Self.VM.Binary.Count - 1 do
+  begin
+    Result.Binary.Add(Self.VM.Binary[I]);
+  end;                             
+  for I := 0 to Self.LineOfCodeList.Count - 1 do
+  begin
+    Result.LineOfCodeList.Add(Self.LineOfCodeList[I]);
+  end;  
+  Result.LocalVarListCount := Self.LocalVarList.Count;
+end;
+
+procedure TEvilC.Restore(const Cache: TSECache);
+var
+  I: Integer;
+begin
+  Self.VM.Binary.Clear;    
+  Self.LineOfCodeList.Clear;
+  for I := 0 to Cache.LineOfCodeList.Count - 1 do
+    Self.LineOfCodeList.Add(Cache.LineOfCodeList[I]);
+  for I := 0 to Cache.Binary.Count - 1 do
+    Self.VM.Binary.Add(Cache.Binary[I]);
+  Self.LocalVarList.Count := Cache.LocalVarListCount;
+  Self.IsParsed := True;
+end;
+
+procedure TSECacheMap.Clear;
+var
+  S: String;
+begin
+  for S in Self.Keys do
+  begin
+    Self[S].Binary.Free;
+    Self[S].LineOfCodeList.Free;
+  end;
+  inherited;
 end;
 
 initialization

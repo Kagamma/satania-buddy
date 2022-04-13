@@ -10,6 +10,7 @@ object FormEvilCEditor: TFormEvilCEditor
   OnShow = FormShow
   Position = poDefault
   ShowInTaskBar = stAlways
+  LCLVersion = '2.3.0.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
@@ -36,7 +37,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator2: TToolButton
       Left = 101
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator2'
       Style = tbsSeparator
@@ -59,7 +60,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator1: TToolButton
       Left = 24
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator1'
       Style = tbsSeparator
@@ -73,7 +74,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator3: TToolButton
       Left = 186
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator3'
       Style = tbsSeparator
@@ -88,7 +89,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton2: TToolButton
       Left = 155
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButton2'
       Style = tbsSeparator
@@ -123,7 +124,7 @@ object FormEvilCEditor: TFormEvilCEditor
     PopupMenu = PopupMenuEditor
     TabOrder = 1
     OnKeyDown = EditorKeyDown
-    Gutter.Width = 59
+    Gutter.Width = 57
     Gutter.MouseActions = <>
     RightGutter.Width = 0
     RightGutter.MouseActions = <>
@@ -582,7 +583,7 @@ object FormEvilCEditor: TFormEvilCEditor
         MouseActions = <>
       end
       object SynGutterLineNumber1: TSynGutterLineNumber
-        Width = 19
+        Width = 17
         MouseActions = <>
         MarkupInfo.Background = clBtnFace
         MarkupInfo.Foreground = clNone

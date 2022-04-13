@@ -185,10 +185,13 @@ end;
 
 procedure TFormEvilCEditor.ToolButtonRunClick(Sender: TObject);
 begin
+  // Clean up cache
+  Satania.CleanUpCache;
+  //
   Satania.Action('script', Editor.Lines.Text);
   try
     StatusBar.Panels[1].Text := '';
-    Satania.Script.Exec;
+    Satania.Script.Exec; // Force to execute the script immediately
   except
     on E: Exception do
     begin
