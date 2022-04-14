@@ -792,4 +792,22 @@ object FormEvilCEditor: TFormEvilCEditor
       OnClick = MenuItemEditorPasteClick
     end
   end
+  object SynCompletion: TSynCompletion
+    ItemList.Strings = (
+      ''
+    )
+    Position = 0
+    LinesInWindow = 6
+    SelectedColor = clHighlight
+    CaseSensitive = False
+    Width = 262
+    AutoUseSingleIdent = True
+    ShortCut = 16416
+    EndOfTokenChr = '()[].'
+    ExecCommandID = ecSynCompletionExecute
+    Editor = Editor
+    ToggleReplaceWhole = False
+    Left = 456
+    Top = 64
+  end
 end

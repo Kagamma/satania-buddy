@@ -26,8 +26,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  SynEdit, SynHighlighterCpp, SynEditMarkupSpecialLine, LCLTranslator, lclintf,
-  Menus;
+  SynEdit, SynHighlighterCpp, SynEditMarkupSpecialLine, SynCompletion,
+  LCLTranslator, lclintf, Menus;
 
 type
 
@@ -43,6 +43,7 @@ type
     SaveDialog: TSaveDialog;
     Editor: TSynEdit;
     StatusBar: TStatusBar;
+    SynCompletion: TSynCompletion;
     SynCppSyn: TSynCppSyn;
     ToolBar1: TToolBar;
     ToolButtonHelp: TToolButton;
@@ -132,8 +133,31 @@ begin
 end;
 
 procedure TFormEvilCEditor.FormCreate(Sender: TObject);
+var
+  I: Integer;
+  S: String;
+  SL: TStringList;
 begin
   ErrorPos.Y := -1;
+  SL := TStringList.Create;
+  try
+    SL.Sorted := True;
+    // Transfer function names and constant names to completion
+    for I := 0 to Satania.Script.FuncList.Count - 1 do
+    begin
+      SL.Add(Satania.Script.FuncList[I].Name);
+    end;
+    for S in Satania.Script.ConstMap.Keys do
+    begin
+      SL.Add(S);
+    end;             
+    for S in SL do
+    begin
+      Self.SynCompletion.ItemList.Add(S);
+    end;
+  finally
+    SL.Free;
+  end;
 end;
 
 procedure TFormEvilCEditor.EditorSpecialLineColors(Sender: TObject;
