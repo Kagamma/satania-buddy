@@ -2856,6 +2856,7 @@ var
   Ident: TSEIdent;
 begin
   Self.FuncScriptList.Clear;
+  Self.CurrentFileList.Clear;
   Self.VM.Reset;
   Self.VM.Binary.Clear;
   Self.VM.IsDone := True;
