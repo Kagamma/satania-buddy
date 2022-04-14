@@ -30,13 +30,14 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  opensslsockets,
-  globals, Forms, datetimectrls, utils.activewindow, mcdowell, State.Main,
-  form.settings, form.chat, mcdowell.chatbot, mcdowell.chatbot.train,
-  form.evilc.editor, mcdowell.imap, Mcdowell.SpeechToText, frame.reminders.item,
-  form.reminders, form.Main, form.touch, mcdowell.sound, form.rules,
-  frame.rules.item, frame.rules.edititem, vosk, voskthread, voskbassaudiosource,
-  mcdowell.chat, mcdowell.net, mcdowell.numbers;
+  opensslsockets, globals, Forms, datetimectrls, utils.activewindow, mcdowell,
+  State.Main, form.settings, form.chat, mcdowell.chatbot,
+  mcdowell.chatbot.train, form.evilc.editor, mcdowell.imap,
+  Mcdowell.SpeechToText, frame.reminders.item, form.reminders, form.Main,
+  form.touch, mcdowell.sound, form.rules, frame.rules.item,
+  frame.rules.edititem, vosk, voskthread, voskbassaudiosource, mcdowell.chat,
+  mcdowell.net, mcdowell.numbers, utils.strings, utils.encdec, utils.coords,
+  utils.threads, utils.files;
 
 {$R *.res}
 

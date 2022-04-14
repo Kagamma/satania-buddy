@@ -5,7 +5,7 @@ object FormMain: TFormMain
   Width = 667
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 732
+  ClientHeight = 755
   ClientWidth = 667
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
@@ -13,6 +13,7 @@ object FormMain: TFormMain
   OnShow = FormShow
   PopupMenu = TrayMenu
   ShowInTaskBar = stNever
+  LCLVersion = '2.3.0.0'
   Scaled = False
   Visible = True
   WindowState = wsMaximized

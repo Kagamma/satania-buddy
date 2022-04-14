@@ -29,8 +29,8 @@ uses
   X, Xlib, glx,
   {$endif}
   Classes, SysUtils, Types, Generics.Collections, fpjsonrtti,
-  CastleFonts, CastleStringUtils, CastleUnicode, StrUtils,
-  CastleVectors, Mcdowell.EvilC, Blowfish, base64;
+  CastleFonts, CastleStringUtils, CastleUnicode,
+  CastleVectors, Mcdowell.EvilC;
 
 const
   PATH_SCRIPTS = 'castle-data:/scripts/';
@@ -201,86 +201,17 @@ type
     property SpeechToText: Boolean read FSpeechToText write FSpeechToText default False;
   end;
 
-  TMethod = procedure of object;
-  TCommonThread = class(TThread)
-    Method: TMethod;
-    procedure Execute; override;
-  end;
-
 var
   OwnedWindowHandleList: TQWordList;
   Save: TSave;
-  ScreenWidth, ScreenHeight: Integer;
   {$ifdef LINUX_X11}
   XDisplay: PDisplay;
   {$endif}
 
-function PointStrToFloat(S: String): Double; inline;
-function PointFloatToStr(X: Double): String; inline;
-function UIToScreenCoord(const V: TVector2): TVector2Integer; overload; inline;
-function UIToScreenCoord(const V: TVector3): TVector2Integer; overload; inline;
-
-function ScreenCoordToUI(const V: TVector2): TVector2; inline;
-procedure CommonThread(Method: TMethod); inline;
-
-function Encrypt(S: String): String; inline;
-function Decrypt(S: String): String; inline;
-function GUID: String; inline;               
-function GUIDName: String; inline;
-
-function CharsetToSettings(S: String): TStringDynArray;
-function SettingsToCharset(L: TStringList): String;
-function CharsetToCharacters(S: String): String;
-function Grep(Src, S: String): String;
-function LookForFileInPath(const Name: String): String;
-
 implementation
 
 uses
-  CastleWindow, Mcdowell;
-
-function PointStrToFloat(S: String): Double;
-var
-  fS: TFormatSettings;
-begin
-  FS := FormatSettings;
-  fS.DecimalSeparator := '.';
-  Result := StrToFloat(S, FS);
-end;
-
-function PointFloatToStr(X: Double): String;
-var
-  FS: TFormatSettings;
-begin
-  FS := FormatSettings;
-  FS.DecimalSeparator := '.';
-  Result := FloatToStr(X, FS);
-end;
-
-function UIToScreenCoord(const V: TVector2): TVector2Integer;
-begin
-  Result := Vector2Integer(Round(V.X), Round(Application.ScreenHeight - V.Y));
-end;
-
-function UIToScreenCoord(const V: TVector3): TVector2Integer;
-begin
-  Result := Vector2Integer(Round(V.X), Round(Application.ScreenHeight - V.Y));
-end;
-
-function ScreenCoordToUI(const V: TVector2): TVector2;
-begin
-  Result := Vector2(V.X, Application.ScreenHeight - V.Y);
-end;
-
-procedure CommonThread(Method: TMethod);
-var
-  T: TCommonThread;
-begin
-  T := TCommonThread.Create(True);
-  T.FreeOnTerminate := True;
-  T.Method := Method;
-  T.Start;
-end;
+  Mcdowell;
 
 constructor TReminderCollectionItem.Create;
 begin
@@ -422,146 +353,6 @@ begin
     Flag.Name := Args[0].VarString;
   end;
   Flag.Value := Args[1].VarString;
-end;
-
-procedure TCommonThread.Execute;
-begin
-  try
-    Method;
-    Terminate;
-  except
-    on E: Exception do
-      Satania.Talk(E.Message);
-  end;
-end;
-
-function Encrypt(S: String): String;
-var
-  EncrytpStream: TBlowFishEncryptStream;
-  StringStream: TStringStream;
-begin
-  StringStream := TStringStream.Create('');
-  EncrytpStream := TBlowFishEncryptStream.Create(SECRET_KEY, StringStream);
-  EncrytpStream.WriteAnsiString(S);
-  EncrytpStream.Free;
-  Result := EncodeStringBase64(StringStream.DataString);
-  StringStream.Free;
-end;
-
-function Decrypt(S: String): String;
-var
-  DecrytpStream: TBlowFishDeCryptStream;
-  StringStream: TStringStream;
-begin
-  S := DecodeStringBase64(S);
-  StringStream := TStringStream.Create(S);
-  DecrytpStream := TBlowFishDeCryptStream.Create(SECRET_KEY, StringStream);
-  Result := DecrytpStream.ReadAnsiString;
-  DecrytpStream.Free;
-  StringStream.Free;
-end;
-
-function GUID: String;
-var
-  GUIDRec: TGUID;
-begin
-  CreateGUID(GUIDRec);
-  Result := GUIDToString(GUIDRec);
-end; 
-
-function GUIDName: String;
-begin
-  Result := 'G' + StringsReplace(GUID, ['{', '}', '-'], ['', '', ''], [rfReplaceAll]);
-end;
-
-function CharsetToSettings(S: String): TStringDynArray;
-begin
-  Result := SplitString(S, #10#13);
-end;
-
-function SettingsToCharset(L: TStringList): String;
-var
-  I: Integer;
-begin
-  Result := '';
-  for I := 0 to L.Count - 1 do
-  begin
-    Result := Result + L[I];
-    if I < L.Count - 1 then
-      Result := Result + #10#13;
-  end;
-end;
-
-function CharsetToCharacters(S: String): String;
-var
-  X, Y, I: Cardinal;
-  W: String;
-  SS: String = '';
-  L, P: TStringDynArray;
-begin
-  L := CharsetToSettings(S);
-  for S in L do
-    if Trim(S) <> '' then
-    begin
-      P := SplitString(S, '..');
-      if Length(P) = 3 then
-      begin
-        X := StrToInt(P[0]);
-        Y := StrToInt(P[2]);
-        W := '';
-        for I := X to Y do
-        begin
-          W := W + UnicodeToUTF8(I);
-        end;
-        SS := SS + W;
-      end;
-    end;
-  Result := SS;
-end;
-
-function Grep(Src, S: String): String;
-var
-  A: TStringDynArray;
-  V: String;
-begin
-  Result := '';
-  A := SplitString(Src, #10);
-  for V in A do
-    if V.IndexOf(S) >= 0 then
-    begin
-      if Result = '' then
-        Result := V
-      else
-        Result := Result + #10 + V;
-    end;
-end;
-
-function LookForFileInPath(const Name: String): String;
-var
-  Paths, Path, S: String;
-  PathArray: TStringDynArray;
-  I: Integer;
-begin
-  Paths := GetEnvironmentVariable('PATH');
-  PathArray := SplitString(Paths, ';');
-  for I := 0 to Length(PathArray) - 1 do
-  begin              
-    S := StringReplace(PathArray[I], '\', '/', [rfReplaceAll]) + '/' + Name;
-    S := StringReplace(S, '//', '/', [rfReplaceAll]);
-    PathArray[I] := S;
-  end;
-  for Path in PathArray do
-  begin
-    if FileExists(S) then
-    begin
-      Exit(S);
-    end;       
-    if FileExists(S + '.exe') then
-    begin
-      Exit(S);
-    end;
-  end;
-  Exit(Name);
 end;
 
 initialization

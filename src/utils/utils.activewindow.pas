@@ -63,6 +63,7 @@ implementation
 
 uses
   form.touch,
+  Utils.Coords,
   mcdowell;
 
 procedure AddFormToIgnoreHandleList(F: TForm);

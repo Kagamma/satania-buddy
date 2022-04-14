@@ -53,6 +53,10 @@ var
 
 implementation
 
+uses
+  Utils.Threads,
+  Utils.Encdec;
+
 procedure TSataniaIMAP.GetMessagesParallel;
 var
   I, J, Count, SubPartCount: Integer;

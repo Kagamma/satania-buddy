@@ -275,6 +275,31 @@
         <Filename Value="satania/mcdowell.numbers.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="utils/utils.strings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Utils.Strings"/>
+      </Unit>
+      <Unit>
+        <Filename Value="utils/utils.encdec.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Utils.Encdec"/>
+      </Unit>
+      <Unit>
+        <Filename Value="utils/utils.coords.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Utils.Coords"/>
+      </Unit>
+      <Unit>
+        <Filename Value="utils/utils.threads.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Utils.Threads"/>
+      </Unit>
+      <Unit>
+        <Filename Value="utils/utils.files.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Utils.Files"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -300,6 +325,11 @@
         <DebugInfoType Value="dsDwarf2"/>
         <UseExternalDbgSyms Value="True"/>
       </Debugging>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
     </Linking>
     <Other>
       <CustomOptions Value="-dCASTLE_SLIM_NODES"/>

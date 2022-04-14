@@ -60,6 +60,7 @@ implementation
 
 uses
   globals,
+  Utils.Encdec,
   mcdowell,
   frame.reminders.item;
 

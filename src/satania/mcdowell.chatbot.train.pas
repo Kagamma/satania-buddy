@@ -38,7 +38,8 @@ procedure RunTrain;
 implementation
 
 uses
-  Mcdowell, Mcdowell.chatbot, Globals;
+  Mcdowell, Mcdowell.chatbot, Globals,
+  Utils.Strings;
 
 type
   TPair = record

@@ -121,7 +121,9 @@ implementation
 {$R *.lfm}
 
 uses
-  Globals, Mcdowell, Mcdowell.imap, State.Main, Mcdowell.SpeechToText;
+  Globals, Mcdowell, Mcdowell.imap, State.Main, Mcdowell.SpeechToText,
+  Utils.Strings,
+  Utils.Encdec;
 
 { TFormSettings }
 

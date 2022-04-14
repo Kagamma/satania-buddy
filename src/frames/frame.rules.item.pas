@@ -59,6 +59,7 @@ implementation
 
 uses
   Globals,
+  Utils.Encdec,
   Frame.Rules.EditItem;
 
 { TFrameRulesItem }

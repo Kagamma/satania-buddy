@@ -9,6 +9,7 @@ object FormSettings: TFormSettings
   ClientWidth = 644
   OnShow = FormShow
   Position = poScreenCenter
+  LCLVersion = '2.3.0.0'
   object PageControl: TPageControl
     Left = 0
     Height = 444

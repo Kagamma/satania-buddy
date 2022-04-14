@@ -43,6 +43,8 @@ uses
   CastleWindow,
   Form.Touch,
   Form.Main,
+  Utils.Strings,
+  Utils.Coords,
   Mcdowell;
 
 { TStateMain ----------------------------------------------------------------- }

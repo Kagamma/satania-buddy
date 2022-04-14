@@ -355,7 +355,7 @@ var
 implementation
 
 uses
-  Math, Strings, Globals;
+  Math, Strings, Globals, Utils.Strings;
 
 type
   TBuiltInFunction = class                 

@@ -29,6 +29,7 @@ object FrameRulesItem: TFrameRulesItem
       Align = alLeft
       BorderSpacing.Around = 4
       Caption = 'Tag'
+      ParentColor = False
     end
     object EditTag: TEdit
       Left = 35

@@ -63,6 +63,7 @@ implementation
 {$R *.lfm}
 
 uses
+  Utils.Encdec,
   globals,
   mcdowell,
   mcdowell.chatbot,  

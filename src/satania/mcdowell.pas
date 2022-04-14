@@ -108,6 +108,9 @@ var
 implementation
 
 uses
+  Utils.Strings,
+  Utils.Threads,
+  Utils.Coords,
   form.reminders,
   form.chat,
   form.touch,
