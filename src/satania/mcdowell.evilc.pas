@@ -262,6 +262,7 @@ type
 
   TSEToken = record
     Kind: TSETokenKind;
+    BelongedFileName,
     Value: String;
     Ln, Col: Integer;
   end;
@@ -286,6 +287,7 @@ type
     IsParsed: Boolean;
     IsDone: Boolean;
     FuncTraversal: Integer;
+    CurrentFileList: TStrings;
     constructor Create;
     destructor Destroy; override;
     procedure AddDefaultConsts;
@@ -1629,6 +1631,7 @@ begin
   Self.ScopeStack := TSEScopeStack.Create;
   Self.LineOfCodeList := TIntegerList.Create;
   Self.IncludeList := TStringList.Create;
+  Self.CurrentFileList := TStringList.Create;
   Self.VM.Parent := Self;                             
   Self.RegisterFunc('typeof', @TBuiltInFunction(nil).SETypeOf, 1);
   Self.RegisterFunc('get', @TBuiltInFunction(nil).SEGet, 2);
@@ -1699,6 +1702,7 @@ begin
   FreeAndNil(Self.ScopeStack);
   FreeAndNil(Self.LineOfCodeList);
   FreeAndNil(Self.IncludeList);
+  FreeAndNil(Self.CurrentFileList);
   inherited;
 end;
 
@@ -1769,11 +1773,14 @@ var
     Exit(Self.Source[Pos]);
   end;
 
-  procedure Error(const S: String);
+  procedure Error(const S: String; const N: String = '');
   begin
     ErrorLn := Ln;
     ErrorCol := Col;
-    raise Exception.CreateFmt('[%d,%d] %s', [Ln, Col, S]);
+    if N = '' then
+      raise Exception.CreateFmt('[%d,%d] %s', [Ln, Col, S])
+    else
+      raise Exception.CreateFmt('(%s) [%d,%d] %s', [N, Ln, Col, S]);
   end;
 
 var
@@ -1794,6 +1801,10 @@ begin
     until (not (C in [#1..#32])) and (C <> ';');
     Token.Ln := Ln;
     Token.Col := Col;
+    if Self.CurrentFileList.Count > 0 then
+      Token.BelongedFileName := Self.CurrentFileList[Self.CurrentFileList.Count - 1]
+    else
+      Token.BelongedFileName := '';
     case C of
       #0:
         if not IsIncluded then
@@ -1856,7 +1867,7 @@ begin
             C := NextChar;
             case C of
               #0:
-                Error('Unterminated string literal');
+                Error('Unterminated string literal', Token.BelongedFileName);
               '\':
                 begin
                   if PeekAtNextChar = 'n' then
@@ -1992,9 +2003,11 @@ begin
             BackupSource := Source;
             SL := TStringList.Create;
             try
+              Self.CurrentFileList.Add(Token.Value);
               SL.LoadFromFile(Token.Value);
               Source := SL.Text;
-              Self.Lex(True);
+              Self.Lex(True);   
+              Self.CurrentFileList.Pop;
             finally
               SL.Free;
             end;
@@ -2072,7 +2085,10 @@ var
   begin
     ErrorLn := Token.Ln;
     ErrorCol := Token.Col;
-    raise Exception.CreateFmt('[%d,%d] %s', [Token.Ln, Token.Col, S]);
+    if Token.BelongedFileName = '' then
+      raise Exception.CreateFmt('[%d,%d] %s', [Token.Ln, Token.Col, S])
+    else                                                                
+      raise Exception.CreateFmt('(%s) [%d,%d] %s', [Token.BelongedFileName, Token.Ln, Token.Col, S]);
   end;
 
   function FindFunc(const Name: String): PSEFuncInfo; inline;

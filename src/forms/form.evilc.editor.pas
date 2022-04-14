@@ -105,11 +105,35 @@ begin
 end;
 
 procedure TFormEvilCEditor.FormShow(Sender: TObject);
+var
+  SL: TStringList;
+  I: Integer;
+  S: String;
 begin
   ToolButtonNewClick(Sender);
   {$ifdef WINDOWS}
   Editor.Font.Name := 'Consolas';
   {$endif}
+  Self.SynCompletion.ItemList.Clear;
+  SL := TStringList.Create;
+  try
+    SL.Sorted := True;
+    // Transfer function names and constant names to completion
+    for I := 0 to Satania.Script.FuncList.Count - 1 do
+    begin
+      SL.Add(Satania.Script.FuncList[I].Name);
+    end;
+    for S in Satania.Script.ConstMap.Keys do
+    begin
+      SL.Add(S);
+    end;
+    for S in SL do
+    begin
+      Self.SynCompletion.ItemList.Add(S);
+    end;
+  finally
+    SL.Free;
+  end;
 end;
 
 procedure TFormEvilCEditor.MenuItemEditorCopyClick(Sender: TObject);
@@ -133,31 +157,8 @@ begin
 end;
 
 procedure TFormEvilCEditor.FormCreate(Sender: TObject);
-var
-  I: Integer;
-  S: String;
-  SL: TStringList;
 begin
   ErrorPos.Y := -1;
-  SL := TStringList.Create;
-  try
-    SL.Sorted := True;
-    // Transfer function names and constant names to completion
-    for I := 0 to Satania.Script.FuncList.Count - 1 do
-    begin
-      SL.Add(Satania.Script.FuncList[I].Name);
-    end;
-    for S in Satania.Script.ConstMap.Keys do
-    begin
-      SL.Add(S);
-    end;             
-    for S in SL do
-    begin
-      Self.SynCompletion.ItemList.Add(S);
-    end;
-  finally
-    SL.Free;
-  end;
 end;
 
 procedure TFormEvilCEditor.EditorSpecialLineColors(Sender: TObject;
