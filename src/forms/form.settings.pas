@@ -65,6 +65,7 @@ type
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     GroupBoxSTTVosk: TGroupBox;
+    Label1: TLabel;
     LabelChatbotServer: TLabel;
     LabelChatbotServer1: TLabel;
     LabelDeveloperMode: TLabel;
