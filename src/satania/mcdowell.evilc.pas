@@ -1716,8 +1716,8 @@ begin
               FinishLoop:   
                 sub  rsp,8
                 call [FuncImport]
-                mov  ImportResult,rax     
-                mov  ImportResultD,rax
+                mov  ImportResult,rax
+                movsd ImportResultD,xmm0
                 xor  rax,rax
                 mov  eax,ArgCount
                 sub  eax,6
@@ -2254,7 +2254,7 @@ begin
             try
               Self.CurrentFileList.Add(Token.Value);
               SL.LoadFromFile(Token.Value);
-              Source := SL.Text;
+              FSource := SL.Text;
               Self.Lex(True);   
               Self.CurrentFileList.Pop;
             finally
