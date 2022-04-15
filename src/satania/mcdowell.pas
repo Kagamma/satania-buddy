@@ -194,6 +194,10 @@ begin
   Script.RegisterFunc('fs_file_read', @SEFileRead, 1);
   Script.RegisterFunc('fs_file_write', @SEFileWrite, 2);     
   Script.RegisterFunc('fs_file_find_all', @SEFileFindAll, 4);
+  Script.RegisterFunc('fs_directory_create', @SEDirectoryCreate, 1);
+  Script.RegisterFunc('fs_directory_delete', @SEDirectoryDelete, 1);
+  Script.RegisterFunc('fs_directory_find_all', @SEDirectoryFindAll, 2);     
+  Script.RegisterFunc('fs_directory_exists', @SEDirectoryExists, 1);
   ScriptCacheMap := TSECacheMap.Create;
   UpdateMeta;
 end;

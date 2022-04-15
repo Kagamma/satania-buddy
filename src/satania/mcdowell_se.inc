@@ -74,6 +74,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;             
+    function SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
+    function SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
@@ -589,6 +593,38 @@ begin
   finally
     SL.Free;
   end;
+end;
+
+function TSatania.SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+begin
+  CreateDir(Args[0].VarString);
+end;
+
+function TSatania.SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+begin
+  DeleteDirectory(Args[0], False);
+end;
+
+function TSatania.SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  SL: TStringList;
+  I: Integer;
+begin
+  SL := TStringList.Create;
+  try
+    FindAllDirectories(SL, Args[0], Args[1]);
+    Result.Kind := sevkArray;
+    SetLength(Result.VarArray, SL.Count);
+    for I := 0 to SL.Count - 1 do
+      Result.VarArray[I] := SL[I];
+  finally
+    SL.Free;
+  end;
+end;        
+
+function TSatania.SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := DirectoryExists(Args[0].VarString);
 end;
 
 {$endif}

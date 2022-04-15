@@ -119,9 +119,9 @@ begin
   try
     SL.Sorted := True;
     // Transfer function names and constant names to completion
-    for I := 0 to Satania.Script.FuncList.Count - 1 do
+    for I := 0 to Satania.Script.FuncNativeList.Count - 1 do
     begin
-      SL.Add(Satania.Script.FuncList[I].Name);
+      SL.Add(Satania.Script.FuncNativeList[I].Name);
     end;
     for S in Satania.Script.ConstMap.Keys do
     begin
