@@ -18,9 +18,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 }
 
-{$ifdef unit_protected}
+{$ifdef unit_protected}                                     
+    function SEBufferCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEBufferGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEBufferGetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEBufferGetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEBufferGetU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEBufferGetU64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEBufferGetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEBufferGetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEBufferGetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEBufferGetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEBufferGetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEBufferPtr(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -80,16 +90,76 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
-{$ifdef unit_implementation}
+{$ifdef unit_implementation}   
+
+function TSatania.SEBufferCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result.Kind := sevkString;
+  SetLength(Result.VarString, Round(Args[0].VarNumber));
+end;
 
 function TSatania.SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Length(Args[0].VarString);
 end;
 
-function TSatania.SEBufferGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEBufferGetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin    
+  Result.Kind := sevkSingle;
+  Result.VarNumber := Byte((@Args[0].VarString[Round(Args[1] + 1)])^);
+end;     
+
+function TSatania.SEBufferGetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin   
+  Result.Kind := sevkSingle;
+  Result.VarNumber := Word((@Args[0].VarString[Round(Args[1] + 1)])^);
+end;
+
+function TSatania.SEBufferGetU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin   
+  Result.Kind := sevkSingle;
+  Result.VarNumber := LongWord((@Args[0].VarString[Round(Args[1] + 1)])^);
+end;
+
+function TSatania.SEBufferGetU64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin     
+  Result.Kind := sevkSingle;
+  Result.VarNumber := QWord((@Args[0].VarString[Round(Args[1] + 1)])^);
+end;
+
+function TSatania.SEBufferGetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin     
+  Result.Kind := sevkSingle;
+  Result.VarNumber := SmallInt((@Args[0].VarString[Round(Args[1] + 1)])^);
+end;
+
+function TSatania.SEBufferGetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin      
+  Result.Kind := sevkSingle;
+  Result.VarNumber := ShortInt((@Args[0].VarString[Round(Args[1] + 1)])^);
+end;
+
+function TSatania.SEBufferGetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin        
+  Result.Kind := sevkSingle;
+  Result.VarNumber := LongInt((@Args[0].VarString[Round(Args[1] + 1)])^);
+end;
+
+function TSatania.SEBufferGetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin           
+  Result.Kind := sevkSingle;
+  Result.VarNumber := Int64((@Args[0].VarString[Round(Args[1] + 1)])^);
+end;  
+
+function TSatania.SEBufferGetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := Ord(Args[0].VarString[Round(Args[1] + 1)]);
+  Result.Kind := sevkSingle;
+  Result.VarNumber := Double((@Args[0].VarString[Round(Args[1] + 1)])^);
+end;
+
+function TSatania.SEBufferPtr(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := QWord(@Args[0].VarString[1]);
 end;
 
 function TSatania.SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
