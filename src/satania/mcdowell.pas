@@ -716,7 +716,7 @@ begin
   Script.AddDefaultConsts;
   Script.ConstMap.Add('CHATMODE_CHAT', CHATMODE_CHAT);
   Script.ConstMap.Add('CHATMODE_SCRIPT', CHATMODE_SCRIPT);
-  Script.ConstMap.Add('FA_DICTIONARY', faDirectory);
+  Script.ConstMap.Add('FA_DIRECTORY', faDirectory);
   Script.ConstMap.Add('FA_READONLY', faReadOnly);
   Script.ConstMap.Add('FA_NORMAL', faNormal);
   Script.ConstMap.Add('FA_ENCRYPTED', faEncrypted);

@@ -555,7 +555,7 @@ var
 begin
   SL := TStringList.Create;
   try
-    if FileExists(Args[0]) then
+    if FileExists(Args[0].VarString) then
       SL.LoadFromFile(Args[0]);
     SL.Text := SL.Text + Args[1];
     SL.SaveToFile(Args[0]);
@@ -585,7 +585,7 @@ begin
     Result.Kind := sevkArray;
     SetLength(Result.VarArray, SL.Count);
     for I := 0 to SL.Count - 1 do
-      Result[I] := SL[I];
+      Result.VarArray[I] := SL[I];
   finally
     SL.Free;
   end;
