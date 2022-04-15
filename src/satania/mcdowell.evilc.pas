@@ -1634,9 +1634,14 @@ begin
                     Double((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
                   end;     
                 seakChars:
-                  begin              
-                    ImportBufferString[I] := Pop^.VarString + #0;
-                    PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferString[I]);
+                  begin
+                    A := Pop;
+                    if A^.Kind = sevkString then
+                    begin
+                      ImportBufferString[I] := Pop^.VarString + #0;
+                      PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferString[I]);
+                    end else
+                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
                   end;
               end;
             end;
@@ -1736,19 +1741,14 @@ begin
                 begin
                   TV := QWord(LongWord(ImportResult))
                 end;  
-              seakU64:
+              seakU64, seakChars:
                 begin
-                  TV := Int64(ImportResult)
+                  TV := QWord(ImportResult)
                 end;    
              // seakF32,
               seakF64:
                 begin
                   TV := ImportResultD;
-                end;
-              seakChars:
-                begin
-                  TV.Kind := sevkString;
-                  TV.VarString := PChar(@ImportResult)^;
                 end;
             end;
             Push(TV);
