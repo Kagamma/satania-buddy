@@ -69,7 +69,8 @@ type
     opOperatorOr,
     opOperatorNot,
     opCallNative,
-    opCallScript,
+    opCallScript,      
+    opCallImport,
     opPause,
     opYield
   );
@@ -114,25 +115,68 @@ type
   TSEValueArray = array of TSEValue;
   PSEValue = ^TSEValue;
 
+  TSEAtomKind = (
+    seakVoid,
+    seakI8,           
+    seakI16,
+    seakI32,       
+    seakI64,
+    seakF32,
+    seakF64,     
+    seakChars
+  );
+  TSEAtomKindArray = array of TSEAtomKind;
+
+  TSECallingConvention = (
+    seccCdecl,
+    seccStdcall
+  );
+
   TSEVM = class;
   TSEFunc = function(const VM: TSEVM; const Args: array of TSEValue): TSEValue of object;
 
-  TSEFuncKind = (sefkNative, sefkScript);
+  TSEFuncKind = (sefkNative, sefkScript, sefkImport);
 
-  TSEFuncInfo = record
-    Kind: TSEFuncKind;
-    Addr,
-    StackAddr: Integer; // Used by parameters
+  TSEFuncNativeInfo = record
+    Name: String;
     Func: TSEFunc;
     ArgCount: Integer;
-    Name: String;
   end;
-  PSEFuncInfo = ^TSEFuncInfo;
+  PSEFuncNativeInfo = ^TSEFuncNativeInfo;
 
-  TSEFuncListAncestor = specialize TList<TSEFuncInfo>;
-  TSEFuncList = class(TSEFuncListAncestor)
+  TSEFuncScriptInfo = record 
+    Name: String;
+    Addr,
+    StackAddr: Integer; // Used by parameters
+    ArgCount: Integer;
+  end;
+  PSEFuncScriptInfo = ^TSEFuncScriptInfo;
+
+  TSEFuncImportInfo = record 
+    Name: String;
+    Func: Pointer;
+    Args: TSEAtomKindArray;
+    Return: TSEAtomKind;
+    CallingConvention: TSECallingConvention;
+  end;
+  PSEFuncImportInfo = ^TSEFuncImportInfo;
+
+  TSEFuncNativeListAncestor = specialize TList<TSEFuncNativeInfo>;
+  TSEFuncNativeList = class(TSEFuncNativeListAncestor)
   public
-    function Ptr(const P: Integer): PSEFuncInfo;
+    function Ptr(const P: Integer): PSEFuncNativeInfo;
+  end;
+
+  TSEFuncScriptListAncestor = specialize TList<TSEFuncScriptInfo>;
+  TSEFuncScriptList = class(TSEFuncScriptListAncestor)
+  public
+    function Ptr(const P: Integer): PSEFuncScriptInfo;
+  end;
+
+  TSEFuncImportListAncestor = specialize TList<TSEFuncImportInfo>;
+  TSEFuncImportList = class(TSEFuncImportListAncestor)
+  public
+    function Ptr(const P: Integer): PSEFuncImportInfo;
   end;
 
   TSEBinaryAncestor = specialize TList<TSEValue>;
@@ -175,6 +219,8 @@ type
     Binary: TSEBinary;
     LocalVarListCount: Cardinal;
     LineOfCodeList: TIntegerList;
+    FuncScriptList: TSEFuncScriptList;
+    FuncImportList: TSEFuncImportList;
   end;
   TSECacheMapAncestor = specialize TDictionary<String, TSECache>;
   TSECacheMap = class(TSECacheMapAncestor)
@@ -198,6 +244,7 @@ type
     tkGreaterOrEqual,
     tkBegin,
     tkEnd,
+    tkColon,
     tkBracketOpen,
     tkBracketClose,
     tkNegative,
@@ -225,16 +272,20 @@ type
     tkFor,
     tkTo,
     tkDownto,
-    tkReturn
+    tkReturn,
+    tkAtom,
+    tkImport,
+    tkCallingConvention
   );
 TSETokenKinds = set of TSETokenKind;
 
 const TokenNames: array[TSETokenKind] of String = (
   'EOF', '.', '+', '-', '*', 'div', 'mod', '=', '!=', '<',
-  '>', '<=', '>=', '{', '}', '(', ')', 'neg', 'number', 'string',
+  '>', '<=', '>=', '{', '}', ':', '(', ')', 'neg', 'number', 'string',
   ',', 'if', 'identity', 'function', 'fn', 'variable', 'const',
   'unknown', 'else', 'while', 'break', 'continue', 'pause', 'yield',
-  '[', ']', 'and', 'or', 'not', 'for', 'to', 'downto', 'return'
+  '[', ']', 'and', 'or', 'not', 'for', 'to', 'downto', 'return',
+  'atom', 'import', 'calling convention'
 );
 
 type
@@ -279,8 +330,9 @@ type
     IncludeList: TStrings;
     TokenList: TSETokenList;
     LocalVarList: TSEIdentList;
-    FuncList,
-    FuncScriptList: TSEFuncList;
+    FuncNativeList: TSEFuncNativeList;
+    FuncScriptList: TSEFuncScriptList;
+    FuncImportList: TSEFuncImportList;
     ConstMap: TSEConstMap;
     ScopeStack: TSEScopeStack;
     LineOfCodeList: TIntegerList;
@@ -301,6 +353,7 @@ type
     function Exec: TSEValue;
     procedure RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);   
     procedure RegisterScriptFunc(const Name: String; const Addr, StackAddr, ArgCount: Integer);
+    procedure RegisterImportFunc(const Name, Lib: String; CC: TSECallingConvention; const Args: TSEAtomKindArray; const Return: TSEAtomKind);
     function Backup: TSECache;
     procedure Restore(const Cache: TSECache);
 
@@ -877,7 +930,17 @@ begin
   Result := M;
 end;
 
-function TSEFuncList.Ptr(const P: Integer): PSEFuncInfo; inline;
+function TSEFuncNativeList.Ptr(const P: Integer): PSEFuncNativeInfo; inline;
+begin
+  Result := @FItems[P];
+end;       
+
+function TSEFuncScriptList.Ptr(const P: Integer): PSEFuncScriptInfo; inline;
+begin
+  Result := @FItems[P];
+end;
+
+function TSEFuncImportList.Ptr(const P: Integer): PSEFuncImportInfo; inline;
 begin
   Result := @FItems[P];
 end;
@@ -1242,7 +1305,9 @@ var
   {$else}
   S: PChar;
   {$endif}
-  FuncInfo: PSEFuncInfo;
+  FuncNativeInfo: PSEFuncNativeInfo;
+  FuncScriptInfo: PSEFuncScriptInfo;
+  FuncImportInfo: PSEFuncImportInfo;
   I, J, ArgCount: Integer;
   Args: array of TSEValue;
   CodePtrLocal: Integer;
@@ -1477,14 +1542,14 @@ begin
           end;
         opCallNative:
           begin
-            FuncInfo := PSEFuncInfo(Pointer(BinaryLocal.Ptr(CodePtrLocal + 1)^));
+            FuncNativeInfo := PSEFuncNativeInfo(Pointer(BinaryLocal.Ptr(CodePtrLocal + 1)^));
             ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
             SetLength(Args, ArgCount);
             for I := ArgCount - 1 downto 0 do
             begin
               Args[I] := Pop^;
             end;
-            TV := FuncInfo^.Func(Self, Args);
+            TV := FuncNativeInfo^.Func(Self, Args);
             if IsDone then
             begin
               Exit;
@@ -1496,15 +1561,22 @@ begin
           begin
             Self.Frame[Self.FramePtr] := CodePtrLocal + 3;
             Inc(Self.FramePtr);
-            FuncInfo := PSEFuncInfo(Pointer(BinaryLocal.Ptr(CodePtrLocal + 1)^));
+            FuncScriptInfo := Self.Parent.FuncScriptList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
             ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
-            J := FuncInfo^.StackAddr + ArgCount;
+            J := FuncScriptInfo^.StackAddr + ArgCount;
             for I := ArgCount - 1 downto 0 do
             begin
               Self.Stack[J] := Pop^;
               Dec(J);
             end;
-            CodePtrLocal := FuncInfo^.Addr;
+            CodePtrLocal := FuncScriptInfo^.Addr;
+          end;    
+        opCallImport:
+          begin                                          
+            FuncImportInfo := Self.Parent.FuncImportList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
+            TV := 0;
+            Push(TV);
+            Inc(CodePtrLocal, 2);
           end;
         opPopFrame:
           begin      
@@ -1625,8 +1697,9 @@ begin
   Self.VM := TSEVM.Create;
   Self.TokenList := TSETokenList.Create;
   Self.LocalVarList := TSEIdentList.Create;
-  Self.FuncList := TSEFuncList.Create;        
-  Self.FuncScriptList := TSEFuncList.Create;
+  Self.FuncNativeList := TSEFuncNativeList.Create;
+  Self.FuncScriptList := TSEFuncScriptList.Create;
+  Self.FuncImportList := TSEFuncImportList.Create;
   Self.ConstMap := TSEConstMap.Create;
   Self.ScopeStack := TSEScopeStack.Create;
   Self.LineOfCodeList := TIntegerList.Create;
@@ -1696,8 +1769,9 @@ begin
   FreeAndNil(Self.VM);
   FreeAndNil(Self.TokenList);
   FreeAndNil(Self.LocalVarList);
-  FreeAndNil(Self.FuncList);
-  FreeAndNil(Self.FuncScriptList);
+  FreeAndNil(Self.FuncNativeList);
+  FreeAndNil(Self.FuncScriptList);     
+  FreeAndNil(Self.FuncImportList);
   FreeAndNil(Self.ConstMap);
   FreeAndNil(Self.ScopeStack);
   FreeAndNil(Self.LineOfCodeList);
@@ -1853,8 +1927,10 @@ begin
         Token.Kind := tkSquareBracketClose;
       '{':
         Token.Kind := tkBegin;
-      '}':
+      '}':   
         Token.Kind := tkEnd;
+      ':':
+        Token.Kind := tkColon;
       '''', '"':
         begin
           PrevQuote := C;
@@ -2060,6 +2136,12 @@ begin
               Token.Kind := tkReturn;
             'fn':
               Token.Kind := tkFunctionDecl;
+            'i0', 'u0', 'i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f32', 'f64', 'chars':
+              Token.Kind := tkAtom;
+            'import':
+              Token.Kind := tkImport;
+            'stdcall', 'cdecl':
+              Token.Kind := tkCallingConvention;
             else
               Token.Kind := tkIdent;
           end;
@@ -2088,21 +2170,75 @@ var
       raise Exception.CreateFmt('(%s) [%d,%d] %s', [Token.BelongedFileName, Token.Ln, Token.Col, S]);
   end;
 
-  function FindFunc(const Name: String): PSEFuncInfo; inline;
+  function FindFunc(const Name: String): Pointer; inline;
   var
     I: Integer;
   begin
-    for I := 0 to Self.FuncList.Count - 1 do
+    for I := 0 to Self.FuncNativeList.Count - 1 do
     begin
-      Result := Self.FuncList.Ptr(I);
-      if Result^.Name = Name then
+      Result := Self.FuncNativeList.Ptr(I);
+      if PSEFuncNativeInfo(Result)^.Name = Name then
         Exit(Result);
     end;      
     for I := 0 to Self.FuncScriptList.Count - 1 do
     begin
       Result := Self.FuncScriptList.Ptr(I);
-      if Result^.Name = Name then
+      if PSEFuncScriptInfo(Result)^.Name = Name then
         Exit(Result);
+    end;
+    for I := 0 to Self.FuncImportList.Count - 1 do
+    begin
+      Result := Self.FuncImportList.Ptr(I);
+      if PSEFuncImportInfo(Result)^.Name = Name then
+        Exit(Result);
+    end;
+    Exit(nil);
+  end;
+
+  function FindFuncNative(const Name: String; var Ind: Integer): PSEFuncNativeInfo; inline;
+  var
+    I: Integer;
+  begin
+    for I := 0 to Self.FuncNativeList.Count - 1 do
+    begin
+      Result := Self.FuncNativeList.Ptr(I);
+      if Result^.Name = Name then
+      begin
+        Ind := I;
+        Exit(Result);
+      end;
+    end;
+    Exit(nil);
+  end;
+
+  function FindFuncScript(const Name: String; var Ind: Integer): PSEFuncScriptInfo; inline;
+  var
+    I: Integer;
+  begin
+    for I := 0 to Self.FuncScriptList.Count - 1 do
+    begin
+      Result := Self.FuncScriptList.Ptr(I);
+      if Result^.Name = Name then
+      begin
+        Ind := I;
+        Exit(Result);
+      end;
+    end;
+    Exit(nil);
+  end;
+
+  function FindFuncImport(const Name: String; var Ind: Integer): PSEFuncImportInfo; inline;
+  var
+    I: Integer;
+  begin
+    for I := 0 to Self.FuncImportList.Count - 1 do
+    begin
+      Result := Self.FuncImportList.Ptr(I);
+      if Result^.Name = Name then
+      begin
+        Ind := I;
+        Exit(Result);
+      end;
     end;
     Exit(nil);
   end;
@@ -2439,25 +2575,42 @@ var
 
   procedure ParseFuncCall(const Name: String);
   var
-    FuncInfo: PSEFuncInfo;
-    I: Integer;
+    FuncNativeInfo: PSEFuncNativeInfo;
+    FuncScriptInfo: PSEFuncScriptInfo;        
+    FuncImportInfo: PSEFuncImportInfo;
+    I, Ind: Integer;
+    DefinedArgCount: Integer;
     ArgCount: Integer = 0;
     Token: TSEToken;
   begin
-    FuncInfo := FindFunc(Name);
-    if FuncInfo^.ArgCount > 0 then
+    FuncNativeInfo := FindFuncNative(Name, Ind);
+    if FuncNativeInfo <> nil then
+      DefinedArgCount := FuncNativeInfo^.ArgCount
+    else
+    begin
+      FuncScriptInfo := FindFuncScript(Name, Ind);
+      if FuncScriptInfo <> nil then
+        DefinedArgCount := FuncScriptInfo^.ArgCount
+      else
+      begin
+        FuncImportInfo := FindFuncImport(Name, Ind);
+        if FuncImportInfo <> nil then
+          DefinedArgCount := Length(FuncImportInfo^.Args);
+      end;
+    end;
+    if DefinedArgCount > 0 then
     begin
       NextTokenExpected([tkBracketOpen]);
-      for I := 0 to FuncInfo^.ArgCount - 1 do
+      for I := 0 to DefinedArgCount - 1 do
       begin
         ParseExpr;
-        if I < FuncInfo^.ArgCount - 1 then
+        if I < DefinedArgCount - 1 then
           NextTokenExpected([tkComma]);
         Inc(ArgCount);
       end;
       NextTokenExpected([tkBracketClose]);
     end else
-    if FuncInfo^.ArgCount < 0 then
+    if DefinedArgCount < 0 then
     begin
       NextTokenExpected([tkBracketOpen]);
       repeat
@@ -2473,10 +2626,13 @@ var
         NextTokenExpected([tkBracketClose]);
       end;
     end;
-    if FuncInfo^.Kind = sefkNative then
-      Emit([Pointer(opCallNative), Pointer(FuncInfo), ArgCount])
+    if FuncNativeInfo <> nil then
+      Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), ArgCount])
     else
-      Emit([Pointer(opCallScript), Pointer(FuncInfo), ArgCount]);
+    if FuncScriptInfo <> nil then
+      Emit([Pointer(opCallScript), Ind, ArgCount])
+    else
+      Emit([Pointer(opCallScript), Ind]);
   end;
 
   procedure ParseFuncDecl;
@@ -2533,6 +2689,70 @@ var
     finally
       BreakList.Free;
     end;
+  end;
+
+  procedure ParseFuncImport;
+
+    function GetAtom(const Name: String): TSEAtomKind;
+    begin
+      case Name of
+        'void':
+          Result := seakVoid;
+        'u8', 'i8':
+          Result := seakI8;
+        'u16', 'i16':
+          Result := seakI16;
+        'u32', 'i32':
+          Result := seakI32;
+        'u64', 'i64':
+          Result := seakI64;
+        'f32':
+          Result := seakF32;
+        'f64':
+          Result := seakF64;
+        'chars':
+          Result := seakChars;
+      end;
+    end;
+
+  var
+    Token: TSEToken;
+    Name, Lib: String;
+    Return: TSEAtomKind;
+    Args: TSEAtomKindArray;
+    CC: TSECallingConvention;
+    I: Integer;
+  begin
+    Token := NextTokenExpected([tkString]);
+    Lib := Token.Value;
+
+    Token := NextTokenExpected([tkCallingConvention]);
+    case Token.Value of
+      'stdcall':
+        CC := seccStdcall;
+      'cdecl':
+        CC := seccCdecl;
+    end;
+
+    Token := NextTokenExpected([tkIdent]);
+    Name := Token.Value;
+
+    if PeekAtNextToken.Kind = tkBracketOpen then
+    begin
+      NextTokenExpected([tkBracketOpen]);
+      repeat
+        if PeekAtNextToken.Kind = tkAtom then
+        begin
+          Token := NextTokenExpected([tkAtom]);
+          SetLength(Args, Length(Args) + 1);
+          Args[Length(Args) - 1] := GetAtom(Token.Value);
+        end;
+        Token := NextTokenExpected([tkComma, tkBracketClose]);
+      until Token.Kind = tkBracketClose;
+    end;
+    NextTokenExpected([tkColon]);
+    Token := NextTokenExpected([tkAtom]);
+    Self.RegisterImportFunc(Name, Lib, CC, Args, GetAtom(Token.Value));
   end;
 
   procedure ParseWhile;
@@ -2679,12 +2899,12 @@ var
 
   procedure ParseArrayAssign;
   var
-    FuncInfo: PSEFuncInfo;
-    I: Integer;
+    FuncNativeInfo: PSEFuncNativeInfo;
+    I, Ind: Integer;
     ArgCount: Integer = 0;
     Token: TSEToken;
   begin
-    FuncInfo := FindFunc('array_create');
+    FuncNativeInfo := FindFuncNative('array_create', Ind);
     repeat
       if PeekAtNextToken.Kind <> tkSquareBracketClose then
       begin
@@ -2693,7 +2913,7 @@ var
       end;
       Token := NextTokenExpected([tkComma, tkSquareBracketClose]);
     until Token.Kind = tkSquareBracketClose;
-    Emit([Pointer(opCallNative), Pointer(FuncInfo), ArgCount]);
+    Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), ArgCount]);
   end;
 
   procedure ParseVarAssign(const Name: String);
@@ -2828,6 +3048,11 @@ var
               Error('Invalid statement', Token);
           end;
         end;
+      tkImport:
+        begin
+          NextToken;
+          ParseFuncImport;
+        end;
       tkEOF:
         Exit;
       else
@@ -2886,25 +3111,35 @@ end;
 
 procedure TEvilC.RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);
 var
-  FuncInfo: TSEFuncInfo;
+  FuncNativeInfo: TSEFuncNativeInfo;
 begin
-  FuncInfo.ArgCount := ArgCount;
-  FuncInfo.Func := Func;
-  FuncInfo.Name := Name;
-  FuncInfo.Kind := sefkNative;
-  Self.FuncList.Add(FuncInfo);
+  FuncNativeInfo.ArgCount := ArgCount;
+  FuncNativeInfo.Func := Func;
+  FuncNativeInfo.Name := Name;
+  Self.FuncNativeList.Add(FuncNativeInfo);
 end;
 
 procedure TEvilC.RegisterScriptFunc(const Name: String; const Addr, StackAddr, ArgCount: Integer);
 var
-  FuncInfo: TSEFuncInfo;
+  FuncScriptInfo: TSEFuncScriptInfo;
 begin
-  FuncInfo.ArgCount := ArgCount;
-  FuncInfo.Addr := Addr; 
-  FuncInfo.StackAddr := StackAddr;
-  FuncInfo.Name := Name;
-  FuncInfo.Kind := sefkScript;
-  Self.FuncScriptList.Add(FuncInfo);
+  FuncScriptInfo.ArgCount := ArgCount;
+  FuncScriptInfo.Addr := Addr;
+  FuncScriptInfo.StackAddr := StackAddr;
+  FuncScriptInfo.Name := Name;
+  Self.FuncScriptList.Add(FuncScriptInfo);
+end;
+
+procedure TEvilC.RegisterImportFunc(const Name, Lib: String; CC: TSECallingConvention; const Args: TSEAtomKindArray; const Return: TSEAtomKind);
+var
+  FuncImportInfo: TSEFuncImportInfo;
+begin
+  FuncImportInfo.Args := Args;
+  FuncImportInfo.Return := Return;
+  FuncImportInfo.Name := Name;
+  FuncImportInfo.CallingConvention := CC;
+  FuncImportInfo.Func := nil; // TODO
+  Self.FuncImportList.Add(FuncImportInfo);
 end;
 
 function TEvilC.Backup: TSECache;
@@ -2913,6 +3148,8 @@ var
 begin
   Result.Binary := TSEBinary.Create;
   Result.LineOfCodeList := TIntegerList.Create;
+  Result.FuncScriptList := TSEFuncScriptList.Create;     
+  Result.FuncImportList := TSEFuncImportList.Create;
   for I := 0 to Self.VM.Binary.Count - 1 do
   begin
     Result.Binary.Add(Self.VM.Binary[I]);
@@ -2920,7 +3157,15 @@ begin
   for I := 0 to Self.LineOfCodeList.Count - 1 do
   begin
     Result.LineOfCodeList.Add(Self.LineOfCodeList[I]);
-  end;  
+  end;
+  for I := 0 to Self.FuncScriptList.Count - 1 do
+  begin
+    Result.FuncScriptList.Add(Self.FuncScriptList[I]);
+  end;
+  for I := 0 to Self.FuncImportList.Count - 1 do
+  begin
+    Result.FuncImportList.Add(Self.FuncImportList[I]);
+  end;
   Result.LocalVarListCount := Self.LocalVarList.Count;
 end;
 
@@ -2933,7 +3178,11 @@ begin
   for I := 0 to Cache.LineOfCodeList.Count - 1 do
     Self.LineOfCodeList.Add(Cache.LineOfCodeList[I]);
   for I := 0 to Cache.Binary.Count - 1 do
-    Self.VM.Binary.Add(Cache.Binary[I]);
+    Self.VM.Binary.Add(Cache.Binary[I]);               
+  for I := 0 to Cache.FuncScriptList.Count - 1 do
+    Self.FuncScriptList.Add(Cache.FuncScriptList[I]);
+  for I := 0 to Cache.FuncImportList.Count - 1 do
+    Self.FuncImportList.Add(Cache.FuncImportList[I]);
   Self.LocalVarList.Count := Cache.LocalVarListCount;
   Self.IsParsed := True;
 end;
@@ -2945,7 +3194,9 @@ begin
   for S in Self.Keys do
   begin
     Self[S].Binary.Free;
-    Self[S].LineOfCodeList.Free;
+    Self[S].LineOfCodeList.Free;    
+    Self[S].FuncScriptList.Free;
+    Self[S].FuncImportList.Free;
   end;
   inherited;
 end;
