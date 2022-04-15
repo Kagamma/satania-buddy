@@ -39,7 +39,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEBufferSetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEBufferSetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEBufferSetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEBufferPtr(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEStringToBuffer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
+    function SEBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -239,9 +240,14 @@ begin
   Double(P^) := Args[1];
 end;
 
-function TSatania.SEBufferPtr(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEStringToBuffer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := QWord(@Args[0].VarString[1]);
+end;        
+
+function TSatania.SEBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := Args[0].VarString;
 end;
 
 function TSatania.SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
