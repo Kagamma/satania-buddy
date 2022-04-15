@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 unit Mcdowell.EvilC;
 
 {$mode objfpc}
+{$asmmode intel}
 {$H+}
 {$modeswitch nestedprocvars}
 {$modeswitch advancedrecords}
@@ -35,7 +36,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr
-  {$ifdef SE_STRING_UTF8},LazUTF8{$endif};
+  {$ifdef SE_STRING_UTF8},LazUTF8{$endif}, dynlibs;
 
 type
   TSENumber = {$ifdef SE_PRECISION}Double{$else}Single{$endif};
@@ -120,17 +121,16 @@ type
     seakI8,           
     seakI16,
     seakI32,       
-    seakI64,
-    seakF32,
+    seakI64,   
+    seakU8,
+    seakU16,
+    seakU32,
+    seakU64,
+   // seakF32,
     seakF64,     
     seakChars
   );
   TSEAtomKindArray = array of TSEAtomKind;
-
-  TSECallingConvention = (
-    seccCdecl,
-    seccStdcall
-  );
 
   TSEVM = class;
   TSEFunc = function(const VM: TSEVM; const Args: array of TSEValue): TSEValue of object;
@@ -157,7 +157,6 @@ type
     Func: Pointer;
     Args: TSEAtomKindArray;
     Return: TSEAtomKind;
-    CallingConvention: TSECallingConvention;
   end;
   PSEFuncImportInfo = ^TSEFuncImportInfo;
 
@@ -274,8 +273,7 @@ type
     tkDownto,
     tkReturn,
     tkAtom,
-    tkImport,
-    tkCallingConvention
+    tkImport
   );
 TSETokenKinds = set of TSETokenKind;
 
@@ -285,7 +283,7 @@ const TokenNames: array[TSETokenKind] of String = (
   ',', 'if', 'identity', 'function', 'fn', 'variable', 'const',
   'unknown', 'else', 'while', 'break', 'continue', 'pause', 'yield',
   '[', ']', 'and', 'or', 'not', 'for', 'to', 'downto', 'return',
-  'atom', 'import', 'calling convention'
+  'atom', 'import'
 );
 
 type
@@ -353,7 +351,7 @@ type
     function Exec: TSEValue;
     procedure RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);   
     procedure RegisterScriptFunc(const Name: String; const Addr, StackAddr, ArgCount: Integer);
-    procedure RegisterImportFunc(const Name, Lib: String; CC: TSECallingConvention; const Args: TSEAtomKindArray; const Return: TSEAtomKind);
+    procedure RegisterImportFunc(const Name, ActualName, LibName: String; const Args: TSEAtomKindArray; const Return: TSEAtomKind);
     function Backup: TSECache;
     procedure Restore(const Cache: TSECache);
 
@@ -468,7 +466,12 @@ type
     class function SEDTGetDay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
     class function SEDTGetHour(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTGetMinute(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-  end;  
+  end;
+
+  TDynlibMap = specialize TDictionary<String, TLibHandle>;
+
+var
+  DynlibMap: TDynlibMap;
 
 class function TBuiltInFunction.SETypeOf(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
@@ -1308,11 +1311,17 @@ var
   FuncNativeInfo: PSEFuncNativeInfo;
   FuncScriptInfo: PSEFuncScriptInfo;
   FuncImportInfo: PSEFuncImportInfo;
-  I, J, ArgCount: Integer;
+  I, J, ArgCount, ArgSize: Integer;
   Args: array of TSEValue;
   CodePtrLocal: Integer;
   StackPtrLocal: PSEValue;
   BinaryLocal: TSEBinary;
+  ImportBufferIndex: array [0..31] of Cardinal;
+  ImportBufferData: array [0..8*31] of Byte;
+  ImportBufferString: array [0..31] of String;
+  ImportResult: QWord;                         
+  ImportResultD: Double;
+  FuncImport, P: Pointer;
 
   procedure Push(const Value: TSEValue); inline;
   begin
@@ -1337,6 +1346,9 @@ var
   begin
     Exit(@Self.Stack[I]);
   end;
+
+label
+  Loop, FinishLoop;
 
 begin
   if Self.IsDone then
@@ -1574,7 +1586,171 @@ begin
         opCallImport:
           begin                                          
             FuncImportInfo := Self.Parent.FuncImportList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
-            TV := 0;
+            ArgCount := Length(FuncImportInfo^.Args);
+            ArgSize := ArgCount * 8;
+            FuncImport := FuncImportInfo^.Func;
+
+            for I := ArgCount - 1 downto 0 do
+            begin
+              case FuncImportInfo^.Args[I] of
+                seakI8:
+                  begin
+                    Int64((@ImportBufferData[I * 8])^) := ShortInt(Round(Pop^.VarNumber));
+                  end;       
+                seakI16:
+                  begin
+                    Int64((@ImportBufferData[I * 8])^) := SmallInt(Round(Pop^.VarNumber));
+                  end;
+                seakI32:
+                  begin
+                    Int64((@ImportBufferData[I * 8])^) := LongInt(Round(Pop^.VarNumber));
+                  end;    
+                seakI64:
+                  begin
+                    Int64((@ImportBufferData[I * 8])^) := Int64(Round(Pop^.VarNumber));
+                  end;        
+                seakU8:
+                  begin
+                    QWord((@ImportBufferData[I * 8])^) := Byte(Round(Pop^.VarNumber));
+                  end;
+                seakU16:
+                  begin
+                    QWord((@ImportBufferData[I * 8])^) := Word(Round(Pop^.VarNumber));
+                  end;
+                seakU32:
+                  begin
+                    QWord((@ImportBufferData[I * 8])^) := LongWord(Round(Pop^.VarNumber));
+                  end;
+                seakU64:
+                  begin
+                    QWord((@ImportBufferData[I * 8])^) := QWord(Round(Pop^.VarNumber));
+                  end;     
+               { seakF32:
+                  begin
+                    Double((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
+                  end;}
+                seakF64:
+                  begin
+                    Double((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
+                  end;     
+                seakChars:
+                  begin              
+                    ImportBufferString[I] := Pop^.VarString + #0;
+                    PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferString[I]);
+                  end;
+              end;
+            end;
+            P := @ImportBufferData[0];
+            {$if defined(WINDOWS)}
+              asm
+                mov  rbx,P
+                mov  rcx,[rbx]
+                mov  rdx,[rbx + 8]
+                mov  r8,[rbx + 16]
+                mov  r9,[rbx + 24]
+                movsd xmm0,[rbx]
+                movsd xmm1,[rbx + 8]
+                movsd xmm2,[rbx + 16]
+                movsd xmm3,[rbx + 24]
+                xor  rax,rax
+                mov  eax,ArgCount
+                cmp  eax,4
+                jle  FinishLoop
+                add  ebx,ArgSize
+                sub  eax,5
+              Loop:         
+                sub  rbx,8
+                mov  r11,[rbx]
+                push r11
+                cmp  rax,0
+                je   FinishLoop
+                dec  rax
+                jmp  Loop
+              FinishLoop:
+                sub  rsp,32
+                call [FuncImport]
+                mov  ImportResult,rax
+                movsd ImportResultD,xmm0
+                xor  rax,rax
+                mov  eax,ArgCount
+                mov  ecx,8
+                mul  ecx
+                add  rsp,rax
+              end ['rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r11', 'xmm0', 'xmm1', 'xmm2', 'xmm3'];
+            {$elseif defined(LINUX)}
+              asm
+                mov  rbx,P
+                mov  rdi,[rbx]
+                mov  rsi,[rbx + 8]
+                mov  rdx,[rbx + 16]
+                mov  rcx,[rbx + 24]
+                mov  r8,[rbx + 32]
+                mov  r9,[rbx + 40]   
+                movsd xmm0,[rbx]
+                movsd xmm1,[rbx + 8]
+                movsd xmm2,[rbx + 16]
+                movsd xmm3,[rbx + 24]   
+                movsd xmm4,[rbx + 32]
+                movsd xmm5,[rbx + 40]
+                movsd xmm6,[rbx + 48]
+                movsd xmm7,[rbx + 56]
+                xor  rax,rax
+                mov  eax,ArgCount
+                cmp  eax,6
+                jle  FinishLoop
+                add  ebx,ArgSize
+                sub  eax,7
+              Loop:
+                sub  rbx,8
+                mov  r11,[rbx]
+                push r11
+                cmp  rax,0
+                je   FinishLoop
+                dec  rax
+                jmp  Loop
+              FinishLoop:   
+                sub  rsp,8
+                call [FuncImport]
+                mov  ImportResult,rax     
+                mov  ImportResultD,rax
+                xor  rax,rax
+                mov  eax,ArgCount
+                sub  eax,6
+                mov  ecx,8
+                mul  ecx
+                add  rsp,rax
+                add  rsp,8
+              end ['rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r11', 'xmm0', 'xmm1', 'xmm2', 'xmm3', 'xmm4', 'xmm5', 'xmm6', 'xmm7'];
+            {$endif}
+
+            case FuncImportInfo^.Return of
+              seakI8, seakI16, seakI32:
+                begin
+                  TV := Int64(LongInt(ImportResult))
+                end;
+              seakI64:
+                begin
+                  TV := Int64(ImportResult)
+                end;
+              seakU8, seakU16, seakU32:
+                begin
+                  TV := QWord(LongWord(ImportResult))
+                end;  
+              seakU64:
+                begin
+                  TV := Int64(ImportResult)
+                end;    
+             // seakF32,
+              seakF64:
+                begin
+                  TV := ImportResultD;
+                end;
+              seakChars:
+                begin
+                  TV.Kind := sevkString;
+                  TV.VarString := PChar(@ImportResult)^;
+                end;
+            end;
             Push(TV);
             Inc(CodePtrLocal, 2);
           end;
@@ -2136,12 +2312,10 @@ begin
               Token.Kind := tkReturn;
             'fn':
               Token.Kind := tkFunctionDecl;
-            'void', 'i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f32', 'f64', 'buffer':
+            'void', 'i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f64', 'buffer':
               Token.Kind := tkAtom;
             'import':
               Token.Kind := tkImport;
-            'stdcall', 'cdecl':
-              Token.Kind := tkCallingConvention;
             else
               Token.Kind := tkIdent;
           end;
@@ -2632,7 +2806,7 @@ var
     if FuncScriptInfo <> nil then
       Emit([Pointer(opCallScript), Ind, ArgCount])
     else
-      Emit([Pointer(opCallScript), Ind]);
+      Emit([Pointer(opCallImport), Ind]);
   end;
 
   procedure ParseFuncDecl;
@@ -2698,16 +2872,24 @@ var
       case Name of
         'void':
           Result := seakVoid;
-        'u8', 'i8':
+        'u8':
+          Result := seakU8;
+        'u16':
+          Result := seakU16;
+        'u32':
+          Result := seakU32;
+        'u64':
+          Result := seakU64;
+        'i8':
           Result := seakI8;
-        'u16', 'i16':
+        'i16':
           Result := seakI16;
-        'u32', 'i32':
+        'i32':
           Result := seakI32;
-        'u64', 'i64':
+        'i64':
           Result := seakI64;
-        'f32':
-          Result := seakF32;
+        {'f32':
+          Result := seakF32;}
         'f64':
           Result := seakF64;
         'buffer':
@@ -2715,44 +2897,67 @@ var
       end;
     end;
 
+    procedure FuncImport(const Lib: String);
+    var
+      Token: TSEToken;
+      Name, ActualName: String;
+      Return: TSEAtomKind;
+      Args: TSEAtomKindArray;
+      I: Integer;
+    begin
+      Token := NextTokenExpected([tkIdent]);
+      Name := Token.Value;
+
+      if FindFunc(Name) <> nil then
+        Error(Format('Duplicate function declaration "%s"', [Token.Value]), Token);
+
+      if PeekAtNextToken.Kind = tkBracketOpen then
+      begin
+        NextTokenExpected([tkBracketOpen]);
+        repeat
+          if PeekAtNextToken.Kind = tkAtom then
+          begin
+            Token := NextTokenExpected([tkAtom]);
+            SetLength(Args, Length(Args) + 1);
+            Args[Length(Args) - 1] := GetAtom(Token.Value);
+          end;
+          Token := NextTokenExpected([tkComma, tkBracketClose]);
+        until Token.Kind = tkBracketClose;
+      end;
+      NextTokenExpected([tkColon]);
+      Token := NextTokenExpected([tkAtom]);
+      Return := GetAtom(Token.Value);
+      if PeekAtNextToken.Kind = tkString then
+      begin
+        Token := NextToken;
+        ActualName := Token.Value;
+      end else
+        ActualName := Name;
+
+      Self.RegisterImportFunc(Name, ActualName, Lib, Args, Return);
+    end;
+
   var
     Token: TSEToken;
-    Name, Lib: String;
-    Return: TSEAtomKind;
-    Args: TSEAtomKindArray;
-    CC: TSECallingConvention;
-    I: Integer;
+    Lib: String;
   begin
     Token := NextTokenExpected([tkString]);
     Lib := Token.Value;
-
-    Token := NextTokenExpected([tkCallingConvention]);
-    case Token.Value of
-      'stdcall':
-        CC := seccStdcall;
-      'cdecl':
-        CC := seccCdecl;
-    end;
-
-    Token := NextTokenExpected([tkIdent]);
-    Name := Token.Value;
-
-    if PeekAtNextToken.Kind = tkBracketOpen then
+    if PeekAtNextToken.Kind <> tkBegin then
+      FuncImport(Lib)
+    else
     begin
-      NextTokenExpected([tkBracketOpen]);
-      repeat
-        if PeekAtNextToken.Kind = tkAtom then
+      NextToken;
+      while True do
+      begin
+        FuncImport(Lib);
+        if PeekAtNextTokenExpected([tkEnd, tkIdent]).Kind = tkEnd then
         begin
-          Token := NextTokenExpected([tkAtom]);
-          SetLength(Args, Length(Args) + 1);
-          Args[Length(Args) - 1] := GetAtom(Token.Value);
+          NextToken;
+          break;
         end;
-        Token := NextTokenExpected([tkComma, tkBracketClose]);
-      until Token.Kind = tkBracketClose;
+      end;
     end;
-    NextTokenExpected([tkColon]);
-    Token := NextTokenExpected([tkAtom]);
-    Self.RegisterImportFunc(Name, Lib, CC, Args, GetAtom(Token.Value));
   end;
 
   procedure ParseWhile;
@@ -3078,7 +3283,8 @@ procedure TEvilC.Reset;
 var
   Ident: TSEIdent;
 begin
-  Self.FuncScriptList.Clear;
+  Self.FuncScriptList.Clear;   
+  Self.FuncImportList.Clear;
   Self.CurrentFileList.Clear;
   Self.VM.Reset;
   Self.VM.Binary.Clear;
@@ -3130,15 +3336,21 @@ begin
   Self.FuncScriptList.Add(FuncScriptInfo);
 end;
 
-procedure TEvilC.RegisterImportFunc(const Name, Lib: String; CC: TSECallingConvention; const Args: TSEAtomKindArray; const Return: TSEAtomKind);
+procedure TEvilC.RegisterImportFunc(const Name, ActualName, LibName: String; const Args: TSEAtomKindArray; const Return: TSEAtomKind);
 var
   FuncImportInfo: TSEFuncImportInfo;
+  Lib: TLibHandle;
 begin
+  if DynlibMap.ContainsKey(LibName) then
+    Lib := DynlibMap[LibName]
+  else
+    Lib := LoadLibrary(LibName);
+
   FuncImportInfo.Args := Args;
   FuncImportInfo.Return := Return;
   FuncImportInfo.Name := Name;
-  FuncImportInfo.CallingConvention := CC;
-  FuncImportInfo.Func := nil; // TODO
+  if Lib <> nil then
+    FuncImportInfo.Func := GetProcAddress(Lib, ActualName);
   Self.FuncImportList.Add(FuncImportInfo);
 end;
 
@@ -3202,9 +3414,11 @@ begin
 end;
 
 initialization
+  DynlibMap := TDynlibMap.Create;
   ScriptVarMap := TSEVarMap.Create;
 
 finalization
   FreeAndNil(ScriptVarMap);
+  DynlibMap.Free;
 
 end.
