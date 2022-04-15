@@ -2905,6 +2905,7 @@ var
       Args: TSEAtomKindArray;
       I: Integer;
     begin
+      NextTokenExpected([tkFunctionDecl]);
       Token := NextTokenExpected([tkIdent]);
       Name := Token.Value;
 
@@ -2951,7 +2952,7 @@ var
       while True do
       begin
         FuncImport(Lib);
-        if PeekAtNextTokenExpected([tkEnd, tkIdent]).Kind = tkEnd then
+        if PeekAtNextTokenExpected([tkEnd, tkFunctionDecl]).Kind = tkEnd then
         begin
           NextToken;
           break;
