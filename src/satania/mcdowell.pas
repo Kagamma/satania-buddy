@@ -192,7 +192,8 @@ begin
   Script.RegisterFunc('fs_file_delete', @SEFileDelete, 1);    
   Script.RegisterFunc('fs_file_exists', @SEFileExists, 1);
   Script.RegisterFunc('fs_file_read', @SEFileRead, 1);
-  Script.RegisterFunc('fs_file_write', @SEFileWrite, 2);
+  Script.RegisterFunc('fs_file_write', @SEFileWrite, 2);     
+  Script.RegisterFunc('fs_file_find_all', @SEFileFindAll, 4);
   ScriptCacheMap := TSECacheMap.Create;
   UpdateMeta;
 end;
@@ -715,6 +716,14 @@ begin
   Script.AddDefaultConsts;
   Script.ConstMap.Add('CHATMODE_CHAT', CHATMODE_CHAT);
   Script.ConstMap.Add('CHATMODE_SCRIPT', CHATMODE_SCRIPT);
+  Script.ConstMap.Add('FA_DICTIONARY', faDirectory);
+  Script.ConstMap.Add('FA_READONLY', faReadOnly);
+  Script.ConstMap.Add('FA_NORMAL', faNormal);
+  Script.ConstMap.Add('FA_ENCRYPTED', faEncrypted);
+  Script.ConstMap.Add('FA_COMPRESSED', faCompressed);
+  Script.ConstMap.Add('FA_SYMLINK', faSymLink);
+  Script.ConstMap.Add('FA_SYSFILE', faSysFile);    
+  Script.ConstMap.Add('FA_ANYFILE', faAnyFile);
   MetaPath := 'data/scripts/' + Save.Settings.Skin + '/meta.json';
   Name := 'Satania';
   if FileExists(MetaPath) then

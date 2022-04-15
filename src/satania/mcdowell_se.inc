@@ -73,6 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEFileWrite(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEFileFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
@@ -554,7 +555,9 @@ var
 begin
   SL := TStringList.Create;
   try
-    SL.Text := Args[1]; 
+    if FileExists(Args[0]) then
+      SL.LoadFromFile(Args[0]);
+    SL.Text := SL.Text + Args[1];
     SL.SaveToFile(Args[0]);
   finally
     SL.Free;
@@ -569,6 +572,23 @@ end;
 function TSatania.SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
 begin
   DeleteFile(Args[0].VarString);
+end;
+
+function TSatania.SEFileFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  SL: TStringList;
+  I: Integer;
+begin
+  SL := TStringList.Create;
+  try
+    FindAllFiles(SL, Args[0], Args[1], Boolean(Round(Args[2].VarNumber)), Round(Args[3]));
+    Result.Kind := sevkArray;
+    SetLength(Result.VarArray, SL.Count);
+    for I := 0 to SL.Count - 1 do
+      Result[I] := SL[I];
+  finally
+    SL.Free;
+  end;
 end;
 
 {$endif}

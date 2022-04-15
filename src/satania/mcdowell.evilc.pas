@@ -1708,9 +1708,7 @@ end;
 
 procedure TEvilC.AddDefaultConsts;
 begin
-  Self.ConstMap.Add('pi', PI);
-  Self.ConstMap.Add('width', 1600);
-  Self.ConstMap.Add('height', 900);
+  Self.ConstMap.Add('PI', PI);
   Self.ConstMap.Add('true', True);
   Self.ConstMap.Add('false', False);
 end;
