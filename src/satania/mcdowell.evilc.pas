@@ -1638,7 +1638,7 @@ begin
                     A := Pop;
                     if A^.Kind = sevkString then
                     begin
-                      ImportBufferString[I] := Pop^.VarString + #0;
+                      ImportBufferString[I] := A^.VarString + #0;
                       PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferString[I]);
                     end else
                       QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
