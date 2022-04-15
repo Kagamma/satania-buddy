@@ -2136,7 +2136,7 @@ begin
               Token.Kind := tkReturn;
             'fn':
               Token.Kind := tkFunctionDecl;
-            'i0', 'u0', 'i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f32', 'f64', 'chars':
+            'void', 'i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f32', 'f64', 'buffer':
               Token.Kind := tkAtom;
             'import':
               Token.Kind := tkImport;
@@ -2710,7 +2710,7 @@ var
           Result := seakF32;
         'f64':
           Result := seakF64;
-        'chars':
+        'buffer':
           Result := seakChars;
       end;
     end;
