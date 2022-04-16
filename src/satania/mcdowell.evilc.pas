@@ -1309,6 +1309,7 @@ var
   {$else}
   S: PChar;
   {$endif}
+  WS: WideString;
   FuncNativeInfo: PSEFuncNativeInfo;
   FuncScriptInfo: PSEFuncScriptInfo;
   FuncImportInfo: PSEFuncImportInfo;
@@ -1317,6 +1318,7 @@ var
   CodePtrLocal: Integer;
   StackPtrLocal: PSEValue;
   BinaryLocal: TSEBinary;
+  MMXCount, RegCount: Cardinal;
   ImportBufferIndex: array [0..31] of Cardinal;
   ImportBufferData: array [0..8*31] of Byte;
   ImportBufferString: array [0..31] of String;     
@@ -1596,6 +1598,8 @@ begin
             {$if defined(LINUX)}
             ArgCountStack := Max(0, ArgCount - 6);
             {$endif}
+            MMXCount := 0;
+            RegCount := 0;
 
             for I := ArgCount - 1 downto 0 do
             begin
@@ -1603,34 +1607,42 @@ begin
                 seakI8:
                   begin
                     Int64((@ImportBufferData[I * 8])^) := ShortInt(Round(Pop^.VarNumber));
+                    ImportBufferIndex[I] := 0;
                   end;       
                 seakI16:
                   begin
-                    Int64((@ImportBufferData[I * 8])^) := SmallInt(Round(Pop^.VarNumber));
+                    Int64((@ImportBufferData[I * 8])^) := SmallInt(Round(Pop^.VarNumber)); 
+                    ImportBufferIndex[I] := 0;
                   end;
                 seakI32:
                   begin
                     Int64((@ImportBufferData[I * 8])^) := LongInt(Round(Pop^.VarNumber));
+                    ImportBufferIndex[I] := 0;
                   end;    
                 seakI64:
                   begin
                     Int64((@ImportBufferData[I * 8])^) := Int64(Round(Pop^.VarNumber));
+                    ImportBufferIndex[I] := 0;
                   end;        
                 seakU8:
                   begin
-                    QWord((@ImportBufferData[I * 8])^) := Byte(Round(Pop^.VarNumber));
+                    QWord((@ImportBufferData[I * 8])^) := Byte(Round(Pop^.VarNumber)); 
+                    ImportBufferIndex[I] := 0;
                   end;
                 seakU16:
                   begin
-                    QWord((@ImportBufferData[I * 8])^) := Word(Round(Pop^.VarNumber));
+                    QWord((@ImportBufferData[I * 8])^) := Word(Round(Pop^.VarNumber)); 
+                    ImportBufferIndex[I] := 0;
                   end;
                 seakU32:
                   begin
                     QWord((@ImportBufferData[I * 8])^) := LongWord(Round(Pop^.VarNumber));
+                    ImportBufferIndex[I] := 0;
                   end;
                 seakU64:
                   begin
-                    QWord((@ImportBufferData[I * 8])^) := QWord(Round(Pop^.VarNumber));
+                    QWord((@ImportBufferData[I * 8])^) := QWord(Round(Pop^.VarNumber));  
+                    ImportBufferIndex[I] := 0;
                   end;     
                { seakF32:
                   begin
@@ -1638,7 +1650,8 @@ begin
                   end;}
                 seakF64:
                   begin
-                    Double((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
+                    Double((@ImportBufferData[I * 8])^) := Pop^.VarNumber;    
+                    ImportBufferIndex[I] := 0;
                   end;     
                 seakChars:
                   begin
@@ -1648,7 +1661,8 @@ begin
                       ImportBufferString[I] := A^.VarString + #0;
                       PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferString[I]);
                     end else
-                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
+                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber); 
+                    ImportBufferIndex[I] := 1;
                   end;
                 seakWChars:
                   begin
@@ -1658,7 +1672,8 @@ begin
                       ImportBufferWideString[I] := UTF8Decode(A^.VarString + #0);
                       PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferWideString[I]);
                     end else
-                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
+                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);  
+                    ImportBufferIndex[I] := 0;
                   end;
               end;
             end;
@@ -1757,10 +1772,15 @@ begin
                 begin
                   TV := QWord(LongWord(ImportResult))
                 end;  
-              seakU64, seakChars, seakWChars:
+              seakU64, seakChars:
                 begin
                   TV := QWord(ImportResult)
-                end;    
+                end;                        
+              seakWChars:
+                begin
+                  WS := PWideChar(ImportResult);
+                  TV := UTF8Encode(WS);
+                end;
              // seakF32,
               seakF64:
                 begin
