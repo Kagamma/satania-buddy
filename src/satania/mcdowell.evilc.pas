@@ -128,7 +128,8 @@ type
     seakU64,
    // seakF32,
     seakF64,     
-    seakChars
+    seakChars,
+    seakWChars
   );
   TSEAtomKindArray = array of TSEAtomKind;
 
@@ -1318,7 +1319,8 @@ var
   BinaryLocal: TSEBinary;
   ImportBufferIndex: array [0..31] of Cardinal;
   ImportBufferData: array [0..8*31] of Byte;
-  ImportBufferString: array [0..31] of String;
+  ImportBufferString: array [0..31] of String;     
+  ImportBufferWideString: array [0..31] of WideString;
   ImportResult: QWord;                         
   ImportResultD: Double;
   FuncImport, P: Pointer;
@@ -1648,6 +1650,16 @@ begin
                     end else
                       QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
                   end;
+                seakWChars:
+                  begin
+                    A := Pop;
+                    if A^.Kind = sevkString then
+                    begin
+                      ImportBufferWideString[I] := UTF8Decode(A^.VarString + #0);
+                      PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferWideString[I]);
+                    end else
+                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
+                  end;
               end;
             end;
             P := @ImportBufferData[0];
@@ -1745,7 +1757,7 @@ begin
                 begin
                   TV := QWord(LongWord(ImportResult))
                 end;  
-              seakU64, seakChars:
+              seakU64, seakChars, seakWChars:
                 begin
                   TV := QWord(ImportResult)
                 end;    
@@ -2328,7 +2340,7 @@ begin
               Token.Kind := tkReturn;
             'fn':
               Token.Kind := tkFunctionDecl;
-            'void', 'i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f64', 'buffer':
+            'void', 'i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f64', 'buffer', 'wbuffer':
               Token.Kind := tkAtom;
             'import':
               Token.Kind := tkImport;
@@ -2914,6 +2926,8 @@ var
           Result := seakF64;
         'buffer':
           Result := seakChars;
+        'wbuffer':
+          Result := seakWChars;
       end;
     end;
 
