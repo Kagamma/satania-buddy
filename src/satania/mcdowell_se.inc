@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEBufferSetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStringToBuffer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
     function SEBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEWBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -247,7 +248,18 @@ end;
 
 function TSatania.SEBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := Args[0].VarString;
+  if QWord(Args[0].VarString[1]) = Round(Args[0].VarNumber) then
+    Result := Args[0].VarString
+  else
+    Result := PChar(Round(Args[0].VarNumber));
+end;
+
+function TSatania.SEWBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  WS: WideString;
+begin
+  WS := PWideChar(Round(Args[0].VarNumber));
+  Result := UTF8Encode(WS);
 end;
 
 function TSatania.SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

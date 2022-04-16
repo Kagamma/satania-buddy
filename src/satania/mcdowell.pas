@@ -158,7 +158,8 @@ begin
   Script.RegisterFunc('buffer_i64_set', @SEBufferSetI64, 2);
   Script.RegisterFunc('buffer_f64_set', @SEBufferSetF64, 2);
   Script.RegisterFunc('string_to_buffer', @SEStringToBuffer, 1);
-  Script.RegisterFunc('buffer_to_string', @SEBufferToString, 1);
+  Script.RegisterFunc('buffer_to_string', @SEBufferToString, 1);       
+  Script.RegisterFunc('wbuffer_to_string', @SEWBufferToString, 1);
   Script.RegisterFunc('numbers', @SENumbers, 1);     
   Script.RegisterFunc('months_to_numbers', @SEMonthsToNumbers, 1);
   Script.RegisterFunc('talk', @SETalk, -1);
