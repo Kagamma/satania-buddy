@@ -117,126 +117,126 @@ end;
 function TSatania.SEBufferGetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result.Kind := sevkSingle;
-  Result.VarNumber := Byte(Pointer(Round(Args[0]))^);
+  Result.VarNumber := Byte(Pointer(Round(Args[0].VarNumber))^);
 end;     
 
 function TSatania.SEBufferGetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin   
   Result.Kind := sevkSingle;
-  Result.VarNumber := Word(Pointer(Round(Args[0]))^);
+  Result.VarNumber := Word(Pointer(Round(Args[0].VarNumber))^);
 end;
 
 function TSatania.SEBufferGetU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin   
   Result.Kind := sevkSingle;
-  Result.VarNumber := LongWord(Pointer(Round(Args[0]))^);
+  Result.VarNumber := LongWord(Pointer(Round(Args[0].VarNumber))^);
 end;
 
 function TSatania.SEBufferGetU64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin     
   Result.Kind := sevkSingle;
-  Result.VarNumber := QWord(Pointer(Round(Args[0]))^);
+  Result.VarNumber := QWord(Pointer(Round(Args[0].VarNumber))^);
 end;
 
 function TSatania.SEBufferGetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin     
   Result.Kind := sevkSingle;
-  Result.VarNumber := SmallInt(Pointer(Round(Args[0]))^);
+  Result.VarNumber := SmallInt(Pointer(Round(Args[0].VarNumber))^);
 end;
 
 function TSatania.SEBufferGetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin      
   Result.Kind := sevkSingle;
-  Result.VarNumber := ShortInt(Pointer(Round(Args[0]))^);
+  Result.VarNumber := ShortInt(Pointer(Round(Args[0].VarNumber))^);
 end;
 
 function TSatania.SEBufferGetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin        
   Result.Kind := sevkSingle;
-  Result.VarNumber := LongInt(Pointer(Round(Args[0]))^);
+  Result.VarNumber := LongInt(Pointer(Round(Args[0].VarNumber))^);
 end;
 
 function TSatania.SEBufferGetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin           
   Result.Kind := sevkSingle;
-  Result.VarNumber := Int64(Pointer(Round(Args[0]))^);
+  Result.VarNumber := Int64(Pointer(Round(Args[0].VarNumber))^);
 end;  
 
 function TSatania.SEBufferGetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result.Kind := sevkSingle;
-  Result.VarNumber := Double(Pointer(Round(Args[0]))^);
+  Result.VarNumber := Double(Pointer(Round(Args[0].VarNumber))^);
 end;
 
 function TSatania.SEBufferSetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   P: Pointer;
 begin
-  P := Pointer(Round(Args[0]));
-  Byte(P^) := Round(Args[1]);
+  P := Pointer(Round(Args[0].VarNumber));
+  Byte(P^) := Round(Args[1].VarNumber);
 end;
 
 function TSatania.SEBufferSetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   P: Pointer;
 begin
-  P := Pointer(Round(Args[0]));
-  Word(P^) := Round(Args[1]);
+  P := Pointer(Round(Args[0].VarNumber));
+  Word(P^) := Round(Args[1].VarNumber);
 end;
 
 function TSatania.SEBufferSetU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   P: Pointer;
 begin
-  P := Pointer(Round(Args[0]));
-  LongWord(P^) := Round(Args[1]);
+  P := Pointer(Round(Args[0].VarNumber));
+  LongWord(P^) := Round(Args[1].VarNumber);
 end;
 
 function TSatania.SEBufferSetU64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   P: Pointer;
 begin
-  P := Pointer(Round(Args[0]));
-  QWord(P^) := Round(Args[1]);
+  P := Pointer(Round(Args[0].VarNumber));
+  QWord(P^) := Round(Args[1].VarNumber);
 end;
 
 function TSatania.SEBufferSetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   P: Pointer;
 begin
-  P := Pointer(Round(Args[0]));
-  ShortInt(P^) := Round(Args[1]);
+  P := Pointer(Round(Args[0].VarNumber));
+  ShortInt(P^) := Round(Args[1].VarNumber);
 end;
 
 function TSatania.SEBufferSetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   P: Pointer;
 begin
-  P := Pointer(Round(Args[0]));
-  SmallInt(P^) := Round(Args[1]);
+  P := Pointer(Round(Args[0].VarNumber));
+  SmallInt(P^) := Round(Args[1].VarNumber);
 end;
 
 function TSatania.SEBufferSetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   P: Pointer;
 begin
-  P := Pointer(Round(Args[0]));
-  LongInt(P^) := Round(Args[1]);
+  P := Pointer(Round(Args[0].VarNumber));
+  LongInt(P^) := Round(Args[1].VarNumber);
 end;
 
 function TSatania.SEBufferSetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   P: Pointer;
 begin
-  P := Pointer(Round(Args[0]));
-  Int64(P^) := Round(Args[1]);
+  P := Pointer(Round(Args[0].VarNumber));
+  Int64(P^) := Round(Args[1].VarNumber);
 end;
 
 function TSatania.SEBufferSetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   P: Pointer;
 begin
-  P := Pointer(Round(Args[0]));
+  P := Pointer(Round(Args[0].VarNumber));
   Double(P^) := Args[1];
 end;
 
@@ -743,7 +743,7 @@ var
 begin
   SL := TStringList.Create;
   try
-    FindAllFiles(SL, Args[0], Args[1], Boolean(Round(Args[2].VarNumber)), Round(Args[3]));
+    FindAllFiles(SL, Args[0], Args[1], Boolean(Round(Args[2].VarNumber)), Round(Args[3].VarNumber));
     Result.Kind := sevkArray;
     SetLength(Result.VarArray, SL.Count);
     for I := 0 to SL.Count - 1 do

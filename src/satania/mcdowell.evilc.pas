@@ -693,7 +693,7 @@ class function TBuiltInFunction.SEStringInsert(const VM: TSEVM; const Args: arra
 begin
   Result := Args[0]; 
   {$ifdef SE_STRING_UTF8}
-  UTF8Insert(Args[1].VarString, Result.VarString, Round(Args[2] + 1));
+  UTF8Insert(Args[1].VarString, Result.VarString, Round(Args[2].VarNumber + 1));
   {$else}
   Insert(Args[1].VarString, Result.VarString, Round(Args[2] + 1));
   {$endif}
@@ -1311,7 +1311,7 @@ var
   FuncNativeInfo: PSEFuncNativeInfo;
   FuncScriptInfo: PSEFuncScriptInfo;
   FuncImportInfo: PSEFuncImportInfo;
-  I, J, ArgCount, ArgSize: Integer;
+  I, J, ArgCount, ArgCountStack, ArgSize: Integer;
   Args: array of TSEValue;
   CodePtrLocal: Integer;
   StackPtrLocal: PSEValue;
@@ -1588,9 +1588,12 @@ begin
             FuncImportInfo := Self.Parent.FuncImportList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
             FuncImport := FuncImportInfo^.Func;
             if FuncImport = nil then
-              raise Exception(Format('Function "%s" is null', [FuncImportInfo^.Name]));
+              raise Exception.Create(Format('Function "%s" is null', [FuncImportInfo^.Name]));
             ArgCount := Length(FuncImportInfo^.Args);
             ArgSize := ArgCount * 8;
+            {$if defined(LINUX)}
+            ArgCountStack := Max(0, ArgCount - 6);
+            {$endif}
 
             for I := ArgCount - 1 downto 0 do
             begin
@@ -1721,8 +1724,7 @@ begin
                 mov  ImportResult,rax
                 movsd ImportResultD,xmm0
                 xor  rax,rax
-                mov  eax,ArgCount
-                sub  eax,6
+                mov  eax,ArgCountStack
                 mov  ecx,8
                 mul  ecx
                 add  rsp,rax
