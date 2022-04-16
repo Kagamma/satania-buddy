@@ -1772,14 +1772,9 @@ begin
                 begin
                   TV := QWord(LongWord(ImportResult))
                 end;  
-              seakU64, seakChars:
+              seakU64, seakChars, seakWChars:
                 begin
                   TV := QWord(ImportResult)
-                end;                        
-              seakWChars:
-                begin
-                  WS := PWideChar(ImportResult);
-                  TV := UTF8Encode(WS);
                 end;
              // seakF32,
               seakF64:
