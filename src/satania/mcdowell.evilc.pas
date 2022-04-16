@@ -1313,12 +1313,12 @@ var
   FuncNativeInfo: PSEFuncNativeInfo;
   FuncScriptInfo: PSEFuncScriptInfo;
   FuncImportInfo: PSEFuncImportInfo;
-  I, J, ArgCount, {$ifdef LINUX}ArgCountStack, {$endif}ArgSize: Integer;
+  I, J, {$ifdef LINUX}ArgCountStack, {$endif}ArgCount, ArgSize: Integer;
   Args: array of TSEValue;
   CodePtrLocal: Integer;
   StackPtrLocal: PSEValue;
   BinaryLocal: TSEBinary;
-  MMXCount, RegCount: Cardinal;
+  MMXCount, RegCount: QWord;
   {$ifdef LINUX}
   ImportBufferIndex: array [0..31] of QWord;
   {$endif}
@@ -1354,7 +1354,9 @@ var
   end;
 
 label
-  Loop, FinishLoop;
+  Loop, FinishLoop, LoopMMX, LoopMMXAlloc, AllocMMX6, AllocMMX5, AllocMMX4, AllocMMX3, AllocMMX2, AllocMMX1,
+  AllocMMX0, LoopMMXFinishAlloc, LoopReg, LoopRegAlloc, AllocRDI, AllocRSI, AllocRDX, AllocRCX, AllocR9, LoopRegFinishAlloc,
+  LoopFinishAlloc;
 
 begin
   if Self.IsDone then
@@ -1598,8 +1600,8 @@ begin
             ArgCount := Length(FuncImportInfo^.Args);
             ArgSize := ArgCount * 8;
             {$ifdef LINUX}
-            MMXCount := 100;
-            RegCount := 100;
+            MMXCount := 0;
+            RegCount := 0;
             {$endif}
 
             for I := ArgCount - 1 downto 0 do
@@ -1677,7 +1679,7 @@ begin
                   begin
                     Double((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
                     {$ifdef LINUX}
-                    ImportBufferIndex[I] := 0; 
+                    ImportBufferIndex[I] := 1;
                     Inc(MMXCount); 
                     {$endif}
                   end;     
@@ -1691,7 +1693,7 @@ begin
                     end else
                       QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
                     {$ifdef LINUX}
-                    ImportBufferIndex[I] := 1;   
+                    ImportBufferIndex[I] := 0;
                     Inc(RegCount);
                     {$endif}
                   end;
@@ -1714,7 +1716,7 @@ begin
             P := @ImportBufferData[0];
             {$if defined(LINUX)}                           
             PP := @ImportBufferIndex[0];
-            ArgCountStack := Max(0, MMXCount - 108) + Max(0, RegCount - 106);
+            ArgCountStack := Max(0, Int64(MMXCount) - 8) + Max(0, Int64(RegCount) - 6);
             {$endif}
             {$if defined(WINDOWS)}
               asm
@@ -1754,11 +1756,18 @@ begin
               end ['rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r11', 'xmm0', 'xmm1', 'xmm2', 'xmm3'];
             {$elseif defined(LINUX)}
               asm
+                xor  rax,rax
+                mov  eax,ArgCount
+                mov  r10,rax
+
+                xor  rax,rax
+                mov  eax,ArgSize
+                mov  r14,rax
+
                 mov  rbx,P
-                add  rbx,ArgSize
+                add  rbx,r14
                 mov  rax,PP
-                add  rax,ArgSize
-                mov  r10,ArgCount
+                add  rax,r14
                 mov  r11,MMXCount
                 mov  r12,RegCount
               Loop:      
@@ -1769,25 +1778,25 @@ begin
                 cmp  r14,0 // Reg?
                 je   LoopReg
               LoopMMX:
-                  cmp  r12,108
+                  cmp  r11,8
                   jle  LoopMMXAlloc // Lower or equal: Register allocation, Higher: Push to stack
                 // Push to stack
                   push r13
                   jmp  LoopMMXFinishAlloc
                 LoopMMXAlloc:
-                  cmp  r12,101
+                  cmp  r11,1
                   je   AllocMMX0
-                  cmp  r12,102
+                  cmp  r11,2
                   je   AllocMMX1
-                  cmp  r12,103
+                  cmp  r11,3
                   je   AllocMMX2
-                  cmp  r12,104
+                  cmp  r11,4
                   je   AllocMMX3
-                  cmp  r12,105
+                  cmp  r11,5
                   je   AllocMMX4
-                  cmp  r12,106
+                  cmp  r11,6
                   je   AllocMMX5
-                  cmp  r12,107
+                  cmp  r11,7
                   je   AllocMMX6
                 // MMX7
                   movsd xmm7,[rbx]
@@ -1813,44 +1822,44 @@ begin
                 AllocMMX0:
                   movsd xmm0,[rbx]
                 LoopMMXFinishAlloc:
-                  dec  r12
+                  dec  r11
                   jmp  LoopFinishAlloc
               LoopReg:   
-                  cmp  r11,106          
+                  cmp  r12,6
                   jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack   
                 // Push to stack
                   push r13
                   jmp  LoopRegFinishAlloc   
                 LoopRegAlloc:
-                  cmp  r11,101
+                  cmp  r12,1
                   je   AllocRDI
-                  cmp  r11,102
+                  cmp  r12,2
                   je   AllocRSI
-                  cmp  r11,103
+                  cmp  r12,3
                   je   AllocRDX
-                  cmp  r11,104
+                  cmp  r12,4
                   je   AllocRCX
-                  cmp  r11,105
+                  cmp  r12,5
                   je   AllocR9  
                 // R8
-                  mov  r8,[rbx]
+                  mov  r8,r13
                   jmp  LoopRegFinishAlloc 
                 AllocRDI:
-                  mov  rdi,[rbx]
+                  mov  rdi,r13
                   jmp  LoopRegFinishAlloc   
                 AllocRSI:
-                  mov  rsi,[rbx]
+                  mov  rsi,r13
                   jmp  LoopRegFinishAlloc
                 AllocRDX:
-                  mov  rdx,[rbx]
+                  mov  rdx,r13
                   jmp  LoopRegFinishAlloc
                 AllocRCX:
-                  mov  rcx,[rbx]
+                  mov  rcx,r13
                   jmp  LoopRegFinishAlloc
                 AllocR9:
-                  mov  r9,[rbx]
+                  mov  r9,r13
                 LoopRegFinishAlloc:
-                  dec  r11
+                  dec  r12
               LoopFinishAlloc:
                 dec  r10
                 cmp  r10,0 // Still have arguments to take care of?
