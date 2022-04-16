@@ -3423,13 +3423,15 @@ end;
 procedure TSECacheMap.Clear;
 var
   S: String;
+  Cache: TSECache;
 begin
   for S in Self.Keys do
   begin
-    Self[S].Binary.Free;
-    Self[S].LineOfCodeList.Free;    
-    Self[S].FuncScriptList.Free;
-    Self[S].FuncImportList.Free;
+    Cache := Self[S];
+    Cache.Binary.Free;
+    Cache.LineOfCodeList.Free;
+    Cache.FuncScriptList.Free;
+    Cache.FuncImportList.Free;
   end;
   inherited;
 end;
