@@ -1586,9 +1586,11 @@ begin
         opCallImport:
           begin                                          
             FuncImportInfo := Self.Parent.FuncImportList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
+            FuncImport := FuncImportInfo^.Func;
+            if FuncImport = nil then
+              raise Exception(Format('Function "%s" is null', [FuncImportInfo^.Name]));
             ArgCount := Length(FuncImportInfo^.Args);
             ArgSize := ArgCount * 8;
-            FuncImport := FuncImportInfo^.Func;
 
             for I := ArgCount - 1 downto 0 do
             begin
