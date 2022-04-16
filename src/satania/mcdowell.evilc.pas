@@ -1311,7 +1311,7 @@ var
   FuncNativeInfo: PSEFuncNativeInfo;
   FuncScriptInfo: PSEFuncScriptInfo;
   FuncImportInfo: PSEFuncImportInfo;
-  I, J, ArgCount, ArgCountStack, ArgSize: Integer;
+  I, J, ArgCount, {$ifdef LINUX}ArgCountStack, {$endif}ArgSize: Integer;
   Args: array of TSEValue;
   CodePtrLocal: Integer;
   StackPtrLocal: PSEValue;
