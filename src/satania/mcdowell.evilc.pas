@@ -1319,13 +1319,15 @@ var
   StackPtrLocal: PSEValue;
   BinaryLocal: TSEBinary;
   MMXCount, RegCount: Cardinal;
-  ImportBufferIndex: array [0..31] of Cardinal;
+  {$ifdef LINUX}
+  ImportBufferIndex: array [0..31] of QWord;
+  {$endif}
   ImportBufferData: array [0..8*31] of Byte;
   ImportBufferString: array [0..31] of String;     
   ImportBufferWideString: array [0..31] of WideString;
   ImportResult: QWord;                         
   ImportResultD: Double;
-  FuncImport, P: Pointer;
+  FuncImport, P, PP: Pointer;
 
   procedure Push(const Value: TSEValue); inline;
   begin
@@ -1595,11 +1597,10 @@ begin
               raise Exception.Create(Format('Function "%s" is null', [FuncImportInfo^.Name]));
             ArgCount := Length(FuncImportInfo^.Args);
             ArgSize := ArgCount * 8;
-            {$if defined(LINUX)}
-            ArgCountStack := Max(0, ArgCount - 6);
+            {$ifdef LINUX}
+            MMXCount := 100;
+            RegCount := 100;
             {$endif}
-            MMXCount := 0;
-            RegCount := 0;
 
             for I := ArgCount - 1 downto 0 do
             begin
@@ -1607,42 +1608,66 @@ begin
                 seakI8:
                   begin
                     Int64((@ImportBufferData[I * 8])^) := ShortInt(Round(Pop^.VarNumber));
+                    {$ifdef LINUX}
                     ImportBufferIndex[I] := 0;
+                    Inc(RegCount);
+                    {$endif}
                   end;       
                 seakI16:
                   begin
-                    Int64((@ImportBufferData[I * 8])^) := SmallInt(Round(Pop^.VarNumber)); 
-                    ImportBufferIndex[I] := 0;
+                    Int64((@ImportBufferData[I * 8])^) := SmallInt(Round(Pop^.VarNumber));
+                    {$ifdef LINUX}
+                    ImportBufferIndex[I] := 0;   
+                    Inc(RegCount);    
+                    {$endif}
                   end;
                 seakI32:
                   begin
-                    Int64((@ImportBufferData[I * 8])^) := LongInt(Round(Pop^.VarNumber));
-                    ImportBufferIndex[I] := 0;
+                    Int64((@ImportBufferData[I * 8])^) := LongInt(Round(Pop^.VarNumber));  
+                    {$ifdef LINUX}
+                    ImportBufferIndex[I] := 0;    
+                    Inc(RegCount);  
+                    {$endif}
                   end;    
                 seakI64:
                   begin
-                    Int64((@ImportBufferData[I * 8])^) := Int64(Round(Pop^.VarNumber));
-                    ImportBufferIndex[I] := 0;
+                    Int64((@ImportBufferData[I * 8])^) := Int64(Round(Pop^.VarNumber)); 
+                    {$ifdef LINUX}
+                    ImportBufferIndex[I] := 0; 
+                    Inc(RegCount);   
+                    {$endif}
                   end;        
                 seakU8:
                   begin
-                    QWord((@ImportBufferData[I * 8])^) := Byte(Round(Pop^.VarNumber)); 
-                    ImportBufferIndex[I] := 0;
+                    QWord((@ImportBufferData[I * 8])^) := Byte(Round(Pop^.VarNumber));  
+                    {$ifdef LINUX}
+                    ImportBufferIndex[I] := 0; 
+                    Inc(RegCount);
+                    {$endif}
                   end;
                 seakU16:
                   begin
-                    QWord((@ImportBufferData[I * 8])^) := Word(Round(Pop^.VarNumber)); 
-                    ImportBufferIndex[I] := 0;
+                    QWord((@ImportBufferData[I * 8])^) := Word(Round(Pop^.VarNumber));
+                    {$ifdef LINUX}
+                    ImportBufferIndex[I] := 0;  
+                    Inc(RegCount); 
+                    {$endif}
                   end;
                 seakU32:
                   begin
                     QWord((@ImportBufferData[I * 8])^) := LongWord(Round(Pop^.VarNumber));
-                    ImportBufferIndex[I] := 0;
+                    {$ifdef LINUX}
+                    ImportBufferIndex[I] := 0;   
+                    Inc(RegCount);  
+                    {$endif}
                   end;
                 seakU64:
                   begin
-                    QWord((@ImportBufferData[I * 8])^) := QWord(Round(Pop^.VarNumber));  
-                    ImportBufferIndex[I] := 0;
+                    QWord((@ImportBufferData[I * 8])^) := QWord(Round(Pop^.VarNumber));
+                    {$ifdef LINUX}
+                    ImportBufferIndex[I] := 0;  
+                    Inc(RegCount);
+                    {$endif}
                   end;     
                { seakF32:
                   begin
@@ -1650,8 +1675,11 @@ begin
                   end;}
                 seakF64:
                   begin
-                    Double((@ImportBufferData[I * 8])^) := Pop^.VarNumber;    
-                    ImportBufferIndex[I] := 0;
+                    Double((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
+                    {$ifdef LINUX}
+                    ImportBufferIndex[I] := 0; 
+                    Inc(MMXCount); 
+                    {$endif}
                   end;     
                 seakChars:
                   begin
@@ -1661,8 +1689,11 @@ begin
                       ImportBufferString[I] := A^.VarString + #0;
                       PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferString[I]);
                     end else
-                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber); 
-                    ImportBufferIndex[I] := 1;
+                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
+                    {$ifdef LINUX}
+                    ImportBufferIndex[I] := 1;   
+                    Inc(RegCount);
+                    {$endif}
                   end;
                 seakWChars:
                   begin
@@ -1672,12 +1703,19 @@ begin
                       ImportBufferWideString[I] := UTF8Decode(A^.VarString + #0);
                       PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferWideString[I]);
                     end else
-                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);  
-                    ImportBufferIndex[I] := 0;
+                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);     
+                    {$ifdef LINUX}
+                    ImportBufferIndex[I] := 0;   
+                    Inc(RegCount); 
+                    {$endif}
                   end;
               end;
             end;
             P := @ImportBufferData[0];
+            {$if defined(LINUX)}                           
+            PP := @ImportBufferIndex[0];
+            ArgCountStack := Max(0, MMXCount - 108) + Max(0, RegCount - 106);
+            {$endif}
             {$if defined(WINDOWS)}
               asm
                 mov  rbx,P
@@ -1717,35 +1755,107 @@ begin
             {$elseif defined(LINUX)}
               asm
                 mov  rbx,P
-                mov  rdi,[rbx]
-                mov  rsi,[rbx + 8]
-                mov  rdx,[rbx + 16]
-                mov  rcx,[rbx + 24]
-                mov  r8,[rbx + 32]
-                mov  r9,[rbx + 40]   
-                movsd xmm0,[rbx]
-                movsd xmm1,[rbx + 8]
-                movsd xmm2,[rbx + 16]
-                movsd xmm3,[rbx + 24]   
-                movsd xmm4,[rbx + 32]
-                movsd xmm5,[rbx + 40]
-                movsd xmm6,[rbx + 48]
-                movsd xmm7,[rbx + 56]
-                xor  rax,rax
-                mov  eax,ArgCount
-                cmp  eax,6
-                jle  FinishLoop
-                add  ebx,ArgSize
-                sub  eax,7
-              Loop:
+                add  rbx,ArgSize
+                mov  rax,PP
+                add  rax,ArgSize
+                mov  r10,ArgCount
+                mov  r11,MMXCount
+                mov  r12,RegCount
+              Loop:      
+                sub  rax,8
                 sub  rbx,8
-                mov  r11,[rbx]
-                push r11
-                cmp  rax,0
-                je   FinishLoop
-                dec  rax
-                jmp  Loop
-              FinishLoop:   
+                mov  r13,[rbx]
+                mov  r14,[rax]
+                cmp  r14,0 // Reg?
+                je   LoopReg
+              LoopMMX:
+                  cmp  r12,108
+                  jle  LoopMMXAlloc // Lower or equal: Register allocation, Higher: Push to stack
+                // Push to stack
+                  push r13
+                  jmp  LoopMMXFinishAlloc
+                LoopMMXAlloc:
+                  cmp  r12,101
+                  je   AllocMMX0
+                  cmp  r12,102
+                  je   AllocMMX1
+                  cmp  r12,103
+                  je   AllocMMX2
+                  cmp  r12,104
+                  je   AllocMMX3
+                  cmp  r12,105
+                  je   AllocMMX4
+                  cmp  r12,106
+                  je   AllocMMX5
+                  cmp  r12,107
+                  je   AllocMMX6
+                // MMX7
+                  movsd xmm7,[rbx]
+                  jmp  LoopMMXFinishAlloc
+                AllocMMX6:
+                  movsd xmm6,[rbx]
+                  jmp  LoopMMXFinishAlloc
+                AllocMMX5:
+                  movsd xmm5,[rbx]
+                  jmp  LoopMMXFinishAlloc
+                AllocMMX4:
+                  movsd xmm4,[rbx]
+                  jmp  LoopMMXFinishAlloc
+                AllocMMX3:
+                  movsd xmm3,[rbx]
+                  jmp  LoopMMXFinishAlloc
+                AllocMMX2:
+                  movsd xmm2,[rbx]
+                  jmp  LoopMMXFinishAlloc
+                AllocMMX1:
+                  movsd xmm1,[rbx]
+                  jmp  LoopMMXFinishAlloc
+                AllocMMX0:
+                  movsd xmm0,[rbx]
+                LoopMMXFinishAlloc:
+                  dec  r12
+                  jmp  LoopFinishAlloc
+              LoopReg:   
+                  cmp  r11,106          
+                  jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack   
+                // Push to stack
+                  push r13
+                  jmp  LoopRegFinishAlloc   
+                LoopRegAlloc:
+                  cmp  r11,101
+                  je   AllocRDI
+                  cmp  r11,102
+                  je   AllocRSI
+                  cmp  r11,103
+                  je   AllocRDX
+                  cmp  r11,104
+                  je   AllocRCX
+                  cmp  r11,105
+                  je   AllocR9  
+                // R8
+                  mov  r8,[rbx]
+                  jmp  LoopRegFinishAlloc 
+                AllocRDI:
+                  mov  rdi,[rbx]
+                  jmp  LoopRegFinishAlloc   
+                AllocRSI:
+                  mov  rsi,[rbx]
+                  jmp  LoopRegFinishAlloc
+                AllocRDX:
+                  mov  rdx,[rbx]
+                  jmp  LoopRegFinishAlloc
+                AllocRCX:
+                  mov  rcx,[rbx]
+                  jmp  LoopRegFinishAlloc
+                AllocR9:
+                  mov  r9,[rbx]
+                LoopRegFinishAlloc:
+                  dec  r11
+              LoopFinishAlloc:
+                dec  r10
+                cmp  r10,0 // Still have arguments to take care of?
+                jne  Loop
+              FinishLoop:
                 sub  rsp,8
                 call [FuncImport]
                 mov  ImportResult,rax
@@ -1756,7 +1866,7 @@ begin
                 mul  ecx
                 add  rsp,rax
                 add  rsp,8
-              end ['rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r11', 'xmm0', 'xmm1', 'xmm2', 'xmm3', 'xmm4', 'xmm5', 'xmm6', 'xmm7'];
+              end ['rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'xmm0', 'xmm1', 'xmm2', 'xmm3', 'xmm4', 'xmm5', 'xmm6', 'xmm7'];
             {$endif}
 
             case FuncImportInfo^.Return of
