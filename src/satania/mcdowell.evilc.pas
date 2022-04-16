@@ -2270,15 +2270,27 @@ begin
           continue;
         end;
       '0'..'9':
-        begin
+        begin      
           Token.Kind := tkNumber;
-          Token.Value := C;
-          while PeekAtNextChar in ['0'..'9', '.'] do
+          if (C = '0') and (PeekAtNextChar = 'x') then
           begin
-            C := NextChar;
-            Token.Value := Token.Value + C;
-            if (C = '.') and not (PeekAtNextChar in ['0'..'9']) then
-              Error('Invalid number');
+            NextChar;   
+            while PeekAtNextChar in ['0'..'9', 'A'..'F', 'a'..'f'] do
+            begin
+              C := NextChar;
+              Token.Value := Token.Value + C;
+            end;
+            Token.Value := IntToStr(Hex2Dec64(Token.Value));
+          end else
+          begin
+            Token.Value := C;
+            while PeekAtNextChar in ['0'..'9', '.'] do
+            begin
+              C := NextChar;
+              Token.Value := Token.Value + C;
+              if (C = '.') and not (PeekAtNextChar in ['0'..'9']) then
+                Error('Invalid number');
+            end;
           end;
         end;
       'A'..'Z', 'a'..'z', '_':
@@ -2877,7 +2889,7 @@ var
         'void':
           begin               
             if IsVoidForbid then
-              Error('"void" it not allowed as parameter', Token);
+              Error('"void" type it not allowed as parameter', Token);
             Result := seakVoid;
           end;
         'u8':
