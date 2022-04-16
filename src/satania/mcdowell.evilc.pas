@@ -2871,11 +2871,15 @@ var
 
   procedure ParseFuncImport;
 
-    function GetAtom(const Name: String): TSEAtomKind;
+    function GetAtom(const Token: TSEToken; const IsVoidForbid: Boolean = False): TSEAtomKind;
     begin
-      case Name of
+      case Token.Value of
         'void':
-          Result := seakVoid;
+          begin               
+            if IsVoidForbid then
+              Error('"void" it not allowed as parameter', Token);
+            Result := seakVoid;
+          end;
         'u8':
           Result := seakU8;
         'u16':
@@ -2924,14 +2928,14 @@ var
           begin
             Token := NextTokenExpected([tkAtom]);
             SetLength(Args, Length(Args) + 1);
-            Args[Length(Args) - 1] := GetAtom(Token.Value);
+            Args[Length(Args) - 1] := GetAtom(Token, True);
           end;
           Token := NextTokenExpected([tkComma, tkBracketClose]);
         until Token.Kind = tkBracketClose;
       end;
       NextTokenExpected([tkColon]);
       Token := NextTokenExpected([tkAtom]);
-      Return := GetAtom(Token.Value);
+      Return := GetAtom(Token);
       if PeekAtNextToken.Kind = tkString then
       begin
         Token := NextToken;
