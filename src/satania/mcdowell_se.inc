@@ -679,23 +679,39 @@ end;
 
 function TSatania.SEClipboardToFile(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
-  S: String;
+  S, Ext: String;
   Jpeg: TJPEGImage;
+  Png: TPortableNetworkGraphic;
   FS: TFileStream;
   B: TBitmap;
 begin
+  Ext := LowerCase((Args[0].VarString));
   if Clipboard.HasFormat(PredefinedClipboardFormat(pcfBitmap)) then
-  begin
-    Jpeg := TJPEGImage.Create;
+  begin       
     B := TBitmap.Create;
-    try
-      B.LoadFromClipboardFormat(PredefinedClipboardFormat(pcfBitmap));
-      Jpeg.CompressionQuality := 80;
-      Jpeg.Assign(B);
-      Jpeg.SaveToFile(Args[0]);
-    finally
-      Jpeg.Free;
-      B.Free;
+    if Ext = '.png' then
+    begin                 
+      Png := TPortableNetworkGraphic.Create;
+      try
+        B.LoadFromClipboardFormat(PredefinedClipboardFormat(pcfBitmap));
+        Png.Assign(B);
+        Png.SaveToFile(Args[0]);
+      finally
+        Png.Free;
+        B.Free;
+      end;
+    end else
+    begin       
+      Jpeg := TJPEGImage.Create;
+      try
+        B.LoadFromClipboardFormat(PredefinedClipboardFormat(pcfBitmap));
+        Jpeg.CompressionQuality := 80;
+        Jpeg.Assign(B);
+        Jpeg.SaveToFile(Args[0]);
+      finally
+        Jpeg.Free;
+        B.Free;
+      end;
     end;
   end else
   if Clipboard.HasFormat(PredefinedClipboardFormat(pcfBitmap)) then
