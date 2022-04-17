@@ -414,7 +414,30 @@ uses
   Math, Strings, Globals, Utils.Strings;
 
 type
-  TBuiltInFunction = class                 
+  TBuiltInFunction = class
+    class function SEBufferCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferGetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferGetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferGetU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferGetU64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferGetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferGetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferGetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferGetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferGetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferSetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferSetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferSetU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferSetU64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferSetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferSetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferSetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferSetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferSetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringToBuffer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEWBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SETypeOf(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEWrite(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEWriteln(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -475,6 +498,165 @@ type
 
 var
   DynlibMap: TDynlibMap;
+
+class function TBuiltInFunction.SEBufferCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result.Kind := sevkSingle;
+  SetLength(Result.VarString, Round(Args[0].VarNumber));
+  Result.VarNumber := QWord(@Result.VarString[1]);
+end;
+
+class function TBuiltInFunction.SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := Length(Args[0].VarString);
+end;
+
+class function TBuiltInFunction.SEBufferGetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result.Kind := sevkSingle;
+  Result.VarNumber := Byte(Pointer(Round(Args[0].VarNumber))^);
+end;
+
+class function TBuiltInFunction.SEBufferGetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result.Kind := sevkSingle;
+  Result.VarNumber := Word(Pointer(Round(Args[0].VarNumber))^);
+end;
+
+class function TBuiltInFunction.SEBufferGetU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result.Kind := sevkSingle;
+  Result.VarNumber := LongWord(Pointer(Round(Args[0].VarNumber))^);
+end;
+
+class function TBuiltInFunction.SEBufferGetU64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result.Kind := sevkSingle;
+  Result.VarNumber := QWord(Pointer(Round(Args[0].VarNumber))^);
+end;
+
+class function TBuiltInFunction.SEBufferGetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result.Kind := sevkSingle;
+  Result.VarNumber := SmallInt(Pointer(Round(Args[0].VarNumber))^);
+end;
+
+class function TBuiltInFunction.SEBufferGetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result.Kind := sevkSingle;
+  Result.VarNumber := ShortInt(Pointer(Round(Args[0].VarNumber))^);
+end;
+
+class function TBuiltInFunction.SEBufferGetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result.Kind := sevkSingle;
+  Result.VarNumber := LongInt(Pointer(Round(Args[0].VarNumber))^);
+end;
+
+class function TBuiltInFunction.SEBufferGetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result.Kind := sevkSingle;
+  Result.VarNumber := Int64(Pointer(Round(Args[0].VarNumber))^);
+end;
+
+class function TBuiltInFunction.SEBufferGetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result.Kind := sevkSingle;
+  Result.VarNumber := Double(Pointer(Round(Args[0].VarNumber))^);
+end;
+
+class function TBuiltInFunction.SEBufferSetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  P: Pointer;
+begin
+  P := Pointer(Round(Args[0].VarNumber));
+  Byte(P^) := Round(Args[1].VarNumber);
+end;
+
+class function TBuiltInFunction.SEBufferSetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  P: Pointer;
+begin
+  P := Pointer(Round(Args[0].VarNumber));
+  Word(P^) := Round(Args[1].VarNumber);
+end;
+
+class function TBuiltInFunction.SEBufferSetU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  P: Pointer;
+begin
+  P := Pointer(Round(Args[0].VarNumber));
+  LongWord(P^) := Round(Args[1].VarNumber);
+end;
+
+class function TBuiltInFunction.SEBufferSetU64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  P: Pointer;
+begin
+  P := Pointer(Round(Args[0].VarNumber));
+  QWord(P^) := Round(Args[1].VarNumber);
+end;
+
+class function TBuiltInFunction.SEBufferSetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  P: Pointer;
+begin
+  P := Pointer(Round(Args[0].VarNumber));
+  ShortInt(P^) := Round(Args[1].VarNumber);
+end;
+
+class function TBuiltInFunction.SEBufferSetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  P: Pointer;
+begin
+  P := Pointer(Round(Args[0].VarNumber));
+  SmallInt(P^) := Round(Args[1].VarNumber);
+end;
+
+class function TBuiltInFunction.SEBufferSetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  P: Pointer;
+begin
+  P := Pointer(Round(Args[0].VarNumber));
+  LongInt(P^) := Round(Args[1].VarNumber);
+end;
+
+class function TBuiltInFunction.SEBufferSetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  P: Pointer;
+begin
+  P := Pointer(Round(Args[0].VarNumber));
+  Int64(P^) := Round(Args[1].VarNumber);
+end;
+
+class function TBuiltInFunction.SEBufferSetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  P: Pointer;
+begin
+  P := Pointer(Round(Args[0].VarNumber));
+  Double(P^) := Args[1];
+end;
+
+class function TBuiltInFunction.SEStringToBuffer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := QWord(@Args[0].VarString[1]);
+end;
+
+class function TBuiltInFunction.SEBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  if QWord(Args[0].VarString[1]) = Round(Args[0].VarNumber) then
+    Result := Args[0].VarString
+  else
+    Result := PChar(Round(Args[0].VarNumber));
+end;
+
+class function TBuiltInFunction.SEWBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  WS: WideString;
+begin
+  WS := PWideChar(Round(Args[0].VarNumber));
+  Result := UTF8Encode(WS);
+end;
 
 class function TBuiltInFunction.SETypeOf(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
@@ -2037,7 +2219,30 @@ begin
   Self.LineOfCodeList := TIntegerList.Create;
   Self.IncludeList := TStringList.Create;
   Self.CurrentFileList := TStringList.Create;
-  Self.VM.Parent := Self;                             
+  Self.VM.Parent := Self;
+  Self.RegisterFunc('buffer_create', @TBuiltInFunction(nil).SEBufferCreate, 1);
+  Self.RegisterFunc('buffer_length', @TBuiltInFunction(nil).SEBufferLength, 1);
+  Self.RegisterFunc('buffer_u8_get', @TBuiltInFunction(nil).SEBufferGetU8, 1);
+  Self.RegisterFunc('buffer_u16_get', @TBuiltInFunction(nil).SEBufferGetU16, 1);
+  Self.RegisterFunc('buffer_u32_get', @TBuiltInFunction(nil).SEBufferGetU32, 1);
+  Self.RegisterFunc('buffer_u64_get', @TBuiltInFunction(nil).SEBufferGetU64, 1);
+  Self.RegisterFunc('buffer_i8_get', @TBuiltInFunction(nil).SEBufferGetI8, 1);
+  Self.RegisterFunc('buffer_i16_get', @TBuiltInFunction(nil).SEBufferGetI16, 1);
+  Self.RegisterFunc('buffer_i32_get', @TBuiltInFunction(nil).SEBufferGetI32, 1);
+  Self.RegisterFunc('buffer_i64_get', @TBuiltInFunction(nil).SEBufferGetI64, 1);
+  Self.RegisterFunc('buffer_f64_get', @TBuiltInFunction(nil).SEBufferGetF64, 1);
+  Self.RegisterFunc('buffer_u8_set', @TBuiltInFunction(nil).SEBufferSetU8, 2);
+  Self.RegisterFunc('buffer_u16_set', @TBuiltInFunction(nil).SEBufferSetU16, 2);
+  Self.RegisterFunc('buffer_u32_set', @TBuiltInFunction(nil).SEBufferSetU32, 2);
+  Self.RegisterFunc('buffer_u64_set', @TBuiltInFunction(nil).SEBufferSetU64, 2);
+  Self.RegisterFunc('buffer_i8_set', @TBuiltInFunction(nil).SEBufferSetI8, 2);
+  Self.RegisterFunc('buffer_i16_set', @TBuiltInFunction(nil).SEBufferSetI16, 2);
+  Self.RegisterFunc('buffer_i32_set', @TBuiltInFunction(nil).SEBufferSetI32, 2);
+  Self.RegisterFunc('buffer_i64_set', @TBuiltInFunction(nil).SEBufferSetI64, 2);
+  Self.RegisterFunc('buffer_f64_set', @TBuiltInFunction(nil).SEBufferSetF64, 2);
+  Self.RegisterFunc('string_to_buffer', @TBuiltInFunction(nil).SEStringToBuffer, 1);
+  Self.RegisterFunc('buffer_to_string', @TBuiltInFunction(nil).SEBufferToString, 1);
+  Self.RegisterFunc('wbuffer_to_string', @TBuiltInFunction(nil).SEWBufferToString, 1);
   Self.RegisterFunc('typeof', @TBuiltInFunction(nil).SETypeOf, 1);
   Self.RegisterFunc('get', @TBuiltInFunction(nil).SEGet, 2);
   Self.RegisterFunc('set', @TBuiltInFunction(nil).SESet, 2);
