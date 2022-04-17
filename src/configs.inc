@@ -2,4 +2,6 @@
 {$ifdef LINUX}
   {$define LINUX_X11}
 {$endif}
-{$asmmode intel}
+{$ifdef CPUX86_64}
+  {$asmmode intel}
+{$endif}
