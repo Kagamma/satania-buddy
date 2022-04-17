@@ -289,7 +289,7 @@ const TokenNames: array[TSETokenKind] of String = (
 
 type
   TSEIdentKind = (
-    ikAtom,
+    ikVariable,
     ikFunc
   );
 
@@ -2997,7 +2997,7 @@ var
 
       Token.Value := 'result';
       Token.Kind := tkIdent;
-      Self.LocalVarList.Add(CreateIdent(ikAtom, Token));
+      Self.LocalVarList.Add(CreateIdent(ikVariable, Token));
 
       if PeekAtNextToken.Kind = tkBracketOpen then
       begin
@@ -3006,7 +3006,7 @@ var
           if PeekAtNextToken.Kind = tkIdent then
           begin
             Token := NextTokenExpected([tkIdent]);
-            Self.LocalVarList.Add(CreateIdent(ikAtom, Token));
+            Self.LocalVarList.Add(CreateIdent(ikVariable, Token));
             Inc(ArgCount);
           end;
           Token := NextTokenExpected([tkComma, tkBracketClose]);
@@ -3191,7 +3191,7 @@ var
       Token := NextTokenExpected([tkVariable, tkIdent]);
       if Token.Kind = tkIdent then
       begin
-        Self.LocalVarList.Add(CreateIdent(ikAtom, Token));
+        Self.LocalVarList.Add(CreateIdent(ikVariable, Token));
       end;
       VarName := Token.Value;
       VarAddr := FindVar(VarName)^.Addr;
@@ -3408,7 +3408,7 @@ var
             tkUnknown:
               begin
                 NextToken;
-                Self.LocalVarList.Add(CreateIdent(ikAtom, Token));
+                Self.LocalVarList.Add(CreateIdent(ikVariable, Token));
                 ParseVarAssign(Token.Value);
               end;
             tkVariable:
@@ -3468,7 +3468,7 @@ begin
   Self.LocalVarList.Clear;
   Self.TokenList.Clear;
   Self.IncludeList.Clear;
-  Ident.Kind := ikAtom;
+  Ident.Kind := ikVariable;
   Ident.Addr := 0;
   Ident.Name := 'result';
   Self.LocalVarList.Add(Ident);
