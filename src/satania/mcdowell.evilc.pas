@@ -21,7 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 unit Mcdowell.EvilC;
 
 {$mode objfpc}
-{$asmmode intel}
+{$ifdef CPUX86_64}
+  {$asmmode intel}
+{$endif}
 {$H+}
 {$modeswitch nestedprocvars}
 {$modeswitch advancedrecords}
