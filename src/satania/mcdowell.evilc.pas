@@ -273,6 +273,7 @@ type
     tkOr,
     tkNot,
     tkFor,
+    tkIn,
     tkTo,
     tkDownto,
     tkReturn,
@@ -286,7 +287,7 @@ const TokenNames: array[TSETokenKind] of String = (
   '>', '<=', '>=', '{', '}', ':', '(', ')', 'neg', 'number', 'string',
   ',', 'if', 'identity', 'function', 'fn', 'variable', 'const',
   'unknown', 'else', 'while', 'break', 'continue', 'pause', 'yield',
-  '[', ']', 'and', 'or', 'not', 'for', 'to', 'downto', 'return',
+  '[', ']', 'and', 'or', 'not', 'for', 'in', 'to', 'downto', 'return',
   'atom', 'import'
 );
 
@@ -2725,7 +2726,9 @@ begin
             'else':
               Token.Kind := tkElse;
             'for':
-              Token.Kind := tkFor;
+              Token.Kind := tkFor;       
+            'in':
+              Token.Kind := tkIn;
             'to':
               Token.Kind := tkTo;
             'downto':
@@ -3445,8 +3448,13 @@ var
     ContinueList: TList;
     I: Integer;
     Token: TSEToken;
-    VarName: String;
-    VarAddr: Integer;
+    VarName,
+    VarHiddenCountName,
+    VarHiddenArrayName: String;
+    Ind,
+    VarAddr,
+    VarHiddenCountAddr,
+    VarHiddenArrayAddr: Integer;
   begin
     ContinueList := TList.Create;
     BreakList := TList.Create;
@@ -3461,43 +3469,84 @@ var
       end;
       VarName := Token.Value;
       VarAddr := FindVar(VarName)^.Addr;
-      NextTokenExpected([tkEqual]);
-      ParseExpr;
-      Emit([Pointer(opAssignLocal), VarName, VarAddr]);
+      Token := NextTokenExpected([tkEqual, tkIn]);
 
-      Token := NextTokenExpected([tkTo, tkDownto]);
-      StartBlock := Self.VM.Binary.Count;
-      Emit([Pointer(opPushLocalVar), VarAddr]);
-      ParseExpr;
-      if Token.Kind = tkTo then
+      if Token.Kind = tkEqual then
       begin
-        Emit([Pointer(opPushConst), 1]);
-        Emit([Pointer(opOperatorAdd)]);
-        JumpEnd := Emit([Pointer(opJumpEqualOrGreater), 0]);
+        ParseExpr;
+        Emit([Pointer(opAssignLocal), VarName, VarAddr]);
+
+        Token := NextTokenExpected([tkTo, tkDownto]);
+        StartBlock := Self.VM.Binary.Count;
+        Emit([Pointer(opPushLocalVar), VarAddr]);
+        ParseExpr;
+        if Token.Kind = tkTo then
+        begin
+          Emit([Pointer(opPushConst), 1]);
+          Emit([Pointer(opOperatorAdd)]);
+          JumpEnd := Emit([Pointer(opJumpEqualOrGreater), 0]);
+        end else
+        if Token.Kind = tkDownto then
+        begin
+          Emit([Pointer(opPushConst), 1]);
+          Emit([Pointer(opOperatorSub)]);
+          JumpEnd := Emit([Pointer(opJumpEqualOrLesser), 0]);
+        end;
+
+        ParseBlock;
+
+        Emit([Pointer(opPushLocalVar), VarAddr]);
+        if Token.Kind = tkTo then
+        begin
+          Emit([Pointer(opPushConst), 1]);
+          Emit([Pointer(opOperatorAdd)]);
+        end else
+        if Token.Kind = tkDownto then
+        begin
+          Emit([Pointer(opPushConst), 1]);
+          Emit([Pointer(opOperatorSub)]);
+        end;
+        Emit([Pointer(opAssignLocal), VarName, VarAddr]);
+        JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
+        EndBLock := JumpBlock;
       end else
-      if Token.Kind = tkDownto then
-      begin
-        Emit([Pointer(opPushConst), 1]);
-        Emit([Pointer(opOperatorSub)]);
+      begin       
+        VarHiddenCountName := '___c' + VarName;
+        VarHiddenArrayName := '___a' + VarName;
+        Token.Value := VarHiddenCountName;
+        Self.LocalVarList.Add(CreateIdent(ikVariable, Token));
+        Token.Value := VarHiddenArrayName;
+        Self.LocalVarList.Add(CreateIdent(ikVariable, Token));
+        VarHiddenCountAddr := FindVar(VarHiddenCountName)^.Addr;
+        VarHiddenArrayAddr := FindVar(VarHiddenArrayName)^.Addr;
+
+        ParseExpr;
+
+        Emit([Pointer(opAssignLocal), VarHiddenArrayName, VarHiddenArrayAddr]);
+        Emit([Pointer(opPushConst), 0]);      
+        Emit([Pointer(opAssignLocal), VarHiddenCountName, VarHiddenCountAddr]);
+
+        StartBlock := Self.VM.Binary.Count;
+
+        Emit([Pointer(opPushLocalVar), VarHiddenArrayAddr]);
+        Emit([Pointer(opCallNative), FindFuncNative('length', Ind), 1]);
+        Emit([Pointer(opPushLocalVar), VarHiddenCountAddr]);
         JumpEnd := Emit([Pointer(opJumpEqualOrLesser), 0]);
-      end;
 
-      ParseBlock;
+        Emit([Pointer(opPushLocalVar), VarHiddenArrayAddr]);
+        Emit([Pointer(opPushLocalVar), VarHiddenCountAddr]);
+        Emit([Pointer(opPushLocalArrayPop)]);
+        Emit([Pointer(opAssignLocal), VarName, VarAddr]);
 
-      Emit([Pointer(opPushLocalVar), VarAddr]);
-      if Token.Kind = tkTo then
-      begin
+        ParseBlock;
+
+        Emit([Pointer(opPushLocalVar), VarHiddenCountAddr]);
         Emit([Pointer(opPushConst), 1]);
         Emit([Pointer(opOperatorAdd)]);
-      end else
-      if Token.Kind = tkDownto then
-      begin
-        Emit([Pointer(opPushConst), 1]);
-        Emit([Pointer(opOperatorSub)]);
+        Emit([Pointer(opAssignLocal), VarHiddenCountName, VarHiddenCountAddr]);
+        JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
+        EndBLock := JumpBlock;
       end;
-      Emit([Pointer(opAssignLocal), VarName, VarAddr]);
-      JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
-      EndBLock := JumpBlock;
 
       ContinueList := ContinueStack.Pop;
       BreakList := BreakStack.Pop;
