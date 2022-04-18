@@ -2082,7 +2082,6 @@ begin
                 cmp  r10,0 // Still have arguments to take care of?
                 jne  Loop
               FinishLoop:
-                sub  rsp,8
                 call [FuncImport]
                 mov  ImportResult,rax
                 movsd ImportResultD,xmm0
@@ -2091,7 +2090,6 @@ begin
                 mov  ecx,8
                 mul  ecx
                 add  rsp,rax
-                add  rsp,8
               end ['rsi', 'rdi', 'rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'xmm0', 'xmm1', 'xmm2', 'xmm3', 'xmm4', 'xmm5', 'xmm6', 'xmm7'];
             {$endif}
             {$else}
