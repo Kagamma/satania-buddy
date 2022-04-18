@@ -238,6 +238,7 @@ type
     tkMul,
     tkDiv,
     tkMod,
+    tkOpAssign,
     tkEqual,
     tkNotEqual,
     tkSmaller,
@@ -281,7 +282,7 @@ type
 TSETokenKinds = set of TSETokenKind;
 
 const TokenNames: array[TSETokenKind] of String = (
-  'EOF', '.', '+', '-', '*', 'div', 'mod', '=', '!=', '<',
+  'EOF', '.', '+', '-', '*', 'div', 'mod', 'operator assign', '=', '!=', '<',
   '>', '<=', '>=', '{', '}', ':', '(', ')', 'neg', 'number', 'string',
   ',', 'if', 'identity', 'function', 'fn', 'variable', 'const',
   'unknown', 'else', 'while', 'break', 'continue', 'pause', 'yield',
@@ -2531,10 +2532,24 @@ begin
           until IsLoopDone;
         end;
       '+':
-        Token.Kind := tkAdd;
+        begin
+          Token.Kind := tkAdd;
+          if PeekAtNextChar = '=' then
+          begin
+            Token.Kind := tkOpAssign;
+            Token.Value := C;
+            NextChar;
+          end;
+        end;
       '-':
         begin
           Token.Kind := tkSub;
+          if PeekAtNextChar = '=' then
+          begin
+            Token.Kind := tkOpAssign;
+            Token.Value := C;
+            NextChar;
+          end else
           if Pos > 1 then
           begin
             PC := Self.Source[Pos - 1];
@@ -2544,7 +2559,15 @@ begin
           end;
         end;
       '*':
-        Token.Kind := tkMul;
+        begin
+          Token.Kind := tkMul;
+          if PeekAtNextChar = '=' then
+          begin
+            Token.Kind := tkOpAssign;
+            Token.Value := C;
+            NextChar;
+          end;
+        end;
       '/':
         begin
           Token.Kind := tkDiv;
@@ -2562,6 +2585,12 @@ begin
             until ((C = '*') and (PeekAtNextChar = '/')) or (C = #0);
             NextChar;
             continue;
+          end else
+          if PeekAtNextChar = '=' then
+          begin
+            Token.Kind := tkOpAssign;
+            Token.Value := C;
+            NextChar;
           end;
         end;
       '=':
@@ -3547,8 +3576,28 @@ var
           NextTokenExpected([tkSquareBracketClose]);
         end;
     end;
-    Token := NextTokenExpected([tkEqual]);
+    Token := NextTokenExpected([tkEqual, tkOpAssign]);
+    if Token.Kind = tkOpAssign then
+    begin          
+      if IsArrayAssign then
+        Emit([Pointer(opPushLocalArray), Addr])
+      else    
+        Emit([Pointer(opPushLocalVar), Addr]);
+    end;
     ParseExpr;
+    if Token.Kind = tkOpAssign then
+    begin
+      case Token.Value of
+        '+':
+          Emit([Pointer(opOperatorAdd)]);      
+        '-':
+          Emit([Pointer(opOperatorSub)]);
+        '*':
+          Emit([Pointer(opOperatorMul)]);
+        '/':
+          Emit([Pointer(opOperatorDiv)]);
+      end;
+    end;
     if IsArrayAssign then
       Emit([Pointer(opAssignLocalArray), Name, Addr])
     else
