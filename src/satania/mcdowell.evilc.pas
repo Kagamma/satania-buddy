@@ -3754,7 +3754,10 @@ begin
   if DynlibMap.ContainsKey(LibName) then
     Lib := DynlibMap[LibName]
   else
+  begin
     Lib := LoadLibrary(LibName);
+    DynlibMap.Add(LibName, Lib);
+  end;
 
   FuncImportInfo.Args := Args;
   FuncImportInfo.Return := Return;
