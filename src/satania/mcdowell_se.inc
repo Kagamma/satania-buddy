@@ -80,20 +80,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {$ifdef unit_implementation}
 
+function SEValueToText(const Value: TSEValue): String;
+var
+  I: Integer;
+begin
+  case Value.Kind of
+    sevkSingle:
+      Result := PointFloatToStr(Value.VarNumber);
+    sevkArray:
+      begin
+        Result := '[';
+        for I := 0 to Length(Value.VarArray) - 1 do
+        begin                                                  
+          if I > 0 then
+            Result := Result + ', ';
+          Result := Result + SEValueToText(Value.VarArray[I]);
+        end;
+        Result := Result + ']'
+      end
+    else
+      Result := Value;
+  end;
+end;
+
 function TSatania.SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   if Length(Args) = 1 then
   begin
-    Talk(Args[0]);
+    Talk(SEValueToText(Args[0]));
     VM.IsPaused := True;
   end else
   begin
     if Args[1] = 0 then
     begin
-      TalkWithoutBlock(Args[0]);
+      TalkWithoutBlock(SEValueToText(Args[0]));
     end else
     begin
-      Talk(Args[0]);
+      Talk(SEValueToText(Args[0]));
       VM.IsPaused := True;
     end;
   end;
@@ -101,7 +124,7 @@ end;
 
 function TSatania.SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Notify(Name, Args[0]);
+  Notify(Name, SEValueToText(Args[0]));
 end;
 
 function TSatania.SEProcessRun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
