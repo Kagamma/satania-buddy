@@ -48,12 +48,12 @@ type
     opPushLocalVar,
     opPushLocalArray,
     opPushLocalArrayPop,
-    opPopConst,   
+    opPopConst,
     opPopFrame,
     opAssignLocal,
     opAssignLocalArray,
     opJumpEqual,
-    opJumpUnconditional,  
+    opJumpUnconditional,
     opJumpEqualOrGreater,
     opJumpEqualOrLesser,
     opOperatorAdd,
@@ -72,7 +72,7 @@ type
     opOperatorOr,
     opOperatorNot,
     opCallNative,
-    opCallScript,      
+    opCallScript,
     opCallImport,
     opPause,
     opYield
@@ -120,16 +120,16 @@ type
 
   TSEAtomKind = (
     seakVoid,
-    seakI8,           
+    seakI8,
     seakI16,
-    seakI32,       
-    seakI64,   
+    seakI32,
+    seakI64,
     seakU8,
     seakU16,
     seakU32,
     seakU64,
    // seakF32,
-    seakF64,     
+    seakF64,
     seakBuffer,
     seakWBuffer
   );
@@ -147,7 +147,7 @@ type
   end;
   PSEFuncNativeInfo = ^TSEFuncNativeInfo;
 
-  TSEFuncScriptInfo = record 
+  TSEFuncScriptInfo = record
     Name: String;
     Addr,
     StackAddr: Integer; // Used by parameters
@@ -155,7 +155,7 @@ type
   end;
   PSEFuncScriptInfo = ^TSEFuncScriptInfo;
 
-  TSEFuncImportInfo = record 
+  TSEFuncImportInfo = record
     Name: String;
     Func: Pointer;
     Args: TSEAtomKindArray;
@@ -352,7 +352,7 @@ type
     procedure Parse;
     procedure Reset;
     function Exec: TSEValue;
-    procedure RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);   
+    procedure RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);
     procedure RegisterScriptFunc(const Name: String; const Addr, StackAddr, ArgCount: Integer);
     procedure RegisterImportFunc(const Name, ActualName, LibName: String; const Args: TSEAtomKindArray; const Return: TSEAtomKind);
     function Backup: TSECache;
@@ -450,7 +450,7 @@ type
     class function SENumber(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEWait(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SELength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;      
+    class function SEArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEArrayCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEArrayDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SELerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -467,11 +467,11 @@ type
     class function SEStringSplit(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEStringFormat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
+    class function SEStringFormat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringUpperCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEStringLowerCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+    class function SEStringLowerCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFindRegex(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -481,15 +481,15 @@ type
     class function SEEaseOutCubic(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInOutCubic(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGetTickCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEDTNow(const VM: TSEVM; const Args: array of TSEValue): TSEValue;         
+    class function SEDTNow(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTSetDate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEDTSetTime(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    class function SEDTSetTime(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTDayAdd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEDTMonthAdd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+    class function SEDTMonthAdd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTYearAdd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEDTGetYear(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    class function SEDTGetYear(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTGetMonth(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEDTGetDay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    class function SEDTGetDay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTGetHour(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTGetMinute(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   end;
@@ -662,7 +662,7 @@ class function TBuiltInFunction.SETypeOf(const VM: TSEVM; const Args: array of T
 begin
   case Args[0].Kind of
     sevkArray:
-      Result := 'array';   
+      Result := 'array';
     sevkSingle:
       Result := 'number';
     sevkString:
@@ -743,7 +743,7 @@ var
 begin
   case Args[0].Kind of
     sevkString:
-      {$ifdef SE_STRING_UTF8}     
+      {$ifdef SE_STRING_UTF8}
       Exit(UTF8Length(String(Args[0].VarString)));
       {$else}
       Exit(Length(String(Args[0].VarString)));
@@ -862,7 +862,7 @@ end;
 class function TBuiltInFunction.SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Args[0].VarString.IndexOf(Args[1]);
-end;        
+end;
 
 class function TBuiltInFunction.SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
@@ -872,11 +872,11 @@ begin
   {$else}
   Delete(Result.VarString, Round(Args[1].VarNumber + 1), Round(Args[2].VarNumber));
   {$endif}
-end;  
+end;
 
 class function TBuiltInFunction.SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := Args[0]; 
+  Result := Args[0];
   {$ifdef SE_STRING_UTF8}
   UTF8Insert(Args[1].VarString, Result.VarString, Round(Args[2].VarNumber + 1));
   {$else}
@@ -948,7 +948,7 @@ begin
     begin
       Result.VarArray[C].Kind := sevkArray;
       SetLength(Result.VarArray[C].VarArray, 2);
-      Result.VarArray[C].VarArray[0] := R.Match[I];  
+      Result.VarArray[C].VarArray[0] := R.Match[I];
       Result.VarArray[C].VarArray[1] := R.MatchPos[I] - 1;
       Inc(C);
     end;
@@ -1121,7 +1121,7 @@ end;
 function TSEFuncNativeList.Ptr(const P: Integer): PSEFuncNativeInfo; inline;
 begin
   Result := @FItems[P];
-end;       
+end;
 
 function TSEFuncScriptList.Ptr(const P: Integer): PSEFuncScriptInfo; inline;
 begin
@@ -1263,14 +1263,14 @@ begin
       begin
         R.Kind := sevkPointer;
         R.VarPointer := V1.VarPointer + V2.VarPointer;
-      end;   
+      end;
     sevkArray:
       begin
         R.Kind := sevkArray;
         SetLength(R.VarArray, Length(V1.VarArray) + Length(V2.VarArray));
         Len := Length(V1.VarArray);
         for I := 0 to Len - 1 do
-          R.VarArray[I] := V1.VarArray[I];    
+          R.VarArray[I] := V1.VarArray[I];
         for I := Len to Len + Length(V2.VarArray) - 1 do
           R.VarArray[I] := V2.VarArray[I - Len];
       end;
@@ -1497,19 +1497,17 @@ var
   FuncNativeInfo: PSEFuncNativeInfo;
   FuncScriptInfo: PSEFuncScriptInfo;
   FuncImportInfo: PSEFuncImportInfo;
-  I, J, {$ifdef LINUX}ArgCountStack, {$endif}ArgCount, ArgSize: Integer;
+  I, J, ArgCountStack, ArgCount, ArgSize: Integer;
   Args: array of TSEValue;
   CodePtrLocal: Integer;
   StackPtrLocal: PSEValue;
   BinaryLocal: TSEBinary;
   MMXCount, RegCount: QWord;
-  {$ifdef LINUX}
   ImportBufferIndex: array [0..31] of QWord;
-  {$endif}
   ImportBufferData: array [0..8*31] of Byte;
-  ImportBufferString: array [0..31] of String;     
+  ImportBufferString: array [0..31] of String;
   ImportBufferWideString: array [0..31] of WideString;
-  ImportResult: QWord;                         
+  ImportResult: QWord;
   ImportResultD: Double;
   FuncImport, P, PP: Pointer;
 
@@ -1539,7 +1537,7 @@ var
 
 label
   Loop, FinishLoop, LoopMMX, LoopMMXAlloc, AllocMMX6, AllocMMX5, AllocMMX4, AllocMMX3, AllocMMX2, AllocMMX1,
-  AllocMMX0, LoopMMXFinishAlloc, LoopReg, LoopRegAlloc, AllocRDI, AllocRSI, AllocRDX, AllocRCX, AllocR9, LoopRegFinishAlloc,
+  AllocMMX0, LoopMMXFinishAlloc, LoopReg, LoopRegAlloc, AllocRDI, AllocRSI, AllocRDX, AllocRCX, AllocR8, AllocR9, LoopRegFinishAlloc,
   LoopFinishAlloc;
 
 begin
@@ -1677,7 +1675,7 @@ begin
                 {$ifdef SE_STRING}
                 {$ifdef SE_STRING_UTF8}
                   Push(UTF8Copy(B^.VarString, Integer(Pop^) + 1, 1));
-                {$else}            
+                {$else}
                   Push(B^.VarString[Integer(Pop^) + 1]);
                 {$endif}
                 {$else}
@@ -1694,7 +1692,7 @@ begin
             B := Pop;
             case B^.Kind of
               sevkString:
-                {$ifdef SE_STRING}   
+                {$ifdef SE_STRING}
                 {$ifdef SE_STRING_UTF8}
                   Push(UTF8Copy(B^.VarString, Integer(A^) + 1, 1));
                 {$else}
@@ -1725,7 +1723,7 @@ begin
         opJumpUnconditional:
           begin
             CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
-          end;  
+          end;
         opJumpEqualOrGreater:
           begin
             B := Pop;
@@ -1734,7 +1732,7 @@ begin
               CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
             else
               Inc(CodePtrLocal, 2);
-          end;        
+          end;
         opJumpEqualOrLesser:
           begin
             B := Pop;
@@ -1774,18 +1772,18 @@ begin
               Dec(J);
             end;
             CodePtrLocal := FuncScriptInfo^.Addr;
-          end;    
+          end;
         opCallImport:
-          begin                                          
+          begin
             FuncImportInfo := Self.Parent.FuncImportList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
             FuncImport := FuncImportInfo^.Func;
             if FuncImport = nil then
               raise Exception.Create(Format('Function "%s" is null', [FuncImportInfo^.Name]));
             ArgCount := Length(FuncImportInfo^.Args);
             ArgSize := ArgCount * 8;
+            RegCount := 0;
             {$ifdef LINUX}
             MMXCount := 0;
-            RegCount := 0;
             {$endif}
 
             for I := ArgCount - 1 downto 0 do
@@ -1794,67 +1792,51 @@ begin
                 seakI8:
                   begin
                     Int64((@ImportBufferData[I * 8])^) := ShortInt(Round(Pop^.VarNumber));
-                    {$ifdef LINUX}
                     ImportBufferIndex[I] := 0;
                     Inc(RegCount);
-                    {$endif}
-                  end;       
+                  end;
                 seakI16:
                   begin
                     Int64((@ImportBufferData[I * 8])^) := SmallInt(Round(Pop^.VarNumber));
-                    {$ifdef LINUX}
-                    ImportBufferIndex[I] := 0;   
-                    Inc(RegCount);    
-                    {$endif}
+                    ImportBufferIndex[I] := 0;
+                    Inc(RegCount);
                   end;
                 seakI32:
                   begin
-                    Int64((@ImportBufferData[I * 8])^) := LongInt(Round(Pop^.VarNumber));  
-                    {$ifdef LINUX}
-                    ImportBufferIndex[I] := 0;    
-                    Inc(RegCount);  
-                    {$endif}
-                  end;    
+                    Int64((@ImportBufferData[I * 8])^) := LongInt(Round(Pop^.VarNumber));
+                    ImportBufferIndex[I] := 0;
+                    Inc(RegCount);
+                  end;
                 seakI64:
                   begin
-                    Int64((@ImportBufferData[I * 8])^) := Int64(Round(Pop^.VarNumber)); 
-                    {$ifdef LINUX}
-                    ImportBufferIndex[I] := 0; 
-                    Inc(RegCount);   
-                    {$endif}
-                  end;        
+                    Int64((@ImportBufferData[I * 8])^) := Int64(Round(Pop^.VarNumber));
+                    ImportBufferIndex[I] := 0;
+                    Inc(RegCount);
+                  end;
                 seakU8:
                   begin
-                    QWord((@ImportBufferData[I * 8])^) := Byte(Round(Pop^.VarNumber));  
-                    {$ifdef LINUX}
-                    ImportBufferIndex[I] := 0; 
+                    QWord((@ImportBufferData[I * 8])^) := Byte(Round(Pop^.VarNumber));
+                    ImportBufferIndex[I] := 0;
                     Inc(RegCount);
-                    {$endif}
                   end;
                 seakU16:
                   begin
                     QWord((@ImportBufferData[I * 8])^) := Word(Round(Pop^.VarNumber));
-                    {$ifdef LINUX}
-                    ImportBufferIndex[I] := 0;  
-                    Inc(RegCount); 
-                    {$endif}
+                    ImportBufferIndex[I] := 0;
+                    Inc(RegCount);
                   end;
                 seakU32:
                   begin
                     QWord((@ImportBufferData[I * 8])^) := LongWord(Round(Pop^.VarNumber));
-                    {$ifdef LINUX}
-                    ImportBufferIndex[I] := 0;   
-                    Inc(RegCount);  
-                    {$endif}
+                    ImportBufferIndex[I] := 0;
+                    Inc(RegCount);
                   end;
                 seakU64:
                   begin
                     QWord((@ImportBufferData[I * 8])^) := QWord(Round(Pop^.VarNumber));
-                    {$ifdef LINUX}
-                    ImportBufferIndex[I] := 0;  
+                    ImportBufferIndex[I] := 0;
                     Inc(RegCount);
-                    {$endif}
-                  end;     
+                  end;
                { seakF32:
                   begin
                     Double((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
@@ -1862,11 +1844,13 @@ begin
                 seakF64:
                   begin
                     Double((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
-                    {$ifdef LINUX}
                     ImportBufferIndex[I] := 1;
-                    Inc(MMXCount); 
+                    {$ifdef WINDOWS}
+                    Inc(RegCount);
+                    {$else}
+                    Inc(MMXCount);
                     {$endif}
-                  end;     
+                  end;
                 seakBuffer:
                   begin
                     A := Pop;
@@ -1876,10 +1860,8 @@ begin
                       PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferString[I]);
                     end else
                       QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
-                    {$ifdef LINUX}
                     ImportBufferIndex[I] := 0;
                     Inc(RegCount);
-                    {$endif}
                   end;
                 seakWBuffer:
                   begin
@@ -1889,56 +1871,106 @@ begin
                       ImportBufferWideString[I] := UTF8Decode(A^.VarString + #0);
                       PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferWideString[I]);
                     end else
-                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);     
-                    {$ifdef LINUX}
-                    ImportBufferIndex[I] := 0;   
-                    Inc(RegCount); 
-                    {$endif}
+                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
+                    ImportBufferIndex[I] := 0;
+                    Inc(RegCount);
                   end;
               end;
             end;
             P := @ImportBufferData[0];
-            {$if defined(LINUX)}                           
             PP := @ImportBufferIndex[0];
+            {$if defined(WINDOWS)}
+            ArgCountStack := Max(0, Int64(RegCount) - 4);
+            {$elseif defined(LINUX)}
             ArgCountStack := Max(0, Int64(MMXCount) - 8) + Max(0, Int64(RegCount) - 6);
             {$endif}
             {$ifdef CPUX86_64}
             {$if defined(WINDOWS)}
               asm
-                mov  rbx,P
-                mov  rcx,[rbx]
-                mov  rdx,[rbx + 8]
-                mov  r8,[rbx + 16]
-                mov  r9,[rbx + 24]
-                movsd xmm0,[rbx]
-                movsd xmm1,[rbx + 8]
-                movsd xmm2,[rbx + 16]
-                movsd xmm3,[rbx + 24]
                 xor  rax,rax
                 mov  eax,ArgCount
-                cmp  eax,4
-                jle  FinishLoop
-                add  ebx,ArgSize
-                sub  eax,5
-              Loop:         
+                mov  r10,rax
+
+                xor  rax,rax
+                mov  eax,ArgSize
+                mov  r14,rax
+
+                mov  rbx,P
+                add  rbx,r14
+                mov  rax,PP
+                add  rax,r14
+                mov  r12,RegCount
+              Loop:
+                sub  rax,8
                 sub  rbx,8
-                mov  r11,[rbx]
-                push r11
-                cmp  rax,0
-                je   FinishLoop
-                dec  rax
-                jmp  Loop
+                mov  r13,[rbx]
+                mov  r14,[rax]
+              LoopReg:
+                  cmp  r12,4
+                  jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
+                // Push to stack
+                  push r13 // Always push ...
+                  jmp  LoopRegFinishAlloc
+                LoopRegAlloc:
+                  cmp  r14,1 // MMX?
+                  je   LoopMMX
+
+                  cmp  r12,1
+                  je   AllocRCX
+                  cmp  r12,2
+                  je   AllocRDX
+                  cmp  r12,3
+                  je   AllocR8
+                // R9
+                  mov  r9,r13
+                  jmp  LoopRegFinishAlloc
+                AllocRCX:
+                  mov  rcx,r13
+                  jmp  LoopRegFinishAlloc
+                AllocRDX:
+                  mov  rdx,r13
+                  jmp  LoopRegFinishAlloc
+                AllocR8:
+                  mov  r8,r13
+                  jmp  LoopRegFinishAlloc
+
+                LoopMMX:
+                  cmp  r12,1
+                  je   AllocMMX0
+                  cmp  r12,2
+                  je   AllocMMX1
+                  cmp  r12,3
+                  je   AllocMMX2
+                // MMX3
+                  movsd xmm3,[rbx]
+                  jmp  LoopRegFinishAlloc
+                AllocMMX0:
+                  movsd xmm0,[rbx]
+                  jmp  LoopRegFinishAlloc
+                AllocMMX1:
+                  movsd xmm1,[rbx]
+                  jmp  LoopRegFinishAlloc
+                AllocMMX2:
+                  movsd xmm2,[rbx]
+
+                LoopRegFinishAlloc:
+                  dec  r12
+              LoopFinishAlloc:
+                dec  r10
+                cmp  r10,0 // Still have arguments to take care of?
+                jne  Loop
               FinishLoop:
                 sub  rsp,32
                 call [FuncImport]
                 mov  ImportResult,rax
                 movsd ImportResultD,xmm0
                 xor  rax,rax
-                mov  eax,ArgCount
+                mov  eax,ArgCountStack
                 mov  ecx,8
                 mul  ecx
                 add  rsp,rax
-              end ['rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r11', 'xmm0', 'xmm1', 'xmm2', 'xmm3'];
+                add  rsp,32
+              end ['rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'xmm0', 'xmm1', 'xmm2', 'xmm3'];
             {$elseif defined(LINUX)}
               asm
                 xor  rax,rax
@@ -1955,7 +1987,7 @@ begin
                 add  rax,r14
                 mov  r11,MMXCount
                 mov  r12,RegCount
-              Loop:      
+              Loop:
                 sub  rax,8
                 sub  rbx,8
                 mov  r13,[rbx]
@@ -2009,12 +2041,12 @@ begin
                 LoopMMXFinishAlloc:
                   dec  r11
                   jmp  LoopFinishAlloc
-              LoopReg:   
+              LoopReg:
                   cmp  r12,6
-                  jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack   
+                  jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
                 // Push to stack
                   push r13
-                  jmp  LoopRegFinishAlloc   
+                  jmp  LoopRegFinishAlloc
                 LoopRegAlloc:
                   cmp  r12,1
                   je   AllocRDI
@@ -2025,13 +2057,13 @@ begin
                   cmp  r12,4
                   je   AllocRCX
                   cmp  r12,5
-                  je   AllocR9  
+                  je   AllocR9
                 // R8
                   mov  r8,r13
-                  jmp  LoopRegFinishAlloc 
+                  jmp  LoopRegFinishAlloc
                 AllocRDI:
                   mov  rdi,r13
-                  jmp  LoopRegFinishAlloc   
+                  jmp  LoopRegFinishAlloc
                 AllocRSI:
                   mov  rsi,r13
                   jmp  LoopRegFinishAlloc
@@ -2060,7 +2092,7 @@ begin
                 mul  ecx
                 add  rsp,rax
                 add  rsp,8
-              end ['rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'xmm0', 'xmm1', 'xmm2', 'xmm3', 'xmm4', 'xmm5', 'xmm6', 'xmm7'];
+              end ['rsi', 'rdi', 'rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'xmm0', 'xmm1', 'xmm2', 'xmm3', 'xmm4', 'xmm5', 'xmm6', 'xmm7'];
             {$endif}
             {$else}
             throw Exception.Create('Import external function does not support this CPU architecture');
@@ -2078,7 +2110,7 @@ begin
               seakU8, seakU16, seakU32:
                 begin
                   TV := QWord(LongWord(ImportResult))
-                end;  
+                end;
               seakU64, seakBuffer, seakWBuffer:
                 begin
                   TV := QWord(ImportResult)
@@ -2093,7 +2125,7 @@ begin
             Inc(CodePtrLocal, 2);
           end;
         opPopFrame:
-          begin      
+          begin
             Dec(Self.FramePtr);
             CodePtrLocal := Self.Frame[Self.FramePtr];
           end;
@@ -2121,7 +2153,7 @@ begin
                     {$else}
                       V^.VarString[Integer(C^) + 1] := B^.VarString[1];
                     {$endif}
-                    {$else}  
+                    {$else}
                     S := V^.VarString;
                     S[C^] := B^.VarString[0];
                     {$endif}
@@ -2136,7 +2168,7 @@ begin
                 begin
                   if V^.Kind = sevkString then
                   begin
-                    {$ifdef SE_STRING} 
+                    {$ifdef SE_STRING}
                     {$ifdef SE_STRING_UTF8}
                       UTF8Delete(V^.VarString, Integer(C^) + 1, 1);
                       S := Char(Round(B^.VarNumber));
@@ -2144,7 +2176,7 @@ begin
                     {$else}
                       V^.VarString[Integer(C^) + 1] := Char(Round(B^.VarNumber));
                     {$endif}
-                    {$else}   
+                    {$else}
                     S := V^.VarString;
                     S[C^] := Char(Round(B^.VarNumber));
                     {$endif}
@@ -2250,22 +2282,22 @@ begin
   Self.RegisterFunc('number', @TBuiltInFunction(nil).SENumber, 1);
   Self.RegisterFunc('wait', @TBuiltInFunction(nil).SEWait, 1);
   Self.RegisterFunc('length', @TBuiltInFunction(nil).SELength, 1);
-  Self.RegisterFunc('array', @TBuiltInFunction(nil).SEArray, 1);  
-  Self.RegisterFunc('array_create', @TBuiltInFunction(nil).SEArrayCreate, -1);     
+  Self.RegisterFunc('array', @TBuiltInFunction(nil).SEArray, 1);
+  Self.RegisterFunc('array_create', @TBuiltInFunction(nil).SEArrayCreate, -1);
   Self.RegisterFunc('array_delete', @TBuiltInFunction(nil).SEArrayDelete, 3);
   Self.RegisterFunc('sign', @TBuiltInFunction(nil).SESign, 1);
   Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, 2);
   Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 2);
   Self.RegisterFunc('pow', @TBuiltInFunction(nil).SEPow, 2);
-  Self.RegisterFunc('string_grep', @TBuiltInFunction(nil).SEStringGrep, -1);   
+  Self.RegisterFunc('string_grep', @TBuiltInFunction(nil).SEStringGrep, -1);
   Self.RegisterFunc('string_format', @TBuiltInFunction(nil).SEStringFormat, 2);
   Self.RegisterFunc('string_split', @TBuiltInFunction(nil).SEStringSplit, 2);
-  Self.RegisterFunc('string_find', @TBuiltInFunction(nil).SEStringFind, 2);   
-  Self.RegisterFunc('string_delete', @TBuiltInFunction(nil).SEStringDelete, 3);  
+  Self.RegisterFunc('string_find', @TBuiltInFunction(nil).SEStringFind, 2);
+  Self.RegisterFunc('string_delete', @TBuiltInFunction(nil).SEStringDelete, 3);
   Self.RegisterFunc('string_insert', @TBuiltInFunction(nil).SEStringInsert, 3);
   Self.RegisterFunc('string_replace', @TBuiltInFunction(nil).SEStringReplace, 3);
   Self.RegisterFunc('string_uppercase', @TBuiltInFunction(nil).SEStringUpperCase, 1);
-  Self.RegisterFunc('string_lowercase', @TBuiltInFunction(nil).SEStringLowerCase, 1);      
+  Self.RegisterFunc('string_lowercase', @TBuiltInFunction(nil).SEStringLowerCase, 1);
   Self.RegisterFunc('string_find_regex', @TBuiltInFunction(nil).SEStringFindRegex, 2);
   Self.RegisterFunc('lerp', @TBuiltInFunction(nil).SELerp, 3);
   Self.RegisterFunc('slerp', @TBuiltInFunction(nil).SESLerp, 3);
@@ -2277,7 +2309,7 @@ begin
   Self.RegisterFunc('ease_in_cubic', @TBuiltInFunction(nil).SEEaseInCubic, 1);
   Self.RegisterFunc('ease_out_cubic', @TBuiltInFunction(nil).SEEaseOutCubic, 1);
   Self.RegisterFunc('ease_in_out_cubic', @TBuiltInFunction(nil).SEEaseInOutQuad, 1);
-  Self.RegisterFunc('ticks', @TBuiltInFunction(nil).SEGetTickCount, 0);                
+  Self.RegisterFunc('ticks', @TBuiltInFunction(nil).SEGetTickCount, 0);
   Self.RegisterFunc('dt_now', @TBuiltInFunction(nil).SEDTNow, 0);
   Self.RegisterFunc('dt_year_get', @TBuiltInFunction(nil).SEDTGetYear, 1);
   Self.RegisterFunc('dt_month_get', @TBuiltInFunction(nil).SEDTGetMonth, 1);
@@ -2286,7 +2318,7 @@ begin
   Self.RegisterFunc('dt_minute_get', @TBuiltInFunction(nil).SEDTGetMinute, 1);
   Self.RegisterFunc('dt_date_set', @TBuiltInFunction(nil).SEDTSetDate, 3);
   Self.RegisterFunc('dt_time_set', @TBuiltInFunction(nil).SEDTSetTime, 4);
-  Self.RegisterFunc('dt_day_add', @TBuiltInFunction(nil).SEDTDayAdd, 2);   
+  Self.RegisterFunc('dt_day_add', @TBuiltInFunction(nil).SEDTDayAdd, 2);
   Self.RegisterFunc('dt_month_add', @TBuiltInFunction(nil).SEDTMonthAdd, 2);
   Self.RegisterFunc('dt_year_add', @TBuiltInFunction(nil).SEDTYearAdd, 2);
   Self.RegisterFunc('random', @TBuiltInFunction(nil).SERandom, 1);
@@ -2307,7 +2339,7 @@ begin
   FreeAndNil(Self.TokenList);
   FreeAndNil(Self.LocalVarList);
   FreeAndNil(Self.FuncNativeList);
-  FreeAndNil(Self.FuncScriptList);     
+  FreeAndNil(Self.FuncScriptList);
   FreeAndNil(Self.FuncImportList);
   FreeAndNil(Self.ConstMap);
   FreeAndNil(Self.ScopeStack);
@@ -2464,7 +2496,7 @@ begin
         Token.Kind := tkSquareBracketClose;
       '{':
         Token.Kind := tkBegin;
-      '}':   
+      '}':
         Token.Kind := tkEnd;
       ':':
         Token.Kind := tkColon;
@@ -2568,7 +2600,7 @@ begin
       '%':
         Token.Kind := tkMod;
       '#':
-        begin             
+        begin
           Token.Value := '';
           C := PeekAtNextChar;
           while C in ['0'..'9', 'A'..'Z', 'a'..'z', '_'] do
@@ -2579,7 +2611,7 @@ begin
 
           if Token.Value <> 'include' then
             Error('Expected "include"');
-                
+
           C := PeekAtNextChar;
           while C = ' ' do
           begin
@@ -2616,7 +2648,7 @@ begin
               Self.CurrentFileList.Add(Token.Value);
               SL.LoadFromFile(Token.Value);
               FSource := SL.Text;
-              Self.Lex(True);   
+              Self.Lex(True);
               Self.CurrentFileList.Pop;
             finally
               SL.Free;
@@ -2627,11 +2659,11 @@ begin
           continue;
         end;
       '0'..'9':
-        begin      
+        begin
           Token.Kind := tkNumber;
           if (C = '0') and (PeekAtNextChar = 'x') then
           begin
-            NextChar;   
+            NextChar;
             while PeekAtNextChar in ['0'..'9', 'A'..'F', 'a'..'f'] do
             begin
               C := NextChar;
@@ -2666,7 +2698,7 @@ begin
             'else':
               Token.Kind := tkElse;
             'for':
-              Token.Kind := tkFor;      
+              Token.Kind := tkFor;
             'to':
               Token.Kind := tkTo;
             'downto':
@@ -2713,7 +2745,7 @@ var
     ErrorCol := Token.Col;
     if Token.BelongedFileName = '' then
       raise Exception.CreateFmt('[%d,%d] %s', [Token.Ln, Token.Col, S])
-    else                                                                
+    else
       raise Exception.CreateFmt('(%s) [%d,%d] %s', [Token.BelongedFileName, Token.Ln, Token.Col, S]);
   end;
 
@@ -2726,7 +2758,7 @@ var
       Result := Self.FuncNativeList.Ptr(I);
       if PSEFuncNativeInfo(Result)^.Name = Name then
         Exit(Result);
-    end;      
+    end;
     for I := 0 to Self.FuncScriptList.Count - 1 do
     begin
       Result := Self.FuncScriptList.Ptr(I);
@@ -2953,7 +2985,7 @@ var
             PeekAtNextTokenExpected([tkNegative, tkNot, tkBracketOpen, tkNumber, tkIdent]);
             Logic();
             NextTokenExpected([tkBracketClose]);
-          end; 
+          end;
         tkSquareBracketOpen:
           begin
             NextToken;
@@ -3123,7 +3155,7 @@ var
   procedure ParseFuncCall(const Name: String);
   var
     FuncNativeInfo: PSEFuncNativeInfo;
-    FuncScriptInfo: PSEFuncScriptInfo;        
+    FuncScriptInfo: PSEFuncScriptInfo;
     FuncImportInfo: PSEFuncImportInfo;
     I, Ind: Integer;
     DefinedArgCount: Integer;
@@ -3191,9 +3223,9 @@ var
     JumpBlock,
     Addr, StackAddr: Integer;
     BreakList: TList;
-  begin           
+  begin
     BreakList := TList.Create;
-    try            
+    try
       BreakStack.Push(BreakList);
       Token := NextTokenExpected([tkIdent]);
       Name := Token.Value;
@@ -3222,7 +3254,7 @@ var
 
       JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
       Addr := JumpBlock;
-      ParseBlock;     
+      ParseBlock;
 
       BreakList := BreakStack.Pop;
       for I := 0 to BreakList.Count - 1 do
@@ -3232,7 +3264,7 @@ var
       Emit([Pointer(opPopFrame)]);
       Patch(JumpBlock - 1, Self.VM.Binary.Count);
 
-      RegisterScriptFunc(Name, Addr, StackAddr, ArgCount);  
+      RegisterScriptFunc(Name, Addr, StackAddr, ArgCount);
     finally
       BreakList.Free;
     end;
@@ -3244,7 +3276,7 @@ var
     begin
       case Token.Value of
         'void':
-          begin               
+          begin
             if IsVoidForbid then
               Error('"void" type it not allowed as parameter', Token);
             Result := seakVoid;
@@ -3376,7 +3408,7 @@ var
     end;
   end;
 
-  procedure ParseFor;  
+  procedure ParseFor;
   var
     StartBlock,
     EndBlock,
@@ -3384,7 +3416,7 @@ var
     JumpEnd: Integer;
     BreakList,
     ContinueList: TList;
-    I: Integer;  
+    I: Integer;
     Token: TSEToken;
     VarName: String;
     VarAddr: Integer;
@@ -3407,19 +3439,19 @@ var
       Emit([Pointer(opAssignLocal), VarName, VarAddr]);
 
       Token := NextTokenExpected([tkTo, tkDownto]);
-      StartBlock := Self.VM.Binary.Count; 
+      StartBlock := Self.VM.Binary.Count;
       Emit([Pointer(opPushLocalVar), VarAddr]);
       ParseExpr;
       if Token.Kind = tkTo then
       begin
         Emit([Pointer(opPushConst), 1]);
-        Emit([Pointer(opOperatorAdd)]);  
+        Emit([Pointer(opOperatorAdd)]);
         JumpEnd := Emit([Pointer(opJumpEqualOrGreater), 0]);
       end else
       if Token.Kind = tkDownto then
       begin
         Emit([Pointer(opPushConst), 1]);
-        Emit([Pointer(opOperatorSub)]);     
+        Emit([Pointer(opOperatorSub)]);
         JumpEnd := Emit([Pointer(opJumpEqualOrLesser), 0]);
       end;
 
@@ -3427,7 +3459,7 @@ var
 
       Emit([Pointer(opPushLocalVar), VarAddr]);
       if Token.Kind = tkTo then
-      begin                            
+      begin
         Emit([Pointer(opPushConst), 1]);
         Emit([Pointer(opOperatorAdd)]);
       end else
@@ -3480,7 +3512,7 @@ var
     Patch(JumpBlock1 - 1, StartBlock1);
     Patch(JumpBlock2 - 1, StartBlock2);
     Patch(JumpEnd - 1, EndBlock2);
-  end;    
+  end;
 
   procedure ParseArrayAssign;
   var
@@ -3493,7 +3525,7 @@ var
     repeat
       if PeekAtNextToken.Kind <> tkSquareBracketClose then
       begin
-        ParseExpr;         
+        ParseExpr;
         Inc(ArgCount);
       end;
       Token := NextTokenExpected([tkComma, tkSquareBracketClose]);
@@ -3571,7 +3603,7 @@ var
           Emit([Pointer(opPause)]);
         end;
       tkReturn:
-        begin                                 
+        begin
           NextToken;
           if FuncTraversal = 0 then
             Error('Not in a function', Token);
@@ -3583,7 +3615,7 @@ var
           Inc(FuncTraversal);
           NextToken;
           Self.ScopeStack.Push(Self.LocalVarList.Count);
-          ParseFuncDecl;     
+          ParseFuncDecl;
           I := Self.ScopeStack.Pop;
           Self.LocalVarList.DeleteRange(I, Self.LocalVarList.Count - I);
           Dec(FuncTraversal);
@@ -3663,7 +3695,7 @@ procedure TEvilC.Reset;
 var
   Ident: TSEIdent;
 begin
-  Self.FuncScriptList.Clear;   
+  Self.FuncScriptList.Clear;
   Self.FuncImportList.Clear;
   Self.CurrentFileList.Clear;
   Self.VM.Reset;
@@ -3740,12 +3772,12 @@ var
 begin
   Result.Binary := TSEBinary.Create;
   Result.LineOfCodeList := TIntegerList.Create;
-  Result.FuncScriptList := TSEFuncScriptList.Create;     
+  Result.FuncScriptList := TSEFuncScriptList.Create;
   Result.FuncImportList := TSEFuncImportList.Create;
   for I := 0 to Self.VM.Binary.Count - 1 do
   begin
     Result.Binary.Add(Self.VM.Binary[I]);
-  end;                             
+  end;
   for I := 0 to Self.LineOfCodeList.Count - 1 do
   begin
     Result.LineOfCodeList.Add(Self.LineOfCodeList[I]);
@@ -3765,12 +3797,12 @@ procedure TEvilC.Restore(const Cache: TSECache);
 var
   I: Integer;
 begin
-  Self.VM.Binary.Clear;    
+  Self.VM.Binary.Clear;
   Self.LineOfCodeList.Clear;
   for I := 0 to Cache.LineOfCodeList.Count - 1 do
     Self.LineOfCodeList.Add(Cache.LineOfCodeList[I]);
   for I := 0 to Cache.Binary.Count - 1 do
-    Self.VM.Binary.Add(Cache.Binary[I]);               
+    Self.VM.Binary.Add(Cache.Binary[I]);
   for I := 0 to Cache.FuncScriptList.Count - 1 do
     Self.FuncScriptList.Add(Cache.FuncScriptList[I]);
   for I := 0 to Cache.FuncImportList.Count - 1 do
