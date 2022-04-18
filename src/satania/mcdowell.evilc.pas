@@ -130,8 +130,8 @@ type
     seakU64,
    // seakF32,
     seakF64,     
-    seakChars,
-    seakWChars
+    seakBuffer,
+    seakWBuffer
   );
   TSEAtomKindArray = array of TSEAtomKind;
 
@@ -1867,7 +1867,7 @@ begin
                     Inc(MMXCount); 
                     {$endif}
                   end;     
-                seakChars:
+                seakBuffer:
                   begin
                     A := Pop;
                     if A^.Kind = sevkString then
@@ -1881,7 +1881,7 @@ begin
                     Inc(RegCount);
                     {$endif}
                   end;
-                seakWChars:
+                seakWBuffer:
                   begin
                     A := Pop;
                     if A^.Kind = sevkString then
@@ -2079,7 +2079,7 @@ begin
                 begin
                   TV := QWord(LongWord(ImportResult))
                 end;  
-              seakU64, seakChars, seakWChars:
+              seakU64, seakBuffer, seakWBuffer:
                 begin
                   TV := QWord(ImportResult)
                 end;
@@ -3270,9 +3270,9 @@ var
         'f64':
           Result := seakF64;
         'buffer':
-          Result := seakChars;
+          Result := seakBuffer;
         'wbuffer':
-          Result := seakWChars;
+          Result := seakWBuffer;
       end;
     end;
 
