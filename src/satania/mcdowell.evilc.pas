@@ -462,6 +462,7 @@ type
     class function SECos(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SETan(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SECot(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SERange(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMin(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMax(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEPow(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -809,18 +810,54 @@ begin
   Exit(Sign(Args[0].VarNumber));
 end;
 
-class function TBuiltInFunction.SEMin(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+class function TBuiltInFunction.SERange(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+  function EpsilonRound(V: Double): Double;
+  begin
+    if Abs(Frac(V)) < 1E-12 then
+      Result := Round(V)
+    else
+      Result := V;
+  end;
+
+var
+  V: Double;
+  I: Integer = 0;
 begin
-  if Args[0] < Args[1] then
-    Exit(Args[0]);
-  Exit(Args[1]);
+  Result.Kind := sevkArray;
+  SetLength(Result.VarArray, 0);
+  V := Args[0];
+  while EpsilonRound(V) <= Args[1].VarNumber do
+  begin
+    Inc(I);
+    SetLength(Result.VarArray, I);
+    Result.VarArray[I - 1] := V;
+    if Length(Args) = 3 then
+      V := V + Args[2].VarNumber
+    else
+      V := V + 1;
+  end;
+end;
+
+class function TBuiltInFunction.SEMin(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  I: Integer;
+begin
+  for I := 0 to Length(Args) - 2 do
+    if Args[I] < Args[I + 1] then
+      Result := Args[I]
+    else
+      Result := Args[I + 1];
 end;
 
 class function TBuiltInFunction.SEMax(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  I: Integer;
 begin
-  if Args[0] > Args[1] then
-    Exit(Args[0]);
-  Exit(Args[1]);
+  for I := 0 to Length(Args) - 2 do
+    if Args[I] > Args[I + 1] then
+      Result := Args[I]
+    else
+      Result := Args[I + 1];
 end;
 
 class function TBuiltInFunction.SEPow(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -2286,8 +2323,9 @@ begin
   Self.RegisterFunc('array_create', @TBuiltInFunction(nil).SEArrayCreate, -1);
   Self.RegisterFunc('array_delete', @TBuiltInFunction(nil).SEArrayDelete, 3);
   Self.RegisterFunc('sign', @TBuiltInFunction(nil).SESign, 1);
-  Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, 2);
-  Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 2);
+  Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, -1);
+  Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 1);
+  Self.RegisterFunc('range', @TBuiltInFunction(nil).SERange, -1);
   Self.RegisterFunc('pow', @TBuiltInFunction(nil).SEPow, 2);
   Self.RegisterFunc('string_grep', @TBuiltInFunction(nil).SEStringGrep, -1);
   Self.RegisterFunc('string_format', @TBuiltInFunction(nil).SEStringFormat, 2);
@@ -3469,7 +3507,7 @@ var
       end;
       VarName := Token.Value;
       VarAddr := FindVar(VarName)^.Addr;
-      Token := NextTokenExpected([tkEqual, tkIn]);
+      Token := NextTokenExpected([tkEqual, tkIn, tkComma]);
 
       if Token.Kind = tkEqual then
       begin
@@ -3510,8 +3548,14 @@ var
         JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
         EndBLock := JumpBlock;
       end else
-      begin       
-        VarHiddenCountName := '___c' + VarName;
+      begin
+        if Token.Kind = tkComma then
+        begin
+          Token := NextTokenExpected([tkIdent]);
+          VarHiddenCountName := Token.Value;
+          NextTokenExpected([tkIn]);
+        end else
+          VarHiddenCountName := '___c' + VarName;
         VarHiddenArrayName := '___a' + VarName;
         Token.Value := VarHiddenCountName;
         Self.LocalVarList.Add(CreateIdent(ikVariable, Token));
