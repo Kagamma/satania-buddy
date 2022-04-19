@@ -2168,12 +2168,12 @@ begin
           end;
         opAssignLocal:
           begin
-            Assign(BinaryLocal.Ptr(CodePtrLocal + 2)^, Pop);
-            Inc(CodePtrLocal, 3);
+            Assign(BinaryLocal.Ptr(CodePtrLocal + 1)^, Pop);
+            Inc(CodePtrLocal, 2);
           end;
         opAssignLocalArray:
           begin
-            A := BinaryLocal.Ptr(CodePtrLocal + 2);
+            A := BinaryLocal.Ptr(CodePtrLocal + 1);
             B := Pop;
             C := Pop;
             V := @Self.Stack[Integer(A^)];
@@ -2230,7 +2230,7 @@ begin
                   Self.Stack[Integer(A^)] := V^;
                 end;
             end;
-            Inc(CodePtrLocal, 3);
+            Inc(CodePtrLocal, 2);
           end;
         opPause:
           begin
@@ -3512,7 +3512,7 @@ var
       if Token.Kind = tkEqual then
       begin
         ParseExpr;
-        Emit([Pointer(opAssignLocal), VarName, VarAddr]);
+        Emit([Pointer(opAssignLocal), VarAddr]);
 
         Token := NextTokenExpected([tkTo, tkDownto]);
         StartBlock := Self.VM.Binary.Count;
@@ -3544,7 +3544,7 @@ var
           Emit([Pointer(opPushConst), 1]);
           Emit([Pointer(opOperatorSub)]);
         end;
-        Emit([Pointer(opAssignLocal), VarName, VarAddr]);
+        Emit([Pointer(opAssignLocal), VarAddr]);
         JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
         EndBLock := JumpBlock;
       end else
@@ -3566,9 +3566,9 @@ var
 
         ParseExpr;
 
-        Emit([Pointer(opAssignLocal), VarHiddenArrayName, VarHiddenArrayAddr]);
+        Emit([Pointer(opAssignLocal), VarHiddenArrayAddr]);
         Emit([Pointer(opPushConst), 0]);      
-        Emit([Pointer(opAssignLocal), VarHiddenCountName, VarHiddenCountAddr]);
+        Emit([Pointer(opAssignLocal), VarHiddenCountAddr]);
 
         StartBlock := Self.VM.Binary.Count;
 
@@ -3580,14 +3580,14 @@ var
         Emit([Pointer(opPushLocalVar), VarHiddenArrayAddr]);
         Emit([Pointer(opPushLocalVar), VarHiddenCountAddr]);
         Emit([Pointer(opPushLocalArrayPop)]);
-        Emit([Pointer(opAssignLocal), VarName, VarAddr]);
+        Emit([Pointer(opAssignLocal), VarAddr]);
 
         ParseBlock;
 
         Emit([Pointer(opPushLocalVar), VarHiddenCountAddr]);
         Emit([Pointer(opPushConst), 1]);
         Emit([Pointer(opOperatorAdd)]);
-        Emit([Pointer(opAssignLocal), VarHiddenCountName, VarHiddenCountAddr]);
+        Emit([Pointer(opAssignLocal), VarHiddenCountAddr]);
         JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
         EndBLock := JumpBlock;
       end;
@@ -3692,9 +3692,9 @@ var
       end;
     end;
     if IsArrayAssign then
-      Emit([Pointer(opAssignLocalArray), Name, Addr])
+      Emit([Pointer(opAssignLocalArray), Addr])
     else
-      Emit([Pointer(opAssignLocal), Name, Addr]);
+      Emit([Pointer(opAssignLocal), Addr]);
   end;
 
   procedure ParseBlock;
