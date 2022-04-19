@@ -3904,6 +3904,7 @@ begin
   FuncImportInfo.Args := Args;
   FuncImportInfo.Return := Return;
   FuncImportInfo.Name := Name;
+  FuncImportInfo.Func := nil;
   if Lib <> nil then
     FuncImportInfo.Func := GetProcAddress(Lib, ActualName);
   Self.FuncImportList.Add(FuncImportInfo);
