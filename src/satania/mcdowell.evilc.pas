@@ -565,7 +565,7 @@ end;
 class function TBuiltInFunction.SEBufferGetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result.Kind := sevkSingle;
-  Result.VarNumber := Double(Pointer(Round(Args[0].VarNumber))^);
+  Result.VarNumber := TSENumber(Pointer(Round(Args[0].VarNumber))^);
 end;
 
 class function TBuiltInFunction.SEBufferSetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -637,7 +637,7 @@ var
   P: Pointer;
 begin
   P := Pointer(Round(Args[0].VarNumber));
-  Double(P^) := Args[1];
+  TSENumber(P^) := Args[1];
 end;
 
 class function TBuiltInFunction.SEStringToBuffer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -811,7 +811,7 @@ begin
 end;
 
 class function TBuiltInFunction.SERange(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-  function EpsilonRound(V: Double): Double;
+  function EpsilonRound(V: TSENumber): TSENumber;
   begin
     if Abs(Frac(V)) < 1E-12 then
       Result := Round(V)
@@ -820,7 +820,7 @@ class function TBuiltInFunction.SERange(const VM: TSEVM; const Args: array of TS
   end;
 
 var
-  V: Double;
+  V: TSENumber;
   I: Integer = 0;
 begin
   Result.Kind := sevkArray;
@@ -1547,7 +1547,7 @@ var
   ImportBufferString: array [0..31] of String;
   ImportBufferWideString: array [0..31] of WideString;
   ImportResult: QWord;
-  ImportResultD: Double;
+  ImportResultD: TSENumber;
   FuncImport, P, PP: Pointer;
 
   procedure Push(const Value: TSEValue); inline;
@@ -1878,11 +1878,11 @@ begin
                   end;
                { seakF32:
                   begin
-                    Double((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
+                    TSENumber((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
                   end;}
                 seakF64:
                   begin
-                    Double((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
+                    TSENumber((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
                     ImportBufferIndex[I] := 1;
                     {$ifdef WINDOWS}
                     Inc(RegCount);
