@@ -501,8 +501,8 @@ object FormSettings: TFormSettings
           Left = 24
           Height = 15
           Top = 144
-          Width = 63
-          Caption = 'Use TLS/SSL'
+          Width = 40
+          Caption = 'Use SSL'
         end
         object CheckBoxEmailSmtpUseSSL: TCheckBox
           Left = 189
