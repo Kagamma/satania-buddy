@@ -37,7 +37,7 @@
 {"hash":358036,"name":"tformsettings.labelemailsmtpport.caption","sourcebytes":[80,111,114,116],"value":"Port"},
 {"hash":164185077,"name":"tformsettings.labelemailsmtpusername.caption","sourcebytes":[85,115,101,114,110,97,109,101],"value":"Username"},
 {"hash":145417188,"name":"tformsettings.labelemailsmtppassword.caption","sourcebytes":[80,97,115,115,119,111,114,100],"value":"Password"},
-{"hash":211245100,"name":"tformsettings.labelemailsmtpusessl.caption","sourcebytes":[85,115,101,32,83,83,76],"value":"Use SSL"},
+{"hash":155901740,"name":"tformsettings.labelemailsmtpusessl.caption","sourcebytes":[85,115,101,32,84,76,83,47,83,83,76],"value":"Use TLS/SSL"},
 {"hash":63876510,"name":"tformsettings.tabsheetspeechrecognition.caption","sourcebytes":[83,112,101,101,99,104,32,82,101,99,111,103,110,105,116,105,111,110],"value":"Speech Recognition"},
 {"hash":142220292,"name":"tformsettings.labelsttbackend.caption","sourcebytes":[66,97,99,107,101,110,100],"value":"Backend"},
 {"hash":382619,"name":"tformsettings.groupboxsttvosk.caption","sourcebytes":[86,111,115,107],"value":"Vosk"},

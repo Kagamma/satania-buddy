@@ -136,6 +136,7 @@ implementation
 uses
   Globals, Mcdowell, Mcdowell.imap, State.Main, Mcdowell.SpeechToText,
   Utils.Strings,
+  Mcdowell.smtp,
   Utils.Encdec;
 
 { TFormSettings }
@@ -241,7 +242,7 @@ begin
     EditEmailSMTPPassword.Text := Decrypt(Save.Settings.EmailSMTPPassword)
   else
     EditEmailSMTPPassword.Text := '';
-  CheckBoxEmailSMTPUseSSL.Checked := Save.Settings.EmailSMTPUseSSL;   
+  CheckBoxEmailUseSSL.Checked := Save.Settings.EmailUseSSL;
   CheckBoxEmailSMTPUseSSL.Checked := Save.Settings.EmailSMTPUseSSL;
 
   ComboBoxImageQuality.ItemIndex := 1;

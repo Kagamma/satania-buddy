@@ -173,7 +173,7 @@ begin
   Script.RegisterFunc('email_imap_is_success', @SEIsEmailSuccess, 0);
   Script.RegisterFunc('email_imap_is_configured', @SEIsEmailConfigured, 0);
   Script.RegisterFunc('email_smtp_is_configured', @SEIsEmailSMTPConfigured, 0);
-  Script.RegisterFunc('email_smtp_send', @SEEmailSMTPSend, 3);
+  Script.RegisterFunc('email_smtp_send', @SEEmailSMTPSend, 6);
   Script.RegisterFunc('sound_play', @SESoundPlay, 1);          
   Script.RegisterFunc('url_open', @SEOpenURL, 1);
   Script.RegisterFunc('url_get', @SEURLGet, 1);    

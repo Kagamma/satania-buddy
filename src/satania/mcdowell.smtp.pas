@@ -25,24 +25,29 @@ unit mcdowell.smtp;
 interface
 
 uses
-  Classes, SysUtils, blcksock, smtpsend, pop3send, globals;
+  Classes, SysUtils, blcksock, smtpsend, mimemess, mimepart, globals, types;
 
 type
   TSataniaSMTP = class(TThread)
   private
-    Smtp: TSMTPSend;  
-    FReceiver,
+    Smtp: TSMTPSend;
+    FSender,
+    FReplyTo,
+    FMailTo,
     FSubject,
     FBody: String;
     FTalk: String;
     procedure Talk;
     procedure Execute; override;
-  public
+  public                 
+    Attachments: TStringDynArray;
     constructor Create;
     destructor Destroy; override;
     class function IsEmailConfigured: Boolean;
 
-    property Receiver: String read FReceiver write FReceiver;     
+    property Sender: String read FSender write FSender;
+    property MailTo: String read FMailTo write FMailTo;  
+    property ReplyTo: String read FReplyTo write FReplyTo;
     property Subject: String read FSubject write FSubject;
     property Body: String read FBody write FBody;
   end;
@@ -89,18 +94,27 @@ end;
 procedure TSataniaSMTP.Execute;
 var
   SL: TStringList;
+  Mime: TMimeMess;
+  P : TMimePart;
+  B : Boolean;
+  S: String;
 begin
+  Mime := TMimeMess.Create;
   SL := TStringList.Create;
-  try
+  try        
+    Mime.Header.ToList.Text := Self.FMailTo;
+    Mime.Header.ReplyTo := Self.FReplyTo;
+    Mime.Header.Subject := Self.FSubject;
+    Mime.Header.From := Self.FSender;
+    P := Mime.AddPartMultipart('mixed', nil);
+    SL.Text := Self.FBody;
+    Mime.AddPartHTML(SL, P);
+    for S in Self.Attachments do
+      Mime.AddPartBinaryFromFile(S, P);
+    Mime.EncodeMessage;
     if not Self.Smtp.Login then
     begin
       FTalk := 'SMTP ERROR: Login: ' + Self.Smtp.EnhCodeString;
-      Self.Synchronize(@Self.Talk);
-      Exit;
-    end;
-    if not Self.Smtp.StartTLS then
-    begin
-      FTalk := 'SMTP ERROR: StartTLS: ' + Self.Smtp.EnhCodeString;
       Self.Synchronize(@Self.Talk);
       Exit;
     end;
@@ -110,14 +124,13 @@ begin
       Self.Synchronize(@Self.Talk);
       Exit;
     end;
-    if not Self.Smtp.MailTo(Self.FReceiver) then
+    if not Self.Smtp.MailTo(Self.FMailTo) then
     begin
       FTalk := 'SMTP ERROR: MailTo: ' + Self.Smtp.EnhCodeString;
       Self.Synchronize(@Self.Talk);
       Exit;
     end;
-    SL.Text := Self.FBody;
-    if not Self.Smtp.MailData(SL) then
+    if not Self.Smtp.MailData(Mime.Lines) then
     begin
       FTalk := 'SMTP ERROR: MailData: ' + Self.Smtp.EnhCodeString;
       Self.Synchronize(@Self.Talk);
@@ -132,6 +145,7 @@ begin
     FTalk := 'E-mail sent OK';
     Self.Synchronize(@Self.Talk);
   finally
+    Mime.Free;
     SL.Free;
   end;
 end;
