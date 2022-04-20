@@ -119,7 +119,8 @@ uses
   mcdowell.net,
   mcdowell.numbers,
   form.main,
-  mcdowell.imap;
+  mcdowell.imap,
+  mcdowell.smtp;
 
 {$define unit_implementation}
 {$I mcdowell_se.inc}
@@ -163,14 +164,16 @@ begin
   Script.RegisterFunc('scheme_load', @SESchemeLoad, 1);
   Script.RegisterFunc('scheme_default', @SESchemeDefault, 0);
   Script.RegisterFunc('delta_time', @SEDelta, 0);
-  Script.RegisterFunc('email_load', @SELoadEmails, 0);
-  Script.RegisterFunc('email_unseen_count', @SEGetUnseenEmailCount, 0);
-  Script.RegisterFunc('email_sender_get', @SEGetEmailSender, 1);
-  Script.RegisterFunc('email_subject_get', @SEGetEmailSubject, 1);
-  Script.RegisterFunc('email_body_get', @SEGetEmailBody, 1);
-  Script.RegisterFunc('email_is_loading', @SEIsEmailLoading, 0);
-  Script.RegisterFunc('email_is_success', @SEIsEmailSuccess, 0);
-  Script.RegisterFunc('email_is_configured', @SEIsEmailConfigured, 0);
+  Script.RegisterFunc('email_imap_load', @SELoadEmails, 0);
+  Script.RegisterFunc('email_imap_unseen_count', @SEGetUnseenEmailCount, 0);
+  Script.RegisterFunc('email_imap_sender_get', @SEGetEmailSender, 1);
+  Script.RegisterFunc('email_imap_subject_get', @SEGetEmailSubject, 1);
+  Script.RegisterFunc('email_imap_body_get', @SEGetEmailBody, 1);
+  Script.RegisterFunc('email_imap_is_loading', @SEIsEmailLoading, 0);
+  Script.RegisterFunc('email_imap_is_success', @SEIsEmailSuccess, 0);
+  Script.RegisterFunc('email_imap_is_configured', @SEIsEmailConfigured, 0);
+  Script.RegisterFunc('email_smtp_is_configured', @SEIsEmailSMTPConfigured, 0);
+  Script.RegisterFunc('email_smtp_send', @SEEmailSMTPSend, 3);
   Script.RegisterFunc('sound_play', @SESoundPlay, 1);          
   Script.RegisterFunc('url_open', @SEOpenURL, 1);
   Script.RegisterFunc('url_get', @SEURLGet, 1);    

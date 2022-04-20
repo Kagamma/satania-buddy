@@ -39,6 +39,7 @@ type
     ButtonCancel: TBitBtn;
     ButtonOk: TBitBtn;
     CheckBoxEmailUseSSL: TCheckBox;
+    CheckBoxEmailSmtpUseSSL: TCheckBox;
     CheckBoxLewd: TCheckBox;
     CheckBoxDeveloperMode: TCheckBox;
     ComboBoxSTTVoskModel: TComboBox;
@@ -50,30 +51,43 @@ type
     EditCharsetTo: TLabeledEdit;
     EditDefaultEvilScheme: TEdit;
     EditChatBubbleDelay: TSpinEdit;
+    EditEmailFetchFrom: TEdit;
+    EditEmailPassword: TEdit;
+    EditEmailSmtpPassword: TEdit;
+    EditEmailPort: TSpinEdit;
+    EditEmailSmtpPort: TSpinEdit;
+    EditEmailServer: TEdit;
+    EditEmailSmtpServer: TEdit;
+    EditEmailUsername: TEdit;
+    EditEmailSmtpUsername: TEdit;
     EditFrameSkip: TSpinEdit;
     EditFontName: TEdit;
-    EditEmailFetchFrom: TEdit;
-    EditEmailServer: TEdit;
-    EditEmailUsername: TEdit;
-    EditEmailPassword: TEdit;
     EditFPS: TSpinEdit;
-    EditEmailPort: TSpinEdit;
     EditSoWRightMargin: TSpinEdit;
     EditFontSize: TSpinEdit;
     EditTextSpeed: TSpinEdit;
     EditBaseScaling: TFloatSpinEdit;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
+    GroupBoxEmailIMAP: TGroupBox;
+    GroupBoxEmailSMTP: TGroupBox;
     GroupBoxSTTVosk: TGroupBox;
     Label1: TLabel;
     LabelChatbotServer: TLabel;
     LabelChatbotServer1: TLabel;
     LabelDeveloperMode: TLabel;
-    LabelSTTBackend: TLabel;
-    LabelEmailUsername: TLabel;
     LabelEmailPassword: TLabel;
+    LabelEmailSmtpPassword: TLabel;
+    LabelEmailPort: TLabel;
+    LabelEmailSmtpPort: TLabel;
+    LabelEmailServer: TLabel;
+    LabelEmailSmtpServer: TLabel;
+    LabelEmailUsername: TLabel;
+    LabelEmailSmtpUsername: TLabel;
     LabelEmailUseSSL: TLabel;
+    LabelEmailSmtpUseSSL: TLabel;
     LabelFetchFrom: TLabel;
+    LabelSTTBackend: TLabel;
     LabelBaseScaling: TLabel;
     LabelFontSkin: TLabel;
     LabelFontSize: TLabel;
@@ -88,8 +102,6 @@ type
     LabelTextSpeed: TLabel;
     LabelDefaultEvilScheme: TLabel;
     LabelImageQuality: TLabel;
-    LabelEmailServer: TLabel;
-    LabelEmailPort: TLabel;
     EditCharsetFrom: TLabeledEdit;
     ListBoxCharset: TListBox;
     MenuItemDeleteCharset: TMenuItem;
@@ -99,7 +111,7 @@ type
     TabSheet1: TTabSheet;
     TabSheetOptimization: TTabSheet;
     TabSheetSpeechRecognition: TTabSheet;
-    TabSheetEmail: TTabSheet;
+    TabSheetIMAP: TTabSheet;
     TabSheetGraphics: TTabSheet;
     TabSheetBot: TTabSheet;
     procedure ButtonCancelClick(Sender: TObject);
@@ -193,6 +205,10 @@ begin
   EditEmailUsername.Text := Save.Settings.EmailUsername;
   EditEmailFetchFrom.Text := Save.Settings.EmailFetchFrom;
 
+  EditEmailSMTPServer.Text := Save.Settings.EmailSMTPServer;
+  EditEmailSMTPPort.Value := Save.Settings.EmailSMTPPort;
+  EditEmailSMTPUsername.Text := Save.Settings.EmailSMTPUsername;
+
   ComboBoxSTTVoskModel.Clear;
   SL := TStringList.Create;
   FindAllDirectories(SL, 'data/nn/vosk', False);
@@ -220,8 +236,13 @@ begin
   if Save.Settings.EmailPassword <> '' then
     EditEmailPassword.Text := Decrypt(Save.Settings.EmailPassword)
   else
-    EditEmailPassword.Text := '';
-  CheckBoxEmailUseSSL.Checked := Save.Settings.EmailUseSSL;
+    EditEmailPassword.Text := '';                            
+  if Save.Settings.EmailSMTPPassword <> '' then
+    EditEmailSMTPPassword.Text := Decrypt(Save.Settings.EmailSMTPPassword)
+  else
+    EditEmailSMTPPassword.Text := '';
+  CheckBoxEmailSMTPUseSSL.Checked := Save.Settings.EmailSMTPUseSSL;   
+  CheckBoxEmailSMTPUseSSL.Checked := Save.Settings.EmailSMTPUseSSL;
 
   ComboBoxImageQuality.ItemIndex := 1;
   for I := 0 to ComboBoxImageQuality.Items.Count - 1 do
@@ -260,6 +281,10 @@ begin
     Save.Settings.EmailUsername := EditEmailUsername.Text;
     Save.Settings.EmailFetchFrom := EditEmailFetchFrom.Text;
 
+    Save.Settings.EmailSMTPServer := EditEmailSMTPServer.Text;
+    Save.Settings.EmailSMTPPort := EditEmailSMTPPort.Value;
+    Save.Settings.EmailSMTPUsername := EditEmailSMTPUsername.Text;
+
     Save.Settings.Font := EditFontName.Text;
     Save.Settings.FontSize := EditFontSize.Value;
     Save.Settings.Charset := SettingsToCharset(TStringList(ListBoxCharset.Items));
@@ -268,9 +293,14 @@ begin
     if EditEmailPassword.Text <> '' then
       Save.Settings.EmailPassword := Encrypt(EditEmailPassword.Text)
     else
-      Save.Settings.EmailPassword := '';
+      Save.Settings.EmailPassword := '';         
+    if EditEmailSMTPPassword.Text <> '' then
+      Save.Settings.EmailSMTPPassword := Encrypt(EditEmailSMTPPassword.Text)
+    else
+      Save.Settings.EmailSMTPPassword := '';
 
-    Save.Settings.EmailUseSSL := CheckBoxEmailUseSSL.Checked;
+    Save.Settings.EmailUseSSL := CheckBoxEmailUseSSL.Checked;        
+    Save.Settings.EmailSMTPUseSSL := CheckBoxEmailSMTPUseSSL.Checked;
     Save.SaveToFile('configs.json');
     SataniaIMAP.Disconnect;
     //

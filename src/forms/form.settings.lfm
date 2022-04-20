@@ -1,27 +1,27 @@
 object FormSettings: TFormSettings
   Left = 364
-  Height = 486
+  Height = 560
   Top = 31
-  Width = 644
+  Width = 645
   BorderStyle = bsDialog
   Caption = 'Settings'
-  ClientHeight = 486
-  ClientWidth = 644
+  ClientHeight = 560
+  ClientWidth = 645
   OnShow = FormShow
   Position = poScreenCenter
   object PageControl: TPageControl
     Left = 0
-    Height = 444
+    Height = 518
     Top = 0
-    Width = 644
-    ActivePage = TabSheetOptimization
+    Width = 645
+    ActivePage = TabSheetIMAP
     Align = alClient
-    TabIndex = 5
+    TabIndex = 3
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
-      ClientHeight = 416
-      ClientWidth = 636
+      ClientHeight = 490
+      ClientWidth = 637
       object LabelChatBubbleDelay: TLabel
         Left = 24
         Height = 15
@@ -207,8 +207,8 @@ object FormSettings: TFormSettings
     end
     object TabSheetGraphics: TTabSheet
       Caption = 'Graphics'
-      ClientHeight = 416
-      ClientWidth = 636
+      ClientHeight = 490
+      ClientWidth = 637
       object EditFPS: TSpinEdit
         Left = 192
         Height = 23
@@ -290,8 +290,8 @@ object FormSettings: TFormSettings
     end
     object TabSheetBot: TTabSheet
       Caption = 'Chatbot'
-      ClientHeight = 416
-      ClientWidth = 636
+      ClientHeight = 490
+      ClientWidth = 637
       object GroupBox1: TGroupBox
         Left = 24
         Height = 80
@@ -343,109 +343,208 @@ object FormSettings: TFormSettings
         end
       end
     end
-    object TabSheetEmail: TTabSheet
-      Caption = 'IMAP'
-      ClientHeight = 416
-      ClientWidth = 636
-      object EditEmailServer: TEdit
-        Left = 192
-        Height = 23
+    object TabSheetIMAP: TTabSheet
+      Caption = 'Email'
+      ClientHeight = 490
+      ClientWidth = 637
+      object GroupBoxEmailIMAP: TGroupBox
+        Left = 24
+        Height = 224
         Top = 16
-        Width = 400
+        Width = 593
+        Caption = 'IMAP'
+        ClientHeight = 204
+        ClientWidth = 589
         TabOrder = 0
+        object LabelEmailServer: TLabel
+          Left = 24
+          Height = 15
+          Top = 16
+          Width = 32
+          Caption = 'Server'
+          ParentColor = False
+        end
+        object EditEmailServer: TEdit
+          Left = 189
+          Height = 23
+          Top = 16
+          Width = 376
+          TabOrder = 0
+        end
+        object LabelEmailPort: TLabel
+          Left = 24
+          Height = 15
+          Top = 48
+          Width = 22
+          Caption = 'Port'
+          ParentColor = False
+        end
+        object EditEmailPort: TSpinEdit
+          Left = 189
+          Height = 23
+          Top = 48
+          Width = 98
+          MaxValue = 65535
+          TabOrder = 1
+          Value = 5
+        end
+        object LabelEmailUsername: TLabel
+          Left = 24
+          Height = 15
+          Top = 80
+          Width = 53
+          Caption = 'Username'
+          ParentColor = False
+        end
+        object EditEmailUsername: TEdit
+          Left = 189
+          Height = 23
+          Top = 80
+          Width = 376
+          TabOrder = 2
+        end
+        object LabelEmailPassword: TLabel
+          Left = 24
+          Height = 15
+          Top = 112
+          Width = 50
+          Caption = 'Password'
+          ParentColor = False
+        end
+        object EditEmailPassword: TEdit
+          Left = 189
+          Height = 23
+          Top = 112
+          Width = 376
+          EchoMode = emPassword
+          PasswordChar = '*'
+          TabOrder = 3
+        end
+        object LabelFetchFrom: TLabel
+          Left = 24
+          Height = 15
+          Top = 144
+          Width = 60
+          Caption = 'Fetch From'
+          ParentColor = False
+        end
+        object EditEmailFetchFrom: TEdit
+          Left = 189
+          Height = 23
+          Top = 144
+          Width = 376
+          TabOrder = 4
+        end
+        object LabelEmailUseSSL: TLabel
+          Left = 24
+          Height = 15
+          Top = 176
+          Width = 40
+          Caption = 'Use SSL'
+          ParentColor = False
+        end
+        object CheckBoxEmailUseSSL: TCheckBox
+          Left = 189
+          Height = 17
+          Top = 176
+          Width = 18
+          TabOrder = 5
+        end
       end
-      object LabelEmailServer: TLabel
-        Left = 24
-        Height = 15
-        Top = 16
-        Width = 32
-        Caption = 'Server'
-        ParentColor = False
-      end
-      object LabelEmailPort: TLabel
-        Left = 24
-        Height = 15
-        Top = 48
-        Width = 22
-        Caption = 'Port'
-        ParentColor = False
-      end
-      object LabelEmailUsername: TLabel
-        Left = 24
-        Height = 15
-        Top = 80
-        Width = 53
-        Caption = 'Username'
-        ParentColor = False
-      end
-      object EditEmailUsername: TEdit
-        Left = 192
-        Height = 23
-        Top = 80
-        Width = 400
+      object GroupBoxEmailSMTP: TGroupBox
+        Left = 26
+        Height = 198
+        Top = 250
+        Width = 593
+        Caption = 'SMTP'
+        ClientHeight = 178
+        ClientWidth = 589
         TabOrder = 1
-      end
-      object EditEmailPassword: TEdit
-        Left = 192
-        Height = 23
-        Top = 112
-        Width = 400
-        EchoMode = emPassword
-        PasswordChar = '*'
-        TabOrder = 2
-      end
-      object LabelEmailPassword: TLabel
-        Left = 24
-        Height = 15
-        Top = 112
-        Width = 50
-        Caption = 'Password'
-        ParentColor = False
-      end
-      object LabelEmailUseSSL: TLabel
-        Left = 24
-        Height = 15
-        Top = 176
-        Width = 40
-        Caption = 'Use SSL'
-        ParentColor = False
-      end
-      object CheckBoxEmailUseSSL: TCheckBox
-        Left = 192
-        Height = 17
-        Top = 176
-        Width = 18
-        TabOrder = 3
-      end
-      object EditEmailFetchFrom: TEdit
-        Left = 192
-        Height = 23
-        Top = 144
-        Width = 400
-        TabOrder = 4
-      end
-      object LabelFetchFrom: TLabel
-        Left = 24
-        Height = 15
-        Top = 144
-        Width = 60
-        Caption = 'Fetch From'
-        ParentColor = False
-      end
-      object EditEmailPort: TSpinEdit
-        Left = 192
-        Height = 23
-        Top = 48
-        Width = 98
-        MaxValue = 65535
-        TabOrder = 5
-        Value = 5
+        object LabelEmailSmtpServer: TLabel
+          Left = 24
+          Height = 15
+          Top = 16
+          Width = 32
+          Caption = 'Server'
+          ParentColor = False
+        end
+        object EditEmailSmtpServer: TEdit
+          Left = 189
+          Height = 23
+          Top = 16
+          Width = 376
+          TabOrder = 0
+        end
+        object LabelEmailSmtpPort: TLabel
+          Left = 24
+          Height = 15
+          Top = 48
+          Width = 22
+          Caption = 'Port'
+          ParentColor = False
+        end
+        object EditEmailSmtpPort: TSpinEdit
+          Left = 189
+          Height = 23
+          Top = 48
+          Width = 98
+          MaxValue = 65535
+          TabOrder = 1
+          Value = 5
+        end
+        object LabelEmailSmtpUsername: TLabel
+          Left = 24
+          Height = 15
+          Top = 80
+          Width = 53
+          Caption = 'Username'
+          ParentColor = False
+        end
+        object EditEmailSmtpUsername: TEdit
+          Left = 189
+          Height = 23
+          Top = 80
+          Width = 376
+          TabOrder = 2
+        end
+        object LabelEmailSmtpPassword: TLabel
+          Left = 24
+          Height = 15
+          Top = 112
+          Width = 50
+          Caption = 'Password'
+          ParentColor = False
+        end
+        object EditEmailSmtpPassword: TEdit
+          Left = 189
+          Height = 23
+          Top = 112
+          Width = 376
+          EchoMode = emPassword
+          PasswordChar = '*'
+          TabOrder = 3
+        end
+        object LabelEmailSmtpUseSSL: TLabel
+          Left = 24
+          Height = 15
+          Top = 144
+          Width = 40
+          Caption = 'Use SSL'
+          ParentColor = False
+        end
+        object CheckBoxEmailSmtpUseSSL: TCheckBox
+          Left = 189
+          Height = 17
+          Top = 144
+          Width = 18
+          TabOrder = 4
+        end
       end
     end
     object TabSheetSpeechRecognition: TTabSheet
       Caption = 'Speech Recognition'
-      ClientHeight = 416
-      ClientWidth = 636
+      ClientHeight = 490
+      ClientWidth = 637
       object LabelSTTBackend: TLabel
         Left = 24
         Height = 15
@@ -494,8 +593,8 @@ object FormSettings: TFormSettings
     end
     object TabSheetOptimization: TTabSheet
       Caption = 'Developer'
-      ClientHeight = 416
-      ClientWidth = 636
+      ClientHeight = 490
+      ClientWidth = 637
       object LabelDeveloperMode: TLabel
         Left = 25
         Height = 15
@@ -524,14 +623,14 @@ object FormSettings: TFormSettings
   object Panel1: TPanel
     Left = 0
     Height = 42
-    Top = 444
-    Width = 644
+    Top = 518
+    Width = 645
     Align = alBottom
     ClientHeight = 42
-    ClientWidth = 644
+    ClientWidth = 645
     TabOrder = 1
     object ButtonCancel: TBitBtn
-      Left = 413
+      Left = 414
       Height = 24
       Top = 9
       Width = 107
@@ -544,7 +643,7 @@ object FormSettings: TFormSettings
       TabOrder = 0
     end
     object ButtonOk: TBitBtn
-      Left = 528
+      Left = 529
       Height = 24
       Top = 9
       Width = 107

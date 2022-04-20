@@ -303,6 +303,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Utils.Files"/>
       </Unit>
+      <Unit>
+        <Filename Value="satania/mcdowell.smtp.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -320,7 +324,7 @@
       <TargetCPU Value="x86_64"/>
       <TargetOS Value="win64"/>
       <Optimizations>
-        <OptimizationLevel Value="2"/>
+        <OptimizationLevel Value="4"/>
       </Optimizations>
     </CodeGeneration>
     <Linking>

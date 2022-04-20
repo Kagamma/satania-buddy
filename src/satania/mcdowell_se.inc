@@ -48,6 +48,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEIsEmailLoading(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsEmailSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsEmailConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEIsEmailSMTPConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEEmailSMTPSend(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESchemeDefault(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESoundPlay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -256,6 +258,22 @@ end;
 function TSatania.SEIsEmailConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := SataniaIMAP.IsEmailConfigured;
+end;
+
+function TSatania.SEIsEmailSMTPConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := TSataniaSMTP.IsEmailConfigured;
+end;
+
+function TSatania.SEEmailSMTPSend(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  SataniaSMTP: TSataniaSMTP;
+begin
+  SataniaSMTP := TSataniaSMTP.Create;
+  SataniaSMTP.Receiver := Args[0];       
+  SataniaSMTP.Subject := Args[1];
+  SataniaSMTP.Body := Args[2];
+  SataniaSMTP.Start;
 end;
 
 function TSatania.SESchemeDefault(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

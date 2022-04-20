@@ -135,10 +135,15 @@ type
     FEmailUsername,
     FEmailPassword,
     FEmailFetchFrom,
+    FEmailSmtpServer, 
+    FEmailSmtpUsername,
+    FEmailSmtpPassword,
     FCharset,
     FFont: String;
     FFontSize: Integer;
+    FEmailSmtpPort,
     FEmailPort: Word;
+    FEmailSmtpUseSSL: Boolean;
     FEmailUseSSL: Boolean;
     FFrameSkip: Integer;
     FDeveloperMode,
@@ -161,7 +166,12 @@ type
     property EmailUsername: String read FEmailUsername write FEmailUsername;
     property EmailPassword: String read FEmailPassword write FEmailPassword;
     property EmailFetchFrom: String read FEmailFetchFrom write FEmailFetchFrom;
-    property EmailUseSSL: Boolean read FEmailUseSSL write FEmailUseSSL;
+    property EmailUseSSL: Boolean read FEmailUseSSL write FEmailUseSSL;       
+    property EmailSmtpServer: String read FEmailSmtpServer write FEmailSmtpServer;
+    property EmailSmtpPort: Word read FEmailSmtpPort write FEmailSmtpPort;
+    property EmailSmtpUsername: String read FEmailSmtpUsername write FEmailSmtpUsername;
+    property EmailSmtpPassword: String read FEmailSmtpPassword write FEmailSmtpPassword;
+    property EmailSmtpUseSSL: Boolean read FEmailSmtpUseSSL write FEmailSmtpUseSSL;
     property Charset: String read FCharset write FCharset;
     property Font: String read FFont write FFont;
     property FontSize: Integer read FFontSize write FFontSize;
