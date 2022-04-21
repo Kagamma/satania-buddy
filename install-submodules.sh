@@ -6,6 +6,7 @@ rm -rf src/components/synalist
 rm -rf src/components/TPocketSphinx
 rm -rf src/components/internettools
 rm -rf src/components/richmemo
+rm -rf src/components/KControls
 rm -rf src/components/HtmlViewer
 
 git clone --depth 1 https://github.com/Kagamma/satania-buddy-data.git data
@@ -21,6 +22,10 @@ cd ..
 git clone https://gitlab.com/EugeneLoza/typing-label.git
 svn checkout https://svn.code.sf.net/p/synalist/code/trunk synalist
 git clone --depth 1 https://github.com/Kagamma/internettools.git
-git clone --depth 1 https://github.com/skalogryz/richmemo.git
+git clone --depth 1 https://github.com/kryslt/KControls.git
 git clone --depth 1 https://github.com/Kagamma/HtmlViewer.git
+git clone --depth 1 https://github.com/pst2d/csscontrols.git
+cd csscontrols
+git checkout dev
+cd ..
 cd ..
