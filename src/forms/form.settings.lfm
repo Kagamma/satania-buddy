@@ -28,7 +28,6 @@ object FormSettings: TFormSettings
         Top = 48
         Width = 97
         Caption = 'Chat Bubble Delay'
-        ParentColor = False
       end
       object EditChatBubbleDelay: TSpinEdit
         Left = 192
@@ -46,7 +45,6 @@ object FormSettings: TFormSettings
         Top = 112
         Width = 96
         Caption = 'SoW Right Margin'
-        ParentColor = False
       end
       object EditSoWRightMargin: TSpinEdit
         Left = 192
@@ -63,7 +61,6 @@ object FormSettings: TFormSettings
         Top = 80
         Width = 56
         Caption = 'Text Speed'
-        ParentColor = False
       end
       object EditTextSpeed: TSpinEdit
         Left = 192
@@ -89,7 +86,6 @@ object FormSettings: TFormSettings
         Top = 144
         Width = 104
         Caption = 'Default Evil Scheme'
-        ParentColor = False
       end
       object EditFontSize: TSpinEdit
         Left = 192
@@ -107,7 +103,6 @@ object FormSettings: TFormSettings
         Top = 240
         Width = 47
         Caption = 'Font Size'
-        ParentColor = False
       end
       object EditFontName: TEdit
         Left = 192
@@ -122,7 +117,6 @@ object FormSettings: TFormSettings
         Top = 208
         Width = 59
         Caption = 'Font Name'
-        ParentColor = False
       end
       object LabelFontCharset: TLabel
         Left = 24
@@ -130,7 +124,6 @@ object FormSettings: TFormSettings
         Top = 272
         Width = 72
         Caption = 'Font Charsets'
-        ParentColor = False
       end
       object ListBoxCharset: TListBox
         Left = 192
@@ -149,7 +142,6 @@ object FormSettings: TFormSettings
         EditLabel.Height = 15
         EditLabel.Width = 80
         EditLabel.Caption = 'From'
-        EditLabel.ParentColor = False
         TabOrder = 7
       end
       object EditCharsetTo: TLabeledEdit
@@ -160,7 +152,6 @@ object FormSettings: TFormSettings
         EditLabel.Height = 15
         EditLabel.Width = 80
         EditLabel.Caption = 'To'
-        EditLabel.ParentColor = False
         TabOrder = 8
       end
       object ButtonCharsetAdd: TBitBtn
@@ -178,7 +169,6 @@ object FormSettings: TFormSettings
         Top = 16
         Width = 55
         Caption = 'Fanservice'
-        ParentColor = False
       end
       object CheckBoxLewd: TCheckBox
         Left = 192
@@ -193,7 +183,6 @@ object FormSettings: TFormSettings
         Top = 176
         Width = 51
         Caption = 'Character'
-        ParentColor = False
       end
       object ComboBoxSkin: TComboBox
         Left = 192
@@ -225,7 +214,6 @@ object FormSettings: TFormSettings
         Top = 16
         Width = 19
         Caption = 'FPS'
-        ParentColor = False
       end
       object LabelImageQuality: TLabel
         Left = 23
@@ -233,7 +221,6 @@ object FormSettings: TFormSettings
         Top = 48
         Width = 74
         Caption = 'Image Quality'
-        ParentColor = False
       end
       object ComboBoxImageQuality: TComboBox
         Left = 192
@@ -257,7 +244,6 @@ object FormSettings: TFormSettings
         Top = 80
         Width = 65
         Caption = 'Base Scaling'
-        ParentColor = False
       end
       object EditBaseScaling: TFloatSpinEdit
         Left = 192
@@ -285,7 +271,6 @@ object FormSettings: TFormSettings
         Top = 112
         Width = 58
         Caption = 'Frame Skip'
-        ParentColor = False
       end
     end
     object TabSheetBot: TTabSheet
@@ -314,7 +299,6 @@ object FormSettings: TFormSettings
           Top = 16
           Width = 33
           Caption = 'AppID'
-          ParentColor = False
         end
       end
       object GroupBox2: TGroupBox
@@ -332,7 +316,6 @@ object FormSettings: TFormSettings
           Top = 16
           Width = 21
           Caption = 'URL'
-          ParentColor = False
         end
         object EditBotServer: TEdit
           Left = 167
@@ -362,7 +345,6 @@ object FormSettings: TFormSettings
           Top = 16
           Width = 32
           Caption = 'Server'
-          ParentColor = False
         end
         object EditEmailServer: TEdit
           Left = 189
@@ -377,7 +359,6 @@ object FormSettings: TFormSettings
           Top = 48
           Width = 22
           Caption = 'Port'
-          ParentColor = False
         end
         object EditEmailPort: TSpinEdit
           Left = 189
@@ -394,7 +375,6 @@ object FormSettings: TFormSettings
           Top = 80
           Width = 53
           Caption = 'Username'
-          ParentColor = False
         end
         object EditEmailUsername: TEdit
           Left = 189
@@ -409,7 +389,6 @@ object FormSettings: TFormSettings
           Top = 112
           Width = 50
           Caption = 'Password'
-          ParentColor = False
         end
         object EditEmailPassword: TEdit
           Left = 189
@@ -426,7 +405,6 @@ object FormSettings: TFormSettings
           Top = 144
           Width = 60
           Caption = 'Fetch From'
-          ParentColor = False
         end
         object EditEmailFetchFrom: TEdit
           Left = 189
@@ -441,7 +419,6 @@ object FormSettings: TFormSettings
           Top = 176
           Width = 40
           Caption = 'Use SSL'
-          ParentColor = False
         end
         object CheckBoxEmailUseSSL: TCheckBox
           Left = 189
@@ -466,7 +443,6 @@ object FormSettings: TFormSettings
           Top = 16
           Width = 32
           Caption = 'Server'
-          ParentColor = False
         end
         object EditEmailSmtpServer: TEdit
           Left = 189
@@ -481,7 +457,6 @@ object FormSettings: TFormSettings
           Top = 48
           Width = 22
           Caption = 'Port'
-          ParentColor = False
         end
         object EditEmailSmtpPort: TSpinEdit
           Left = 189
@@ -498,7 +473,6 @@ object FormSettings: TFormSettings
           Top = 80
           Width = 53
           Caption = 'Username'
-          ParentColor = False
         end
         object EditEmailSmtpUsername: TEdit
           Left = 189
@@ -513,7 +487,6 @@ object FormSettings: TFormSettings
           Top = 112
           Width = 50
           Caption = 'Password'
-          ParentColor = False
         end
         object EditEmailSmtpPassword: TEdit
           Left = 189
@@ -530,7 +503,6 @@ object FormSettings: TFormSettings
           Top = 144
           Width = 40
           Caption = 'Use SSL'
-          ParentColor = False
         end
         object CheckBoxEmailSmtpUseSSL: TCheckBox
           Left = 189
@@ -551,7 +523,6 @@ object FormSettings: TFormSettings
         Top = 16
         Width = 45
         Caption = 'Backend'
-        ParentColor = False
       end
       object ComboBoxSTTBackend: TComboBox
         Left = 192
@@ -578,7 +549,6 @@ object FormSettings: TFormSettings
           Top = 16
           Width = 34
           Caption = 'Model'
-          ParentColor = False
         end
         object ComboBoxSTTVoskModel: TComboBox
           Left = 168
@@ -601,7 +571,6 @@ object FormSettings: TFormSettings
         Top = 16
         Width = 87
         Caption = 'Developer Mode'
-        ParentColor = False
       end
       object CheckBoxDeveloperMode: TCheckBox
         Left = 192
@@ -616,7 +585,6 @@ object FormSettings: TFormSettings
         Top = 70
         Width = 424
         Caption = 'Enable Developer Mode disable the following optimizations:'#13#10'- Sprite caching. Sprites will be reloaded everytime sprite_load() is called.'#13#10'- Byecode caching. Scripts will be recompiled everytime the app changes scripts.'
-        ParentColor = False
       end
     end
   end

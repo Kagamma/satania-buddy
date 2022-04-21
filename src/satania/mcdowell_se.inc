@@ -268,11 +268,18 @@ end;
 function TSatania.SEEmailSMTPSend(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   SataniaSMTP: TSataniaSMTP;
+  I: Integer;
 begin
   SataniaSMTP := TSataniaSMTP.Create;
-  SataniaSMTP.Receiver := Args[0];       
-  SataniaSMTP.Subject := Args[1];
-  SataniaSMTP.Body := Args[2];
+  SataniaSMTP.Sender := Args[0];
+  SataniaSMTP.MailTo := Args[1];
+  SataniaSMTP.ReplyTo := Args[2];
+  SataniaSMTP.Subject := Args[3];
+  SataniaSMTP.Body := Args[4];
+  SetLength(SataniaSMTP.Attachments, Length(Args[5].VarArray));
+  for I := 0 to Length(Args[5].VarArray) - 1 do
+    SataniaSMTP.Attachments[I] := Args[5].VarArray[I];
+
   SataniaSMTP.Start;
 end;
 
