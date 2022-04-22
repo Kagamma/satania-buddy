@@ -74,7 +74,7 @@ begin
   FShapeMailTo.Align := alLeft;
   FShapeMailTo.AutoSize := True;
 
-  FTagContainerMailTo := HTMLDiv('display:inline-block;padding-bottom:4px')
+  FTagContainerMailTo := HTMLDiv('display:inline-block;margin-bottom:4px')
     .AppendTo(FShapeMailTo.Body);
 
   Self.ScrollBoxMailTo.InsertControl(FShapeMailTo);
@@ -115,7 +115,7 @@ begin
   Node := FTagContainerMailTo.FirstChild;
   while Node <> nil do
   begin
-    MailTo := MailTo + Node.Text;
+    MailTo := MailTo + Node.FirstChild.Text;
     Node := Node.GetNext(Node);
     if Node <> nil then
       MailTo := MailTo + ';';
@@ -140,16 +140,22 @@ end;
 
 procedure TFormEmailEditor.RemoveInputResult(Sender: TObject);
 begin
-  THtmlNode(Sender).ParentNode.Delete(THtmlNode(Sender));
+  THtmlNode(Sender).ParentNode.ParentNode.Delete(THtmlNode(Sender).ParentNode);
 end;
 
 procedure TFormEmailEditor.AddInputResult(const AParent: THtmlNode; const AText: String);
 var
+  TagDummy,
+  TagText,
   TagButton: THtmlNode;
-begin
-  TagButton := HTMLSpan('margin:2px;color:black;background-color:white;border:1px solid blue;border-radius:3px;padding-right:4px', AText)
-    .SetHover('color:white;background-color:red;')
-    .AppendTo(AParent)
+begin     
+  TagDummy := HTMLDiv('display:inline-block;padding-right:4px;')
+    .AppendTo(AParent);
+  TagButton := HTMLSpan('padding:4px;color:black;background-color:#DFE3E8', AText)
+    .AppendTo(TagDummy);
+  TagButton := HTMLSpan('padding:4px;color:black;background-color:#C6CDD6;border-bottom-right-radius:4px', 'X')
+    .SetHover('color:white;background-color:#EA5E60;')
+    .AppendTo(TagDummy)
     .SetOnClick(@RemoveInputResult);
 end;
 
