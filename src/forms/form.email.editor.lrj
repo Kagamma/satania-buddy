@@ -1,0 +1,7 @@
+{"version":1,"strings":[
+{"hash":221266220,"name":"tformemaileditor.caption","sourcebytes":[67,111,109,112,111,115,101,32,69,109,97,105,108],"value":"Compose Email"},
+{"hash":90721265,"name":"tformemaileditor.panel1.caption","sourcebytes":[80,97,110,101,108,49],"value":"Panel1"},
+{"hash":179899380,"name":"tformemaileditor.editsubject.texthint","sourcebytes":[83,117,98,106,101,99,116],"value":"Subject"},
+{"hash":367684,"name":"tformemaileditor.buttonsend.caption","sourcebytes":[83,101,110,100],"value":"Send"},
+{"hash":58714111,"name":"tformemaileditor.editmailto.texthint","sourcebytes":[77,97,105,108,32,116,111],"value":"Mail to"}
+]}

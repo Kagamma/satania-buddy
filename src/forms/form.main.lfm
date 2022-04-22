@@ -1,27 +1,26 @@
 object FormMain: TFormMain
   Left = -8
-  Height = 755
+  Height = 794
   Top = -8
-  Width = 667
+  Width = 683
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 755
-  ClientWidth = 667
+  ClientHeight = 771
+  ClientWidth = 683
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   PopupMenu = TrayMenu
   ShowInTaskBar = stNever
-  LCLVersion = '2.3.0.0'
   Scaled = False
   Visible = True
   WindowState = wsMaximized
   object CastleControl: TCastleControl
     Left = 0
-    Height = 732
+    Height = 771
     Top = 0
-    Width = 667
+    Width = 683
     Align = alClient
     AlphaBits = 8
     Options = []
@@ -1395,6 +1394,13 @@ object FormMain: TFormMain
       end
       object Separator1: TMenuItem
         Caption = '-'
+      end
+    end
+    object MenuItemEmail: TMenuItem
+      Caption = 'Email'
+      object MenuItemEmailCompose: TMenuItem
+        Caption = 'Compose'
+        OnClick = MenuItemEmailComposeClick
       end
     end
     object MenuItemRules: TMenuItem

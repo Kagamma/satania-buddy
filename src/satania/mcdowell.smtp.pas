@@ -25,7 +25,8 @@ unit mcdowell.smtp;
 interface
 
 uses
-  Classes, SysUtils, blcksock, smtpsend, mimemess, mimepart, globals, types;
+  Classes, SysUtils, blcksock, smtpsend, mimemess, mimepart, globals, types,
+  StrUtils;
 
 type
   TSataniaSMTP = class(TThread)
@@ -124,12 +125,13 @@ begin
       Self.Synchronize(@Self.Talk);
       Exit;
     end;
-    if not Self.Smtp.MailTo(Self.FMailTo) then
-    begin
-      FTalk := 'SMTP ERROR: MailTo: ' + Self.Smtp.EnhCodeString;
-      Self.Synchronize(@Self.Talk);
-      Exit;
-    end;
+    for S in SplitString(Self.FMailTo, ';') do
+      if not Self.Smtp.MailTo(S) then
+      begin
+        FTalk := 'SMTP ERROR: MailTo: ' + Self.Smtp.EnhCodeString;
+        Self.Synchronize(@Self.Talk);
+        Exit;
+      end;
     if not Self.Smtp.MailData(Mime.Lines) then
     begin
       FTalk := 'SMTP ERROR: MailData: ' + Self.Smtp.EnhCodeString;

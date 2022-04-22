@@ -1,0 +1,141 @@
+object FormEmailEditor: TFormEmailEditor
+  Left = 341
+  Height = 503
+  Top = 250
+  Width = 720
+  Caption = 'Compose Email'
+  ClientHeight = 503
+  ClientWidth = 720
+  OnCreate = FormCreate
+  OnShow = FormShow
+  Position = poDesktopCenter
+  object PanelMain: TPanel
+    Left = 0
+    Height = 503
+    Top = 0
+    Width = 720
+    Align = alClient
+    BorderWidth = 4
+    ClientHeight = 503
+    ClientWidth = 720
+    TabOrder = 0
+    object PanelHeader: TPanel
+      Left = 5
+      Height = 83
+      Top = 5
+      Width = 710
+      Align = alTop
+      ClientHeight = 83
+      ClientWidth = 710
+      TabOrder = 0
+      object Panel1: TPanel
+        Left = 1
+        Height = 24
+        Top = 49
+        Width = 708
+        Align = alTop
+        BorderSpacing.Top = 4
+        BevelOuter = bvNone
+        Caption = 'Panel1'
+        ClientHeight = 24
+        ClientWidth = 708
+        TabOrder = 0
+        object EditSubject: TEdit
+          Left = 0
+          Height = 24
+          Top = 0
+          Width = 621
+          Align = alClient
+          BorderSpacing.Right = 4
+          TabOrder = 0
+          TextHint = 'Subject'
+        end
+        object ButtonSend: TBitBtn
+          Left = 625
+          Height = 24
+          Top = 0
+          Width = 83
+          Align = alRight
+          Caption = 'Send'
+          OnClick = ButtonSendClick
+          TabOrder = 1
+        end
+      end
+      object Panel2: TPanel
+        Left = 1
+        Height = 44
+        Top = 1
+        Width = 708
+        Align = alTop
+        BevelOuter = bvNone
+        ClientHeight = 44
+        ClientWidth = 708
+        TabOrder = 1
+        object ScrollBoxMailTo: TScrollBox
+          Left = 259
+          Height = 44
+          Top = 0
+          Width = 449
+          HorzScrollBar.Page = 1
+          VertScrollBar.Page = 1
+          VertScrollBar.Visible = False
+          Align = alClient
+          BorderSpacing.Left = 4
+          BorderStyle = bsNone
+          TabOrder = 0
+        end
+        object Panel5: TPanel
+          Left = 0
+          Height = 44
+          Top = 0
+          Width = 255
+          Align = alLeft
+          BevelOuter = bvNone
+          ClientHeight = 44
+          ClientWidth = 255
+          TabOrder = 1
+          object EditMailTo: TEdit
+            Left = 0
+            Height = 23
+            Top = 0
+            Width = 253
+            OnKeyPress = EditMailToKeyPress
+            TabOrder = 0
+            TextHint = 'Mail to'
+          end
+        end
+      end
+    end
+    object PanelBody: TPanel
+      Left = 5
+      Height = 410
+      Top = 88
+      Width = 710
+      Align = alClient
+      ClientHeight = 410
+      ClientWidth = 710
+      TabOrder = 1
+      object Memo: TKMemo
+        Left = 1
+        Height = 382
+        Top = 27
+        Width = 708
+        Align = alClient
+        ContentPadding.Left = 5
+        ContentPadding.Top = 5
+        ContentPadding.Right = 5
+        ContentPadding.Bottom = 5
+        ParentFont = False
+        TabOrder = 0
+        Visible = True
+      end
+      object ToolBarMemo: TToolBar
+        Left = 1
+        Height = 26
+        Top = 1
+        Width = 708
+        TabOrder = 1
+      end
+    end
+  end
+end

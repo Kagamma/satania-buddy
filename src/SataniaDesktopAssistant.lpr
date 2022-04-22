@@ -37,7 +37,7 @@ uses
   form.touch, mcdowell.sound, form.rules, frame.rules.item,
   frame.rules.edititem, vosk, voskthread, voskbassaudiosource, mcdowell.chat,
   mcdowell.net, mcdowell.numbers, utils.strings, utils.encdec, utils.coords,
-  utils.threads, utils.files, mcdowell.smtp;
+  utils.threads, utils.files, mcdowell.smtp, form.email.editor;
 
 {$R *.res}
 
@@ -52,6 +52,7 @@ begin
   Application.CreateForm(TFormEvilCEditor, FormEvilCEditor);
   Application.CreateForm(TFormReminders, FormReminders);
   Application.CreateForm(TFormRules, FormRules);
+  Application.CreateForm(TFormEmailEditor, FormEmailEditor);
   Application.Run;
 end.
 
