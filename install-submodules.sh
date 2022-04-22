@@ -11,9 +11,9 @@ rm -rf src/components/HtmlViewer
 
 git clone --depth 1 https://github.com/Kagamma/satania-buddy-data.git data
 cd src/components
-git clone --depth 1 https://github.com/castle-engine/castle-engine.git
+git clone --depth 1 https://github.com/Kagamma/castle-engine.git
 cd castle-engine
-git apply ../patches/castle-engine.patch
+git checkout satania-buddy
 cd ..
 git clone --depth 1 https://github.com/joaopauloschuler/neural-api
 cd neural-api
