@@ -33,16 +33,13 @@ type
 
   TFormEmailEditor = class(TForm)
     ButtonSend: TBitBtn;
+    CSSShape: TCSSShape;
     EditSubject: TEdit;
     EditMailTo: TEdit;
     Memo: TKMemo;
-    Panel1: TPanel;
-    Panel2: TPanel;
-    Panel5: TPanel;
+    PanelSubject: TPanel;
     PanelBody: TPanel;
-    PanelHeader: TPanel;
     PanelMain: TPanel;
-    ScrollBoxMailTo: TScrollBox;
     ToolBarMemo: TToolBar;
     procedure ButtonSendClick(Sender: TObject);
     procedure EditMailToKeyPress(Sender: TObject; var Key: char);
@@ -50,7 +47,6 @@ type
     procedure FormShow(Sender: TObject);
   private
     FTagContainerMailTo: THtmlNode;
-    FShapeMailTo: TCSSShape;
   public
     procedure RemoveInputResult(Sender: TObject);
     procedure AddInputResult(const AParent: THtmlNode; const AText: String);
@@ -68,16 +64,17 @@ uses
   Mcdowell.smtp;
 
 procedure TFormEmailEditor.FormCreate(Sender: TObject);
+var
+  Dummy: THtmlNode;
 begin
   DisableAlign;
-  FShapeMailTo := TCSSShape.Create(Self);
-  FShapeMailTo.Align := alLeft;
-  FShapeMailTo.AutoSize := True;
 
-  FTagContainerMailTo := HTMLDiv('display:inline-block;margin-bottom:4px')
-    .AppendTo(FShapeMailTo.Body);
+  Dummy := HTMLDiv('display:flex;margin-bottom:4px')
+    .AppendTo(CSSShape.Body);        
+  FTagContainerMailTo := HTMLDiv('').AppendTo(Dummy);
+  HTMLDiv('display:inline-block;padding-right:4px').AppendTo(FTagContainerMailTo).SetAlignControl(EditMailTo);
+  HTMLDiv('').AppendTo(CSSShape.Body).SetAlignControl(PanelSubject);
 
-  Self.ScrollBoxMailTo.InsertControl(FShapeMailTo);
   EnableAlign;
 end;
 
@@ -90,7 +87,7 @@ begin
     for S in SplitString(EditMailTo.Text, ';') do
       AddInputResult(FTagContainerMailTo, S);
     EditMailTo.Text := '';
-    FShapeMailTo.Changed;
+    CSSShape.Changed;
   end;
 end;
 
@@ -112,7 +109,8 @@ begin
   EditMailToKeyPress(Self, C);
   MailTo := '';
   // Get all emails
-  Node := FTagContainerMailTo.FirstChild;
+  Node := FTagContainerMailTo.FirstChild;  
+  Node := Node.GetNext(Node);
   while Node <> nil do
   begin
     MailTo := MailTo + Node.FirstChild.Text;
@@ -136,6 +134,8 @@ end;
 
 procedure TFormEmailEditor.FormShow(Sender: TObject);
 begin
+  FTagContainerMailTo.Clear;       
+  HTMLDiv('display:inline-block;padding-right:4px').AppendTo(FTagContainerMailTo).SetAlignControl(EditMailTo);
 end;       
 
 procedure TFormEmailEditor.RemoveInputResult(Sender: TObject);
@@ -145,17 +145,15 @@ end;
 
 procedure TFormEmailEditor.AddInputResult(const AParent: THtmlNode; const AText: String);
 var
-  TagDummy,
-  TagText,
-  TagButton: THtmlNode;
+  Dummy: THtmlNode;
 begin     
-  TagDummy := HTMLDiv('display:inline-block;padding-right:4px;')
+  Dummy := HTMLDiv('display:inline-block;padding-right:4px;')
     .AppendTo(AParent);
-  TagButton := HTMLSpan('padding:4px;color:black;background-color:#DFE3E8', AText)
-    .AppendTo(TagDummy);
-  TagButton := HTMLSpan('padding:4px;color:black;background-color:#C6CDD6;border-bottom-right-radius:4px', 'X')
+  HTMLSpan('padding:4px;color:black;background-color:#DFE3E8', AText)
+    .AppendTo(Dummy);
+  HTMLSpan('padding:4px;color:black;background-color:#C6CDD6;border-bottom-right-radius:4px', 'X')
     .SetHover('color:white;background-color:#EA5E60;')
-    .AppendTo(TagDummy)
+    .AppendTo(Dummy)
     .SetOnClick(@RemoveInputResult);
 end;
 

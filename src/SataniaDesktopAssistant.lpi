@@ -68,6 +68,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="csspckg_lazarus"/>
+      </Item>
+      <Item>
         <PackageName Value="KControlsLaz"/>
       </Item>
       <Item>
