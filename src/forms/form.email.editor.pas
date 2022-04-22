@@ -46,14 +46,11 @@ type
     ToolBarMemo: TToolBar;
     procedure ButtonSendClick(Sender: TObject);
     procedure EditMailToKeyPress(Sender: TObject; var Key: char);
-    procedure EditReplyToKeyPress(Sender: TObject; var Key: char);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
-    FTagContainerReplyTo,
     FTagContainerMailTo: THtmlNode;
-    FShapeMailTo,
-    FShapeReplyTo: TCSSShape;
+    FShapeMailTo: TCSSShape;
   public
     procedure RemoveInputResult(Sender: TObject);
     procedure AddInputResult(const AParent: THtmlNode; const AText: String);
@@ -77,18 +74,10 @@ begin
   FShapeMailTo.Align := alLeft;
   FShapeMailTo.AutoSize := True;
 
-  FShapeReplyTo := TCSSShape.Create(Self);
-  FShapeReplyTo.Align := alLeft;
-  FShapeReplyTo.AutoSize := True;
-
   FTagContainerMailTo := HTMLDiv('display:inline-block;padding-bottom:4px')
     .AppendTo(FShapeMailTo.Body);
 
-  FTagContainerReplyTo := HTMLDiv('display:inline-block;padding-bottom:4px')
-    .AppendTo(FShapeReplyTo.Body);
-
   Self.ScrollBoxMailTo.InsertControl(FShapeMailTo);
-  Self.ScrollBoxReplyTo.InsertControl(FShapeReplyTo);
   EnableAlign;
 end;
 
@@ -108,55 +97,41 @@ end;
 procedure TFormEmailEditor.ButtonSendClick(Sender: TObject);
 var
   I: Integer;
-  MailTos,
-  ReplyTos: String;
+  MailTo: String;
   Node: THtmlNode;
   C: Char = #13;
+  SataniaSMTP: TSataniaSMTP;
 begin
+  //
+  if not TSataniaSMTP.IsEmailConfigured then
+  begin
+    Satania.Talk('Please config you email first in <font color="#0000ff">Settings</font>');
+    Exit;
+  end;
   // Adds remaining text to list
   EditMailToKeyPress(Self, C);
-  EditReplyToKeyPress(Self, C);
-  MailTos := '';
-  ReplyTos := '';
+  MailTo := '';
   // Get all emails
   Node := FTagContainerMailTo.FirstChild;
   while Node <> nil do
   begin
-    MailTos := MailTos + Node.Text;
+    MailTo := MailTo + Node.Text;
     Node := Node.GetNext(Node);
     if Node <> nil then
-      MailTos := MailTos + ';';
-  end;                        
-  // Get all emails
-  Node := FTagContainerReplyTo.FirstChild;
-  while Node <> nil do
-  begin
-    ReplyTos := ReplyTos + Node.Text;
-    Node := Node.GetNext(Node);
-    if Node <> nil then
-      ReplyTos := ReplyTos + ';';
-  end; 
+      MailTo := MailTo + ';';
+  end;
   // Verify
-  if (MailTos = '') or (EditSubject.Text = '') then
+  if (MailTo = '') or (EditSubject.Text = '') then
   begin
     Satania.Talk('Please make sure MailTo and Subject are filled');
     Exit;
   end;
   // Send    
-  Satania.Talk(MailTos);
-end;
-
-procedure TFormEmailEditor.EditReplyToKeyPress(Sender: TObject; var Key: char);
-var
-  S: String;
-begin
-  if (Key = #13) and (EditReplyTo.Text <> '') then
-  begin
-    for S in SplitString(EditReplyTo.Text, ';') do
-      AddInputResult(FTagContainerReplyTo, S);
-    EditReplyTo.Text := ''; 
-    FShapeReplyTo.Changed;
-  end;
+  Satania.Talk('Sending...');
+  SataniaSMTP := TSataniaSMTP.Create;
+  SataniaSMTP.MailTo := MailTo;
+  SataniaSMTP.Subject := EditSubject.Text;
+  SataniaSMTP.Body := Memo.Text;
 end;
 
 procedure TFormEmailEditor.FormShow(Sender: TObject);
