@@ -9,6 +9,7 @@ object FormEmailEditor: TFormEmailEditor
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poDesktopCenter
+  LCLVersion = '2.3.0.0'
   object PanelMain: TPanel
     Left = 0
     Height = 503
@@ -67,7 +68,6 @@ object FormEmailEditor: TFormEmailEditor
       Width = 710
       Align = alTop
       AutoSize = True
-      Style = 'padding:5px'
     end
     object PanelSubject: TPanel
       Left = 1

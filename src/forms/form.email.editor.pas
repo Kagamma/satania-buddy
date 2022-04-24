@@ -73,7 +73,7 @@ begin
     .AppendTo(CSSShape.Body);        
   FTagContainerMailTo := HTMLDiv('').AppendTo(Dummy);
   HTMLDiv('display:inline-block;padding-right:4px').AppendTo(FTagContainerMailTo).SetAlignControl(EditMailTo);
-  HTMLDiv('').AppendTo(CSSShape.Body).SetAlignControl(PanelSubject);
+  HTMLDiv('margin-bottom:4px').AppendTo(CSSShape.Body).SetAlignControl(PanelSubject);
 
   EnableAlign;
 end;
@@ -130,6 +130,7 @@ begin
   SataniaSMTP.MailTo := MailTo;
   SataniaSMTP.Subject := EditSubject.Text;
   SataniaSMTP.Body := Memo.Text;
+  SataniaSMTP.Start;
 end;
 
 procedure TFormEmailEditor.FormShow(Sender: TObject);
