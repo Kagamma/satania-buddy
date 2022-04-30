@@ -5,7 +5,7 @@ object FormMain: TFormMain
   Width = 683
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 771
+  ClientHeight = 794
   ClientWidth = 683
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
@@ -18,7 +18,7 @@ object FormMain: TFormMain
   WindowState = wsMaximized
   object CastleControl: TCastleControl
     Left = 0
-    Height = 771
+    Height = 794
     Top = 0
     Width = 683
     Align = alClient
@@ -1398,6 +1398,7 @@ object FormMain: TFormMain
     end
     object MenuItemEmail: TMenuItem
       Caption = 'Email'
+      Visible = False
       object MenuItemEmailCompose: TMenuItem
         Caption = 'Compose'
         OnClick = MenuItemEmailComposeClick
