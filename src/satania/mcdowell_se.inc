@@ -692,6 +692,8 @@ begin
     if D <> nil then
     begin
       case D.JSONType of
+        jtString;
+          Result := D.AsString;
         jtNumber:
           Result := D.AsFloat;
         jtBoolean:
