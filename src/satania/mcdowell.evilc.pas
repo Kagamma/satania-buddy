@@ -61,6 +61,7 @@ type
     opOperatorMul,
     opOperatorDiv,
     opOperatorMod,
+    opOperatorPow,
     opOperatorNegative,
     opOperatorSmaller,
     opOperatorSmallerOrEqual,
@@ -238,6 +239,7 @@ type
     tkMul,
     tkDiv,
     tkMod,
+    tkPow,
     tkOpAssign,
     tkEqual,
     tkNotEqual,
@@ -283,7 +285,7 @@ type
 TSETokenKinds = set of TSETokenKind;
 
 const TokenNames: array[TSETokenKind] of String = (
-  'EOF', '.', '+', '-', '*', 'div', 'mod', 'operator assign', '=', '!=', '<',
+  'EOF', '.', '+', '-', '*', 'div', 'mod', '^', 'operator assign', '=', '!=', '<',
   '>', '<=', '>=', '{', '}', ':', '(', ')', 'neg', 'number', 'string',
   ',', 'if', 'identity', 'function', 'fn', 'variable', 'const',
   'unknown', 'else', 'while', 'break', 'continue', 'pause', 'yield',
@@ -2251,6 +2253,13 @@ begin
             Self.CodePtr := CodePtrLocal;
             Self.StackPtr := StackPtrLocal;
             Exit;
+          end;  
+        opOperatorPow:
+          begin
+            B := Pop;
+            A := Pop;
+            Push(Power(A^.VarNumber, B^.VarNumber));
+            Inc(CodePtrLocal);
           end;
       end;
       if Self.IsPaused or Self.IsWaited then
@@ -2583,6 +2592,10 @@ begin
             Token.Value := C;
             NextChar;
           end;
+        end;   
+      '^':
+        begin
+          Token.Kind := tkPow;
         end;
       '-':
         begin
@@ -3143,7 +3156,7 @@ var
       end;
     end;
 
-    procedure Term;
+    procedure Pow;
     var
       Token: TSEToken;
     begin
@@ -3152,12 +3165,29 @@ var
       begin
         Token := PeekAtNextToken;
         case Token.Kind of
+          tkPow:
+            BinaryOp(opOperatorPow, @SignedFactor, True);
+          else
+            Exit;
+        end;
+      end;
+    end;
+
+    procedure Term;
+    var
+      Token: TSEToken;
+    begin
+      Pow;
+      while True do
+      begin
+        Token := PeekAtNextToken;
+        case Token.Kind of
           tkMul:
-            BinaryOp(opOperatorMul, @SignedFactor, True);
+            BinaryOp(opOperatorMul, @Pow, True);
           tkDiv:
-            BinaryOp(opOperatorDiv, @SignedFactor, True);
+            BinaryOp(opOperatorDiv, @Pow, True);
           tkMod:
-            BinaryOp(opOperatorMod, @SignedFactor, True);
+            BinaryOp(opOperatorMod, @Pow, True);
           else
             Exit;
         end;
