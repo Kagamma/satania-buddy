@@ -716,7 +716,8 @@ end;
 
 class function TBuiltInFunction.SEGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Exit(ScriptVarMap[Args[0]]);
+  if ScriptVarMap.ContainsKey(Args[0].VarString) then
+    Exit(ScriptVarMap[Args[0]]);
 end;
 
 class function TBuiltInFunction.SESet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
