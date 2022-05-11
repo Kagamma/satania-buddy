@@ -696,6 +696,11 @@ begin
           Result := D.AsFloat;
         jtBoolean:
           Result := D.AsBoolean;
+        jtNull:
+          begin
+            Result.VarString := '';
+            Result := 0;
+          end
         else
           Result := D.AsJSON;
       end;
