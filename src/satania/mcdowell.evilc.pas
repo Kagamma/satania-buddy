@@ -2314,7 +2314,7 @@ begin
   Self.RegisterFunc('buffer_to_string', @TBuiltInFunction(nil).SEBufferToString, 1);
   Self.RegisterFunc('wbuffer_to_string', @TBuiltInFunction(nil).SEWBufferToString, 1);
   Self.RegisterFunc('typeof', @TBuiltInFunction(nil).SETypeOf, 1);
-  Self.RegisterFunc('get', @TBuiltInFunction(nil).SEGet, 2);
+  Self.RegisterFunc('get', @TBuiltInFunction(nil).SEGet, 1);
   Self.RegisterFunc('set', @TBuiltInFunction(nil).SESet, 2);
   Self.RegisterFunc('string', @TBuiltInFunction(nil).SEString, 1);
   Self.RegisterFunc('number', @TBuiltInFunction(nil).SENumber, 1);
