@@ -219,7 +219,7 @@ type
 
   TSECache = record
     Binary: TSEBinary;
-    LocalVarListCount: Cardinal;
+    GlobalVarCount: Cardinal;
     LineOfCodeList: TIntegerList;
     FuncScriptList: TSEFuncScriptList;
     FuncImportList: TSEFuncImportList;
@@ -332,6 +332,7 @@ type
     VM: TSEVM;
     IncludeList: TStrings;
     TokenList: TSETokenList;
+    GlobalVarCount: Integer;
     LocalVarList: TSEIdentList;
     FuncNativeList: TSEFuncNativeList;
     FuncScriptList: TSEFuncScriptList;
@@ -1515,11 +1516,11 @@ begin
   Self.IsDone := False;
   Self.Parent.IsDone := False;
   Self.WaitTime := 0;
-  SetLength(Self.Stack, Self.Parent.LocalVarList.Count + 64 + StackWorkingSize);
+  SetLength(Self.Stack, Self.Parent.GlobalVarCount + 64 + StackWorkingSize);
   SetLength(Self.Frame, 64);
   Self.FramePtr := 0;
   Self.StackPtr := @Self.Stack[0];
-  Self.StackPtr := Self.StackPtr + Self.Parent.LocalVarList.Count + 64;
+  Self.StackPtr := Self.StackPtr + Self.Parent.GlobalVarCount + 64;
 end;
 
 procedure TSEVM.Exec;
@@ -2959,8 +2960,9 @@ var
     Result.Kind := Kind;
     Result.Ln := Token.Ln;
     Result.Col := Token.Col;
-    Result.Addr := Self.LocalVarList.Count - 1;
+    Result.Addr := Self.GlobalVarCount;
     Result.Name := Token.Value;
+    Inc(Self.GlobalVarCount);
   end;
 
   function Emit(const Data: array of TSEValue): Integer; inline;
@@ -3300,7 +3302,7 @@ var
       if FindFunc(Name) <> nil then
         Error(Format('Duplicate function declaration "%s"', [Token.Value]), Token);
 
-      StackAddr := Self.LocalVarList.Count - 1;
+      StackAddr := Self.GlobalVarCount;
 
       Token.Value := 'result';
       Token.Kind := tkIdent;
@@ -3847,6 +3849,7 @@ begin
   Self.LocalVarList.Clear;
   Self.TokenList.Clear;
   Self.IncludeList.Clear;
+  Self.GlobalVarCount := 1;
   Ident.Kind := ikVariable;
   Ident.Addr := 0;
   Ident.Name := 'result';
@@ -3934,7 +3937,7 @@ begin
   begin
     Result.FuncImportList.Add(Self.FuncImportList[I]);
   end;
-  Result.LocalVarListCount := Self.LocalVarList.Count;
+  Result.GlobalVarCount := Self.GlobalVarCount;
 end;
 
 procedure TEvilC.Restore(const Cache: TSECache);
@@ -3951,7 +3954,7 @@ begin
     Self.FuncScriptList.Add(Cache.FuncScriptList[I]);
   for I := 0 to Cache.FuncImportList.Count - 1 do
     Self.FuncImportList.Add(Cache.FuncImportList[I]);
-  Self.LocalVarList.Count := Cache.LocalVarListCount;
+  Self.GlobalVarCount := Cache.GlobalVarCount;
   Self.IsParsed := True;
 end;
 
