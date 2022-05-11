@@ -199,6 +199,7 @@ begin
   Script.RegisterFunc('fs_directory_delete', @SEDirectoryDelete, 1);
   Script.RegisterFunc('fs_directory_find_all', @SEDirectoryFindAll, 2);     
   Script.RegisterFunc('fs_directory_exists', @SEDirectoryExists, 1);
+  Script.RegisterFunc('json_get', @SEJSONGet, 2);
   ScriptCacheMap := TSECacheMap.Create;
   UpdateMeta;
 end;
