@@ -78,6 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
     function SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
@@ -677,6 +678,31 @@ end;
 function TSatania.SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := DirectoryExists(Args[0].VarString);
+end;
+
+function TSatania.SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  JSON: TJSONObject;
+  D: TJSONData;
+begin
+  JSON := GetJSON(Args[0].VarString) as TJSONObject;
+  Result := '';
+  try
+    D := JSON.FindPath(Args[1].VarString);
+    if D <> nil then
+    begin
+      case D.JSONType of
+        jtNumber:
+          Result := D.AsFloat;
+        jtBoolean:
+          Result := D.AsBoolean;
+        else
+          Result := D.AsJSON;
+      end;
+    end;
+  finally
+    JSON.Free;
+  end;
 end;
 
 {$endif}
