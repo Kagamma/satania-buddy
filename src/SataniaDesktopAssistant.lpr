@@ -37,7 +37,7 @@ uses
   form.touch, mcdowell.sound, form.rules, frame.rules.item,
   frame.rules.edititem, vosk, voskthread, voskbassaudiosource, mcdowell.chat,
   mcdowell.net, mcdowell.numbers, utils.strings, utils.encdec, utils.coords,
-  utils.threads, utils.files, mcdowell.smtp, form.email.editor;
+  utils.threads, utils.files, mcdowell.smtp, form.email.editor, utils.smartptr;
 
 {$R *.res}
 

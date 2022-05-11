@@ -339,7 +339,7 @@ begin
   SetScale(Args[0].VarNumber);
 end;
 
-function TSatania.SESpriteVisibleSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESpriteVisibleSet(const VM: TSEVM  ; const Args: array of TSEValue): TSEValue;
 begin
   if Args[0].VarNumber = 0 then
     SetVisible(False)

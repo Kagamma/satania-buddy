@@ -39,7 +39,10 @@ uses
 procedure TSataniaHttpGetThread.SendToHer;
 begin
   RunList.Delete(RunList.IndexOf(URL));
-  RunResultList.Add(URL, Data);
+  if RunResultList.ContainsKey(URL) then
+    RunResultList[URL] := Data
+  else
+    RunResultList.Add(URL, Data);
 end;
 
 procedure TSataniaHttpGetThread.Execute;
@@ -60,7 +63,10 @@ end;
 procedure TSataniaHttpPostThread.SendToHer;
 begin
   RunList.Delete(RunList.IndexOf(URL));
-  RunResultList.Add(URL, Data);
+  if RunResultList.ContainsKey(URL) then
+    RunResultList[URL] := Data
+  else
+    RunResultList.Add(URL, Data);
 end;
 
 procedure TSataniaHttpPostThread.Execute;
