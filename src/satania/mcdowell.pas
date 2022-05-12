@@ -440,9 +440,9 @@ begin
 end;
 
 procedure TSatania.TalkReset(S: String);
-begin      
-  Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
+begin                                 
   Self.Talk(S);
+  Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
 end;
 
 procedure TSatania.TalkWithoutBlock(S: String);
