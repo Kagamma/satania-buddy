@@ -48,7 +48,7 @@ begin
     Terminate;
   except
     on E: Exception do
-      Satania.Talk(E.Message);
+      Satania.TalkReset(E.Message);
   end;
 end;
 

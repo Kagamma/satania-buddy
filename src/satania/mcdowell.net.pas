@@ -50,7 +50,7 @@ begin
       Synchronize(@SendToHer);
     except
       on E: Exception do
-        Satania.Talk(E.Message);
+        Satania.TalkReset(E.Message);
     end;
   finally
     Terminate;
@@ -85,7 +85,7 @@ begin
       Synchronize(@SendToHer);
     except
       on E: Exception do
-        Satania.Talk(E.Message);
+        Satania.TalkReset(E.Message);
     end;
   finally
     HTTP.Free;

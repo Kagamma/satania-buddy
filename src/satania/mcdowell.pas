@@ -79,7 +79,8 @@ type
     procedure StopAnimation(AnimName: String);
     procedure StopAllAnimations;
     procedure Log(LogName, S: String);
-    procedure Talk(S: String);
+    procedure Talk(S: String);          
+    procedure TalkReset(S: String);
     procedure Notify(C, S: String);
     procedure TalkWithoutBlock(S: String);
     function Exec(S: String): String;
@@ -436,6 +437,12 @@ begin
   finally
     CSTalk.Leave;
   end;
+end;
+
+procedure TSatania.TalkReset(S: String);
+begin      
+  Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
+  Self.Talk(S);
 end;
 
 procedure TSatania.TalkWithoutBlock(S: String);
