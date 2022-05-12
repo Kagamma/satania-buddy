@@ -288,6 +288,7 @@ begin
   FSettings.STTVoskModel := 'english';
   FSettings.STTBackend := SPEECH_RECOGNIZER_BACKEND_VOSK;
   FSettings.FSitOnWindowRightMargin := 86;
+  FSettings.FBotVolframAlphaAppID := 'XPP79K-99H9A8AH32';
 end;
 
 destructor TSave.Destroy;
