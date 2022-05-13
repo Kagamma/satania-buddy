@@ -355,7 +355,11 @@ end;
 function TSatania.SEURLGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   Thread: TSataniaHttpGetThread;
-begin  
+  I: Integer;
+begin         
+  I := RunList.IndexOf(Args[0]);
+  if I >= 0 then
+    RunList.Delete(I);
   RunList.Add(Args[0]);
   Thread := TSataniaHttpGetThread.Create(True);
   Thread.FreeOnTerminate := True;
@@ -369,6 +373,9 @@ var
   Thread: TSataniaHttpPostThread;
   I: Integer;
 begin
+  I := RunList.IndexOf(Args[0]);
+  if I >= 0 then
+    RunList.Delete(I);
   RunList.Add(Args[0]);
   Thread := TSataniaHttpPostThread.Create(True);
   Thread.FreeOnTerminate := True;
@@ -389,6 +396,9 @@ var
   Thread: TSataniaHttpPostThread;
   I, P: Integer;
 begin
+  I := RunList.IndexOf(Args[0]);
+  if I >= 0 then
+    RunList.Delete(I);
   RunList.Add(Args[0]);
   Thread := TSataniaHttpPostThread.Create(True);
   Thread.FreeOnTerminate := True;

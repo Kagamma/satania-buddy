@@ -539,9 +539,13 @@ end;
 function TSatania.Exec(S: String): String;
 var
   ExecThread: TSataniaExecThread;
+  I: Integer;
 begin
   ExecThread := TSataniaExecThread.Create(True);
   ExecThread.RunName := S;
+  I := RunList.IndexOf(ExecThread.RunName);
+  if I >= 0 then
+    RunList.Delete(I);
   RunList.Add(ExecThread.RunName);
   ExecThread.ChatSend := S;
   ExecThread.FreeOnTerminate := True;
