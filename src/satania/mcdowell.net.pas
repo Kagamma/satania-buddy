@@ -9,8 +9,10 @@ uses
 
 type
   TSataniaHttpGetThread = class(TThread)
-  protected
-    procedure SendToHer;
+  protected            
+    ErrorMessage: String;
+    procedure SendToHer;   
+    procedure ResetToDefault;
   public
     Data,
     URL: String;
@@ -19,7 +21,9 @@ type
 
   TSataniaHttpPostThread = class(TThread)
   protected
-    procedure SendToHer;
+    ErrorMessage: String;
+    procedure SendToHer;  
+    procedure ResetToDefault;
   public
     FormData: TStrings;
     FieldName,
@@ -42,6 +46,11 @@ begin
   RunResultList.AddOrSetValue(URL, Data);
 end;
 
+procedure TSataniaHttpGetThread.ResetToDefault;
+begin
+  Satania.TalkReset(ErrorMessage);
+end;
+
 procedure TSataniaHttpGetThread.Execute;
 begin
   try
@@ -50,7 +59,10 @@ begin
       Synchronize(@SendToHer);
     except
       on E: Exception do
-        Satania.TalkReset(E.Message);
+      begin
+        ErrorMessage := E.Message;
+        Synchronize(@Self.ResetToDefault);
+      end;
     end;
   finally
     Terminate;
@@ -61,6 +73,11 @@ procedure TSataniaHttpPostThread.SendToHer;
 begin
   RunList.Delete(RunList.IndexOf(URL));
   RunResultList.AddOrSetValue(URL, Data);
+end;        
+
+procedure TSataniaHttpPostThread.ResetToDefault;
+begin
+  Satania.TalkReset(ErrorMessage);
 end;
 
 procedure TSataniaHttpPostThread.Execute;
@@ -85,7 +102,10 @@ begin
       Synchronize(@SendToHer);
     except
       on E: Exception do
-        Satania.TalkReset(E.Message);
+      begin
+        ErrorMessage := E.Message;
+        Synchronize(@Self.ResetToDefault);
+      end;
     end;
   finally
     HTTP.Free;

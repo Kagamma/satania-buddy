@@ -30,6 +30,10 @@ uses
 type
   TMethod = procedure of object;
   TCommonThread = class(TThread)
+  protected   
+    ErrorMessage: String;
+    procedure ResetToDefault;
+  public
     Method: TMethod;
     procedure Execute; override;
   end;
@@ -41,6 +45,11 @@ implementation
 uses
   Mcdowell;
 
+procedure TCommonThread.ResetToDefault;
+begin
+  Satania.TalkReset(ErrorMessage);
+end;
+
 procedure TCommonThread.Execute;
 begin
   try
@@ -48,7 +57,10 @@ begin
     Terminate;
   except
     on E: Exception do
-      Satania.TalkReset(E.Message);
+    begin
+      ErrorMessage := E.Message;
+      Synchronize(@Self.ResetToDefault);
+    end;
   end;
 end;
 
