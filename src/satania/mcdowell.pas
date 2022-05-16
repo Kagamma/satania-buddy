@@ -48,6 +48,7 @@ type
     MenuItems: array of TMenuItem;
     IsAction: Boolean;
     IsTalking: Boolean;
+    IsAsking: Boolean;
     IsBlocked: Boolean;
     ChatResult: String;
     Sprite: TCastleScene;
@@ -79,7 +80,8 @@ type
     procedure StopAnimation(AnimName: String);
     procedure StopAllAnimations;
     procedure Log(LogName, S: String);
-    procedure Talk(S: String);          
+    procedure Talk(S: String);           
+    procedure Ask(S: String);
     procedure TalkReset(S: String);
     procedure Notify(C, S: String);
     procedure TalkWithoutBlock(S: String);
@@ -115,6 +117,7 @@ uses
   form.reminders,
   form.chat,
   form.touch,
+  form.ChatBubble,
   mcdowell.chatbot,
   mcdowell.sound,
   mcdowell.net,
@@ -141,7 +144,9 @@ begin
   Self.AnimTalkScriptList := TStringList.Create;
   Script.RegisterFunc('numbers', @SENumbers, 1);     
   Script.RegisterFunc('months_to_numbers', @SEMonthsToNumbers, 1);
-  Script.RegisterFunc('talk', @SETalk, -1);
+  Script.RegisterFunc('talk', @SETalk, -1);                           
+  Script.RegisterFunc('ask', @SEAsk, 2);
+  Script.RegisterFunc('answer', @SEAnswer, 0);
   Script.RegisterFunc('notify', @SENotify, 1);
   Script.RegisterFunc('process_run', @SEProcessRun, 1);
   Script.RegisterFunc('process_is_running', @SEProcessIsRunning, 1);
@@ -422,6 +427,7 @@ begin
     end;
     ChatBubbleDelay := 1;
     IsTalking := True;
+    IsAsking := False;
     if S <> '' then
     begin
       Log(Name, S);
@@ -433,6 +439,35 @@ begin
         // Play an animation randomly
         Satania.ActionFromFile(Self.AnimTalkScriptList.Strings[Random(Self.AnimTalkScriptList.Count)]);
       end;
+    end;
+  finally
+    CSTalk.Leave;
+  end;
+end;
+
+procedure TSatania.Ask(S: String);
+begin
+  CSTalk.Enter;
+  try
+    LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
+    LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
+    LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
+    ChatText.ResetText;
+    ChatText.MaxDisplayChars := 0;
+    ChatText.Text.Text := S;
+    FormChatBubble.AskText.Caption := S;
+    if ChatText.Text.Count > 25 then
+    begin
+      ChatText.Text.Text := 'too much words... please check the history instead!';
+    end;
+    ChatBubbleDelay := 1;
+    IsTalking := True;   
+    IsAsking := True;
+    IsBlocked := True;
+    if S <> '' then
+    begin
+      Log(Name, S);
+      ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
     end;
   finally
     CSTalk.Leave;
@@ -465,7 +500,8 @@ begin
       Log(Name, S);
       ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
     end;
-    IsTalking := False;
+    IsTalking := False; 
+    IsAsking := False;
   finally
     CSTalk.Leave;
   end;

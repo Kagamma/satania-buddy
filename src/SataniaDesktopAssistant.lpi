@@ -324,6 +324,18 @@
         <Filename Value="utils/utils.smartptr.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="forms/form.chatbubble.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormChatBubble"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Form.ChatBubble"/>
+      </Unit>
+      <Unit>
+        <Filename Value="utils/utils.htmltext.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

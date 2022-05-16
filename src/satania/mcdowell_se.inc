@@ -24,7 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteVisibleSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteVisibleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;               
+    function SEAsk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEAnswer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEProcessRun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEProcessIsRunning(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -123,6 +125,24 @@ begin
       VM.IsPaused := True;
     end;
   end;
+end;
+
+function TSatania.SEAsk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  I: Integer;
+begin
+  Ask(SEValueToText(Args[0]));
+  VM.IsPaused := True;
+  FormChatBubble.ClearButtons;
+  for I := Length(Args[1].VarArray) - 1 downto 0 do
+  begin
+    FormChatBubble.AddButton(Args[1].VarArray[I].VarString, I);
+  end;
+end;
+
+function TSatania.SEAnswer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := FormChatBubble.Answer;
 end;
 
 function TSatania.SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

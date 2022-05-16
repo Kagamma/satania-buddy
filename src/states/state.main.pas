@@ -43,6 +43,7 @@ uses
   CastleWindow,
   Form.Touch,
   Form.Main,
+  Form.ChatBubble,
   Utils.Strings,
   Utils.Coords,
   Mcdowell;
@@ -128,11 +129,16 @@ var
   R, RA: TFloatRectangle;
 begin
   if ChatText.Text.Text <> '' then
-    ChatBubble.Exists := True and Sprite.Visible
-  else
+  begin                 
+    FormChatBubble.Visible := Satania.IsAsking;
+    ChatBubble.Exists := True and Sprite.Visible and not Satania.IsAsking;
+  end else
+  begin
+    FormChatBubble.Visible := False;
     ChatBubble.Exists := False;
-  ChatBubbleArrow.Exists := ChatBubble.Exists;
-  if not ChatBubble.Exists then Exit;
+  end;
+  ChatBubbleArrow.Exists := ChatBubble.Exists and not Satania.IsAsking;
+  if (not ChatBubble.Exists) and (not FormChatBubble.Visible) then Exit;
 
   Box := Satania.LocalBoundingBoxSnapshot;
   Box.Data[0] := Box.Data[0] + Sprite.Translation + SpriteTransform.Translation;
@@ -142,7 +148,8 @@ begin
   case BubbleSideX of
     0:
       begin
-        ChatBubble.Left := Box.Min.X - R.Width;
+        ChatBubble.Left := Box.Min.X - R.Width;            
+        FormChatBubble.Left := Round(Box.Min.X - FormChatBubble.Width);
         ChatBubbleArrow.Left := ChatBubble.Left + R.Width - RA.Width - 4;
         ChatBubbleArrow.FlipHorizontal := False;
         if R.Left < 0 then
@@ -150,7 +157,8 @@ begin
       end;
     1:
       begin
-        ChatBubble.Left := Box.Max.X;
+        ChatBubble.Left := Box.Max.X;     
+        FormChatBubble.Left := Round(Box.Max.X);
         ChatBubbleArrow.Left := ChatBubble.Left + 4;
         ChatBubbleArrow.FlipHorizontal := True;
         if R.Left + R.Width > R.Width * 2 + (Box.Max.X - Box.Min.X) then
@@ -160,7 +168,8 @@ begin
   case BubbleSideY of
     0:
       begin
-        ChatBubble.Bottom := Box.Min.Y - R.Height;
+        ChatBubble.Bottom := Box.Min.Y - R.Height;     
+        FormChatBubble.Top := Round(Application.ScreenHeight - Box.Min.Y);
         ChatBubbleArrow.Bottom := ChatBubble.Bottom + R.Height - 4;
         ChatBubbleArrow.FlipVertical := True;
         if R.Bottom + R.Height * 2 + (Box.Max.Y - Box.Min.Y) < Application.ScreenHeight then
@@ -169,6 +178,7 @@ begin
     1:
       begin
         ChatBubble.Bottom := Box.Max.Y;
+        FormChatBubble.Top := Round(Application.ScreenHeight - (Box.Max.Y + FormChatBubble.Height));
         ChatBubbleArrow.Bottom := ChatBubble.Bottom - RA.Height + 4;
         ChatBubbleArrow.FlipVertical := False;
         if R.Bottom + R.Height > Application.ScreenHeight then
@@ -179,7 +189,7 @@ begin
   if ChatBubble.EffectiveWidth < ChatBubbleArrow.EffectiveWidth then
     ChatBubbleArrow.Exists := False
   else
-    ChatBubbleArrow.Exists := True;
+    ChatBubbleArrow.Exists := ChatBubble.Exists and not Satania.IsAsking;
 end;
 
 procedure TStateMain.Update(const SecondsPassed: Single; var HandleInput: Boolean);
