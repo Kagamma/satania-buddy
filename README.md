@@ -20,7 +20,7 @@ A: Windows Vista or above with Aero enabled.
 
 A: x11, qt5, qt5pas, freetype, openssl (for IMAP), openal, vorbis
 
-Optional dependencies: fortune, sensors, metar
+Optional dependencies: fortune, sensors
 
 You also need a compositor, or else the app will show black screen.
 
@@ -44,7 +44,7 @@ A: Satania Buddy works completely offline without any connections to remote serv
 
 A: https://github.com/Kagamma/satania-buddy/wiki/Scripting-References-&-APIs
 
-##### Q: How to make her speaks in my language? She only shows `?` in her chat bubble.
+##### Q: How to make her speaks in my language? She only shows `_` in her chat bubble.
 
 A: By default only ASCII is enabled. If you want to add supports for your language, make sure to add suitable fonts in `data/fonts`, enable it in `Settings`, and add unicode codepoints in Charsets.
 For example this is Japanese's codepoints:
