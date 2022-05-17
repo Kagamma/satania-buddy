@@ -69,7 +69,7 @@ end;
 procedure TFormChatBubble.PanelPaint(Sender: TObject);
 begin
   Panel.Canvas.Pen.Color := clBlack;
-  Panel.Canvas.Rectangle(0, 0, Panel.Width - 1, Panel.Height - 1);
+  Panel.Canvas.Rectangle(0, 0, Panel.Width, Panel.Height);
 end;
 
 procedure TFormChatBubble.ButtonAnswerClick(Sender: TObject);
