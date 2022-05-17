@@ -94,7 +94,7 @@ begin
   B.Caption := ButtonName;
   B.Tag := T;
   B.Align := alLeft;
-  B.BorderSpacing.Left := 4;
+  B.BorderSpacing.Right := 4;
   B.OnClick := @ButtonAnswerClick;
   PanelButton.InsertControl(B);
 end;
