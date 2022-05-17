@@ -32,8 +32,6 @@ type
   { TFormChatBubble }
 
   TFormChatBubble = class(TForm)
-    ButtonYes: TButton;
-    ButtonNo: TButton;
     AskText: TLabel;
     Panel1: TPanel;
     Panel: TPanel;
@@ -71,10 +69,7 @@ end;
 procedure TFormChatBubble.PanelPaint(Sender: TObject);
 begin
   Panel.Canvas.Pen.Color := clBlack;
-  Panel.Canvas.Line(0, 0, Panel.Width - 1, 0);
-  Panel.Canvas.Line(Panel.Width - 1, 0, Panel.Width - 1, Panel.Height - 1);
-  Panel.Canvas.Line(Panel.Width - 1, Panel.Height - 1, 0, Panel.Height - 1);
-  Panel.Canvas.Line(0, Panel.Height - 1, 0, 0);
+  Panel.Canvas.Rectangle(0, 0, Panel.Width - 1, Panel.Height - 1);
 end;
 
 procedure TFormChatBubble.ButtonAnswerClick(Sender: TObject);

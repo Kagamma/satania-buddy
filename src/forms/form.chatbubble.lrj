@@ -1,6 +1,4 @@
 {"version":1,"strings":[
 {"hash":235541365,"name":"tformchatbubble.caption","sourcebytes":[70,111,114,109,67,104,97,116,66,117,98,98,108,101],"value":"FormChatBubble"},
-{"hash":144747700,"name":"tformchatbubble.asktext.caption","sourcebytes":[65,115,107,84,101,120,116],"value":"AskText"},
-{"hash":24515,"name":"tformchatbubble.buttonyes.caption","sourcebytes":[89,101,115],"value":"Yes"},
-{"hash":1359,"name":"tformchatbubble.buttonno.caption","sourcebytes":[78,111],"value":"No"}
+{"hash":144747700,"name":"tformchatbubble.asktext.caption","sourcebytes":[65,115,107,84,101,120,116],"value":"AskText"}
 ]}

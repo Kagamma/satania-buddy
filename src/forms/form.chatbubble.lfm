@@ -67,32 +67,7 @@ object FormChatBubble: TFormChatBubble
         Width = 338
         Align = alBottom
         BevelOuter = bvNone
-        ClientHeight = 26
-        ClientWidth = 338
         TabOrder = 1
-        object ButtonYes: TButton
-          Left = 0
-          Height = 26
-          Top = 0
-          Width = 75
-          Align = alLeft
-          BorderSpacing.Right = 4
-          Caption = 'Yes'
-          OnClick = ButtonAnswerClick
-          TabOrder = 0
-        end
-        object ButtonNo: TButton
-          Tag = 1
-          Left = 79
-          Height = 26
-          Top = 0
-          Width = 75
-          Align = alLeft
-          BorderSpacing.Right = 4
-          Caption = 'No'
-          OnClick = ButtonAnswerClick
-          TabOrder = 1
-        end
       end
     end
   end
