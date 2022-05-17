@@ -25,11 +25,6 @@ unit Form.ChatBubble;
 interface
 
 uses
-  {$ifdef WINDOWS}
-  windows,
-  {$else}
-  qt5, qtwidgets,
-  {$endif}
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls;
 
 type
@@ -69,18 +64,7 @@ uses
 { TFormChatBubble }
 
 procedure TFormChatBubble.FormCreate(Sender: TObject);
-var
-  Attrib: LongInt;
 begin
-  {$ifdef WINDOWS}
-  Color := clFuchsia;
-  Attrib := GetWindowLongA(Handle, GWL_EXSTYLE);
-  SetWindowLongA(Handle, GWL_EXSTYLE, Attrib or WS_EX_LAYERED or WS_EX_TOOLWINDOW and not WS_EX_APPWINDOW);
-  SetLayeredWindowAttributes(Handle, clFuchsia, 0, LWA_COLORKEY);
-  {$else}
-  TQtWidget(TQtMainWindow(Handle).Widget).setAttribute(QtWA_TranslucentBackground);
-  TQtWidget(TQtMainWindow(Handle).Widget).setAttribute(QtWA_NoSystemBackground);
-  {$endif}
   AddFormToIgnoreHandleList(Self);
 end;
 

@@ -11,6 +11,7 @@ object FormChatBubble: TFormChatBubble
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   ShowInTaskBar = stNever
+  LCLVersion = '2.3.0.0'
   object Panel: TPanel
     Left = 0
     Height = 189
