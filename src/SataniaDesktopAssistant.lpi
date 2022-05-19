@@ -336,6 +336,10 @@
         <Filename Value="utils/utils.htmltext.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="components/mormot.core.fpcx64mm.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -23,6 +23,7 @@ program SataniaBuddy;
 {$I configs.inc}
 
 uses
+  mormot.core.fpcx64mm,
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
