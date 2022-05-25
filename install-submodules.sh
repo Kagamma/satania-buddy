@@ -8,6 +8,7 @@ rm -rf src/components/internettools
 rm -rf src/components/richmemo
 rm -rf src/components/KControls
 rm -rf src/components/HtmlViewer
+rm -rf src/components/spine-runtimes
 
 git clone --depth 1 https://github.com/Kagamma/satania-buddy-data.git data
 cd src/components
@@ -27,5 +28,9 @@ git clone --depth 1 https://github.com/Kagamma/HtmlViewer.git
 git clone https://github.com/Kagamma/csscontrols.git
 cd csscontrols
 git checkout dev
+cd ..
+git clone https://github.com/Kagamma/spine-runtimes.git
+cd spine-runtimes
+git checkout castle-engine
 cd ..
 cd ..
