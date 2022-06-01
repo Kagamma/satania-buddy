@@ -240,6 +240,7 @@ begin
       Sprite.URL := '';
       Sprite.URL := S;
     end;
+    TrackDict.Clear; // For spine only
   except
     on E: Exception do
     begin

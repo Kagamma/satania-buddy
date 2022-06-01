@@ -59,6 +59,7 @@ type
   TQWordList = specialize TList<QWord>;
   TStringDict = specialize TDictionary<String, String>;
   TStringArrayDict = specialize TDictionary<String, TStringDynArray>;
+  TTrackDict = specialize TDictionary<String, Integer>;
   TMailList = specialize TList<TMailRec>;
   TRuleDict = specialize TDictionary<String, TRuleRec>;
 
