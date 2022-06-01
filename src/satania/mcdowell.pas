@@ -31,6 +31,7 @@ uses
   CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
   CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts,
+  CastleSceneCore,
   CastleBehaviors, Clipbrd, fphttpclient, LazUTF8,
   Mcdowell.EvilC, Mcdowell.Chat, Globals;
 
@@ -51,7 +52,7 @@ type
     IsAsking: Boolean;
     IsBlocked: Boolean;
     ChatResult: String;
-    Sprite: TCastleScene;
+    Sprite: TCastleSceneCore;
     Viewport: TCastleViewport;
     LocalBoundingBoxSnapshot: TBox3D;
     ChatMode: Integer;
@@ -111,9 +112,10 @@ var
 implementation
 
 uses
+  Utils.coords,
   Utils.Strings,
   Utils.Threads,
-  Utils.Coords,
+  utils.sprites,
   form.reminders,
   form.chat,
   form.touch,
@@ -249,46 +251,29 @@ begin
     StopAllAnimations;
   end;
   try
-    TouchBone := nil;
-    TouchBone := Sprite.RootNode.FindNode('Bone_touch') as TTransformNode;
+    // TODO: Spine
+    AnimTalkLoop := 'talk_loop';
+    AnimTalkFinish := 'talk_finish';
+    Self.AnimTalkScriptList.Clear;
 
     LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
     LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
     LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
 
-    AnimTalkLoop := 'talk_loop';
-    AnimTalkFinish := 'talk_finish';
-    Self.AnimTalkScriptList.Clear;
+    TouchBone := nil;
+    TouchBone := Sprite.RootNode.FindNode('Bone_touch') as TTransformNode;
   except
   end;
 end;
 
 procedure TSatania.SetAnimationSpeed(AnimName: String; Speed: Single);
-var
-  TimeSensor: TTimeSensorNode;
 begin
-  try
-    TimeSensor := Sprite.Node(AnimName) as TTimeSensorNode;
-    TimeSensor.FdCycleInterval.Value := Speed;
-  except
-    on E: Exception do
-      TalkWithoutBlock(E.Message);
-  end;
+  SpriteSetAnimationSpeed(Self.Sprite, AnimName, Speed);
 end;
 
 procedure TSatania.StartAnimation(AnimName: String; IsRepeat: Boolean = True);
-var
-  TimeSensor: TTimeSensorNode;
-  B: Boolean;
 begin
-  try
-    TimeSensor := Sprite.Node(AnimName) as TTimeSensorNode;
-    TimeSensor.Start(IsRepeat, True, 0);
-    Sprite.ForceInitialAnimationPose;
-  except
-    on E: Exception do
-      TalkWithoutBlock(E.Message);
-  end;
+  SpriteStartAnimation(Self.Sprite, AnimName, IsRepeat);
 end;
 
 procedure TSatania.StartAnimation(URL, AnimName: String; IsRepeat: Boolean = True);
@@ -298,38 +283,13 @@ begin
 end;
 
 procedure TSatania.StopAnimation(AnimName: String);
-var
-  TimeSensor: TTimeSensorNode;
 begin
-  try
-    TimeSensor := Sprite.Node(AnimName) as TTimeSensorNode;
-    TimeSensor.Start(False, True, 0);
-    TimeSensor.Stop;
-  except
-    on E: Exception do
-      TalkWithoutBlock(E.Message);
-  end;
+  SpriteStopAnimation(Self.Sprite, AnimName);
 end;
 
 procedure TSatania.StopAllAnimations;
-  procedure StopButNotResetAnimation(AnimName: String);
-  var
-    TimeSensor: TTimeSensorNode;
-  begin
-    try
-      TimeSensor := Sprite.Node(AnimName) as TTimeSensorNode;
-      TimeSensor.Stop;
-    except
-      on E: Exception do
-        TalkWithoutBlock(E.Message);
-    end;
-  end;
-var
-  S: String;
 begin
-  for S in Sprite.AnimationsList do
-    StopButNotResetAnimation(S);
-  Sprite.ResetAnimationState;
+  SpriteStopAllAnimations(Self.Sprite);
 end;
 
 procedure TSatania.Action(Typ, Message: String);
@@ -596,23 +556,7 @@ end;
 
 procedure TSatania.SetImageQuality(S: String);
 begin
-  case S of
-    'Linear':
-      begin
-        Sprite.RenderOptions.MinificationFilter := minLinear;
-        Sprite.RenderOptions.MagnificationFilter := magLinear;
-      end;
-    'Nicest':
-      begin
-        Sprite.RenderOptions.MinificationFilter := minNicest;
-        Sprite.RenderOptions.MagnificationFilter := magNicest;
-      end;
-    else
-      begin
-        Sprite.RenderOptions.MinificationFilter := minNearest;
-        Sprite.RenderOptions.MagnificationFilter := magNearest;
-      end;
-  end;
+  SpriteSetFilter(Self.Sprite, S);
 end;
 
 function TSatania.Expression(const S: String): String;

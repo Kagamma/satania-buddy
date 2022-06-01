@@ -9,7 +9,7 @@ uses Classes,
   CastleVectors, CastleUIState, CastleComponentSerialize,
   CastleUIControls, CastleControls, CastleKeysMouse, CastleScene, CastleTransform,
   X3DNodes, CastleBoxes, CastleRectangles, CastleTypingLabel, CastleViewport,
-  CastleFonts, LCLTranslator,
+  CastleFonts, LCLTranslator, CastleSceneCore,
   Globals;
 
 type
@@ -24,7 +24,7 @@ type
     ChatBubbleArrow: TCastleImageControl;
     FontSystem: TCastleFont;
     SpriteTransform: TCastleTransform;
-    Sprite: TCastleScene;
+    Sprite: TCastleSceneCore;
     Viewport: TCastleViewport;
     BubbleSideX, BubbleSideY: Integer;
     constructor Create(AOwner: TComponent); override;
