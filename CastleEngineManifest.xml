@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="barbara-desktop-assistant"
-  standalone_source="barbara_standalone.lpr"
+<project name="satania-desktop-assistant"
+  standalone_source="satania_standalone.lpr"
   game_units="GameInitialize"
-  qualified_name="com.mycompany.barbara"
+  qualified_name="com.mycompany.satania"
   caption="gallery"
   editor_units="castletypinglabel"
 >
