@@ -4,12 +4,13 @@
   game_units="GameInitialize"
   qualified_name="com.mycompany.satania"
   caption="gallery"
-  editor_units="castletypinglabel"
+  editor_units="castletypinglabel,castlespine"
 >
   <compiler_options>
     <search_paths>
       <path value="src/" /> 
       <path value="src/components/typing-label/typinglabel"/>
+      <path value="src/components/spine-runtimes/src"/>
     </search_paths>
   </compiler_options>
 </project>

@@ -31,7 +31,7 @@ uses
   CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
   CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts,
-  CastleSceneCore,
+  CastleSceneCore, CastleSpine,
   CastleBehaviors, Clipbrd, fphttpclient, LazUTF8,
   Mcdowell.EvilC, Mcdowell.Chat, Globals;
 
@@ -52,7 +52,9 @@ type
     IsAsking: Boolean;
     IsBlocked: Boolean;
     ChatResult: String;
-    Sprite: TCastleSceneCore;
+    Sprite: TCastleSceneCore;   
+    SpriteAsX3D: TCastleScene;
+    SpriteAsSpine: TCastleSpine;
     Viewport: TCastleViewport;
     LocalBoundingBoxSnapshot: TBox3D;
     ChatMode: Integer;
@@ -232,12 +234,30 @@ begin
 end;
 
 procedure TSatania.LoadModel(S: String);
+var
+  Ext: String;
 begin
+  Ext := LowerCase(ExtractFileExt(S));
   S := PATH_SPRITES + Save.Settings.Skin + '/' + S;
   if (S <> Sprite.URL) or Save.Settings.DeveloperMode then
   try
     begin
+      // Clean up sprite's data
       Sprite.URL := '';
+      // Hide the sprite
+      Sprite.Exists := False;
+      // Load new model, runtime based on ext
+      case Ext of
+        '.json':
+          begin
+            Sprite := Self.SpriteAsSpine;
+          end
+        else
+          begin
+            Sprite := Self.SpriteAsX3D;
+          end;
+      end;
+      Sprite.Exists := True;
       Sprite.URL := S;
     end;
     TrackDict.Clear; // For spine only
