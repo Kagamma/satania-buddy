@@ -230,7 +230,8 @@ begin
     Save.SpriteDefaultLocationX := ScreenWidth - 150;
     Save.SpriteDefaultLocationY := 150;
   end;
-  Sprite.Translation := Vector3(Save.SpriteDefaultLocationX, Save.SpriteDefaultLocationY, 0);
+  SpriteAsX3D.Translation := Vector3(Save.SpriteDefaultLocationX, Save.SpriteDefaultLocationY, 0);  
+  SpriteAsSpine.Translation := Vector3(Save.SpriteDefaultLocationX, Save.SpriteDefaultLocationY, 0);
 end;
 
 procedure TSatania.LoadModel(S: String);
@@ -288,7 +289,6 @@ begin
     LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
     LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
     // Set some Sprite-dependency options again, in case Sprite type is changed
-    DefaultPosition;
     Sprite.AnimateSkipTicks := Save.Settings.FrameSkip;
     Satania.SetImageQuality(Save.Settings.ImageQuality);
 
