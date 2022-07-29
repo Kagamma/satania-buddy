@@ -112,8 +112,6 @@ begin
     V.X := V.X - FormMain.Monitor.Left;
   end;
   SpriteTransform.Translation := V;
-  Writeln('1: ', SpriteTransform.Translation.ToString);
-  Writeln('2: ', Satania.Sprite.Translation.ToString);
 end;
 
 procedure TStateMain.UpdateTouchPanelPosition;
