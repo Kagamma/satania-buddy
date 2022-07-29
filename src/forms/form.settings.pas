@@ -314,7 +314,8 @@ begin
     Satania.FontSystem.OptimalSize := Save.Settings.FontSize;
     Satania.FontSystem.LoadCharacters := CharsetToCharacters(Save.Settings.Charset);
     Satania.ChatText.FontSize := Save.Settings.FontSize;
-    Satania.Sprite.AnimateSkipTicks := Save.Settings.FrameSkip;
+    Satania.SpriteAsSpine.AnimateSkipTicks := Save.Settings.FrameSkip;  
+    Satania.SpriteAsX3D.AnimateSkipTicks := Save.Settings.FrameSkip;
     Satania.UpdateMenuItems;
 
     if (ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex] <> Save.Settings.STTVoskModel)

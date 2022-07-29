@@ -288,9 +288,6 @@ begin
     LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
     LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
     LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
-    // Set some Sprite-dependency options again, in case Sprite type is changed
-    Sprite.AnimateSkipTicks := Save.Settings.FrameSkip;
-    Satania.SetImageQuality(Save.Settings.ImageQuality);
 
     TouchBone := nil;
     ExposeTransforms := TStringList.Create;
@@ -601,7 +598,8 @@ end;
 
 procedure TSatania.SetImageQuality(S: String);
 begin
-  SpriteSetFilter(Self.Sprite, S);
+  SpriteSetFilter(Self.SpriteAsSpine, S); 
+  SpriteSetFilter(Self.SpriteAsX3D, S);
 end;
 
 function TSatania.Expression(const S: String): String;
