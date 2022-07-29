@@ -252,6 +252,8 @@ begin
       case Ext of
         '.json':
           begin
+            if Save.Settings.DeveloperMode then
+              SpineDataCache.Clear; // Clear spine cache in case this is developer mode
             Sprite := Self.SpriteAsSpine;
             TCastleSpine(Sprite).URL := S;
             // Call update here to trigger the loading immediately
@@ -297,12 +299,12 @@ begin
     begin
       Sprite.ExposeTransforms := ExposeTransforms;
       if Sprite.Count > 0 then
-        TouchBone := Sprite.Items[0]; // The first item is Bone_touch
+        TouchBone := Sprite.FindComponent('Bone_touch') as TCastleTransform;
     end else
     begin
       TCastleSpine(Sprite).ExposeTransforms := ExposeTransforms;
       if Sprite.Count > 0 then
-        TouchBone := Sprite.Items[0]; // The first item is Bone_touch
+        TouchBone := Sprite.FindComponent('Bone_touch') as TCastleTransform;
     end;
     ExposeTransforms.Free;
   except
