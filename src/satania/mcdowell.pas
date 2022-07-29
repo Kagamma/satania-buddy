@@ -72,7 +72,7 @@ type
     AnimTalkScriptList: TStringList; // List of possible scripts to execute during talking
     UsedRemindersList: TStringList;
     { Where we should move our touch panel to }
-    TouchBone: TTransformNode;
+    TouchBone: TCastleTransform;
     constructor Create;
     destructor Destroy; override;
     procedure DefaultPosition;
@@ -237,6 +237,7 @@ procedure TSatania.LoadModel(S: String);
 var
   Ext: String;
   RM: TRemoveType = rtNone;
+  ExposeTransforms: TStrings;
 begin
   Ext := LowerCase(ExtractFileExt(S));
   S := PATH_SPRITES + Save.Settings.Skin + '/' + S;
@@ -290,8 +291,20 @@ begin
     Satania.SetImageQuality(Save.Settings.ImageQuality);
 
     TouchBone := nil;
-    if Sprite = Self.SpriteAsX3D then // TODO: We only support X3d for now
-      TouchBone := Sprite.RootNode.FindNode('Bone_touch') as TTransformNode;
+    ExposeTransforms := TStringList.Create;
+    ExposeTransforms.Add('Bone_touch');
+    if Sprite = Self.SpriteAsX3D then
+    begin
+      Sprite.ExposeTransforms := ExposeTransforms;
+      if Sprite.Count > 0 then
+        TouchBone := Sprite.Items[0]; // The first item is Bone_touch
+    end else
+    begin
+      TCastleSpine(Sprite).ExposeTransforms := ExposeTransforms;
+      if Sprite.Count > 0 then
+        TouchBone := Sprite.Items[0]; // The first item is Bone_touch
+    end;
+    ExposeTransforms.Free;
   except
   end;
 end;

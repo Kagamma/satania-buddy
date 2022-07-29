@@ -120,7 +120,7 @@ var
   ScreenPosition: TVector2Integer;
 begin
   if Satania.TouchBone <> nil then
-    Position := Satania.Sprite.WorldTransform.MultPoint(Satania.TouchBone.Translation)
+    Position := Satania.TouchBone.WorldTranslation
   else
     Position := Satania.Sprite.Translation;
   ScreenPosition := UIToScreenCoord(Position);
