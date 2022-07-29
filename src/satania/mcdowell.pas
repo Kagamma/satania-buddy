@@ -282,7 +282,8 @@ begin
     LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
 
     TouchBone := nil;
-    TouchBone := Sprite.RootNode.FindNode('Bone_touch') as TTransformNode;
+    if Sprite = Self.SpriteAsX3D then // TODO: We only support X3d for now
+      TouchBone := Sprite.RootNode.FindNode('Bone_touch') as TTransformNode;
   except
   end;
 end;
