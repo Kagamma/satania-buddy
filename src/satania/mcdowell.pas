@@ -236,6 +236,7 @@ end;
 procedure TSatania.LoadModel(S: String);
 var
   Ext: String;
+  RM: TRemoveType = rtNone;
 begin
   Ext := LowerCase(ExtractFileExt(S));
   S := PATH_SPRITES + Save.Settings.Skin + '/' + S;
@@ -251,14 +252,17 @@ begin
         '.json':
           begin
             Sprite := Self.SpriteAsSpine;
+            TCastleSpine(Sprite).URL := S;
+            // Call update here to trigger the loading immediately
+            TCastleSpine(Sprite).Update(0.0001, RM);
           end
         else
           begin
-            Sprite := Self.SpriteAsX3D;
+            Sprite := Self.SpriteAsX3D;     
+            Sprite.URL := S;
           end;
       end;
       Sprite.Exists := True;
-      Sprite.URL := S;
     end;
     TrackDict.Clear; // For spine only
   except
