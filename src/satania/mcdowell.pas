@@ -284,6 +284,10 @@ begin
     LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
     LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
     LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
+    // Set some Sprite-dependency options again, in case Sprite type is changed
+    DefaultPosition;
+    Sprite.AnimateSkipTicks := Save.Settings.FrameSkip;
+    Satania.SetImageQuality(Save.Settings.ImageQuality);
 
     TouchBone := nil;
     if Sprite = Self.SpriteAsX3D then // TODO: We only support X3d for now

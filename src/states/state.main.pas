@@ -110,8 +110,10 @@ begin
   if FormMain.Monitor.Left > 0 then
   begin
     V.X := V.X - FormMain.Monitor.Left;
-  end; 
+  end;
   SpriteTransform.Translation := V;
+  Writeln('1: ', SpriteTransform.Translation.ToString);
+  Writeln('2: ', Satania.Sprite.Translation.ToString);
 end;
 
 procedure TStateMain.UpdateTouchPanelPosition;
@@ -120,9 +122,9 @@ var
   ScreenPosition: TVector2Integer;
 begin
   if Satania.TouchBone <> nil then
-    Position := Sprite.WorldTransform.MultPoint(Satania.TouchBone.Translation)
+    Position := Satania.Sprite.WorldTransform.MultPoint(Satania.TouchBone.Translation)
   else
-    Position := Sprite.Translation;
+    Position := Satania.Sprite.Translation;
   ScreenPosition := UIToScreenCoord(Position);
   FormTouch.Left := ScreenPosition.X - FormTouch.Width div 2 - Round(SpriteTransform.Translation.X);
   FormTouch.Top := ScreenPosition.Y - FormTouch.Height div 2;
@@ -138,7 +140,7 @@ begin
     if ChatText.Text.Text <> '' then
     begin
       FormChatBubble.Visible := Satania.IsAsking;
-      ChatBubble.Exists := True and Sprite.Visible and not Satania.IsAsking;
+      ChatBubble.Exists := True and Satania.Sprite.Visible and not Satania.IsAsking;
     end else
     begin
       FormChatBubble.Visible := False;
@@ -148,8 +150,8 @@ begin
     if (not ChatBubble.Exists) and (not FormChatBubble.Visible) then Exit;
 
     Box := Satania.LocalBoundingBoxSnapshot;
-    Box.Data[0] := Box.Data[0] + Sprite.Translation + SpriteTransform.Translation;
-    Box.Data[1] := Box.Data[1] + Sprite.Translation + SpriteTransform.Translation;
+    Box.Data[0] := Box.Data[0] + Satania.Sprite.Translation + SpriteTransform.Translation;
+    Box.Data[1] := Box.Data[1] + Satania.Sprite.Translation + SpriteTransform.Translation;
     R := ChatBubble.EffectiveRect;
     RA := ChatBubbleArrow.EffectiveRect;
     case BubbleSideX of
