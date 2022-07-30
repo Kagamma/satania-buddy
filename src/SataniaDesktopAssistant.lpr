@@ -23,14 +23,16 @@ program SataniaBuddy;
 {$I configs.inc}
 
 uses
-  mormot.core.fpcx64mm,
+  //mormot.core.fpcx64mm,
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
   {$IFDEF HASAMIGA}
   athreads,
   {$ENDIF}
+  LCLPlatformDef,
   Interfaces, // this includes the LCL widgetset
+  FrameViewer09,
   opensslsockets, globals, Forms, datetimectrls, utils.activewindow, mcdowell,
   State.Main, form.settings, form.chat, mcdowell.chatbot,
   mcdowell.chatbot.train, form.evilc.editor, mcdowell.imap,
