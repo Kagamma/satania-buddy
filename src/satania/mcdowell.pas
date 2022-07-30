@@ -301,7 +301,7 @@ begin
     begin
       TCastleSpine(Sprite).ExposeTransforms := ExposeTransforms;
       if Sprite.Count > 0 then
-        TouchBoneSpine := Sprite.FindComponent('touch') as TCastleTransform;
+        TouchBoneSpine := Sprite.Items[0];
     end;
     ExposeTransforms.Free;
   except
