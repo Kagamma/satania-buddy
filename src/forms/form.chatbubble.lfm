@@ -41,10 +41,10 @@ object FormChatBubble: TFormChatBubble
         Height = 107
         Top = 0
         Width = 296
-        BorderStyle = htFocused
+        BorderStyle = htNone
         DefBackground = clInfoBk
         HistoryMaxCount = 0
-        NoSelect = False
+        NoSelect = True
         PrintMarginBottom = 2
         PrintMarginLeft = 2
         PrintMarginRight = 2
