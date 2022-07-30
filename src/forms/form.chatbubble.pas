@@ -87,7 +87,7 @@ begin
   Satania.IsBlocked := False;
   Self.Visible := False;
   Satania.ChatText.Text.Text := '';
-  Answer := Results.Text;
+  Answer := StringReplace(Results.Text, #13, '', [rfReplaceAll]);
 end;
 
 end.
