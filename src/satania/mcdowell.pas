@@ -293,7 +293,7 @@ begin
     TouchBoneX3D := nil;    
     TouchBoneSpine := nil;
     ExposeTransforms := TStringList.Create;
-    ExposeTransforms.Add('Bone_touch');
+    ExposeTransforms.Add('touch');
     if Sprite = Self.SpriteAsX3D then
     begin
       TouchBoneX3D := Sprite.RootNode.FindNode('Bone_touch') as TTransformNode;
@@ -301,7 +301,7 @@ begin
     begin
       TCastleSpine(Sprite).ExposeTransforms := ExposeTransforms;
       if Sprite.Count > 0 then
-        TouchBoneSpine := Sprite.FindComponent('Bone_touch') as TCastleTransform;
+        TouchBoneSpine := Sprite.FindComponent('touch') as TCastleTransform;
     end;
     ExposeTransforms.Free;
   except
