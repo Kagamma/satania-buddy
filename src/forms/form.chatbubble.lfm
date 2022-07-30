@@ -6,11 +6,12 @@ object FormChatBubble: TFormChatBubble
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'FormChatBubble'
-  ClientHeight = 109
-  ClientWidth = 298
+  ClientHeight = 148
+  ClientWidth = 314
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   ShowInTaskBar = stNever
+  LCLVersion = '2.3.0.0'
   object Panel: TPanel
     Left = 0
     Height = 109

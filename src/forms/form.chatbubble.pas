@@ -26,7 +26,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  HtmlView, HTMLUn2, HtmlGlobals;
+  HtmlView, HTMLUn2, HtmlGlobals, Mcdowell.EvilC;
 
 type
 
@@ -45,7 +45,7 @@ type
   private
 
   public
-    Answer: String;
+    Answer: TSEValue;
   end;
 
 var
@@ -83,11 +83,16 @@ end;
 
 procedure TFormChatBubble.AskTextFormSubmit(Sender: TObject; const Act,
   Target, EncType, Method: ThtString; Results: ThtStringList);
+var
+  I: Integer;
 begin
   Satania.IsBlocked := False;
   Self.Visible := False;
   Satania.ChatText.Text.Text := '';
-  Answer := StringReplace(Results.Text, #13, '', [rfReplaceAll]);
+  Answer.Kind := sevkArray;
+  SetLength(Answer.VarArray, Results.Count);
+  for I := 0 to Results.Count - 1 do
+    Answer.VarArray[I] := Results[I];
 end;
 
 end.
