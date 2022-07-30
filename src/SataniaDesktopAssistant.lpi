@@ -68,6 +68,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="FrameViewer09"/>
+      </Item>
+      <Item>
         <PackageName Value="csspckg_lazarus"/>
       </Item>
       <Item>

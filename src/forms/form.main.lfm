@@ -1,12 +1,12 @@
 object FormMain: TFormMain
   Left = -8
-  Height = 833
+  Height = 872
   Top = -8
-  Width = 699
+  Width = 715
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 810
-  ClientWidth = 699
+  ClientHeight = 849
+  ClientWidth = 715
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -18,9 +18,9 @@ object FormMain: TFormMain
   WindowState = wsMaximized
   object CastleControl: TCastleControl
     Left = 0
-    Height = 810
+    Height = 849
     Top = 0
-    Width = 699
+    Width = 715
     Align = alClient
     AlphaBits = 8
     Options = []

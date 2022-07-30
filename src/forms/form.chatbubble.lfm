@@ -1,73 +1,59 @@
 object FormChatBubble: TFormChatBubble
   Left = 342
-  Height = 189
+  Height = 148
   Top = 250
-  Width = 354
+  Width = 314
   BorderIcons = []
   BorderStyle = bsNone
   Caption = 'FormChatBubble'
-  ClientHeight = 189
-  ClientWidth = 354
+  ClientHeight = 109
+  ClientWidth = 298
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   ShowInTaskBar = stNever
-  LCLVersion = '2.3.0.0'
   object Panel: TPanel
     Left = 0
-    Height = 189
+    Height = 109
     Top = 0
-    Width = 354
+    Width = 298
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 189
-    ClientWidth = 354
+    ClientHeight = 109
+    ClientWidth = 298
     Color = clInfoBk
     ParentColor = False
     TabOrder = 0
     OnPaint = PanelPaint
     object Panel1: TPanel
-      Left = 8
-      Height = 173
-      Top = 8
-      Width = 338
+      Left = 1
+      Height = 107
+      Top = 1
+      Width = 296
       Align = alClient
-      BorderSpacing.Around = 8
+      BorderSpacing.Around = 1
       BevelOuter = bvNone
-      ClientHeight = 173
-      ClientWidth = 338
-      Color = clInfoBk
-      ParentColor = False
+      Caption = 'Panel1'
+      ClientHeight = 107
+      ClientWidth = 296
       TabOrder = 0
-      object Panel3: TPanel
+      object AskText: THtmlViewer
         Left = 0
-        Height = 178
+        Height = 107
         Top = 0
-        Width = 338
-        Align = alTop
-        BevelOuter = bvNone
-        ClientHeight = 178
-        ClientWidth = 338
-        Color = clInfoBk
-        ParentColor = False
+        Width = 296
+        BorderStyle = htFocused
+        DefBackground = clInfoBk
+        HistoryMaxCount = 0
+        NoSelect = False
+        PrintMarginBottom = 2
+        PrintMarginLeft = 2
+        PrintMarginRight = 2
+        PrintMarginTop = 2
+        PrintScale = 1
+        OnFormSubmit = AskTextFormSubmit
+        OnHotSpotClick = AskTextHotSpotClick
+        Align = alClient
         TabOrder = 0
-        object AskText: TLabel
-          Left = 0
-          Height = 178
-          Top = 0
-          Width = 338
-          Align = alClient
-          Caption = 'AskText'
-          ParentColor = False
-        end
-      end
-      object PanelButton: TPanel
-        Left = 0
-        Height = 26
-        Top = 147
-        Width = 338
-        Align = alBottom
-        BevelOuter = bvNone
-        TabOrder = 1
       end
     end
   end

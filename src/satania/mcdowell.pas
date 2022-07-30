@@ -31,7 +31,7 @@ uses
   CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
   CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts,
-  CastleSceneCore, CastleSpine,
+  CastleSceneCore, CastleSpine, strutils,
   CastleBehaviors, Clipbrd, fphttpclient, LazUTF8,
   Mcdowell.EvilC, Mcdowell.Chat, Globals;
 
@@ -72,7 +72,8 @@ type
     AnimTalkScriptList: TStringList; // List of possible scripts to execute during talking
     UsedRemindersList: TStringList;
     { Where we should move our touch panel to }
-    TouchBone: TCastleTransform;
+    TouchBoneX3D: TTransformNode;
+    TouchBoneSpine: TCastleTransform;
     constructor Create;
     destructor Destroy; override;
     procedure DefaultPosition;
@@ -149,7 +150,7 @@ begin
   Script.RegisterFunc('numbers', @SENumbers, 1);     
   Script.RegisterFunc('months_to_numbers', @SEMonthsToNumbers, 1);
   Script.RegisterFunc('talk', @SETalk, -1);                           
-  Script.RegisterFunc('ask', @SEAsk, 2);
+  Script.RegisterFunc('ask', @SEAsk, 3);
   Script.RegisterFunc('answer', @SEAnswer, 0);
   Script.RegisterFunc('notify', @SENotify, 1);
   Script.RegisterFunc('process_run', @SEProcessRun, 1);
@@ -289,19 +290,18 @@ begin
     LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
     LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
 
-    TouchBone := nil;
+    TouchBoneX3D := nil;    
+    TouchBoneSpine := nil;
     ExposeTransforms := TStringList.Create;
     ExposeTransforms.Add('Bone_touch');
     if Sprite = Self.SpriteAsX3D then
     begin
-      Sprite.ExposeTransforms := ExposeTransforms;
-      if Sprite.Count > 0 then
-        TouchBone := Sprite.FindComponent('Bone_touch') as TCastleTransform;
+      TouchBoneX3D := Sprite.RootNode.FindNode('Bone_touch') as TTransformNode;
     end else
     begin
       TCastleSpine(Sprite).ExposeTransforms := ExposeTransforms;
       if Sprite.Count > 0 then
-        TouchBone := Sprite.FindComponent('Bone_touch') as TCastleTransform;
+        TouchBoneSpine := Sprite.FindComponent('Bone_touch') as TCastleTransform;
     end;
     ExposeTransforms.Free;
   except
@@ -457,7 +457,8 @@ begin
     ChatText.ResetText;
     ChatText.MaxDisplayChars := 0;
     ChatText.Text.Text := S;
-    FormChatBubble.AskText.Caption := S;
+    FormChatBubble.Answer := '';
+    FormChatBubble.AskText.Text := S;
     if ChatText.Text.Count > 25 then
     begin
       ChatText.Text.Text := 'too much words... please check the history instead!';

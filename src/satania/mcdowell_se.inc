@@ -132,12 +132,16 @@ var
   I: Integer;
 begin
   Ask(SEValueToText(Args[0]));
-  VM.IsPaused := True;
-  FormChatBubble.ClearButtons;
-  for I := Length(Args[1].VarArray) - 1 downto 0 do
+  if Length(Args) = 3 then
   begin
-    FormChatBubble.AddButton(Args[1].VarArray[I].VarString, I);
+    FormChatBubble.Width := Args[1];
+    FormChatBubble.Height := Args[2];
+  end else
+  begin
+    FormChatBubble.Width := 314;
+    FormChatBubble.Height := 148;
   end;
+  VM.IsPaused := True
 end;
 
 function TSatania.SEAnswer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

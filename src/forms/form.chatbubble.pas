@@ -25,27 +25,27 @@ unit Form.ChatBubble;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
+  HtmlView, HTMLUn2, HtmlGlobals;
 
 type
 
   { TFormChatBubble }
 
   TFormChatBubble = class(TForm)
-    AskText: TLabel;
-    Panel1: TPanel;
+    AskText: THtmlViewer;
     Panel: TPanel;
-    Panel3: TPanel;
-    PanelButton: TPanel;
-    procedure ButtonAnswerClick(Sender: TObject);
+    Panel1: TPanel;
+    procedure AskTextFormSubmit(Sender: TObject; const Act, Target, EncType,
+      Method: ThtString; Results: ThtStringList);
+    procedure AskTextHotSpotClick(Sender: TObject; const SRC: ThtString;
+      var Handled: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure PanelPaint(Sender: TObject);
   private
 
   public
-    Answer: Integer;                         
-    procedure ClearButtons;
-    procedure AddButton(const ButtonName: String; const T: Integer);
+    Answer: String;
   end;
 
 var
@@ -72,31 +72,22 @@ begin
   Panel.Canvas.Rectangle(0, 0, Panel.Width, Panel.Height);
 end;
 
-procedure TFormChatBubble.ButtonAnswerClick(Sender: TObject);
+procedure TFormChatBubble.AskTextHotSpotClick(Sender: TObject;
+  const SRC: ThtString; var Handled: Boolean);
 begin
   Satania.IsBlocked := False;
-  Self.Visible := False;         
+  Self.Visible := False;
   Satania.ChatText.Text.Text := '';
-  Answer := (Sender as TButton).Tag;
+  Answer := SRC;
 end;
 
-procedure TFormChatBubble.ClearButtons;
+procedure TFormChatBubble.AskTextFormSubmit(Sender: TObject; const Act,
+  Target, EncType, Method: ThtString; Results: ThtStringList);
 begin
-  while PanelButton.ControlCount > 0 do
-    PanelButton.RemoveControl(PanelButton.Controls[0]);
-end;
-
-procedure TFormChatBubble.AddButton(const ButtonName: String; const T: Integer);
-var
-  B: TButton;
-begin
-  B := TButton.Create(Self);
-  B.Caption := ButtonName;
-  B.Tag := T;
-  B.Align := alLeft;
-  B.BorderSpacing.Right := 4;
-  B.OnClick := @ButtonAnswerClick;
-  PanelButton.InsertControl(B);
+  Satania.IsBlocked := False;
+  Self.Visible := False;
+  Satania.ChatText.Text.Text := '';
+  Answer := Results.Text;
 end;
 
 end.

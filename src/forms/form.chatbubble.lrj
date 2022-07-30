@@ -1,4 +1,4 @@
 {"version":1,"strings":[
 {"hash":235541365,"name":"tformchatbubble.caption","sourcebytes":[70,111,114,109,67,104,97,116,66,117,98,98,108,101],"value":"FormChatBubble"},
-{"hash":144747700,"name":"tformchatbubble.asktext.caption","sourcebytes":[65,115,107,84,101,120,116],"value":"AskText"}
+{"hash":90721265,"name":"tformchatbubble.panel1.caption","sourcebytes":[80,97,110,101,108,49],"value":"Panel1"}
 ]}
