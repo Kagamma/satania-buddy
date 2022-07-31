@@ -32,6 +32,7 @@ var
 
 function UIToScreenCoord(const V: TVector2): TVector2Integer; overload; inline;
 function UIToScreenCoord(const V: TVector3): TVector2Integer; overload; inline;
+function UIToScreenCoord(const S: Single): Integer; inline;
 function ScreenCoordToUI(const V: TVector2): TVector2; inline;
 
 implementation
@@ -47,6 +48,11 @@ end;
 function UIToScreenCoord(const V: TVector3): TVector2Integer;
 begin
   Result := Vector2Integer(Round(V.X), Round(Application.ScreenHeight - V.Y));
+end; 
+
+function UIToScreenCoord(const S: Single): Integer; inline;
+begin
+  Result := Round(Application.ScreenHeight - S);
 end;
 
 function ScreenCoordToUI(const V: TVector2): TVector2;

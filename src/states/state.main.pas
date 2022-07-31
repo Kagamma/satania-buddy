@@ -28,7 +28,8 @@ type
     SpriteAsSpine: TCastleSpine;
     Sprite: TCastleSceneCore;
     Viewport: TCastleViewport;
-    BubbleSideX, BubbleSideY: Integer;
+    BubbleSideX, BubbleSideY,
+    AskSideX, AskSideY: Integer;
     constructor Create(AOwner: TComponent); override;
     procedure Start; override;
     procedure Update(const SecondsPassed: Single; var HandleInput: Boolean); override;
@@ -154,7 +155,6 @@ begin
     0:
       begin
         ChatBubble.Left := Box.Min.X - R.Width;
-        FormChatBubble.Left := Round(Box.Min.X - FormChatBubble.Width);
         ChatBubbleArrow.Left := ChatBubble.Left + R.Width - RA.Width - 4;
         ChatBubbleArrow.FlipHorizontal := False;
         if R.Left < 0 then
@@ -163,7 +163,6 @@ begin
     1:
       begin
         ChatBubble.Left := Box.Max.X;
-        FormChatBubble.Left := Round(Box.Max.X);
         ChatBubbleArrow.Left := ChatBubble.Left + 4;
         ChatBubbleArrow.FlipHorizontal := True;
         if R.Left + R.Width > R.Width * 2 + (Box.Max.X - Box.Min.X) then
@@ -174,7 +173,6 @@ begin
     0:
       begin
         ChatBubble.Bottom := Box.Min.Y - R.Height;
-        FormChatBubble.Top := Round(Application.ScreenHeight - Box.Min.Y);
         ChatBubbleArrow.Bottom := ChatBubble.Bottom + R.Height - 4;
         ChatBubbleArrow.FlipVertical := True;
         if R.Bottom + R.Height * 2 + (Box.Max.Y - Box.Min.Y) < Application.ScreenHeight then
@@ -183,11 +181,38 @@ begin
     1:
       begin
         ChatBubble.Bottom := Box.Max.Y;
-        FormChatBubble.Top := Round(Application.ScreenHeight - (Box.Max.Y + FormChatBubble.Height));
         ChatBubbleArrow.Bottom := ChatBubble.Bottom - RA.Height + 4;
         ChatBubbleArrow.FlipVertical := False;
         if R.Bottom + R.Height > Application.ScreenHeight then
           BubbleSideY := 0;
+      end;
+  end;
+  case AskSideX of
+    0:
+      begin
+        FormChatBubble.Left := Round(Box.Min.X - FormChatBubble.Width) + FormMain.Monitor.Left;
+        if FormChatBubble.Left < FormMain.Monitor.Left then
+          AskSideX := 1;
+      end;
+    1:
+      begin
+        FormChatBubble.Left := Round(Box.Max.X) + FormMain.Monitor.Left;
+        if FormChatBubble.Left + FormChatBubble.Width > FormChatBubble.Width * 2 + (Box.Max.X - Box.Min.X) + FormMain.Monitor.Left then
+          AskSideX := 0;
+      end;
+  end;
+  case AskSideY of
+    0:
+      begin
+        FormChatBubble.Top := UIToScreenCoord(Box.Max.Y) - FormChatBubble.Height;
+        if FormChatBubble.Top < 0 then
+          AskSideY := 1;
+      end;
+    1:
+      begin
+        FormChatBubble.Top := UIToScreenCoord(Box.Min.Y);
+        if FormChatBubble.Top + FormChatBubble.Height > Application.ScreenHeight then
+          AskSideY := 0;
       end;
   end;
   // Hide arrow if size is larger than bubble
