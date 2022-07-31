@@ -72,8 +72,7 @@ type
     AnimTalkScriptList: TStringList; // List of possible scripts to execute during talking
     UsedRemindersList: TStringList;
     { Where we should move our touch panel to }
-    TouchBoneX3D: TTransformNode;
-    TouchBoneSpine: TCastleTransform;
+    TouchBone: TCastleTransform;
     constructor Create;
     destructor Destroy; override;
     procedure DefaultPosition;
@@ -281,7 +280,6 @@ begin
     StopAllAnimations;
   end;
   try
-    // TODO: Spine
     AnimTalkLoop := 'talk_loop';
     AnimTalkFinish := 'talk_finish';
     Self.AnimTalkScriptList.Clear;
@@ -290,18 +288,20 @@ begin
     LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
     LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
 
-    TouchBoneX3D := nil;    
-    TouchBoneSpine := nil;
+    TouchBone := nil;
     ExposeTransforms := TStringList.Create;
-    ExposeTransforms.Add('touch');
     if Sprite = Self.SpriteAsX3D then
     begin
-      TouchBoneX3D := Sprite.RootNode.FindNode('Bone_touch') as TTransformNode;
+      ExposeTransforms.Add('Bone_touch');
+      Sprite.ExposeTransforms := ExposeTransforms;
+      if Sprite.Count > 0 then
+        TouchBone := Sprite.Items[0];
     end else
     begin
+      ExposeTransforms.Add('touch');
       TCastleSpine(Sprite).ExposeTransforms := ExposeTransforms;
       if Sprite.Count > 0 then
-        TouchBoneSpine := Sprite.Items[0];
+        TouchBone := Sprite.Items[0];
     end;
     ExposeTransforms.Free;
   except
