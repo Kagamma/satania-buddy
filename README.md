@@ -87,10 +87,6 @@ A: `Base Scaling` in `Settings`.
 
 A: `Silent` menu.
 
-##### Q: /g/ regulator?
-
-A: Nah just a tourist.
-
 ##### Q: Why don't you contribute to existing satania-buddy projects instead of creating new one?
 
 A: I suck at C/Rust/whatever shiny, "modern" programming languages out there. I also suck at pixel arts.
