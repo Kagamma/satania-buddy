@@ -9,15 +9,14 @@ object FormSettings: TFormSettings
   ClientWidth = 645
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.3.0.0'
   object PageControl: TPageControl
     Left = 0
     Height = 518
     Top = 0
     Width = 645
-    ActivePage = TabSheetIMAP
+    ActivePage = TabSheetBot
     Align = alClient
-    TabIndex = 3
+    TabIndex = 2
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'General'
@@ -283,7 +282,7 @@ object FormSettings: TFormSettings
         Height = 80
         Top = 104
         Width = 593
-        Caption = 'VolframAlpha'
+        Caption = 'WolframAlpha'
         ClientHeight = 60
         ClientWidth = 589
         TabOrder = 0
