@@ -51,9 +51,10 @@ begin
 end;
 
 initialization
-  BrookSettings.Port := 9999;
-  TBrookHTTPApplication(BrookApp.Instance).Threaded := false;
-  BrookThread := TBrookThread.Create;
+ // BrookSettings.Port := 6666;
+ // TBrookHTTPApplication(BrookApp.Instance).Threaded := True;
+ // BrookThread := TBrookThread.Create;
+ // BrookThread.Start;
 
 end.
 

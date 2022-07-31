@@ -29,8 +29,8 @@
             <Filename Value="../satania-buddy"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);components/neural-api/neural;components/internettools"/>
-            <OtherUnitFiles Value="forms;utils;satania;states;components;components/neural-api/neural;components/synalist;components/typing-label/typinglabel;components/TPocketSphinx/src;components/TPocketSphinx/src/pocketsphinx;frames;components/internettools/internet;components/internettools/data;components/vosk;components/activex;components/csscontrols;components/spine-runtimes/src"/>
+            <IncludeFiles Value="$(ProjOutDir);components/neural-api/neural;components/internettools;components/brookfreepascal/includes"/>
+            <OtherUnitFiles Value="forms;utils;satania;states;components;components/neural-api/neural;components/synalist;components/typing-label/typinglabel;components/TPocketSphinx/src;components/TPocketSphinx/src/pocketsphinx;frames;components/internettools/internet;components/internettools/data;components/vosk;components/activex;components/csscontrols;components/spine-runtimes/src;com;components/brookfreepascal/core;components/brookfreepascal/brokers"/>
             <UnitOutputDirectory Value="../lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -347,6 +347,16 @@
         <Filename Value="utils/utils.sprites.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="com/com.brokers.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Com.Brokers"/>
+      </Unit>
+      <Unit>
+        <Filename Value="com/com.talk.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Com.Talk"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -355,8 +365,8 @@
       <Filename Value="../satania-buddy"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);components/neural-api/neural;components/internettools"/>
-      <OtherUnitFiles Value="forms;utils;satania;states;components;components/neural-api/neural;components/synalist;components/typing-label/typinglabel;components/TPocketSphinx/src;components/TPocketSphinx/src/pocketsphinx;frames;components/internettools/internet;components/internettools/data;components/vosk;components/activex;components/csscontrols;components/spine-runtimes/src"/>
+      <IncludeFiles Value="$(ProjOutDir);components/neural-api/neural;components/internettools;components/brookfreepascal/includes"/>
+      <OtherUnitFiles Value="forms;utils;satania;states;components;components/neural-api/neural;components/synalist;components/typing-label/typinglabel;components/TPocketSphinx/src;components/TPocketSphinx/src/pocketsphinx;frames;components/internettools/internet;components/internettools/data;components/vosk;components/activex;components/csscontrols;components/spine-runtimes/src;com;components/brookfreepascal/core;components/brookfreepascal/brokers"/>
       <UnitOutputDirectory Value="../lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>

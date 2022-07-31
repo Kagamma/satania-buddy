@@ -31,30 +31,42 @@ uses
 type
   TTalkAction = class(TBrookAction)
   public
-    function Process: string;
-    procedure Get; override;
+    procedure Get; override;   
     procedure Post; override;
   end;
 
 implementation
 
-function TTalkAction.Process: string;
-begin
-  Result := 'Hello!';
-end;
+uses
+  Mcdowell;
 
 procedure TTalkAction.Get;
+var
+  Name, Value, Typ, Message: String;
+  I: Integer;
 begin
-  Write(Process);
+  Typ := 'chat';
+  for I := 0 to Params.Count - 1 do
+  begin
+    Params.GetNameValue(I, Name, Value);
+    if Name = 'message' then
+      Message := Value
+    else
+    if Name = 'type' then
+      Typ := Value;
+  end;
+  if Message <> '' then
+    Satania.Action(Typ, Message);
+  Write('satania-buddy');
 end;
 
 procedure TTalkAction.Post;
 begin
-  Write(Process);
+  Write('satania-buddy');
 end;
 
 initialization
-  TTalkAction.Register('/talk');
+  TTalkAction.Register('*');
 
 end.
 
