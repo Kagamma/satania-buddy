@@ -80,7 +80,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
     function SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    function SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
@@ -744,6 +746,16 @@ begin
   finally
     JSON.Free;
   end;
+end;
+
+function TSatania.SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := LocalFlagIni.ReadString('Flags', Args[0], '');
+end;
+
+function TSatania.SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  LocalFlagIni.WriteString('Flags', Args[0], Args[1]);
 end;
 
 {$endif}

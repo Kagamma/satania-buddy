@@ -28,7 +28,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
   FileUtil,
   ExtCtrls, Buttons, Spin, MaskEdit, Menus, CastleApplicationProperties,
-  Types, LCLTranslator;
+  Types, LCLTranslator, IniFiles;
 
 type
 
@@ -261,6 +261,8 @@ begin
 end;
 
 procedure TFormSettings.ButtonOkClick(Sender: TObject);
+var
+  IniFilePath: String;
 begin
   try
     Save.Settings.Lewd := CheckBoxLewd.Checked;    
@@ -317,6 +319,9 @@ begin
     Satania.SpriteAsSpine.AnimateSkipTicks := Save.Settings.FrameSkip;  
     Satania.SpriteAsX3D.AnimateSkipTicks := Save.Settings.FrameSkip;
     Satania.UpdateMenuItems;
+
+    // Load local flag
+    Satania.LoadLocalFlags;
 
     if (ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex] <> Save.Settings.STTVoskModel)
       or (ComboBoxSTTBackend.ItemIndex <> Save.Settings.STTBackend) then

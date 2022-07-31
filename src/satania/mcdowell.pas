@@ -32,7 +32,7 @@ uses
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
   CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts,
   CastleSceneCore, CastleSpine, strutils,
-  CastleBehaviors, Clipbrd, fphttpclient, LazUTF8,
+  CastleBehaviors, Clipbrd, fphttpclient, LazUTF8, IniFiles,
   Mcdowell.EvilC, Mcdowell.Chat, Globals;
 
 type
@@ -73,10 +73,13 @@ type
     UsedRemindersList: TStringList;
     { Where we should move our touch panel to }
     TouchBone: TCastleTransform;
+    { Store local config }
+    LocalFlagIni: TIniFile;
     constructor Create;
     destructor Destroy; override;
     procedure DefaultPosition;
     procedure LoadModel(S: String);
+    procedure LoadLocalFlags;
     procedure SetAnimationSpeed(AnimName: String; Speed: Single);
     procedure StartAnimation(AnimName: String; IsRepeat: Boolean = True); overload;
     procedure StartAnimation(URL, AnimName: String; IsRepeat: Boolean = True); overload;
@@ -169,8 +172,10 @@ begin
   Script.RegisterFunc('is_silent', @SEIsSilent, 0);
   Script.RegisterFunc('is_speech_to_text', @SEIsSpeechToText, 0);
   Script.RegisterFunc('sprite_scale_set', @SESpriteScaleGet, 1);
-  Script.RegisterFunc('flag_get', @Save.SEGetFlag, 1);
-  Script.RegisterFunc('flag_set', @Save.SESetFlag, 2);
+  Script.RegisterFunc('flag_global_get', @Save.SEGetFlag, 1);
+  Script.RegisterFunc('flag_global_set', @Save.SESetFlag, 2);        
+  Script.RegisterFunc('flag_local_get', @SELocalFlagGet, 1);
+  Script.RegisterFunc('flag_local_set', @SELocalFlagSet, 2);
   Script.RegisterFunc('scheme_load', @SESchemeLoad, 1);
   Script.RegisterFunc('scheme_default', @SESchemeDefault, 0);
   Script.RegisterFunc('delta_time', @SEDelta, 0);
@@ -212,6 +217,7 @@ begin
   Script.RegisterFunc('json_get', @SEJSONGet, 2);
   ScriptCacheMap := TSECacheMap.Create;
   UpdateMeta;
+  Self.LoadLocalFlags;
 end;
 
 destructor TSatania.Destroy;
@@ -220,6 +226,8 @@ begin
   AnimTalkScriptList.Free;
   ScriptCacheMap.Free;
   Script.Free;
+  if LocalFlagIni <> nil then
+    FreeAndNil(LocalFlagIni);
   inherited;
 end;
 
@@ -306,6 +314,16 @@ begin
     ExposeTransforms.Free;
   except
   end;
+end;
+
+procedure TSatania.LoadLocalFlags; 
+var
+  IniFilePath: String;
+begin
+  if IniFilePath <> nil then
+    FreeAndNil(IniFilePath);
+  IniFilePath := PATH_SCRIPTS_RAW + Save.Settings.Skin +  '/flags.ini';
+  LocalFlagIni := TIniFile.Create(IniFilePath);
 end;
 
 procedure TSatania.SetAnimationSpeed(AnimName: String; Speed: Single);

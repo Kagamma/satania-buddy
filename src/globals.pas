@@ -33,6 +33,7 @@ uses
   CastleVectors, Mcdowell.EvilC;
 
 const
+  PATH_SCRIPTS_RAW = 'data/scripts/';
   PATH_SCRIPTS = 'castle-data:/scripts/';
   PATH_SPRITES = 'castle-data:/sprites/';
   PATH_FONT = 'castle-data:/fonts/';         
