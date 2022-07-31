@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {$if defined(LINUX_X11)}
 
 {$ifdef unit_declare_interface}
-  qt5, qtwidgets, xlib, xatom, x,
+  qt5, qtwidgets, xlib, xatom, x, form.ChatBubble,
 {$endif unit_declare_interface}
 
 {$ifdef unit_implmentation}
@@ -42,6 +42,11 @@ begin
       LastVirtualDesktop := Data^;
       Hide;
       Show;
+      if FormChatBubble.Visible then
+      begin
+        FormChatBubble.Hide;
+        FormChatBubble.Show;
+      end;
     end;
     XFree(Data);
   end;
