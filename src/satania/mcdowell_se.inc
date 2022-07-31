@@ -716,18 +716,24 @@ begin
   Result := DirectoryExists(Args[0].VarString);
 end;
 
-function TSatania.SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-var
-  JSON: TJSONObject;
-  D: TJSONData;
-begin
-  JSON := GetJSON(Args[0].VarString) as TJSONObject;
-  Result := '';
-  try
-    D := JSON.FindPath(Args[1].VarString);
+function TSatania.SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+  function QueryForValue(D: TJSONData): TSEValue;
+  var
+    I: Integer;
+  begin  
+   Result := '';
     if D <> nil then
     begin
       case D.JSONType of
+        jtArray:
+          begin
+            Result.Kind := sevkArray;
+            SetLength(Result.VarArray, D.Count);
+            for I := 0 to D.Count - 1 do
+            begin
+              Result.VarArray[I] := QueryForValue(D.Items[I]);
+            end;
+          end;
         jtString:
           Result := D.AsString;
         jtNumber:
@@ -743,6 +749,16 @@ begin
           Result := D.AsJSON;
       end;
     end;
+  end;
+
+var
+  JSON: TJSONObject;
+  D: TJSONData;
+begin
+  JSON := GetJSON(Args[0].VarString) as TJSONObject;
+  try
+    D := JSON.FindPath(Args[1].VarString);
+    Result := QueryForValue(D);
   finally
     JSON.Free;
   end;
