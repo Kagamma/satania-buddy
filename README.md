@@ -18,7 +18,7 @@ A: Windows Vista or above with Aero enabled.
 
 ##### Q: Linux requirements?
 
-A: x11, qt5, qt5pas, freetype, openssl (for IMAP), openal, vorbis
+A: x11, qt5, qt5pas, freetype, openssl, openal, vorbis
 
 Optional dependencies: fortune, sensors
 
@@ -61,7 +61,9 @@ Type an expression, for example `5+3*2` and she will answer with `11`
 
 By default she has a simple rule-based chat system, you can configure patterns and responses in `Rules`, then tell her to learn the rules by pressing the `Learn` button.
 
-##### Q: What is Chatbot in Settings?
+If none of the above apply, then she will send your messages to https://www.wolframalpha.com/ for potential answers. Make sure to set your own AppID in `Chatbot > WolframAlpha`.
+
+##### Q: What is Chatbot > Custom Server in Settings?
 
 A: She can send messages that she doesn't understand to another 3rd chatbot service if you have one available. Basically she will:
 - Make a POST to chatbot's URL, with formdata format:
@@ -75,6 +77,7 @@ A: She can send messages that she doesn't understand to another 3rd chatbot serv
     "message": <"response data">
   }
   ```
+  By setting a custom server, she will ignore WolframAlpha setting and send your messages to custom server instead.
 
 ##### Q: How can I change her size?
 
