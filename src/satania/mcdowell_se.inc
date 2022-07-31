@@ -744,7 +744,7 @@ function TSatania.SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSE
           begin
             Result.VarString := '';
             Result := 0;
-          end
+          end;
         else
           Result := D.AsJSON;
       end;
