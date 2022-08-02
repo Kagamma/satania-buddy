@@ -40,6 +40,8 @@ type
       Method: ThtString; Results: ThtStringList);
     procedure AskTextHotSpotClick(Sender: TObject; const SRC: ThtString;
       var Handled: Boolean);
+    procedure AskTextImageRequest(Sender: TObject; const SRC: ThtString;
+      var Stream: TStream);
     procedure FormCreate(Sender: TObject);
     procedure PanelPaint(Sender: TObject);
   private
@@ -57,6 +59,8 @@ implementation
 
 uses
   mcdowell,
+  fphttpclient,
+  Utils.Threads,
   Utils.ActiveWindow;
 
 { TFormChatBubble }
@@ -79,6 +83,35 @@ begin
   Self.Visible := False;
   Satania.ChatText.Text.Text := '';
   Answer := SRC;
+end;
+
+procedure TFormChatBubble.AskTextImageRequest(Sender: TObject;
+  const SRC: ThtString; var Stream: TStream);
+var
+  Client: TFPHTTPClient;
+begin
+  if (String(SRC).IndexOf('http:') >= 0) or (String(SRC).IndexOf('https:') >= 0) then
+  begin
+    Client := TFPHTTPClient.Create(nil);
+    Stream := TMemoryStream.Create;
+    try
+      try
+        Client.Get(SRC, Stream);
+      except
+        on E: Exception do
+        begin
+          Satania.TalkReset(E.Message);
+          FreeAndNil(Stream);
+        end;
+      end;
+    finally
+      Client.Free;
+    end;
+  end else
+  begin
+    if FileExists(SRC) then
+      Stream := TFileStream.Create(SRC, fmOpenRead);
+  end;
 end;
 
 procedure TFormChatBubble.AskTextFormSubmit(Sender: TObject; const Act,

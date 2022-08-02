@@ -25,7 +25,7 @@ unit Utils.Threads;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, fphttpclient;
 
 type
   TMethod = procedure of object;
@@ -38,12 +38,25 @@ type
     procedure Execute; override;
   end;
 
-procedure CommonThread(Method: TMethod); inline;
+  TDownloadThread = class(TThread)
+  protected
+    ErrorMessage: String;
+    procedure ResetToDefault;
+  public
+    Stream: TStream;
+    URL: String;
+    procedure Execute; override;
+  end;
+
+procedure CommonThread(Method: TMethod); inline;     
+procedure DownloadThread(URL: String; var Stream: TStream); inline;
 
 implementation
 
 uses
   Mcdowell;
+
+// TCommonThread
 
 procedure TCommonThread.ResetToDefault;
 begin
@@ -71,6 +84,46 @@ begin
   T := TCommonThread.Create(True);
   T.FreeOnTerminate := True;
   T.Method := Method;
+  T.Start;
+end;
+
+// TDownloadThread
+
+procedure TDownloadThread.ResetToDefault;
+begin
+  Satania.TalkReset(ErrorMessage);
+end;
+
+procedure TDownloadThread.Execute;
+var
+  Client: TFPHTTPClient;
+begin
+  Client := TFPHTTPClient.Create(nil);
+  try
+    try
+      Client.Get(URL, Stream);
+      Terminate;
+    except
+      on E: Exception do
+      begin
+        ErrorMessage := E.Message;
+        Synchronize(@Self.ResetToDefault);
+      end;
+    end;
+  finally
+    Client.Free;
+  end;
+end;
+
+procedure DownloadThread(URL: String; var Stream: TStream);
+var
+  T: TDownloadThread;
+begin
+  Stream := TMemoryStream.Create;
+  T := TDownloadThread.Create(True);
+  T.FreeOnTerminate := True;
+  T.URL := URL;
+  T.Stream := Stream;
   T.Start;
 end;
 

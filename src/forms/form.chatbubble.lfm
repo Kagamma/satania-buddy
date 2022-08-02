@@ -53,6 +53,7 @@ object FormChatBubble: TFormChatBubble
         PrintScale = 1
         OnFormSubmit = AskTextFormSubmit
         OnHotSpotClick = AskTextHotSpotClick
+        OnImageRequest = AskTextImageRequest
         Align = alClient
         TabOrder = 0
       end
