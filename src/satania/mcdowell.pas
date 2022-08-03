@@ -124,7 +124,7 @@ uses
   form.reminders,
   form.chat,
   form.touch,
-  form.ChatBubble,
+  form.ask,
   mcdowell.chatbot,
   mcdowell.sound,
   mcdowell.net,
@@ -475,8 +475,8 @@ begin
     ChatText.ResetText;
     ChatText.MaxDisplayChars := 0;
     ChatText.Text.Text := S;
-    FormChatBubble.Answer := '';
-    FormChatBubble.AskText.Text := S;
+    FormAsk.Answer := '';
+    FormAsk.AskText.Text := S;
     if ChatText.Text.Count > 25 then
     begin
       ChatText.Text.Text := 'too much words... please check the history instead!';

@@ -42,10 +42,10 @@ begin
       LastVirtualDesktop := Data^;
       Hide;
       Show;
-      if FormChatBubble.Visible then
+      if FormAsk.Visible then
       begin
-        FormChatBubble.Hide;
-        FormChatBubble.Show;
+        FormAsk.Hide;
+        FormAsk.Show;
       end;
     end;
     XFree(Data);

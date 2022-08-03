@@ -40,7 +40,7 @@ uses
   frame.rules.edititem, vosk, voskthread, voskbassaudiosource, mcdowell.chat,
   mcdowell.net, mcdowell.numbers, utils.strings, utils.encdec, utils.coords,
   utils.threads, utils.files, mcdowell.smtp, form.email.editor, utils.smartptr,
-  form.chatbubble, utils.htmltext, utils.sprites;
+  form.ask, utils.htmltext, utils.sprites;
 
 {$R *.res}
 
@@ -56,7 +56,7 @@ begin
   Application.CreateForm(TFormReminders, FormReminders);
   Application.CreateForm(TFormRules, FormRules);
   Application.CreateForm(TFormEmailEditor, FormEmailEditor);
-  Application.CreateForm(TFormChatBubble, FormChatBubble);
+  Application.CreateForm(TFormAsk, FormAsk);
   Application.Run;
 end.
 

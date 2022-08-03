@@ -1,11 +1,11 @@
-object FormChatBubble: TFormChatBubble
+object FormAsk: TFormAsk
   Left = 342
   Height = 148
   Top = 250
   Width = 314
   BorderIcons = []
   BorderStyle = bsNone
-  Caption = 'FormChatBubble'
+  Caption = 'Ask'
   ClientHeight = 148
   ClientWidth = 314
   FormStyle = fsSystemStayOnTop

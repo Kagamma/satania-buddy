@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 }
 
-unit Form.ChatBubble;
+unit form.ask;
 
 {$I configs.inc}
 
@@ -30,9 +30,9 @@ uses
 
 type
 
-  { TFormChatBubble }
+  { TFormAsk }
 
-  TFormChatBubble = class(TForm)
+  TFormAsk = class(TForm)
     AskText: THtmlViewer;
     Panel: TPanel;
     Panel1: TPanel;
@@ -51,7 +51,7 @@ type
   end;
 
 var
-  FormChatBubble: TFormChatBubble;
+  FormAsk: TFormAsk;
 
 implementation
 
@@ -63,20 +63,20 @@ uses
   Utils.Threads,
   Utils.ActiveWindow;
 
-{ TFormChatBubble }
+{ TFormAsk }
 
-procedure TFormChatBubble.FormCreate(Sender: TObject);
+procedure TFormAsk.FormCreate(Sender: TObject);
 begin
   AddFormToIgnoreHandleList(Self);
 end;
 
-procedure TFormChatBubble.PanelPaint(Sender: TObject);
+procedure TFormAsk.PanelPaint(Sender: TObject);
 begin
   Panel.Canvas.Pen.Color := clBlack;
   Panel.Canvas.Rectangle(0, 0, Panel.Width, Panel.Height);
 end;
 
-procedure TFormChatBubble.AskTextHotSpotClick(Sender: TObject;
+procedure TFormAsk.AskTextHotSpotClick(Sender: TObject;
   const SRC: ThtString; var Handled: Boolean);
 begin
   Satania.IsBlocked := False;
@@ -85,7 +85,7 @@ begin
   Answer := SRC;
 end;
 
-procedure TFormChatBubble.AskTextImageRequest(Sender: TObject;
+procedure TFormAsk.AskTextImageRequest(Sender: TObject;
   const SRC: ThtString; var Stream: TStream);
 var
   Client: TFPHTTPClient;
@@ -114,7 +114,7 @@ begin
   end;
 end;
 
-procedure TFormChatBubble.AskTextFormSubmit(Sender: TObject; const Act,
+procedure TFormAsk.AskTextFormSubmit(Sender: TObject; const Act,
   Target, EncType, Method: ThtString; Results: ThtStringList);
 var
   I: Integer;

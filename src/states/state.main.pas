@@ -44,9 +44,9 @@ implementation
 uses
   SysUtils,
   CastleWindow,
-  Form.Touch,
-  Form.Main,
-  Form.ChatBubble,
+  form.ask,
+  form.main,
+  form.touch,
   Utils.Strings,
   Utils.Coords,
   Mcdowell;
@@ -136,15 +136,15 @@ var
 begin
   if ChatText.Text.Text <> '' then
   begin
-    FormChatBubble.Visible := Satania.IsAsking;
+    FormAsk.Visible := Satania.IsAsking;
     ChatBubble.Exists := True and Satania.Sprite.Visible and not Satania.IsAsking;
   end else
   begin
-    FormChatBubble.Visible := False;
+    FormAsk.Visible := False;
     ChatBubble.Exists := False;
   end;
   ChatBubbleArrow.Exists := ChatBubble.Exists and not Satania.IsAsking;
-  if (not ChatBubble.Exists) and (not FormChatBubble.Visible) then Exit;
+  if (not ChatBubble.Exists) and (not FormAsk.Visible) then Exit;
 
   Box := Satania.LocalBoundingBoxSnapshot;
   Box.Data[0] := Box.Data[0] + Satania.Sprite.Translation + SpriteTransform.Translation;
@@ -190,28 +190,28 @@ begin
   case AskSideX of
     0:
       begin
-        FormChatBubble.Left := Round(Box.Min.X - FormChatBubble.Width) + FormMain.Monitor.Left;
-        if FormChatBubble.Left < FormMain.Monitor.Left then
+        FormAsk.Left := Round(Box.Min.X - FormAsk.Width) + FormMain.Monitor.Left;
+        if FormAsk.Left < FormMain.Monitor.Left then
           AskSideX := 1;
       end;
     1:
       begin
-        FormChatBubble.Left := Round(Box.Max.X) + FormMain.Monitor.Left;
-        if FormChatBubble.Left + FormChatBubble.Width > FormChatBubble.Width * 2 + (Box.Max.X - Box.Min.X) + FormMain.Monitor.Left then
+        FormAsk.Left := Round(Box.Max.X) + FormMain.Monitor.Left;
+        if FormAsk.Left + FormAsk.Width > FormAsk.Width * 2 + (Box.Max.X - Box.Min.X) + FormMain.Monitor.Left then
           AskSideX := 0;
       end;
   end;
   case AskSideY of
     0:
       begin
-        FormChatBubble.Top := UIToScreenCoord(Box.Max.Y) - FormChatBubble.Height;
-        if FormChatBubble.Top < 0 then
+        FormAsk.Top := UIToScreenCoord(Box.Max.Y) - FormAsk.Height;
+        if FormAsk.Top < 0 then
           AskSideY := 1;
       end;
     1:
       begin
-        FormChatBubble.Top := UIToScreenCoord(Box.Min.Y);
-        if FormChatBubble.Top + FormChatBubble.Height > Application.ScreenHeight then
+        FormAsk.Top := UIToScreenCoord(Box.Min.Y);
+        if FormAsk.Top + FormAsk.Height > Application.ScreenHeight then
           AskSideY := 0;
       end;
   end;

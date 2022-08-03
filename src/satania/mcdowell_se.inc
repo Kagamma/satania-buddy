@@ -136,19 +136,19 @@ begin
   Ask(SEValueToText(Args[0]));
   if Length(Args) = 3 then
   begin
-    FormChatBubble.Width := Args[1];
-    FormChatBubble.Height := Args[2];
+    FormAsk.Width := Args[1];
+    FormAsk.Height := Args[2];
   end else
   begin
-    FormChatBubble.Width := 314;
-    FormChatBubble.Height := 148;
+    FormAsk.Width := 314;
+    FormAsk.Height := 148;
   end;
   VM.IsPaused := True
 end;
 
 function TSatania.SEAnswer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := FormChatBubble.Answer;
+  Result := FormAsk.Answer;
 end;
 
 function TSatania.SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
