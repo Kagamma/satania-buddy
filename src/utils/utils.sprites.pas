@@ -5,14 +5,14 @@ unit utils.sprites;
 interface
 
 uses
-  Classes, SysUtils, CastleScene, CastleSceneCore, CastleRenderOptions, X3DNodes,
+  Classes, SysUtils, CastleScene, CastleTransform, CastleRenderOptions, X3DNodes,
   CastleSpine, globals;
 
-procedure SpriteSetFilter(const Sprite: TCastleSceneCore; const S: String);
-procedure SpriteSetAnimationSpeed(const Sprite: TCastleSceneCore; const AnimName: String; const Speed: Single);
-procedure SpriteStartAnimation(const Sprite: TCastleSceneCore; const AnimName: String; const IsRepeat: Boolean);
-procedure SpriteStopAnimation(const Sprite: TCastleSceneCore; const AnimName: String);
-procedure SpriteStopAllAnimations(const Sprite: TCastleSceneCore);
+procedure SpriteSetFilter(const Sprite: TCastleTransform; const S: String);
+procedure SpriteSetAnimationSpeed(const Sprite: TCastleTransform; const AnimName: String; const Speed: Single);
+procedure SpriteStartAnimation(const Sprite: TCastleTransform; const AnimName: String; const IsRepeat: Boolean);
+procedure SpriteStopAnimation(const Sprite: TCastleTransform; const AnimName: String);
+procedure SpriteStopAllAnimations(const Sprite: TCastleTransform);
 
 var
   TrackDict: TTrackDict;
@@ -22,7 +22,7 @@ implementation
 uses
   Mcdowell;
 
-procedure SpriteSetFilter(const Sprite: TCastleSceneCore; const S: String);
+procedure SpriteSetFilter(const Sprite: TCastleTransform; const S: String);
 begin
   if Sprite is TCastleScene then
   begin
@@ -59,14 +59,14 @@ begin
   end;
 end;
 
-procedure SpriteSetAnimationSpeed(const Sprite: TCastleSceneCore; const AnimName: String; const Speed: Single);
+procedure SpriteSetAnimationSpeed(const Sprite: TCastleTransform; const AnimName: String; const Speed: Single);
 var
   TimeSensor: TTimeSensorNode;
 begin     
   if Sprite is TCastleScene then
   begin
     try
-      TimeSensor := Sprite.Node(AnimName) as TTimeSensorNode;
+      TimeSensor := TCastleScene(Sprite).Node(AnimName) as TTimeSensorNode;
       TimeSensor.FdCycleInterval.Value := Speed;
     except
       on E: Exception do
@@ -79,7 +79,7 @@ begin
   end;
 end;    
 
-procedure SpriteStartAnimation(const Sprite: TCastleSceneCore; const AnimName: String; const IsRepeat: Boolean);
+procedure SpriteStartAnimation(const Sprite: TCastleTransform; const AnimName: String; const IsRepeat: Boolean);
 var
   TimeSensor: TTimeSensorNode;
   Track: Integer;
@@ -87,9 +87,9 @@ begin
   if Sprite is TCastleScene then
   begin
     try
-      TimeSensor := Sprite.Node(AnimName) as TTimeSensorNode;
+      TimeSensor := TCastleScene(Sprite).Node(AnimName) as TTimeSensorNode;
       TimeSensor.Start(IsRepeat, True, 0);
-      Sprite.ForceInitialAnimationPose;
+      TCastleScene(Sprite).ForceInitialAnimationPose;
     except
       on E: Exception do
         Satania.TalkWithoutBlock(E.Message);
@@ -108,14 +108,14 @@ begin
   end;
 end;
 
-procedure SpriteStopAnimation(const Sprite: TCastleSceneCore; const AnimName: String);
+procedure SpriteStopAnimation(const Sprite: TCastleTransform; const AnimName: String);
 var
   TimeSensor: TTimeSensorNode;
 begin
   if Sprite is TCastleScene then
   begin
     try
-      TimeSensor := Sprite.Node(AnimName) as TTimeSensorNode;
+      TimeSensor := TCastleScene(Sprite).Node(AnimName) as TTimeSensorNode;
       TimeSensor.Start(False, True, 0);
       TimeSensor.Stop;
     except
@@ -130,13 +130,13 @@ begin
   end;
 end;
 
-procedure SpriteStopAllAnimations(const Sprite: TCastleSceneCore);
+procedure SpriteStopAllAnimations(const Sprite: TCastleTransform);
   procedure StopButNotResetAnimation(AnimName: String);
   var
     TimeSensor: TTimeSensorNode;
   begin
     try
-      TimeSensor := Sprite.Node(AnimName) as TTimeSensorNode;
+      TimeSensor := TCastleScene(Sprite).Node(AnimName) as TTimeSensorNode;
       TimeSensor.Stop;
     except
       on E: Exception do
@@ -148,9 +148,9 @@ var
 begin     
   if Sprite is TCastleScene then
   begin
-    for S in Sprite.AnimationsList do
+    for S in TCastleScene(Sprite).AnimationsList do
       StopButNotResetAnimation(S);
-    Sprite.ResetAnimationState;
+    TCastleScene(Sprite).ResetAnimationState;
   end else
   if Sprite is TCastleSpine then
   begin

@@ -52,7 +52,7 @@ type
     IsAsking: Boolean;
     IsBlocked: Boolean;
     ChatResult: String;
-    Sprite: TCastleSceneCore;   
+    Sprite: TCastleTransform;
     SpriteAsX3D: TCastleScene;
     SpriteAsSpine: TCastleSpine;
     Viewport: TCastleViewport;
@@ -250,11 +250,12 @@ var
 begin
   Ext := LowerCase(ExtractFileExt(S));
   S := PATH_SPRITES + Save.Settings.Skin + '/' + S;
-  if (S <> Sprite.URL) or Save.Settings.DeveloperMode then
+  if (SpriteAsX3D.Exists and (S <> SpriteAsX3D.URL)) or (SpriteAsSpine.Exists and (S <> SpriteAsSpine.URL)) or Save.Settings.DeveloperMode then
   try
     begin
       // Clean up sprite's data
-      Sprite.URL := '';
+      SpriteAsX3D.URL := '';      
+      SpriteAsSpine.URL := '';
       // Hide the sprite
       Sprite.Exists := False;
       // Load new model, runtime based on ext
@@ -271,7 +272,7 @@ begin
         else
           begin
             Sprite := Self.SpriteAsX3D;     
-            Sprite.URL := S;
+            TCastleScene(Sprite).URL := S;
           end;
       end;
       Sprite.Exists := True;
@@ -280,7 +281,7 @@ begin
   except
     on E: Exception do
     begin
-      Sprite.URL := PATH_SPRITES + 'template/sprites.plist';
+      TCastleScene(Sprite).URL := PATH_SPRITES + 'template/sprites.plist';
       Talk(E.Message);
     end;
   end else
@@ -301,7 +302,7 @@ begin
     if Sprite = Self.SpriteAsX3D then
     begin
       ExposeTransforms.Add('Bone_touch');
-      Sprite.ExposeTransforms := ExposeTransforms;
+      TCastleScene(Sprite).ExposeTransforms := ExposeTransforms;
       if Sprite.Count > 0 then
         TouchBone := Sprite.Items[0];
     end else

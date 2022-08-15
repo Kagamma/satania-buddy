@@ -205,7 +205,7 @@ var
   TimeSensor: TTimeSensorNode;
 begin
   try
-    TimeSensor := Sprite.Node(Args[0]) as TTimeSensorNode;
+    TimeSensor := TCastleScene(Sprite).Node(Args[0]) as TTimeSensorNode;
     if (not TimeSensor.Loop) and (TimeSensor.Enabled) and (TimeSensor.StartTime > 0) and
        (TimeSensor.IsActive) and (not TimeSensor.IsPaused) then
       Result := 1
