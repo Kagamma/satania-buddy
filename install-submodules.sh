@@ -35,6 +35,6 @@ git checkout dev
 cd ..
 git clone https://github.com/Kagamma/spine-runtimes.git
 cd spine-runtimes
-git checkout castle-engine
+git checkout 4.1
 cd ..
 cd ..
