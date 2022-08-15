@@ -266,8 +266,6 @@ begin
               SpineDataCache.Clear; // Clear spine cache in case this is developer mode
             Sprite := Self.SpriteAsSpine;
             TCastleSpine(Sprite).URL := S;
-            // Call update here to trigger the loading immediately
-            TCastleSpine(Sprite).Update(0.0001, RM);
           end
         else
           begin
