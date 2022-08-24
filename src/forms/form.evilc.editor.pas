@@ -130,7 +130,7 @@ begin
     end;
     // Add keywords
     SL.AddStrings([
-      'include',
+      '#include',
       'if',
       'for',
       'while',
