@@ -118,6 +118,23 @@ begin
   SL := TStringList.Create;
   try
     SL.Sorted := True;
+    // Add keywords
+    SL.AddStrings([
+      'if',
+      'for',
+      'while',
+      'true',
+      'false',
+      'yield',
+      'break',
+      'continue',
+      'pause',
+      'in',
+      'to',
+      'fn',
+      'import',
+      'i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f64', 'buffer', 'wbuffer'
+    ]);
     // Transfer function names and constant names to completion
     for I := 0 to Satania.Script.FuncNativeList.Count - 1 do
     begin
