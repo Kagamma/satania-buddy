@@ -342,6 +342,7 @@ type
     ConstMap: TSEConstMap;
     ScopeStack: TSEScopeStack;
     LineOfCodeList: TIntegerList;
+    IsLex,
     IsParsed: Boolean;
     IsDone: Boolean;
     FuncTraversal: Integer;
@@ -2815,6 +2816,7 @@ begin
     end;
     TokenList.Add(Token);
   until C = #0;
+  Self.IsLex := True;
 end;
 
 procedure TEvilC.Parse;
@@ -3879,6 +3881,7 @@ begin
   Self.Vm.IsPaused := False;
   Self.IsDone := False;
   Self.IsParsed := False;
+  Self.IsLex := False;
   Self.LocalVarList.Clear;
   Self.TokenList.Clear;
   Self.IncludeList.Clear;
@@ -3894,11 +3897,10 @@ end;
 
 function TEvilC.Exec: TSEValue;
 begin
-  if not Self.IsParsed then
-  begin
+  if not Self.IsLex then
     Self.Lex;
+  if not Self.IsParsed then
     Self.Parse;
-  end;
   Self.VM.Exec;
   Exit(Self.VM.Stack[0])
 end;
