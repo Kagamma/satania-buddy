@@ -27,7 +27,8 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
   SynEdit, SynHighlighterCpp, SynEditMarkupSpecialLine, SynCompletion,
-  LCLTranslator, lclintf, Menus;
+  LCLTranslator, lclintf, Menus,
+  Mcdowell.EvilC, Types, LCLType;
 
 type
 
@@ -63,10 +64,14 @@ type
     procedure EditorSpecialLineColors(Sender: TObject; Line: integer;
       var Special: boolean; var FG, BG: TColor);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure MenuItemEditorCopyClick(Sender: TObject);
     procedure MenuItemEditorCutClick(Sender: TObject);
     procedure MenuItemEditorPasteClick(Sender: TObject);
+    procedure SynCompletionBeforeExecute(ASender: TSynBaseCompletion;
+      var ACurrentString: String; var APosition: Integer; var AnX,
+      AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
     procedure ToolButtonHelpClick(Sender: TObject);
     procedure ToolButtonNewClick(Sender: TObject);
     procedure ToolButtonOpenClick(Sender: TObject);
@@ -77,7 +82,9 @@ type
     procedure OpenRules;
     procedure ToolButtonUndoClick(Sender: TObject);
   private
-
+    // For autocomplete
+    Script: TEvilC;
+    procedure GenerateAutoComplete(const ASource: String = '');
   public
     ErrorPos: TPoint;
     WorkingFile: String;
@@ -96,6 +103,67 @@ uses
 
 { TFormEvilCEditor }
 
+procedure TFormEvilCEditor.GenerateAutoComplete(const ASource: String = '');
+var
+  SL: TStringList;
+  I: Integer;
+  S: String;
+  Token: TSEToken;
+begin
+  Self.SynCompletion.ItemList.Clear;
+  SL := TStringList.Create;
+  try
+    SL.Sorted := True;
+    SL.Duplicates := dupIgnore;
+    try
+      Self.Script.Source := ASource;
+      Self.Script.Lex;
+    except
+      // There will be errors, obviously. We just need to ignore it
+    end;
+    // Add identity
+    for I := 0 to Self.Script.TokenList.Count - 1 do
+    begin
+      Token := Self.Script.TokenList[I];
+      if Token.Kind = tkIdent then
+        SL.Add(Token.Value);
+    end;
+    // Add keywords
+    SL.AddStrings([
+      '#include',
+      'if',
+      'for',
+      'while',
+      'true',
+      'false',
+      'yield',
+      'break',
+      'continue',
+      'pause',
+      'in',
+      'to',
+      'fn',
+      'import',
+      'i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f64', 'buffer', 'wbuffer'
+    ]);
+    // Transfer function names and constant names to completion
+    for I := 0 to Self.Script.FuncNativeList.Count - 1 do
+    begin
+      SL.Add(Self.Script.FuncNativeList[I].Name);
+    end;
+    for S in Self.Script.ConstMap.Keys do
+    begin
+      SL.Add(S);
+    end;
+    for S in SL do
+    begin
+      Self.SynCompletion.ItemList.Add(S);
+    end;
+  finally
+    SL.Free;
+  end;
+end;
+
 procedure TFormEvilCEditor.ToolButtonNewClick(Sender: TObject);
 begin
   WorkingFile := '';
@@ -109,31 +177,12 @@ var
   SL: TStringList;
   I: Integer;
   S: String;
+  Token: TSEToken;
 begin
   ToolButtonNewClick(Sender);
   {$ifdef WINDOWS}
   Editor.Font.Name := 'Consolas';
   {$endif}
-  Self.SynCompletion.ItemList.Clear;
-  SL := TStringList.Create;
-  try
-    SL.Sorted := True;
-    // Transfer function names and constant names to completion
-    for I := 0 to Satania.Script.FuncNativeList.Count - 1 do
-    begin
-      SL.Add(Satania.Script.FuncNativeList[I].Name);
-    end;
-    for S in Satania.Script.ConstMap.Keys do
-    begin
-      SL.Add(S);
-    end;
-    for S in SL do
-    begin
-      Self.SynCompletion.ItemList.Add(S);
-    end;
-  finally
-    SL.Free;
-  end;
 end;
 
 procedure TFormEvilCEditor.MenuItemEditorCopyClick(Sender: TObject);
@@ -151,6 +200,14 @@ begin
   Editor.PasteFromClipboard;
 end;
 
+procedure TFormEvilCEditor.SynCompletionBeforeExecute(
+  ASender: TSynBaseCompletion; var ACurrentString: String;
+  var APosition: Integer; var AnX, AnY: Integer;
+  var AnResult: TOnBeforeExeucteFlags);
+begin
+  Self.GenerateAutoComplete(Editor.Lines.Text);
+end;
+
 procedure TFormEvilCEditor.ToolButtonHelpClick(Sender: TObject);
 begin
   OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Scripting-References-&-APIs');
@@ -159,6 +216,13 @@ end;
 procedure TFormEvilCEditor.FormCreate(Sender: TObject);
 begin
   ErrorPos.Y := -1;
+  Self.Script := TEvilC.Create;
+  Satania.RegisterFuncs(Self.Script);
+end;
+
+procedure TFormEvilCEditor.FormDestroy(Sender: TObject);
+begin
+  Self.Script.Free;
 end;
 
 procedure TFormEvilCEditor.EditorSpecialLineColors(Sender: TObject;
