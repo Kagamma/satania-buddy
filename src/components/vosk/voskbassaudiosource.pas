@@ -57,7 +57,7 @@ implementation
 
 function HiWord(l: LongInt): Word;
 begin
-  HIWORD := Word(((DWord(l)) shr 16) and $FFFF);
+  Result := Word(((DWord(l)) shr 16) and $FFFF);
 end;
 
 { TBassAudioSource }
