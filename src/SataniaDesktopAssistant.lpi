@@ -356,6 +356,10 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Com.Talk"/>
       </Unit>
+      <Unit>
+        <Filename Value="satania/mcdowell.sketch.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

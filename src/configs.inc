@@ -5,3 +5,5 @@
 {$ifdef CPUX86_64}
   {$asmmode intel}
 {$endif}
+{$macro on}
+{$define nl:=+ LineEnding +}

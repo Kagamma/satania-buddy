@@ -40,7 +40,7 @@ uses
   frame.rules.edititem, vosk, voskthread, voskbassaudiosource, mcdowell.chat,
   mcdowell.net, mcdowell.numbers, utils.strings, utils.encdec, utils.coords,
   utils.threads, utils.files, mcdowell.smtp, form.email.editor, utils.smartptr,
-  form.ask, utils.htmltext, utils.sprites;
+  form.ask, utils.htmltext, utils.sprites, mcdowell.sketch;
 
 {$R *.res}
 
