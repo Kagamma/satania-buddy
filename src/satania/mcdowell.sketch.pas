@@ -62,9 +62,11 @@ type
     { Find a sketch by name, return nil if none is found }
     function Find(const AName: String): TSataniaSketchItem;
     { Add new sketch with triangles }
-    procedure AddTriangles(const AName: String; const ATriangles: TSataniaSketchDataArray);
+    function AddTriangles(const AName: String; const ATriangles: TSataniaSketchDataArray): TSataniaSketchItem;
     { Delete sketch by name, return true if delete successfully }
     function Delete(const AName: String): Boolean;
+    { Delete all sketches }
+    procedure DeleteAll;
   end;
 
 var
@@ -222,17 +224,15 @@ begin
   Result := TSataniaSketchItem(Satania.SketchRoot.FindComponent(AName));
 end;
 
-procedure TSataniaSketch.AddTriangles(const AName: String; const ATriangles: TSataniaSketchDataArray);
-var
-  Item: TSataniaSketchItem;
+function TSataniaSketch.AddTriangles(const AName: String; const ATriangles: TSataniaSketchDataArray): TSataniaSketchItem;
 begin
-  Item := Self.Find(AName);
-  if Item = nil then
+  Result := Self.Find(AName);
+  if Result = nil then
   begin
-    Item := TSataniaSketchItem.Create(Satania.SketchRoot);
-    Satania.SketchRoot.Add(Item);
+    Result := TSataniaSketchItem.Create(Satania.SketchRoot);
+    Satania.SketchRoot.Add(Result);
   end;
-  Item.SketchData := ATriangles;
+  Result.SketchData := ATriangles;
 end;
 
 function TSataniaSketch.Delete(const AName: String): Boolean;
@@ -246,6 +246,14 @@ begin
     Result := True;
   end else
     Result := False;
+end;
+
+procedure TSataniaSketch.DeleteAll;
+var
+  I: Integer;
+begin
+  for I := Satania.SketchRoot.Count - 1 downto 0 do
+    Satania.SketchRoot.Items[I].Free;
 end;
 
 initialization

@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteVisibleSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteVisibleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;               
+    function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEAsk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEAnswer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -55,34 +55,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SESchemeDefault(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESoundPlay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    function SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEChatResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;        
+    function SEURLGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLPost(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLProcess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+    function SEURLProcess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLEncode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLDecode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SENumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
+    function SENumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEMonthsToNumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEReminderCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEReminderTodayGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    function SEReminderTodayGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEClipboardGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEClipboardToFile(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEFileRead(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    function SEFileRead(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileWrite(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;             
+    function SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
+    function SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    function SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESketchAddTriangles(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESketchExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESketchClear(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
@@ -98,7 +102,7 @@ begin
       begin
         Result := '[';
         for I := 0 to Length(Value.VarArray) - 1 do
-        begin                                                  
+        begin
           if I > 0 then
             Result := Result + ', ';
           Result := Result + SEValueToText(Value.VarArray[I]);
@@ -188,8 +192,8 @@ function TSatania.SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue
 var
   I: Integer;
 begin
-  AnimTalkLoop := Args[0];        
-  AnimTalkFinish := Args[1];  
+  AnimTalkLoop := Args[0];
+  AnimTalkFinish := Args[1];
   Self.AnimTalkScriptList.Clear;
   if Length(Args) = 3 then
   begin
@@ -382,7 +386,7 @@ function TSatania.SEURLGet(const VM: TSEVM; const Args: array of TSEValue): TSEV
 var
   Thread: TSataniaHttpGetThread;
   I: Integer;
-begin         
+begin
   I := RunList.IndexOf(Args[0]);
   if I >= 0 then
     RunList.Delete(I);
@@ -530,7 +534,7 @@ var
 begin
   DD := Args[0].VarNumber;
   TT := Args[1].VarNumber;
-  DecodeDate(DD, Y, M, D);    
+  DecodeDate(DD, Y, M, D);
   DecodeTime(TT, H, MM, S, MS);
   Reminder := Save.Reminders.Add as TReminderCollectionItem;
   Reminder.Kind := 1;
@@ -561,24 +565,24 @@ begin
       (Reminder.Month = M) and
       (Reminder.Day = D) then
     begin
-      SetLength(V.VarArray, 5);    
+      SetLength(V.VarArray, 5);
       SetLength(Result.VarArray, Count + 1);
       Result.VarArray[Count].Kind := sevkArray;
       SetLength(Result.VarArray[Count].VarArray, 2);
-      Result.VarArray[Count].VarArray[0] := Reminder.Hour;      
+      Result.VarArray[Count].VarArray[0] := Reminder.Hour;
       Result.VarArray[Count].VarArray[1] := Reminder.Minute;
       Inc(Count);
     end;
   end;
 end;
 
-function TSatania.SEClipboardGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+function TSatania.SEClipboardGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   if Clipboard.HasFormat(PredefinedClipboardFormat(pcfText)) then
     Result := StringReplace(Clipboard.AsText, 'file://', '', [rfReplaceAll])
   else
     Result := '';
-end;    
+end;
 
 function TSatania.SEClipboardToFile(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
@@ -590,10 +594,10 @@ var
 begin
   Ext := LowerCase((Args[0].VarString));
   if Clipboard.HasFormat(PredefinedClipboardFormat(pcfBitmap)) then
-  begin       
+  begin
     B := TBitmap.Create;
     if Ext = '.png' then
-    begin                 
+    begin
       Png := TPortableNetworkGraphic.Create;
       try
         B.LoadFromClipboardFormat(PredefinedClipboardFormat(pcfBitmap));
@@ -604,7 +608,7 @@ begin
         B.Free;
       end;
     end else
-    begin       
+    begin
       Jpeg := TJPEGImage.Create;
       try
         B.LoadFromClipboardFormat(PredefinedClipboardFormat(pcfBitmap));
@@ -623,11 +627,11 @@ begin
     try
       S := Clipboard.AsText;
       FS.WriteAnsiString(S);
-    finally   
+    finally
       FS.Free;
     end;
   end;
-end;   
+end;
 
 function TSatania.SEFileRead(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
@@ -662,7 +666,7 @@ begin
   Result := FileExists(Args[0].VarString);
 end;
 
-function TSatania.SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+function TSatania.SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   DeleteFile(Args[0].VarString);
 end;
@@ -684,12 +688,12 @@ begin
   end;
 end;
 
-function TSatania.SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+function TSatania.SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   CreateDir(Args[0].VarString);
 end;
 
-function TSatania.SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+function TSatania.SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   DeleteDirectory(Args[0], False);
 end;
@@ -709,18 +713,18 @@ begin
   finally
     SL.Free;
   end;
-end;        
+end;
 
 function TSatania.SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := DirectoryExists(Args[0].VarString);
 end;
 
-function TSatania.SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+function TSatania.SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   function QueryForValue(D: TJSONData): TSEValue;
   var
     I: Integer;
-  begin  
+  begin
    Result := '';
     if D <> nil then
     begin
@@ -772,6 +776,55 @@ end;
 function TSatania.SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   LocalFlagIni.WriteString('Flags', Args[0], Args[1]);
+end;
+
+function TSatania.SESketchAddTriangles(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Triangles: TSataniaSketchDataArray;
+  Len, I, V, C: Integer;
+  ColorValue: Cardinal;
+begin
+  // 0: name
+  // 1: vertices
+  // 2: colors
+
+  // Do not draw if vertex count <> color count, count = 0, or is not triangles
+  Len := Length(Args[1].VarArray);
+  if ((Len div 2) <> Length(Args[2].VarArray)) or (Len = 0) or ((Len mod 6) <> 0) then
+    Exit;
+
+  Len := Len div 2;
+  SetLength(Triangles, Len);
+  V := 0;
+  C := 0;
+  for I := 0 to Len - 1 do
+  begin
+    ColorValue := Round(Args[2].VarArray[C].VarNumber);
+    Triangles[I].Vertex := Vector2(Args[1].VarArray[V].VarNumber, Args[1].VarArray[V + 1].VarNumber);
+    Triangles[I].Color := Vector4(
+      Byte(ColorValue) / 255,
+      Byte(ColorValue shr 8) / 255,
+      Byte(ColorValue shr 16) / 255,
+      Byte(ColorValue shr 24) / 255
+    );
+    Inc(V, 2);
+    Inc(C);
+  end;
+end;
+
+function TSatania.SESketchExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := SataniaSketch.Find(Args[0]);
+end;
+
+function TSatania.SESketchClear(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := SataniaSketch.Delete(Args[0]);
+end;
+
+function TSatania.SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  SataniaSketch.DeleteAll;
 end;
 
 {$endif}

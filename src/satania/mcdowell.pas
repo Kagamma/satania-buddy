@@ -134,7 +134,8 @@ uses
   mcdowell.numbers,
   form.main,
   mcdowell.imap,
-  mcdowell.smtp;
+  mcdowell.smtp,
+  mcdowell.sketch;
 
 {$define unit_implementation}
 {$I mcdowell_se.inc}
@@ -149,7 +150,7 @@ begin
   UsedRemindersList := TStringList.Create;
   UsedRemindersList.Sorted := True;
   Script := TEvilC.Create;
-  AnimTalkLoop := 'talk_loop';   
+  AnimTalkLoop := 'talk_loop';
   AnimTalkFinish := 'talk_finish';
   Self.AnimTalkScriptList := TStringList.Create;
   Self.RegisterFuncs(Self.Script);
@@ -237,6 +238,10 @@ begin
   S.RegisterFunc('fs_directory_find_all', @SEDirectoryFindAll, 2);
   S.RegisterFunc('fs_directory_exists', @SEDirectoryExists, 1);
   S.RegisterFunc('json_get', @SEJSONGet, 2);
+  S.RegisterFunc('sketch_triangles_add', @SESketchAddTriangles, 3);
+  S.RegisterFunc('sketch_exists', @SESketchExists, 1);
+  S.RegisterFunc('sketch_clear', @SESketchClear, 1);
+  S.RegisterFunc('sketch_clear_all', @SESketchClearAll, 0);
 end;
 
 procedure TSatania.DefaultPosition;
@@ -246,7 +251,7 @@ begin
     Save.SpriteDefaultLocationX := ScreenWidth - 150;
     Save.SpriteDefaultLocationY := 150;
   end;
-  SpriteAsX3D.Translation := Vector3(Save.SpriteDefaultLocationX, Save.SpriteDefaultLocationY, 0);  
+  SpriteAsX3D.Translation := Vector3(Save.SpriteDefaultLocationX, Save.SpriteDefaultLocationY, 0);
   SpriteAsSpine.Translation := Vector3(Save.SpriteDefaultLocationX, Save.SpriteDefaultLocationY, 0);
 end;
 
@@ -262,7 +267,7 @@ begin
   try
     begin
       // Clean up sprite's data
-      SpriteAsX3D.URL := '';      
+      SpriteAsX3D.URL := '';
       SpriteAsSpine.URL := '';
       // Hide the sprite
       Sprite.Exists := False;
@@ -277,7 +282,7 @@ begin
           end
         else
           begin
-            Sprite := Self.SpriteAsX3D;     
+            Sprite := Self.SpriteAsX3D;
             TCastleScene(Sprite).URL := S;
           end;
       end;
@@ -323,7 +328,7 @@ begin
   end;
 end;
 
-procedure TSatania.LoadLocalFlags; 
+procedure TSatania.LoadLocalFlags;
 var
   IniFilePath: String;
 begin
@@ -403,14 +408,14 @@ begin
       // Clear the cache in developer mode
       if Save.Settings.DeveloperMode then
         Self.CleanUpCache;
-      // We always load script in developer mode    
+      // We always load script in developer mode
       IsContainKey := Self.ScriptCacheMap.ContainsKey(Path);
       if Save.Settings.DeveloperMode or (not IsContainKey) then
       begin
         FS := Download(Path) as TFileStream;
         FS.Position := 0;
         SS.CopyFrom(FS, FS.Size);
-        FreeAndNil(FS);   
+        FreeAndNil(FS);
         Action('script', SS.DataString);
         // Parse the source beforehand to store backup
         Self.Script.Lex;
@@ -439,7 +444,7 @@ begin
 end;
 
 procedure TSatania.Talk(S: String);
-begin      
+begin
   CSTalk.Enter;
   try
     LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
@@ -460,7 +465,7 @@ begin
       Log(Name, S);
       if AnimTalkLoop <> '' then
         Satania.StartAnimation(AnimTalkLoop);
-      ChatBubbleDelay := Save.Settings.ChatBubbleDelay; 
+      ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
       if Self.AnimTalkScriptList.Count > 0 then
       begin
         // Play an animation randomly
@@ -489,7 +494,7 @@ begin
       ChatText.Text.Text := 'too much words... please check the history instead!';
     end;
     ChatBubbleDelay := 1;
-    IsTalking := True;   
+    IsTalking := True;
     IsAsking := True;
     IsBlocked := True;
     if S <> '' then
@@ -503,7 +508,7 @@ begin
 end;
 
 procedure TSatania.TalkReset(S: String);
-begin                                 
+begin
   Self.Talk(S);
   Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
 end;
@@ -528,7 +533,7 @@ begin
       Log(Name, S);
       ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
     end;
-    IsTalking := False; 
+    IsTalking := False;
     IsAsking := False;
   finally
     CSTalk.Leave;
@@ -624,7 +629,7 @@ end;
 
 procedure TSatania.SetImageQuality(S: String);
 begin
-  SpriteSetFilter(Self.SpriteAsSpine, S); 
+  SpriteSetFilter(Self.SpriteAsSpine, S);
   SpriteSetFilter(Self.SpriteAsX3D, S);
 end;
 
@@ -695,12 +700,12 @@ end;
 procedure TSatania.SetVisible(const V: Boolean);
 begin
   if V then
-  begin                  
+  begin
     FormMain.MenuItemHideShow.Caption := 'Hide';
     Satania.Sprite.Visible := True;
     FormTouch.Show;
   end else
-  begin           
+  begin
     FormMain.MenuItemHideShow.Caption := 'Show';
     Satania.Sprite.Visible := False;
     FormTouch.Hide;
@@ -791,7 +796,7 @@ begin
   Script.ConstMap.Add('FA_ENCRYPTED', faEncrypted);
   Script.ConstMap.Add('FA_COMPRESSED', faCompressed);
   Script.ConstMap.Add('FA_SYMLINK', faSymLink);
-  Script.ConstMap.Add('FA_SYSFILE', faSysFile);    
+  Script.ConstMap.Add('FA_SYSFILE', faSysFile);
   Script.ConstMap.Add('FA_ANYFILE', faAnyFile);
   MetaPath := 'data/scripts/' + Save.Settings.Skin + '/meta.json';
   Name := 'Satania';
@@ -834,12 +839,12 @@ initialization
   RunList := TStringList.Create;
   RunResultList := TStringDict.Create;
 
-finalization 
+finalization
   Save.SaveToFile('configs.json');
   FreeAndNil(Save);
   FreeAndNil(Satania);
   FreeAndNil(RunList);
-  FreeAndNil(RunResultList);      
+  FreeAndNil(RunResultList);
   CSTalk.Free;
   CSAction.Free;
 
