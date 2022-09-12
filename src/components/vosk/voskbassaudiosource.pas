@@ -55,30 +55,30 @@ function GetMicrophoneDeviceIdx: Integer;
 
 implementation
 
-function HIWORD(l : longint) : WORD;
+function HiWord(l: LongInt): Word;
 begin
-  HIWORD:=WORD(((DWORD(l)) shr 16) and $FFFF);
+  HIWORD := Word(((DWord(l)) shr 16) and $FFFF);
 end;
 
 { TBassAudioSource }
 
 function GetMicrophoneDeviceIdx: Integer;
 var
-  i: Integer;
+  I: Integer;
   info: BASS_DEVICEINFO;
 begin
   Result := -1;
-  i := 0;
-  while BASS_RecordGetDeviceInfo(i, info) do
+  I := 0;
+  while BASS_RecordGetDeviceInfo(I, info) do
   begin
     if ((info.flags and BASS_DEVICE_ENABLED) = BASS_DEVICE_ENABLED) and
        ((info.flags and BASS_DEVICE_TYPE_MASK) = BASS_DEVICE_TYPE_MICROPHONE) then
     begin
-      Result := i;
+      Result := I;
       Break;
     end;
 
-    Inc(i);
+    Inc(I);
   end;
 end;
 
@@ -87,7 +87,7 @@ begin
   Result := False;
 
   // Check if correct version of BASS.DLL was loaded
-  if (HIWORD(BASS_GetVersion) <> BASSVERSION) then
+  if (HiWord(BASS_GetVersion) <> BASSVERSION) then
     Exit;
 
   // Initialize audio device - 16000hz, mono, 16 bits
@@ -107,35 +107,35 @@ end;
 
 procedure TBassAudioSource.ListInputSources;
 var
-  i: Integer;
+  I: Integer;
   inName: PAnsiChar;
   level: Single;
 begin
-  i := 0;
-  inName := BASS_RecordGetInputName(i);
+  I := 0;
+  inName := BASS_RecordGetInputName(I);
   while inName <> nil do
   begin
     FInputSources.Add(StrPas(inName));
-    if (BASS_RecordGetInput(i, level) and BASS_INPUT_OFF) = 0 then
-      FInputSourceIdx := i;
-    Inc(i);
-    inName := BASS_RecordGetInputName(i);
+    if (BASS_RecordGetInput(I, level) and BASS_INPUT_OFF) = 0 then
+      FInputSourceIdx := I;
+    Inc(I);
+    inName := BASS_RecordGetInputName(I);
   end;
 end;
 
 procedure TBassAudioSource.SetInputSourceIdx(ANewIdx: Integer);
 var
-  i: Integer;
-  r: Boolean;
+  I: Integer;
+  R: Boolean;
 begin
   FInputSourceIdx := ANewIdx;
 
-  r := True;
-  i := 0;
-  while r do
+  R := True;
+  I := 0;
+  while R do
   begin
-    r := BASS_RecordSetInput(i, BASS_INPUT_OFF, -1);
-    Inc(i);
+    R := BASS_RecordSetInput(I, BASS_INPUT_OFF, -1);
+    Inc(I);
   end;
   BASS_RecordSetInput(FInputSourceIdx, BASS_INPUT_ON, -1);
 end;
