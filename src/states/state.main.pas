@@ -27,6 +27,7 @@ type
     SpriteAsX3D: TCastleScene;                   
     SpriteAsSpine: TCastleSpine;
     Sprite: TCastleSceneCore;
+    SketchRoot: TCastleTransform;
     Viewport: TCastleViewport;
     BubbleSideX, BubbleSideY,
     AskSideX, AskSideY: Integer;
@@ -78,6 +79,7 @@ begin
   SpriteTransform := DesignedComponent('SpriteTransform') as TCastleTransform;
   Viewport := DesignedComponent('Viewport') as TCastleViewport;
   ChatText.TypingSpeed := Save.Settings.TextSpeed;
+  SketchRoot := DesignedComponent('SketchRoot') as TCastleTransform;
 
   //
   Satania.Sprite := Sprite;
@@ -87,6 +89,7 @@ begin
   Satania.ChatText := ChatText;
   Satania.ChatBubble := ChatBubble;
   Satania.FontSystem := FontSystem;
+  Satania.SketchRoot := Self.SketchRoot;
   try
     BubbleSideY := 1;
     Satania.DefaultPosition;

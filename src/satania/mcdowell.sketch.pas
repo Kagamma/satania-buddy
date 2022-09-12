@@ -30,25 +30,40 @@ uses
   CastleRenderContext;
 
 type
+  TSataniaSketchData = record
+    Vertex: TVector2;
+    TexCoord: TVector2;
+    Color: TVector4;
+  end;
+  TSataniaSketchDataArray = array of TSataniaSketchData;
+
   TSataniaSketchItem = class(TCastleTransform)
   private
-    FVertices: array of TVector2;
-    FTexCoords: array of TVector2;
-    FColors: array of TVector4;
+    VBO: GLuint;
+    FSketchData: array of TSataniaSketchData;
     FShader: TGLSLProgram;
+    FSketchDataPreviousLength: Integer;
+    FIsDataChanged: Boolean;
+    procedure SetSketchData(const Data: TSataniaSketchDataArray);
     procedure GLContextOpen;
   public
     IsRemoved: Boolean;
+    procedure GLContextClose; override;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Update(const SecondsPassed: Single; var RemoveMe: TRemoveType); override;
     procedure LocalRender(const Params: TRenderParams); override;
+
+    property SketchData: TSataniaSketchDataArray write SetSketchData;
   end;
 
   TSataniaSketch = class
   public
+    { Find a sketch by name, return nil if none is found }
     function Find(const AName: String): TSataniaSketchItem;
-    procedure AddOrReplace(const AName: String; const AItem: TSataniaSketchItem);
+    { Add new sketch with triangles }
+    procedure AddTriangles(const AName: String; const ATriangles: TSataniaSketchDataArray);
+    { Delete sketch by name, return true if delete successfully }
     function Delete(const AName: String): Boolean;
   end;
 
@@ -84,10 +99,9 @@ const
 'varying vec4 fragColor;'nl
 
 'uniform sampler2D baseColor;'nl
-'uniform vec4 color;'nl
 
 'void main() {'nl
-'  gl_FragColor = texture2D(baseColor, fragTexCoord) * fragColor * color;'nl
+'  gl_FragColor = fragColor;'nl
 '}';
 
 var
@@ -104,6 +118,12 @@ end;
 
 // ----- TSataniaSketchItem -----
 
+procedure TSataniaSketchItem.SetSketchData(const Data: TSataniaSketchDataArray);
+begin
+  Self.FSketchData := Data;
+  Self.FIsDataChanged := True;
+end;
+
 procedure TSataniaSketchItem.GLContextOpen;
 begin
   if RenderProgram = nil then
@@ -114,6 +134,23 @@ begin
     RenderProgram.Link;
     ApplicationProperties.OnGLContextClose.Add(@FreeGLContext);
   end;
+  if Self.VBO = 0 then
+  begin
+    glGenBuffers(1, @Self.VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, Self.VBO);
+    glBufferData(GL_ARRAY_BUFFER, Length(Self.FSketchData) * SizeOf(TSataniaSketchData), @Self.FSketchData[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+  end;
+end;
+
+procedure TSataniaSketchItem.GLContextClose;
+begin
+  if Self.VBO <> 0 then
+  begin
+    glDeleteBuffers(1, @Self.VBO);
+    Self.VBO := 0;
+  end;
+  inherited;
 end;
 
 constructor TSataniaSketchItem.Create(AOwner: TComponent);
@@ -136,11 +173,11 @@ begin
     RemoveMe := rtRemoveAndFree
   else
     RemoveMe := rtNone;
-end;  
+end;
 
 procedure TSataniaSketchItem.LocalRender(const Params: TRenderParams);
 var
-  I: Integer;
+  I, Len: Integer;
   PreviousProgram: TGLSLProgram;
 begin
   if (not Self.Visible) or (not Self.Exists) or Params.InShadow or (not Params.Transparent) or (Params.StencilTest > 0) then
@@ -152,12 +189,24 @@ begin
   PreviousProgram := RenderContext.CurrentProgram;
   RenderProgram.Enable;
 
+  Self.FShader.Uniform('mvMatrix').SetValue(Params.RenderingCamera.Matrix * Params.Transform^);
+  Self.FShader.Uniform('pMatrix').SetValue(RenderContext.ProjectionMatrix);
+
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   glDepthMask(GL_FALSE);
   // glActiveTexture(GL_TEXTURE0);
 
-  // TODO: Render goes here
+  if Self.FIsDataChanged then
+  begin
+    Len := Length(Self.FSketchData);
+    if Len <> Self.FSketchDataPreviousLength then
+      glBufferData(GL_ARRAY_BUFFER, Len * SizeOf(TSataniaSketchData), @Self.FSketchData[0], GL_STATIC_DRAW)
+    else
+      glBufferSubData(GL_ARRAY_BUFFER, 0, Len * SizeOf(TSataniaSketchData), @Self.FSketchData[0]);
+    Self.FSketchDataPreviousLength := Len;
+  end;
+  glDrawArrays(GL_TRIANGLES, 0, Len);
 
   glDisable(GL_BLEND);
   glDisable(GL_DEPTH_TEST);
@@ -170,17 +219,33 @@ end;
 
 function TSataniaSketch.Find(const AName: String): TSataniaSketchItem;
 begin
-
+  Result := TSataniaSketchItem(Satania.SketchRoot.FindComponent(AName));
 end;
 
-procedure TSataniaSketch.AddOrReplace(const AName: String; const AItem: TSataniaSketchItem);
+procedure TSataniaSketch.AddTriangles(const AName: String; const ATriangles: TSataniaSketchDataArray);
+var
+  Item: TSataniaSketchItem;
 begin
-
+  Item := Self.Find(AName);
+  if Item = nil then
+  begin
+    Item := TSataniaSketchItem.Create(Satania.SketchRoot);
+    Satania.SketchRoot.Add(Item);
+  end;
+  Item.SketchData := ATriangles;
 end;
 
 function TSataniaSketch.Delete(const AName: String): Boolean;
+var
+  Item: TSataniaSketchItem;
 begin
-
+  Item := Self.Find(AName);
+  if Item <> nil then
+  begin
+    Item.Free;
+    Result := True;
+  end else
+    Result := False;
 end;
 
 initialization
@@ -190,4 +255,3 @@ finalization
   SataniaSketch.Free;
 
 end.
-

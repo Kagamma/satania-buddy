@@ -73,6 +73,8 @@ type
     UsedRemindersList: TStringList;
     { Where we should move our touch panel to }
     TouchBone: TCastleTransform;
+    { The root contains all the sketches }
+    SketchRoot: TCastleTransform;
     { Store local config }
     LocalFlagIni: TIniFile;
     constructor Create;
@@ -87,7 +89,7 @@ type
     procedure StopAnimation(AnimName: String);
     procedure StopAllAnimations;
     procedure Log(LogName, S: String);
-    procedure Talk(S: String);           
+    procedure Talk(S: String);
     procedure Ask(S: String);
     procedure TalkReset(S: String);
     procedure Notify(C, S: String);
