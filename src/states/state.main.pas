@@ -27,7 +27,8 @@ type
     SpriteAsX3D: TCastleScene;                   
     SpriteAsSpine: TCastleSpine;
     Sprite: TCastleSceneCore;
-    SketchRoot: TCastleTransform;
+    SketchBefore,
+    SketchAfter: TCastleTransform;
     Viewport: TCastleViewport;
     BubbleSideX, BubbleSideY,
     AskSideX, AskSideY: Integer;
@@ -79,7 +80,8 @@ begin
   SpriteTransform := DesignedComponent('SpriteTransform') as TCastleTransform;
   Viewport := DesignedComponent('Viewport') as TCastleViewport;
   ChatText.TypingSpeed := Save.Settings.TextSpeed;
-  SketchRoot := DesignedComponent('SketchRoot') as TCastleTransform;
+  SketchBefore := DesignedComponent('SketchBefore') as TCastleTransform;   
+  SketchAfter := DesignedComponent('SketchAfter') as TCastleTransform;
 
   //
   Satania.Sprite := Sprite;
@@ -89,7 +91,8 @@ begin
   Satania.ChatText := ChatText;
   Satania.ChatBubble := ChatBubble;
   Satania.FontSystem := FontSystem;
-  Satania.SketchRoot := Self.SketchRoot;
+  Satania.SketchBefore := Self.SketchBefore;
+  Satania.SketchAfter := Self.SketchAfter;
   try
     BubbleSideY := 1;
     Satania.DefaultPosition;
@@ -234,7 +237,8 @@ begin
     UpdateSataniaPositionBasedOnMonitor;
     UpdateTouchPanelPosition;
     UpdateChatBubblePosition;
-    Self.SketchRoot.Translation := Satania.Sprite.Translation;
+    Self.SketchBefore.Translation := Satania.Sprite.Translation;
+    Self.SketchAfter.Translation := Satania.Sprite.Translation;
     Satania.Update(SecondsPassed);
     Forms.Application.ProcessMessages;
   except

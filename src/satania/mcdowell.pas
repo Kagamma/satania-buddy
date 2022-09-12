@@ -74,7 +74,8 @@ type
     { Where we should move our touch panel to }
     TouchBone: TCastleTransform;
     { The root contains all the sketches }
-    SketchRoot: TCastleTransform;
+    SketchBefore,
+    SketchAfter: TCastleTransform;
     { Store local config }
     LocalFlagIni: TIniFile;
     constructor Create;
@@ -238,11 +239,11 @@ begin
   S.RegisterFunc('fs_directory_find_all', @SEDirectoryFindAll, 2);
   S.RegisterFunc('fs_directory_exists', @SEDirectoryExists, 1);
   S.RegisterFunc('json_get', @SEJSONGet, 2);
-  S.RegisterFunc('sketch_add_triangles', @SESketchAddTriangles, 3);  
-  S.RegisterFunc('sketch_position_set', @SESketchPositionSet, 4);
+  S.RegisterFunc('sketch_create', @SESketchCreate, 1);
+  S.RegisterFunc('sketch_draw_triangles', @SESketchDrawTriangles, 3);
   S.RegisterFunc('sketch_exists', @SESketchExists, 1);
-  S.RegisterFunc('sketch_clear', @SESketchClear, 1);
-  S.RegisterFunc('sketch_clear_all', @SESketchClearAll, 0);
+  S.RegisterFunc('sketch_delete', @SESketchClear, 1);
+  S.RegisterFunc('sketch_delete_all', @SESketchClearAll, 0);
 end;
 
 procedure TSatania.DefaultPosition;

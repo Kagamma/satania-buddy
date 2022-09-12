@@ -57,10 +57,12 @@ type
 
   TSataniaSketch = class
   public
+    { Create new sketch with triangles }
+    function CreateSketch(const AName: String): TSataniaSketchItem;
     { Find a sketch by name, return nil if none is found }
     function Find(const AName: String): TSataniaSketchItem;
-    { Add new sketch with triangles }
-    function AddTriangles(const AName: String; const ATriangles: TSataniaSketchDataArray): TSataniaSketchItem;
+    { Draw triangles }
+    function DrawTriangles(const AName: String; const ATriangles: TSataniaSketchDataArray): TSataniaSketchItem;
     { Delete sketch by name, return true if delete successfully }
     function Delete(const AName: String): Boolean;
     { Delete all sketches }
@@ -223,22 +225,29 @@ begin
   PreviousProgram.Enable;
 end;
 
-// ----- TSataniaSketch -----
+// ----- TSataniaSketch ----- 
 
-function TSataniaSketch.Find(const AName: String): TSataniaSketchItem;
-begin
-  Result := TSataniaSketchItem(Satania.SketchRoot.FindComponent(AName));
-end;
-
-function TSataniaSketch.AddTriangles(const AName: String; const ATriangles: TSataniaSketchDataArray): TSataniaSketchItem;
+function TSataniaSketch.CreateSketch(const AName: String): TSataniaSketchItem;
 begin
   Result := Self.Find(AName);
   if Result = nil then
   begin
-    Result := TSataniaSketchItem.Create(Satania.SketchRoot);
+    Result := TSataniaSketchItem.Create(Satania.SketchAfter);
     Result.Name := AName;
-    Satania.SketchRoot.Add(Result);
+    Satania.SketchBefore.Add(Result);
   end;
+end;
+
+function TSataniaSketch.Find(const AName: String): TSataniaSketchItem;
+begin
+  Result := TSataniaSketchItem(Satania.SketchBefore.FindComponent(AName));
+  if Result = nil then
+    Result := TSataniaSketchItem(Satania.SketchAfter.FindComponent(AName));
+end;
+
+function TSataniaSketch.DrawTriangles(const AName: String; const ATriangles: TSataniaSketchDataArray): TSataniaSketchItem;
+begin
+  Result := CreateSketch(AName);
   Result.SketchData := ATriangles;
 end;
 
@@ -259,8 +268,10 @@ procedure TSataniaSketch.DeleteAll;
 var
   I: Integer;
 begin
-  for I := Satania.SketchRoot.Count - 1 downto 0 do
-    Satania.SketchRoot.Items[I].Free;
+  for I := Satania.SketchBefore.Count - 1 downto 0 do
+    Satania.SketchBefore.Items[I].Free;
+  for I := Satania.SketchAfter.Count - 1 downto 0 do
+    Satania.SketchAfter.Items[I].Free;
 end;
 
 initialization
