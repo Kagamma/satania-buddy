@@ -781,7 +781,7 @@ end;
 function TSatania.SESketchAddTriangles(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   Triangles: TSataniaSketchDataArray;
-  Len, I, V, C: Integer;
+  Len, I, V, C, ColLen: Integer;
   ColorValue: Cardinal;
 begin
   // 0: name
@@ -790,8 +790,8 @@ begin
 
   // Do not draw if vertex count <> color count, count = 0, or is not triangles
   Len := Length(Args[1].VarArray);
-  if ((Len div 2) <> Length(Args[2].VarArray)) or (Len = 0) or ((Len mod 6) <> 0) then
-    Exit;
+  if (Len = 0) or ((Len mod 6) <> 0) then
+    Exit(0);
 
   Len := Len div 2;
   SetLength(Triangles, Len);
@@ -799,7 +799,11 @@ begin
   C := 0;
   for I := 0 to Len - 1 do
   begin
-    ColorValue := Round(Args[2].VarArray[C].VarNumber);
+    ColLen := Length(Args[2].VarArray) - 1;
+    if C > ColLen then
+      ColorValue := Round(Args[2].VarArray[ColLen].VarNumber)
+    else
+      ColorValue := Round(Args[2].VarArray[C].VarNumber);
     Triangles[I].Vertex := Vector2(Args[1].VarArray[V].VarNumber, Args[1].VarArray[V + 1].VarNumber);
     Triangles[I].Color := Vector4(
       Byte(ColorValue) / 255,
@@ -810,6 +814,8 @@ begin
     Inc(V, 2);
     Inc(C);
   end;
+  SataniaSketch.AddTriangles(Args[0], Triangles);
+  Exit(1);
 end;
 
 function TSatania.SESketchExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

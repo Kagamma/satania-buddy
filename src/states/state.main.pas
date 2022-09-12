@@ -234,6 +234,7 @@ begin
     UpdateSataniaPositionBasedOnMonitor;
     UpdateTouchPanelPosition;
     UpdateChatBubblePosition;
+    Self.SketchRoot.Translation := Satania.Sprite.Translation;
     Satania.Update(SecondsPassed);
     Forms.Application.ProcessMessages;
   except

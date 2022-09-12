@@ -41,9 +41,7 @@ type
   private
     VBO: GLuint;
     FSketchData: array of TSataniaSketchData;
-    FShader: TGLSLProgram;
     FSketchDataPreviousLength: Integer;
-    FIsDataChanged: Boolean;
     procedure SetSketchData(const Data: TSataniaSketchDataArray);
     procedure GLContextOpen;
   public
@@ -121,9 +119,18 @@ end;
 // ----- TSataniaSketchItem -----
 
 procedure TSataniaSketchItem.SetSketchData(const Data: TSataniaSketchDataArray);
+var
+  Len: Integer;
 begin
   Self.FSketchData := Data;
-  Self.FIsDataChanged := True;
+  Len := Length(Self.FSketchData);
+  glBindBuffer(GL_ARRAY_BUFFER, Self.VBO);
+  if Len <> Self.FSketchDataPreviousLength then
+    glBufferData(GL_ARRAY_BUFFER, Len * SizeOf(TSataniaSketchData), @Self.FSketchData[0], GL_STATIC_DRAW)
+  else
+    glBufferSubData(GL_ARRAY_BUFFER, 0, Len * SizeOf(TSataniaSketchData), @Self.FSketchData[0]); 
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  Self.FSketchDataPreviousLength := Len;
 end;
 
 procedure TSataniaSketchItem.GLContextOpen;
@@ -179,7 +186,7 @@ end;
 
 procedure TSataniaSketchItem.LocalRender(const Params: TRenderParams);
 var
-  I, Len: Integer;
+  I: Integer;
   PreviousProgram: TGLSLProgram;
 begin
   if (not Self.Visible) or (not Self.Exists) or Params.InShadow or (not Params.Transparent) or (Params.StencilTest > 0) then
@@ -191,24 +198,23 @@ begin
   PreviousProgram := RenderContext.CurrentProgram;
   RenderProgram.Enable;
 
-  Self.FShader.Uniform('mvMatrix').SetValue(Params.RenderingCamera.Matrix * Params.Transform^);
-  Self.FShader.Uniform('pMatrix').SetValue(RenderContext.ProjectionMatrix);
+  RenderProgram.Uniform('mvMatrix').SetValue(Params.RenderingCamera.Matrix * Params.Transform^);
+  RenderProgram.Uniform('pMatrix').SetValue(RenderContext.ProjectionMatrix);
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   glDepthMask(GL_FALSE);
   // glActiveTexture(GL_TEXTURE0);
 
-  if Self.FIsDataChanged then
-  begin
-    Len := Length(Self.FSketchData);
-    if Len <> Self.FSketchDataPreviousLength then
-      glBufferData(GL_ARRAY_BUFFER, Len * SizeOf(TSataniaSketchData), @Self.FSketchData[0], GL_STATIC_DRAW)
-    else
-      glBufferSubData(GL_ARRAY_BUFFER, 0, Len * SizeOf(TSataniaSketchData), @Self.FSketchData[0]);
-    Self.FSketchDataPreviousLength := Len;
-  end;
-  glDrawArrays(GL_TRIANGLES, 0, Len);
+  glBindBuffer(GL_ARRAY_BUFFER, Self.VBO);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, SizeOf(TSataniaSketchData), Pointer(0));
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, SizeOf(TSataniaSketchData), Pointer(8));
+  glEnableVertexAttribArray(2);
+  glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, SizeOf(TSataniaSketchData), Pointer(16));
+  glDrawArrays(GL_TRIANGLES, 0, Length(Self.FSketchData));
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   glDisable(GL_BLEND);
   glDisable(GL_DEPTH_TEST);
@@ -230,6 +236,7 @@ begin
   if Result = nil then
   begin
     Result := TSataniaSketchItem.Create(Satania.SketchRoot);
+    Result.Name := AName;
     Satania.SketchRoot.Add(Result);
   end;
   Result.SketchData := ATriangles;
