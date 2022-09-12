@@ -238,7 +238,8 @@ begin
   S.RegisterFunc('fs_directory_find_all', @SEDirectoryFindAll, 2);
   S.RegisterFunc('fs_directory_exists', @SEDirectoryExists, 1);
   S.RegisterFunc('json_get', @SEJSONGet, 2);
-  S.RegisterFunc('sketch_triangles_add', @SESketchAddTriangles, 3);
+  S.RegisterFunc('sketch_add_triangles', @SESketchAddTriangles, 3);  
+  S.RegisterFunc('sketch_position_set', @SESketchPositionSet, 4);
   S.RegisterFunc('sketch_exists', @SESketchExists, 1);
   S.RegisterFunc('sketch_clear', @SESketchClear, 1);
   S.RegisterFunc('sketch_clear_all', @SESketchClearAll, 0);

@@ -86,7 +86,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SESketchAddTriangles(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchClear(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    function SESketchPositionSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
@@ -831,6 +832,16 @@ end;
 function TSatania.SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   SataniaSketch.DeleteAll;
+end;
+
+function TSatania.SESketchPositionSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Item: TSataniaSketchItem;
+begin
+  Item := SataniaSketch.Find(Args[0]);
+  if Item <> nil then
+    Item.Translation := Vector3(Args[1].VarNumber, Args[2].VarNumber, Args[3].VarNumber);
+  Exit(Item <> nil);
 end;
 
 {$endif}
