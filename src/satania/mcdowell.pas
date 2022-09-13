@@ -188,10 +188,10 @@ procedure TSatania.RegisterFuncs(const S: TEvilC; const IsSafe: Boolean = False)
 begin      
   if not IsSafe then
   begin
-    S.RegisterFunc('talk', @SETalk, -1);
     S.RegisterFunc('ask', @SEAsk, -1);
     S.RegisterFunc('scheme_load', @SESchemeLoad, 1);
-  end;
+  end;              
+  S.RegisterFunc('talk', @SETalk, -1);
   S.RegisterFunc('numbers', @SENumbers, 1);
   S.RegisterFunc('months_to_numbers', @SEMonthsToNumbers, 1);
   S.RegisterFunc('answer', @SEAnswer, 0);
@@ -604,6 +604,8 @@ begin
       end;
       IsTalking := False;
       Script.IsPaused := False;
+      for Key in BackgroundScriptDict.Keys do
+        BackgroundScriptDict[Key].Script.IsPaused := False;
     end;
     //
     if not Self.Script.IsDone then

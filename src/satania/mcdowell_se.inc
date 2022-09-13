@@ -118,11 +118,15 @@ begin
 end;
 
 function TSatania.SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Key: String;
 begin
   if Length(Args) = 1 then
   begin
     Talk(SEValueToText(Args[0]));
     VM.IsPaused := True;
+    for Key in BackgroundScriptDict.Keys do
+      BackgroundScriptDict[Key].Script.IsPaused := True;
   end else
   begin
     if Args[1] = 0 then
@@ -132,6 +136,8 @@ begin
     begin
       Talk(SEValueToText(Args[0]));
       VM.IsPaused := True;
+      for Key in BackgroundScriptDict.Keys do
+        BackgroundScriptDict[Key].Script.IsPaused := True;
     end;
   end;
 end;
