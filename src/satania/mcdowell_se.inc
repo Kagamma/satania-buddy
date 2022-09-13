@@ -845,33 +845,18 @@ function TSatania.SEWorkerCreate(const VM: TSEVM; const Args: array of TSEValue)
 var
   Item: TSataniaBackgroundScript;
   Key: String;
-  FS: TFileStream;
-  SS: TStringStream;
-begin 
-  SS := TStringStream.Create('');
-  Result := '';
-  try
-    if FileExists('data/scripts/' + Save.Settings.Skin + '/' + Args[1].VarString) then
-    begin
-      FS := Download(PATH_SCRIPTS + Save.Settings.Skin + '/' + Args[1].VarString) as TFileStream;
-      FS.Position := 0;
-      SS.CopyFrom(FS, FS.Size);
-      Item.Script := TEvilC.Create;
-      Self.RegisterFuncs(Item.Script, True);
-      Item.Script.Source := SS.DataString;
-      FS.Free;
-      if Length(Args) >= 3 then
-        Item.Interval := Round(Args[2] * 1000)
-      else
-        Item.Interval := 0;
-      Item.LastTimestamp := GetTickCount64;
-      Key := Args[0];
-      Self.BackgroundScriptDict.AddOrSetValue(Key, Item);
-    end else
-      raise Exception.Create(Format('Script "%s" not found!', [Args[1].VarString]));
-  finally
-    SS.Free;
-  end;
+begin
+  Item.Script := TEvilC.Create;
+  Self.RegisterFuncs(Item.Script, True);
+  Item.Script.Source := Args[1];
+  if Length(Args) >= 3 then
+    Item.Interval := Round(Args[2] * 1000)
+  else
+    Item.Interval := 0;
+  Item.LastTimestamp := GetTickCount64;
+  Key := Args[0];
+  Self.BackgroundScriptDict.AddOrSetValue(Key, Item);
+  Result := Key;
 end;
 
 function TSatania.SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
