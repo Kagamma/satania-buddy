@@ -89,9 +89,7 @@ type
   );
   {$mode delphi}
   TSEValue = record
-    {$ifdef SE_STRING}
     VarString: String;
-    {$endif}
     VarArray: array of TSEValue;
     case Kind: TSEValueKind of
       sevkSingle:
@@ -100,11 +98,7 @@ type
         );
       sevkString:
         (
-          {$ifdef SE_STRING}
           VarStringDummy: PChar;
-          {$else}
-          VarString: PChar;
-          {$endif}
         );
       sevkArray:
         (
@@ -383,9 +377,7 @@ operator := (V: TSEValue) R: String;
 operator := (V: TSEValue) R: TSEValueArray;
 operator := (V: TSEValue) R: Pointer;
 operator + (V1: TSEValue; V2: TSENumber) R: TSEValue;
-{$ifdef SE_STRING}
 operator + (V1: TSEValue; V2: String) R: TSEValue;
-{$endif}
 operator + (V1: TSEValue; V2: Pointer) R: TSEValue;
 operator - (V1: TSEValue; V2: TSENumber) R: TSEValue;
 operator - (V1: TSEValue; V2: Pointer) R: TSEValue;
@@ -401,9 +393,7 @@ operator > (V1: TSEValue; V2: TSENumber) R: Boolean;
 operator <= (V1: TSEValue; V2: TSENumber) R: Boolean;
 operator >= (V1: TSEValue; V2: TSENumber) R: Boolean;
 operator = (V1: TSEValue; V2: TSENumber) R: Boolean;
-{$ifdef SE_STRING}
 operator <> (V1: TSEValue; V2: String) R: Boolean;
-{$endif}
 operator < (V1, V2: TSEValue) R: Boolean;
 operator > (V1, V2: TSEValue) R: Boolean;
 operator <= (V1, V2: TSEValue) R: Boolean;
@@ -1217,13 +1207,11 @@ begin
         for I := Len to Len + Length(V2.VarArray) - 1 do
           R.VarArray[I] := V2.VarArray[I - Len];
       end;
-    {$ifdef SE_STRING}
     sevkString:
       begin
         R.Kind := sevkString;
         R.VarString := V1.VarString + V2.VarString;
       end;
-    {$endif}
   end;
 end;
 
@@ -1286,10 +1274,8 @@ begin
   case V1.Kind of
     sevkSingle:
       R := V1.VarNumber = V2.VarNumber;
-  {$ifdef SE_STRING}
     sevkString:
       R := V1.VarString = V2.VarString;
-  {$endif}
   end;
 end;
 
@@ -1298,10 +1284,8 @@ begin
   case V1.Kind of
     sevkSingle:
       R := V1.VarNumber <> V2.VarNumber;
-    {$ifdef SE_STRING}
     sevkString:
       R := V1.VarString <> V2.VarString;
-    {$endif}
   end;
 end;
 
@@ -1330,10 +1314,8 @@ begin
   case V1.Kind of
     sevkSingle:
       Result := V1.VarNumber = V2.VarNumber;
-  {$ifdef SE_STRING}
     sevkString:
       Result := V1.VarString = V2.VarString;
-  {$endif}
   end;
 end;
 
@@ -1342,10 +1324,8 @@ begin
   case V1.Kind of
     sevkSingle:
       Result := V1.VarNumber <> V2.VarNumber;
-    {$ifdef SE_STRING}
     sevkString:
       Result := V1.VarString <> V2.VarString;
-    {$endif}
   end;
 end;
 
@@ -1356,19 +1336,13 @@ begin
   R.Kind := sevkSingle;
   R.VarNumber := V;
 end;
-{$ifdef SE_STRING}
+
 operator := (V: String) R: TSEValue; inline;
 begin
   R.Kind := sevkString;
   R.VarString := V;
 end;
-{$else}
-operator := (V: String) R: TSEValue; inline;
-begin
-  R.Kind := sevkString;
-  R.VarString := PChar(V);
-end;
-{$endif}
+
 operator := (V: Boolean) R: TSEValue; inline;
 begin
   R.Kind := sevkSingle;
@@ -1423,12 +1397,12 @@ begin
   R.Kind := sevkSingle;
   R.VarNumber := V1.VarNumber + V2;
 end;
-{$ifdef SE_STRING}
+
 operator + (V1: TSEValue; V2: String) R: TSEValue; inline;
 begin
   R.VarString := V2;
 end;
-{$endif}
+
 operator + (V1: TSEValue; V2: Pointer) R: TSEValue; inline;
 begin
   R.Kind := sevkPointer;
@@ -1484,13 +1458,11 @@ begin
         for I := Len to Len + Length(V2.VarArray) - 1 do
           R.VarArray[I] := V2.VarArray[I - Len];
       end;
-    {$ifdef SE_STRING}
     sevkString:
       begin
         R.Kind := sevkString;
         R.VarString := V1.VarString + V2.VarString;
       end;
-    {$endif}
   end;
 end;
 operator - (V: TSEValue) R: TSEValue; inline;
@@ -1547,22 +1519,21 @@ operator = (V1: TSEValue; V2: TSENumber) R: Boolean; inline;
 begin
   R := V1.VarNumber = V2;
 end;
-{$ifdef SE_STRING}
+
 operator = (V1: TSEValue; V2: String) R: Boolean; inline;
 begin
   R := V1.VarString = V2;
 end;
-{$endif}
+
 operator <> (V1: TSEValue; V2: TSENumber) R: Boolean; inline;
 begin
   R := V1.VarNumber <> V2;
 end;
-{$ifdef SE_STRING}
+
 operator <> (V1: TSEValue; V2: String) R: Boolean; inline;
 begin
   R := V1.VarString <> V2;
 end;
-{$endif}
 
 operator < (V1, V2: TSEValue) R: Boolean; inline;
 begin
@@ -1585,10 +1556,8 @@ begin
   case V1.Kind of
     sevkSingle:
       R := V1.VarNumber = V2.VarNumber;
-  {$ifdef SE_STRING}
     sevkString:
       R := V1.VarString = V2.VarString;
-  {$endif}
   end;
 end;
 operator <> (V1, V2: TSEValue) R: Boolean; inline;
@@ -1596,10 +1565,8 @@ begin
   case V1.Kind of
     sevkSingle:
       R := V1.VarNumber <> V2.VarNumber;
-    {$ifdef SE_STRING}
     sevkString:
       R := V1.VarString <> V2.VarString;
-    {$endif}
   end;
 end;
 
@@ -1644,11 +1611,7 @@ var
   A, B, C: PSEValue;
   V: PSEValue;
   TV: TSEValue;
-  {$ifdef SE_STRING}
   S: String;
-  {$else}
-  S: PChar;
-  {$endif}
   WS: WideString;
   FuncNativeInfo: PSEFuncNativeInfo;
   FuncScriptInfo: PSEFuncScriptInfo;
@@ -1839,14 +1802,10 @@ begin
             B := Get(A^);
             case B^.Kind of
               sevkString:
-                {$ifdef SE_STRING}
                 {$ifdef SE_STRING_UTF8}
                   Push(UTF8Copy(B^.VarString, Integer(Pop^) + 1, 1));
                 {$else}
                   Push(B^.VarString[Integer(Pop^) + 1]);
-                {$endif}
-                {$else}
-                Push(B^.VarString[Integer(Pop^)]);
                 {$endif}
               else
                 Push(TSEValueArray(B^.VarArray)[Integer(Pop^)]);
@@ -1859,14 +1818,10 @@ begin
             B := Pop;
             case B^.Kind of
               sevkString:
-                {$ifdef SE_STRING}
                 {$ifdef SE_STRING_UTF8}
                   Push(UTF8Copy(B^.VarString, Integer(A^) + 1, 1));
                 {$else}
                   Push(B^.VarString[Integer(A^) + 1]);
-                {$endif}
-                {$else}
-                Push(B^.VarString[Integer(A^)]);
                 {$endif}
               else
                 Push(TSEValueArray(B^.VarArray)[Integer(A^)]);
@@ -2310,17 +2265,12 @@ begin
                 begin
                   if V^.Kind = sevkString then
                   begin
-                    {$ifdef SE_STRING}
                     {$ifdef SE_STRING_UTF8}
                       UTF8Delete(V^.VarString, Integer(C^) + 1, 1);
                       S := UTF8Copy(B^.VarString, 1, 1);
                       UTF8Insert(S, V^.VarString, Integer(C^) + 1);
                     {$else}
                       V^.VarString[Integer(C^) + 1] := B^.VarString[1];
-                    {$endif}
-                    {$else}
-                    S := V^.VarString;
-                    S[C^] := B^.VarString[0];
                     {$endif}
                     // Self.Stack[A] := S;
                   end else
@@ -2333,17 +2283,12 @@ begin
                 begin
                   if V^.Kind = sevkString then
                   begin
-                    {$ifdef SE_STRING}
                     {$ifdef SE_STRING_UTF8}
                       UTF8Delete(V^.VarString, Integer(C^) + 1, 1);
                       S := Char(Round(B^.VarNumber));
                       UTF8Insert(S, V^.VarString, Integer(C^) + 1);
                     {$else}
                       V^.VarString[Integer(C^) + 1] := Char(Round(B^.VarNumber));
-                    {$endif}
-                    {$else}
-                    S := V^.VarString;
-                    S[C^] := Char(Round(B^.VarNumber));
                     {$endif}
                     // Self.Stack[A] := S;
                   end else
