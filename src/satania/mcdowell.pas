@@ -519,7 +519,6 @@ begin
     IsBlocked := True;
     if S <> '' then
     begin
-      Log(Name, S);
       ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
     end;
   finally
