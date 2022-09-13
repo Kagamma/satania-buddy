@@ -87,7 +87,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SESketchDrawTriangles(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchClear(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    function SEWorkerCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
@@ -837,6 +839,44 @@ end;
 function TSatania.SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   SataniaSketch.DeleteAll;
+end;
+
+function TSatania.SEWorkerCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Item: TSataniaBackgroundScript;
+  Key: String;
+  FS: TFileStream;
+  SS: TStringStream;
+begin 
+  SS := TStringStream.Create('');
+  Result := '';
+  try
+    if FileExists('data/scripts/' + Save.Settings.Skin + '/' + Args[1].VarString) then
+    begin
+      FS := Download(PATH_SCRIPTS + Save.Settings.Skin + '/' + Args[1].VarString) as TFileStream;
+      FS.Position := 0;
+      SS.CopyFrom(FS, FS.Size);
+      Item.Script := TEvilC.Create;
+      Self.RegisterFuncs(Item.Script, True);
+      Item.Script.Source := SS.DataString;
+      FS.Free;
+      if Length(Args) >= 3 then
+        Item.Interval := Round(Args[2] * 1000)
+      else
+        Item.Interval := 0;
+      Item.LastTimestamp := GetTickCount64;
+      Key := Args[0];
+      Self.BackgroundScriptDict.Add(Key, Item);
+    end else
+      raise Exception.Create(Format('Script "%s" not found!', [Args[1].VarString]));
+  finally
+    SS.Free;
+  end;
+end;
+
+function TSatania.SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := Self.BackgroundScriptDict.ContainsKey(Args[0]);
 end;
 
 {$endif}

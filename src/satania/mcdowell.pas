@@ -25,7 +25,7 @@ unit Mcdowell;
 interface
 
 uses
-  Classes, SysUtils,
+  Classes, SysUtils, Generics.Collections,
   Forms, Menus, FileUtil, simpleinternet,
   fpjson, jsonparser, Process, LCLType, Types, LCLIntf, Graphics, syncobjs,
   CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,
@@ -36,6 +36,13 @@ uses
   Mcdowell.EvilC, Mcdowell.Chat, Globals;
 
 type
+  TSataniaBackgroundScript = record
+    Script: TEvilC;
+    Interval,
+    LastTimestamp: QWord;
+  end;
+  TSataniaBackgroundScriptDict = specialize TDictionary<String, TSataniaBackgroundScript>;
+
   TSatania = class
   protected
     {$define unit_protected}
@@ -68,6 +75,7 @@ type
     AnimTalkFinish,
     Name: String;
     Script: TEvilC;
+    BackgroundScriptDict: TSataniaBackgroundScriptDict;
     ScriptCacheMap: TSECacheMap;
     AnimTalkScriptList: TStringList; // List of possible scripts to execute during talking
     UsedRemindersList: TStringList;
@@ -80,7 +88,7 @@ type
     LocalFlagIni: TIniFile;
     constructor Create;
     destructor Destroy; override;
-    procedure RegisterFuncs(const S: TEvilC);
+    procedure RegisterFuncs(const S: TEvilC; const IsSafe: Boolean = False);
     procedure DefaultPosition;
     procedure LoadModel(S: String);
     procedure LoadLocalFlags;
@@ -109,6 +117,7 @@ type
     procedure UpdateReminders;
     procedure UpdateMeta;
     procedure CleanUpCache;
+    procedure BackgroundScriptClearAll;
   end;
 
 var
@@ -122,6 +131,7 @@ implementation
 
 uses
   Utils.coords,
+  Utils.Encdec,
   Utils.Strings,
   Utils.Threads,
   utils.sprites,
@@ -151,6 +161,7 @@ begin
   UsedRemindersList := TStringList.Create;
   UsedRemindersList.Sorted := True;
   Script := TEvilC.Create;
+  BackgroundScriptDict := TSataniaBackgroundScriptDict.Create;
   AnimTalkLoop := 'talk_loop';
   AnimTalkFinish := 'talk_finish';
   Self.AnimTalkScriptList := TStringList.Create;
@@ -166,17 +177,23 @@ begin
   AnimTalkScriptList.Free;
   ScriptCacheMap.Free;
   Script.Free;
+  BackgroundScriptClearAll;
+  BackgroundScriptDict.Free;
   if LocalFlagIni <> nil then
     FreeAndNil(LocalFlagIni);
   inherited;
 end;
 
-procedure TSatania.RegisterFuncs(const S: TEvilC);
-begin
+procedure TSatania.RegisterFuncs(const S: TEvilC; const IsSafe: Boolean = False);
+begin      
+  if not IsSafe then
+  begin
+    S.RegisterFunc('talk', @SETalk, -1);
+    S.RegisterFunc('ask', @SEAsk, -1);
+    S.RegisterFunc('scheme_load', @SESchemeLoad, 1);
+  end;
   S.RegisterFunc('numbers', @SENumbers, 1);
   S.RegisterFunc('months_to_numbers', @SEMonthsToNumbers, 1);
-  S.RegisterFunc('talk', @SETalk, -1);
-  S.RegisterFunc('ask', @SEAsk, -1);
   S.RegisterFunc('answer', @SEAnswer, 0);
   S.RegisterFunc('notify', @SENotify, 1);
   S.RegisterFunc('process_run', @SEProcessRun, 1);
@@ -200,7 +217,6 @@ begin
   S.RegisterFunc('flag_global_set', @Save.SESetFlag, 2);
   S.RegisterFunc('flag_local_get', @SELocalFlagGet, 1);
   S.RegisterFunc('flag_local_set', @SELocalFlagSet, 2);
-  S.RegisterFunc('scheme_load', @SESchemeLoad, 1);
   S.RegisterFunc('scheme_default', @SESchemeDefault, 0);
   S.RegisterFunc('delta_time', @SEDelta, 0);
   S.RegisterFunc('email_imap_load', @SELoadEmails, 0);
@@ -243,7 +259,9 @@ begin
   S.RegisterFunc('sketch_draw_triangles', @SESketchDrawTriangles, 3);
   S.RegisterFunc('sketch_exists', @SESketchExists, 1);
   S.RegisterFunc('sketch_delete', @SESketchClear, 1);
-  S.RegisterFunc('sketch_delete_all', @SESketchClearAll, 0);
+  S.RegisterFunc('sketch_delete_all', @SESketchClearAll, 0); 
+  S.RegisterFunc('worker_create', @SEWorkerCreate, -1);
+  S.RegisterFunc('worker_exists', @SEWorkerExists, 1);
 end;
 
 procedure TSatania.DefaultPosition;
@@ -571,6 +589,10 @@ begin
 end;
 
 procedure TSatania.Update(const Dt: Single);
+var
+  I: Integer;
+  Key: String;
+  BackgroundScript: TSataniaBackgroundScript;
 begin
   Delta := Dt;
   try
@@ -590,6 +612,25 @@ begin
       Script.Exec;
     end else
       IsAction := False;
+    // Execute background scripts
+    for I := Self.BackgroundScriptDict.Count - 1 downto 0 do
+    begin
+      Key := Self.BackgroundScriptDict.Keys.ToArray[I];
+      BackgroundScript := Self.BackgroundScriptDict[Key];
+      if not BackgroundScript.Script.IsDone then
+      begin
+        if (GetTickCount64 > BackgroundScript.LastTimestamp + BackgroundScript.Interval) then
+        begin
+          BackgroundScript.LastTimestamp := GetTickCount64;
+          BackgroundScript.Script.Exec;
+        end;
+      end else
+      // Remove script if the job is completed
+      begin
+        BackgroundScript.Script.Free;
+        BackgroundScriptDict.Remove(Key);
+      end;
+    end;
   except
     on E: Exception do
     begin
@@ -829,6 +870,17 @@ end;
 procedure TSatania.CleanUpCache;
 begin
   Self.ScriptCacheMap.Clear;
+end;
+
+procedure TSatania.BackgroundScriptClearAll;
+var
+  Key: String;
+begin
+  for Key in Self.BackgroundScriptDict.Keys do
+  begin
+    BackgroundScriptDict[Key].Script.Free;
+  end;
+  BackgroundScriptDict.Clear;
 end;
 
 initialization
