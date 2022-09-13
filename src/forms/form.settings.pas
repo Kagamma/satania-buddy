@@ -137,6 +137,7 @@ uses
   Globals, Mcdowell, Mcdowell.imap, State.Main, Mcdowell.SpeechToText,
   Utils.Strings,
   Mcdowell.smtp,
+  Mcdowell.sketch,
   Utils.Encdec;
 
 { TFormSettings }
@@ -277,6 +278,9 @@ begin
     Save.Settings.DefaultEvilScheme := EditDefaultEvilScheme.Text;
     Save.Settings.ImageQuality := ComboBoxImageQuality.Items[ComboBoxImageQuality.ItemIndex];
     Save.Settings.FrameSkip := EditFrameSkip.Value;
+    // Clear sketch if skin is changed
+    if Save.Settings.Skin <> ComboBoxSkin.Items[ComboBoxSkin.ItemIndex] then
+      SataniaSketch.DeleteAll;
     Save.Settings.Skin := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
 
     Save.Settings.EmailServer := EditEmailServer.Text;
