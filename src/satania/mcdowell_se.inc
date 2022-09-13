@@ -126,8 +126,6 @@ begin
   begin
     Talk(SEValueToText(Args[0]));
     VM.IsPaused := True;
-    for Key in BackgroundScriptDict.Keys do
-      BackgroundScriptDict[Key].Script.IsPaused := True;
   end else
   begin
     if Args[1] = 0 then
@@ -137,8 +135,6 @@ begin
     begin
       Talk(SEValueToText(Args[0]));
       VM.IsPaused := True;
-      for Key in BackgroundScriptDict.Keys do
-        BackgroundScriptDict[Key].Script.IsPaused := True;
     end;
   end;
 end;
