@@ -89,7 +89,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SESketchClear(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
     function SEWorkerCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    function SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
@@ -868,6 +869,15 @@ end;
 function TSatania.SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Self.BackgroundScriptDict.ContainsKey(Args[0]);
+end;
+
+function TSatania.SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  if Self.BackgroundScriptDict.ContainsKey(Args[0]) then
+  begin
+    Self.BackgroundScriptDict[Args[0]].Script.Free;
+    Self.BackgroundScriptDict.Remove(Args[0]);
+  end;
 end;
 
 {$endif}
