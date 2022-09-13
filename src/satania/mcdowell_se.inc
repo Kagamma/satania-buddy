@@ -866,7 +866,7 @@ begin
         Item.Interval := 0;
       Item.LastTimestamp := GetTickCount64;
       Key := Args[0];
-      Self.BackgroundScriptDict.Add(Key, Item);
+      Self.BackgroundScriptDict.AddOrSetValue(Key, Item);
     end else
       raise Exception.Create(Format('Script "%s" not found!', [Args[1].VarString]));
   finally
