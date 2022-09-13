@@ -278,9 +278,12 @@ begin
     Save.Settings.DefaultEvilScheme := EditDefaultEvilScheme.Text;
     Save.Settings.ImageQuality := ComboBoxImageQuality.Items[ComboBoxImageQuality.ItemIndex];
     Save.Settings.FrameSkip := EditFrameSkip.Value;
-    // Clear sketch if skin is changed
+    // Clear sketch and workers if skin is changed
     if Save.Settings.Skin <> ComboBoxSkin.Items[ComboBoxSkin.ItemIndex] then
+    begin
       SataniaSketch.DeleteAll;
+      Satania.BackgroundScriptClearAll;
+    end;
     Save.Settings.Skin := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
 
     Save.Settings.EmailServer := EditEmailServer.Text;
