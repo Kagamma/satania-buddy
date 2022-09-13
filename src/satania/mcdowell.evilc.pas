@@ -1189,6 +1189,124 @@ begin
   Result := @FItems[P];
 end;
 
+// ----- Fast inline TSEValue operations -----
+
+function SEValueAdd(constref V1, V2: TSEValue): TSEValue; inline; overload;
+var
+  I, Len: Integer;
+begin
+  if V1.Kind = V2.Kind then
+  case V1.Kind of
+    sevkSingle:
+      begin
+        Result.Kind := sevkSingle;
+        Result.VarNumber := V1.VarNumber + V2.VarNumber;
+      end;
+    sevkPointer:
+      begin
+        Result.Kind := sevkPointer;
+        Result.VarPointer := V1.VarPointer + V2.VarPointer;
+      end;
+    sevkArray:
+      begin
+        Result.Kind := sevkArray;
+        SetLength(Result.VarArray, Length(V1.VarArray) + Length(V2.VarArray));
+        Len := Length(V1.VarArray);
+        for I := 0 to Len - 1 do
+          Result.VarArray[I] := V1.VarArray[I];
+        for I := Len to Len + Length(V2.VarArray) - 1 do
+          Result.VarArray[I] := V2.VarArray[I - Len];
+      end;
+    {$ifdef SE_STRING}
+    sevkString:
+      begin
+        Result.Kind := sevkString;
+        Result.VarString := V1.VarString + V2.VarString;
+      end;
+    {$endif}
+  end;
+end;
+
+function SEValueSub(constref V1, V2: TSEValue): TSEValue; inline; overload;
+begin
+  if V1.Kind = V2.Kind then
+  case V1.Kind of
+    sevkSingle:
+      begin
+        Result.Kind := sevkSingle;
+        Result.VarNumber := V1.VarNumber - V2.VarNumber;
+      end;
+    sevkPointer:
+      begin
+        Result.Kind := sevkPointer;
+        Result.VarPointer := Pointer(V1.VarPointer - V2.VarPointer);
+      end;
+  end;
+end;
+
+function SEValueNeg(constref V: TSEValue): TSEValue; inline;
+begin
+  Result.VarNumber := -V.VarNumber;
+end;
+
+function SEValueMul(constref V1, V2: TSEValue): TSEValue; inline; overload;
+begin
+  Result.Kind := sevkSingle;
+  Result.VarNumber := V1.VarNumber * V2.VarNumber;
+end;
+
+function SEValueDiv(constref V1, V2: TSEValue): TSEValue; inline; overload;
+begin
+  Result.Kind := sevkSingle;
+  Result.VarNumber := V1.VarNumber / V2.VarNumber;
+end;
+
+function SEValueLesser(constref V1, V2: TSEValue): Boolean; inline; overload;
+begin
+  Result := V1.VarNumber < V2.VarNumber;
+end;
+
+function SEValueGreater(constref V1, V2: TSEValue): Boolean; inline; overload;
+begin
+  Result := V1.VarNumber > V2.VarNumber;
+end;
+
+function SEValueLesserOrEqual(constref V1, V2: TSEValue): Boolean; inline; overload;
+begin
+  Result := V1.VarNumber <= V2.VarNumber;
+end;
+
+function SEValueGreaterOrEqual(constref V1, V2: TSEValue): Boolean; inline; overload;
+begin
+  Result := V1.VarNumber >= V2.VarNumber;
+end;
+
+function SEValueEqual(constref V1, V2: TSEValue): Boolean; inline; overload;
+begin
+  case V1.Kind of
+    sevkSingle:
+      Result := V1.VarNumber = V2.VarNumber;
+  {$ifdef SE_STRING}
+    sevkString:
+      Result := V1.VarString = V2.VarString;
+  {$endif}
+  end;
+end;
+
+function SEValueNotEqual(constref V1, V2: TSEValue): Boolean; inline;
+begin
+  case V1.Kind of
+    sevkSingle:
+      Result := V1.VarNumber <> V2.VarNumber;
+    {$ifdef SE_STRING}
+    sevkString:
+      Result := V1.VarString <> V2.VarString;
+    {$endif}
+  end;
+end;
+
+// ----- TSEValue operator overloading
+
 operator := (V: TSENumber) R: TSEValue; inline;
 begin
   R.Kind := sevkSingle;
@@ -1252,7 +1370,9 @@ end;
 operator := (V: TSEValue) R: Pointer; inline;
 begin
   R := V.VarPointer;
-end;
+end;                                                   
+var
+  I, Len: Integer;
 
 operator + (V1: TSEValue; V2: TSENumber) R: TSEValue; inline;
 begin
@@ -1331,10 +1451,7 @@ begin
 end;
 operator - (V: TSEValue) R: TSEValue; inline;
 begin
-  case V.Kind of
-    sevkSingle:
-      R.VarNumber := -V.VarNumber;
-  end;
+  R.VarNumber := -V.VarNumber;
 end;
 operator - (V1, V2: TSEValue) R: TSEValue; inline;
 begin
@@ -1354,40 +1471,22 @@ begin
 end;
 operator * (V1, V2: TSEValue) R: TSEValue; inline;
 begin
-  if V1.Kind = V2.Kind then
-  case V1.Kind of
-    sevkSingle:
-      begin
-        R.Kind := sevkSingle;
-        R.VarNumber := V1.VarNumber * V2.VarNumber;
-      end;
-  end;
+  R.Kind := sevkSingle;
+  R.VarNumber := V1.VarNumber * V2.VarNumber;
 end;
 operator / (V1, V2: TSEValue) R: TSEValue; inline;
 begin
-  if V1.Kind = V2.Kind then
-  case V1.Kind of
-    sevkSingle:
-      begin
-        R.Kind := sevkSingle;
-        R.VarNumber := V1.VarNumber / V2.VarNumber;
-      end;
-  end;
+  R.Kind := sevkSingle;
+  R.VarNumber := V1.VarNumber / V2.VarNumber;
 end;
 
 operator < (V1: TSEValue; V2: TSENumber) R: Boolean; inline;
 begin
-  case V1.Kind of
-    sevkSingle:
-      R := V1.VarNumber < V2;
-  end;
+  R := V1.VarNumber < V2;
 end;
 operator > (V1: TSEValue; V2: TSENumber) R: Boolean; inline;
 begin
-  case V1.Kind of
-    sevkSingle:
-      R := V1.VarNumber > V2;
-  end;
+  R := V1.VarNumber > V2;
 end;
 operator <= (V1: TSEValue; V2: TSENumber) R: Boolean; inline;
 begin
@@ -1398,79 +1497,47 @@ begin
 end;
 operator >= (V1: TSEValue; V2: TSENumber) R: Boolean; inline;
 begin
-  case V1.Kind of
-    sevkSingle:
-      R := V1.VarNumber >= V2;
-  end;
+  R := V1.VarNumber >= V2;
 end;
 operator = (V1: TSEValue; V2: TSENumber) R: Boolean; inline;
 begin
-  case V1.Kind of
-    sevkSingle:
-      R := V1.VarNumber = V2;
-  end;
+  R := V1.VarNumber = V2;
 end;
 {$ifdef SE_STRING}
 operator = (V1: TSEValue; V2: String) R: Boolean; inline;
 begin
-  case V1.Kind of
-    sevkString:
-      R := V1.VarString = V2;
-  end;
+  R := V1.VarString = V2;
 end;
 {$endif}
 operator <> (V1: TSEValue; V2: TSENumber) R: Boolean; inline;
 begin
-  case V1.Kind of
-    sevkSingle:
-      R := V1.VarNumber <> V2;
-  end;
+  R := V1.VarNumber <> V2;
 end;
 {$ifdef SE_STRING}
 operator <> (V1: TSEValue; V2: String) R: Boolean; inline;
 begin
-  case V1.Kind of
-    sevkString:
-      R := V1.VarString <> V2;
-  end;
+  R := V1.VarString <> V2;
 end;
 {$endif}
 
 operator < (V1, V2: TSEValue) R: Boolean; inline;
 begin
-  if V1.Kind = V2.Kind then
-  case V1.Kind of
-    sevkSingle:
-      R := V1.VarNumber < V2.VarNumber;
-  end;
+  R := V1.VarNumber < V2.VarNumber;
 end;
 operator > (V1, V2: TSEValue) R: Boolean; inline;
 begin
-  if V1.Kind = V2.Kind then
-  case V1.Kind of
-    sevkSingle:
-      R := V1.VarNumber > V2.VarNumber;
-  end;
+  R := V1.VarNumber > V2.VarNumber;
 end;
 operator <= (V1, V2: TSEValue) R: Boolean; inline;
 begin
-  if V1.Kind = V2.Kind then
-  case V1.Kind of
-    sevkSingle:
-      R := V1.VarNumber <= V2.VarNumber;
-  end;
+  R := V1.VarNumber <= V2.VarNumber;
 end;
 operator >= (V1, V2: TSEValue) R: Boolean; inline;
 begin
-  if V1.Kind = V2.Kind then
-  case V1.Kind of
-    sevkSingle:
-      R := V1.VarNumber >= V2.VarNumber;
-  end;
+  R := V1.VarNumber >= V2.VarNumber;
 end;
 operator = (V1, V2: TSEValue) R: Boolean; inline;
 begin
-  if V1.Kind = V2.Kind then
   case V1.Kind of
     sevkSingle:
       R := V1.VarNumber = V2.VarNumber;
@@ -1482,7 +1549,6 @@ begin
 end;
 operator <> (V1, V2: TSEValue) R: Boolean; inline;
 begin
-  if V1.Kind = V2.Kind then
   case V1.Kind of
     sevkSingle:
       R := V1.VarNumber <> V2.VarNumber;
@@ -1603,28 +1669,28 @@ begin
           begin
             B := Pop;
             A := Pop;
-            Push(A^ + B^);
+            Push(SEValueAdd(A^, B^));
             Inc(CodePtrLocal);
           end;
         opOperatorSub:
           begin
             B := Pop;
             A := Pop;
-            Push(A^ - B^);
+            Push(SEValueSub(A^, B^));
             Inc(CodePtrLocal);
           end;
         opOperatorMul:
           begin
             B := Pop;
             A := Pop;
-            Push(A^ * B^);
+            Push(SEValueMul(A^, B^));
             Inc(CodePtrLocal);
           end;
         opOperatorDiv:
           begin
             B := Pop;
             A := Pop;
-            Push(A^ / B^);
+            Push(SEValueDiv(A^, B^));
             Inc(CodePtrLocal);
           end;
         opOperatorMod:
@@ -1638,42 +1704,42 @@ begin
           begin
             B := Pop;
             A := Pop;
-            Push(A^ = B^);
+            Push(SEValueEqual(A^, B^));
             Inc(CodePtrLocal);
           end;
         opOperatorNotEqual:
           begin
             B := Pop;
             A := Pop;
-            Push(A^ <> B^);
+            Push(SEValueNotEqual(A^, B^));
             Inc(CodePtrLocal);
           end;
         opOperatorSmaller:
           begin
             B := Pop;
             A := Pop;
-            Push(A^ < B^);
+            Push(SEValueLesser(A^, B^));
             Inc(CodePtrLocal);
           end;
         opOperatorSmallerOrEqual:
           begin
             B := Pop;
             A := Pop;
-            Push(A^ <= B^);
+            Push(SEValueLesserOrEqual(A^, B^));
             Inc(CodePtrLocal);
           end;
         opOperatorGreater:
           begin
             B := Pop;
             A := Pop;
-            Push(A^ > B^);
+            Push(SEValueGreater(A^, B^));
             Inc(CodePtrLocal);
           end;
         opOperatorGreaterOrEqual:
           begin
             B := Pop;
             A := Pop;
-            Push(A^ >= B^);
+            Push(SEValueGreaterOrEqual(A^, B^));
             Inc(CodePtrLocal);
           end;
         opOperatorAnd:
@@ -1699,7 +1765,7 @@ begin
         opOperatorNegative:
           begin
             A := Pop;
-            Push(-(A^));
+            Push(SEValueNeg(A^));
             Inc(CodePtrLocal);
           end;
         opPushConst:
