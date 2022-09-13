@@ -622,7 +622,17 @@ begin
         if (GetTickCount64 > BackgroundScript.LastTimestamp + BackgroundScript.Interval) then
         begin
           BackgroundScript.LastTimestamp := GetTickCount64;
-          BackgroundScript.Script.Exec;
+          try
+            BackgroundScript.Script.Exec;
+          except
+            // Make sure runtime doesnt block when an error occurs in background script
+            on E: Exception do
+            begin
+              BackgroundScript.Script.Free;
+              BackgroundScriptDict.Remove(Key);
+              Talk(E.Message);
+            end;
+          end;
         end;
       end else
       // Remove script if the job is completed
