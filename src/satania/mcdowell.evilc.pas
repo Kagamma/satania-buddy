@@ -1183,7 +1183,6 @@ procedure SEValueAdd(out R: TSEValue; constref V1, V2: TSEValue); inline; overlo
 var
   I, Len: Integer;
 begin
-  if V1.Kind = V2.Kind then
   case V1.Kind of
     sevkSingle:
       begin
@@ -1215,7 +1214,6 @@ end;
 
 procedure SEValueSub(out R: TSEValue; constref V1, V2: TSEValue); inline; overload;
 begin
-  if V1.Kind = V2.Kind then
   case V1.Kind of
     sevkSingle:
       begin
@@ -1434,7 +1432,6 @@ operator + (V1, V2: TSEValue) R: TSEValue; inline;
 var
   I, Len: Integer;
 begin
-  if V1.Kind = V2.Kind then
   case V1.Kind of
     sevkSingle:
       begin
@@ -1469,7 +1466,6 @@ begin
 end;
 operator - (V1, V2: TSEValue) R: TSEValue; inline;
 begin
-  if V1.Kind = V2.Kind then
   case V1.Kind of
     sevkSingle:
       begin
