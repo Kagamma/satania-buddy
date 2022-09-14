@@ -791,7 +791,7 @@ class function TBuiltInFunction.SEString(const VM: TSEVM; const Args: array of T
 begin
   if Args[0].Kind = sevkSingle then
     Exit(PointFloatToStr(Args[0].VarNumber));
-  Exit(Args[0].VarString);
+  Exit(Args[0].VarString^);
 end;
 
 class function TBuiltInFunction.SENumber(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
