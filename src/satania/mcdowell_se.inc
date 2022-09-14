@@ -105,7 +105,7 @@ begin
     sevkArray:
       begin
         Result := '[';
-        for I := 0 to Length(Value.VarArray) - 1 do
+        for I := 0 to MemSize(Value.VarArray) div SizeOf(TSEValue) - 1 do
         begin
           if I > 0 then
             Result := Result + ', ';
@@ -203,7 +203,7 @@ begin
   Self.AnimTalkScriptList.Clear;
   if Length(Args) = 3 then
   begin
-    for I := 0 to Length(Args[2].VarArray) - 1 do
+    for I := 0 to SESize(Args[2]) - 1 do
     begin
       Self.AnimTalkScriptList.Add(Args[2].VarArray[I].VarString);
     end;
@@ -313,8 +313,8 @@ begin
   SataniaSMTP.ReplyTo := Args[2];
   SataniaSMTP.Subject := Args[3];
   SataniaSMTP.Body := Args[4];
-  SetLength(SataniaSMTP.Attachments, Length(Args[5].VarArray));
-  for I := 0 to Length(Args[5].VarArray) - 1 do
+  SetLength(SataniaSMTP.Attachments, SESize(Args[5]));
+  for I := 0 to SESize(Args[5]) - 1 do
     SataniaSMTP.Attachments[I] := Args[5].VarArray[I];
 
   SataniaSMTP.Start;
@@ -416,7 +416,7 @@ begin
   Thread := TSataniaHttpPostThread.Create(True);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
-  for I := 0 to Length(Args[1].VarArray) do
+  for I := 0 to SESize(Args[1]) do
   begin
     if Args[1].VarArray[I].Kind = sevkSingle then
       Thread.FormData.Add(PointFloatToStr(Args[1].VarArray[I].VarNumber))
@@ -439,7 +439,7 @@ begin
   Thread := TSataniaHttpPostThread.Create(True);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
-  for I := 0 to Length(Args[1].VarArray) div 2 - 1 do
+  for I := 0 to SESize(Args[1]) div 2 - 1 do
   begin
     P := I * 2;
     if Args[1].VarArray[I].Kind = sevkSingle then
@@ -484,11 +484,9 @@ begin
     begin
       SL.Add(X.ToString);
     end;
-    Result.Kind := sevkArray;
-    SetLength(A, SL.Count);
+    GC.AllocArray(@Result, SL.Count);
     for I := 0 to SL.Count - 1 do
-      A[I] := SL[I];
-    Result.VarArray := Pointer(A);
+      Result.VarArray[I] := SL[I];
   finally
     SL.Free;
   end;
@@ -510,8 +508,7 @@ var
   I: Integer;
 begin
   A := WordsToNumbers(Args[0]);
-  Result.Kind := sevkArray;
-  SetLength(Result.VarArray, Length(A));
+  GC.AllocArray(@Result, Length(A));
   for I := 0 to Length(A) - 1 do
   begin
     Result.VarArray[I] := A[I];
@@ -524,8 +521,7 @@ var
   I: Integer;
 begin
   A := WordsToDates(Args[0]);
-  Result.Kind := sevkArray;
-  SetLength(Result.VarArray, Length(A));
+  GC.AllocArray(@Result, Length(A));
   for I := 0 to Length(A) - 1 do
   begin
     Result.VarArray[I] := A[I];
@@ -561,7 +557,6 @@ var
   Y, M, D: Word;
   V: TSEValue;
 begin
-  Result.Kind := sevkArray;
   DecodeDate(Now, Y, M, D);
   Count := 0;
   for I := Save.Reminders.Count - 1 downto 0 do
@@ -571,10 +566,10 @@ begin
       (Reminder.Month = M) and
       (Reminder.Day = D) then
     begin
-      SetLength(V.VarArray, 5);
-      SetLength(Result.VarArray, Count + 1);
+      GC.AllocArray(@V, 5);
+      GC.AllocArray(@Result, Count + 1);
       Result.VarArray[Count].Kind := sevkArray;
-      SetLength(Result.VarArray[Count].VarArray, 2);
+      GC.AllocArray(@Result.VarArray[Count], 2);
       Result.VarArray[Count].VarArray[0] := Reminder.Hour;
       Result.VarArray[Count].VarArray[1] := Reminder.Minute;
       Inc(Count);
@@ -685,8 +680,7 @@ begin
   SL := TStringList.Create;
   try
     FindAllFiles(SL, Args[0], Args[1], Boolean(Round(Args[2].VarNumber)), Round(Args[3].VarNumber));
-    Result.Kind := sevkArray;
-    SetLength(Result.VarArray, SL.Count);
+    GC.AllocArray(@Result, SL.Count);
     for I := 0 to SL.Count - 1 do
       Result.VarArray[I] := SL[I];
   finally
@@ -712,8 +706,7 @@ begin
   SL := TStringList.Create;
   try
     FindAllDirectories(SL, Args[0], Args[1]);
-    Result.Kind := sevkArray;
-    SetLength(Result.VarArray, SL.Count);
+    GC.AllocArray(@Result, SL.Count);
     for I := 0 to SL.Count - 1 do
       Result.VarArray[I] := SL[I];
   finally
@@ -737,8 +730,7 @@ function TSatania.SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSE
       case D.JSONType of
         jtArray:
           begin
-            Result.Kind := sevkArray;
-            SetLength(Result.VarArray, D.Count);
+            GC.AllocArray(@Result, D.Count);
             for I := 0 to D.Count - 1 do
             begin
               Result.VarArray[I] := QueryForValue(D.Items[I]);
@@ -800,7 +792,7 @@ begin
   // 2: colors
 
   // Do not draw if vertex count <> color count, count = 0, or is not triangles
-  Len := Length(Args[1].VarArray);
+  Len := SESize(Args[1]);
   if (Len = 0) or ((Len mod 6) <> 0) then
     Exit(0);
 
@@ -810,7 +802,7 @@ begin
   C := 0;
   for I := 0 to Len - 1 do
   begin
-    ColLen := Length(Args[2].VarArray) - 1;
+    ColLen := SESize(Args[2]) - 1;
     if C > ColLen then
       ColorValue := Round(Args[2].VarArray[ColLen].VarNumber)
     else

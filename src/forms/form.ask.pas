@@ -122,8 +122,7 @@ begin
   Satania.IsBlocked := False;
   Self.Visible := False;
   Satania.ChatText.Text.Text := '';
-  Answer.Kind := sevkArray;
-  SetLength(Answer.VarArray, Results.Count);
+  GC.AllocArray(@Answer, Results.Count);
   for I := 0 to Results.Count - 1 do
     Answer.VarArray[I] := Results[I];
 end;
