@@ -131,7 +131,7 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure AddToList(const PValue: PSEValue);
-    procedure ChekForGC;
+    procedure CheckForGC;
     procedure GC;
     procedure AllocArray(const PValue: PSEValue; const ASize: Cardinal);
     procedure AllocString(const PValue: PSEValue; const S: String);
@@ -1718,7 +1718,7 @@ begin
   end;
 end;
 
-procedure TGarbageCollector.ChekForGC; inline;
+procedure TGarbageCollector.CheckForGC; inline;
 begin
   if (GetTickCount64 - Self.FTicks > 1000 * 60 * 2) or (Self.FAllocatedMem > 1024 * 1024 * 512) then
   begin
@@ -1841,7 +1841,7 @@ begin
   PValue^.Kind := sevkArray;
   if ASize > 0 then
   begin
-    ChekForGC;
+    CheckForGC;
     Len := SizeOf(TSEValue) * ASize;
     GetMem(PValue^.VarArray, Len);
     PValue^.Size := Len div SizeOf(TSEValue);
@@ -1858,7 +1858,7 @@ end;
 procedure TGarbageCollector.AllocString(const PValue: PSEValue; const S: String);
 begin
   PValue^.Kind := sevkString;
-  ChekForGC;
+  CheckForGC;
   New(PValue^.VarString);
   PValue^.VarString^ := S;
   PValue^.Size := Length(S);
@@ -1972,6 +1972,7 @@ begin
   CodePtrLocal := Self.CodePtr;
   StackPtrLocal := Self.StackPtr;
   BinaryLocal := Self.Binary;
+  GC.CheckForGC;
   try
     while CodePtrLocal < BinaryLocal.Count do
     begin
