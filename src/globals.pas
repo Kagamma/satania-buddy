@@ -347,7 +347,7 @@ function TSave.SEGetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEVal
 var
   Flag: TSaveFlagCollectionItem;
 begin
-  Flag := TSaveFlagCollectionItem(Self.FFlags.FindByName(Args[0].VarString));
+  Flag := TSaveFlagCollectionItem(Self.FFlags.FindByName(Args[0].VarString^));
   if Flag <> nil then
     GC.AllocString(@Result, Flag.Value)
   else
@@ -358,13 +358,13 @@ function TSave.SESetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEVal
 var
   Flag: TSaveFlagCollectionItem;
 begin
-  Flag := TSaveFlagCollectionItem(Self.FFlags.FindByName(Args[0].VarString));
+  Flag := TSaveFlagCollectionItem(Self.FFlags.FindByName(Args[0].VarString^));
   if Flag = nil then
   begin
     Flag := TSaveFlagCollectionItem(Self.FFlags.Add);
-    Flag.Name := Args[0].VarString;
+    Flag.Name := Args[0].VarString^;
   end;
-  Flag.Value := Args[1].VarString;
+  Flag.Value := Args[1].VarString^;
 end;
 
 initialization

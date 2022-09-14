@@ -76,7 +76,6 @@ type
     Name: String;
     Script: TEvilC;
     BackgroundScriptDict: TSataniaBackgroundScriptDict;
-    ScriptCacheMap: TSECacheMap;
     AnimTalkScriptList: TStringList; // List of possible scripts to execute during talking
     UsedRemindersList: TStringList;
     { Where we should move our touch panel to }
@@ -166,7 +165,6 @@ begin
   AnimTalkFinish := 'talk_finish';
   Self.AnimTalkScriptList := TStringList.Create;
   Self.RegisterFuncs(Self.Script);
-  ScriptCacheMap := TSECacheMap.Create;
   UpdateMeta;
   Self.LoadLocalFlags;
 end;
@@ -175,7 +173,6 @@ destructor TSatania.Destroy;
 begin
   UsedRemindersList.Free;
   AnimTalkScriptList.Free;
-  ScriptCacheMap.Free;
   Script.Free;
   BackgroundScriptClearAll;
   BackgroundScriptDict.Free;
@@ -429,7 +426,7 @@ begin
       if Save.Settings.DeveloperMode then
         Self.CleanUpCache;
       // We always load script in developer mode
-      IsContainKey := Self.ScriptCacheMap.ContainsKey(Path);
+      IsContainKey := ScriptCacheMap.ContainsKey(Path);
       if Save.Settings.DeveloperMode or (not IsContainKey) then
       begin
         FS := Download(Path) as TFileStream;
@@ -440,7 +437,7 @@ begin
         // Parse the source beforehand to store backup
         Self.Script.Lex;
         Self.Script.Parse;
-        Self.ScriptCacheMap.Add(Path, Self.Script.Backup);
+        ScriptCacheMap.Add(Path, Self.Script.Backup);
       end else
       if IsContainKey then
       begin
@@ -448,7 +445,7 @@ begin
         try
           // Restore binaries from cache
           ResetScript;
-          Self.Script.Restore(Self.ScriptCacheMap[Path]);
+          Self.Script.Restore(ScriptCacheMap[Path]);
           IsAction := True;
         finally
           CSAction.Leave;
@@ -700,7 +697,7 @@ begin
         Result := PointFloatToStr(V.VarNumber)
       else
       if V.Kind = sevkString then
-        Result := V.VarString;
+        Result := V.VarString^;
     except
       on E: Exception do;
     end;
@@ -878,7 +875,7 @@ end;
 
 procedure TSatania.CleanUpCache;
 begin
-  Self.ScriptCacheMap.Clear;
+  ScriptCacheMap.Clear;
 end;
 
 procedure TSatania.BackgroundScriptClearAll;

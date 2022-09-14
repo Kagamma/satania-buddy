@@ -183,8 +183,8 @@ function TSatania.SEProcessResultGet(const VM: TSEVM; const Args: array of TSEVa
 begin
   Result := '';
   try
-    Result := RunResultList[Args[0].VarString];
-    RunResultList.Remove(Args[0].VarString);
+    Result := RunResultList[Args[0].VarString^];
+    RunResultList.Remove(Args[0].VarString^);
   except
   end;
 end;
@@ -205,7 +205,7 @@ begin
   begin
     for I := 0 to SESize(Args[2]) - 1 do
     begin
-      Self.AnimTalkScriptList.Add(Args[2].VarArray[I].VarString);
+      Self.AnimTalkScriptList.Add(Args[2].VarArray[I].VarString^);
     end;
   end;
 end;
@@ -401,7 +401,7 @@ begin
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
   Thread.Start;
-  Result := Args[0].VarString;
+  Result := Args[0].VarString^;
 end;
 
 function TSatania.SEURLPost(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -421,10 +421,10 @@ begin
     if Args[1].VarArray[I].Kind = sevkSingle then
       Thread.FormData.Add(PointFloatToStr(Args[1].VarArray[I].VarNumber))
     else
-      Thread.FormData.Add(Args[1].VarArray[I].VarString);
+      Thread.FormData.Add(Args[1].VarArray[I].VarString^);
   end;
   Thread.Start;
-  Result := Args[0].VarString;
+  Result := Args[0].VarString^;
 end;
 
 function TSatania.SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -443,14 +443,14 @@ begin
   begin
     P := I * 2;
     if Args[1].VarArray[I].Kind = sevkSingle then
-      Thread.FormData.Values[Args[1].VarArray[P].VarString] := PointFloatToStr(Args[1].VarArray[P + 1].VarNumber)
+      Thread.FormData.Values[Args[1].VarArray[P].VarString^] := PointFloatToStr(Args[1].VarArray[P + 1].VarNumber)
     else
-      Thread.FormData.Values[Args[1].VarArray[P].VarString] := Args[1].VarArray[P + 1].VarString;
+      Thread.FormData.Values[Args[1].VarArray[P].VarString^] := Args[1].VarArray[P + 1].VarString^;
   end;
   Thread.FieldName := Args[2];
   Thread.FileName := Args[3];
   Thread.Start;
-  Result := Args[0].VarString;
+  Result := Args[0].VarString^;
 end;
 
 function TSatania.SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -465,8 +465,8 @@ function TSatania.SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue)
 begin
   Result := '';
   try
-    Result := RunResultList[Args[0].VarString];
-    RunResultList.Remove(Args[0].VarString);
+    Result := RunResultList[Args[0].VarString^];
+    RunResultList.Remove(Args[0].VarString^);
   except
   end;
 end;
@@ -593,7 +593,7 @@ var
   FS: TFileStream;
   B: TBitmap;
 begin
-  Ext := LowerCase((Args[0].VarString));
+  Ext := LowerCase((Args[0].VarString^));
   if Clipboard.HasFormat(PredefinedClipboardFormat(pcfBitmap)) then
   begin
     B := TBitmap.Create;
@@ -653,7 +653,7 @@ var
 begin
   SL := TStringList.Create;
   try
-    if FileExists(Args[0].VarString) then
+    if FileExists(Args[0].VarString^) then
       SL.LoadFromFile(Args[0]);
     SL.Text := SL.Text + Args[1];
     SL.SaveToFile(Args[0]);
@@ -664,12 +664,12 @@ end;
 
 function TSatania.SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := FileExists(Args[0].VarString);
+  Result := FileExists(Args[0].VarString^);
 end;
 
 function TSatania.SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  DeleteFile(Args[0].VarString);
+  DeleteFile(Args[0].VarString^);
 end;
 
 function TSatania.SEFileFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -690,7 +690,7 @@ end;
 
 function TSatania.SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  CreateDir(Args[0].VarString);
+  CreateDir(Args[0].VarString^);
 end;
 
 function TSatania.SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -716,7 +716,7 @@ end;
 
 function TSatania.SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := DirectoryExists(Args[0].VarString);
+  Result := DirectoryExists(Args[0].VarString^);
 end;
 
 function TSatania.SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -744,7 +744,7 @@ function TSatania.SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSE
           Result := D.AsBoolean;
         jtNull:
           begin
-            Result.VarString := '';
+            Result.VarString^ := '';
             Result := 0;
           end;
         else
@@ -757,9 +757,9 @@ var
   JSON: TJSONObject;
   D: TJSONData;
 begin
-  JSON := GetJSON(Args[0].VarString) as TJSONObject;
+  JSON := GetJSON(Args[0].VarString^) as TJSONObject;
   try
-    D := JSON.FindPath(Args[1].VarString);
+    D := JSON.FindPath(Args[1].VarString^);
     Result := QueryForValue(D);
   finally
     JSON.Free;
