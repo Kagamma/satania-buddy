@@ -849,11 +849,12 @@ var
   Item: TSataniaBackgroundScript;
   Key: String;
 begin
+  Key := Args[0];
   // We do not allow duplicate of the same worker
-  if Self.BackgroundScriptDict.ContainsKey(Args[0]) then
+  if Self.BackgroundScriptDict.ContainsKey(Key) then
   begin
-    Self.BackgroundScriptDict[Args[0]].Script.Free;
-    Self.BackgroundScriptDict.Remove(Args[0]);
+    Self.BackgroundScriptDict[Key].Script.Free;
+    Self.BackgroundScriptDict.Remove(Key);
   end;
   Item.Script := TEvilC.Create;
   Self.RegisterFuncs(Item.Script, True);
@@ -863,7 +864,6 @@ begin
   else
     Item.Interval := 0;
   Item.LastTimestamp := GetTickCount64;
-  Key := Args[0];
   Self.BackgroundScriptDict.AddOrSetValue(Key, Item);
   Result := Key;
 end;
