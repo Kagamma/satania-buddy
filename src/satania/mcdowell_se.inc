@@ -849,6 +849,12 @@ var
   Item: TSataniaBackgroundScript;
   Key: String;
 begin
+  // We do not allow duplicate of the same worker
+  if Self.BackgroundScriptDict.ContainsKey(Args[0]) then
+  begin
+    Self.BackgroundScriptDict[Args[0]].Script.Free;
+    Self.BackgroundScriptDict.Remove(Args[0]);
+  end;
   Item.Script := TEvilC.Create;
   Self.RegisterFuncs(Item.Script, True);
   Item.Script.Source := Args[1];
