@@ -555,10 +555,11 @@ var
   Reminder: TReminderCollectionItem;
   Count, I, J: Integer;
   Y, M, D: Word;
-  V: TSEValue;
+  HA, MA: array of Word;
 begin
   DecodeDate(Now, Y, M, D);
   Count := 0;
+  GC.AllocArray(@Result, Count + 1);
   for I := Save.Reminders.Count - 1 downto 0 do
   begin
     Reminder := TReminderCollectionItem(Save.Reminders.Items[I]);
@@ -566,14 +567,19 @@ begin
       (Reminder.Month = M) and
       (Reminder.Day = D) then
     begin
-      GC.AllocArray(@V, 5);
-      GC.AllocArray(@Result, Count + 1);
-      Result.VarArray[Count].Kind := sevkArray;
-      GC.AllocArray(@Result.VarArray[Count], 2);
-      Result.VarArray[Count].VarArray[0] := Reminder.Hour;
-      Result.VarArray[Count].VarArray[1] := Reminder.Minute;
+      SetLength(HA, Count + 1);
+      SetLength(MA, Count + 1);
+      HA[Count] := Reminder.Hour;
+      MA[Count] := Reminder.Minute;
       Inc(Count);
     end;
+  end;
+  GC.AllocArray(@Result, Count);
+  for I := 0 to Count - 1 do
+  begin
+    GC.AllocArray(@Result.VarArray[I], 2);
+    Result.VarArray[I].VarArray[0] := HA[I];    
+    Result.VarArray[I].VarArray[1] := MA[I];
   end;
 end;
 
