@@ -160,6 +160,7 @@ uses
   form.evilc.editor,
   form.email.editor,
   form.rules,
+  Mcdowell.EvilC,
   Mcdowell.chatbot,
   Mcdowell.chatbot.train,
   mcdowell.speechtotext,
@@ -235,7 +236,7 @@ end;
 
 procedure TFormMain.MenuItemAboutClick(Sender: TObject);
 begin
-  Satania.Talk('Satania Buddy'#10'Homepage: https://kgm.itch.io/satania-buddy');
+  Satania.Talk('Satania Buddy'#10'Homepage: https://kgm.itch.io/satania-buddy'#10#10'Evil Script Memory Usage: ' + IntToStr(GC.AllocatedMem div 1024) + 'KB');
 end;
 
 procedure TFormMain.MenuItemAlarmsAndRemindersClick(Sender: TObject);
