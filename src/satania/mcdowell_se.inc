@@ -100,7 +100,9 @@ var
   Key: String;
   I: Integer = 0;
 begin
-  case Value.Kind of
+  case Value.Kind of 
+    sevkString:
+      Result := '"' + Value.VarString^ + '"';
     sevkSingle:
       Result := PointFloatToStr(Value.VarNumber);
     sevkMap:
@@ -110,7 +112,7 @@ begin
         begin
           if I > 0 then
             Result := Result + ', ';
-          Result := Result + SEValueToText(SEMapGet(Value, Key));
+          Result := Result + '"' + Key + '"' + ' => ' + SEValueToText(SEMapGet(Value, Key));
           Inc(I);
         end;
         Result := Result + ']'
