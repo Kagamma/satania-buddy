@@ -486,7 +486,8 @@ type
     class function SEMapCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapCreateArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEMapKey(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEMapKey(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+    class function SEMapKeysGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SELerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESLerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESign(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -952,7 +953,20 @@ begin
   begin
     if I = Args[1] then
       Exit(Key);
-    I := I + 1;
+    Inc(I);
+  end;
+end;
+
+class function TBuiltInFunction.SEMapKeysGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Key: String;
+  I: Integer = 0;
+begin
+  GC.AllocMap(@Result);
+  for Key in TSEValueMap(Args[0].VarMap).Keys do
+  begin
+    SEMapSet(Result, I, Key);
+    Inc(I);
   end;
 end;
 
@@ -2807,6 +2821,7 @@ begin
   Self.RegisterFunc('map_create_array', @TBuiltInFunction(nil).SEMapCreateArray, -1);
   Self.RegisterFunc('map_delete', @TBuiltInFunction(nil).SEMapDelete, 3);
   Self.RegisterFunc('map_index_to_key', @TBuiltInFunction(nil).SEMapKey, 2);
+  Self.RegisterFunc('map_keys_get', @TBuiltInFunction(nil).SEMapKeysGet, 1);
   Self.RegisterFunc('sign', @TBuiltInFunction(nil).SESign, 1);
   Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, -1);
   Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 1);
