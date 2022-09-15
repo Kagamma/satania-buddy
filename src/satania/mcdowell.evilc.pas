@@ -483,7 +483,7 @@ type
     class function SENumber(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEWait(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SELength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEMap(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEMapCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapCreateArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
     class function SEMapKey(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -658,7 +658,7 @@ class function TBuiltInFunction.SEBufferCreate(const VM: TSEVM; const Args: arra
 begin
   Result.Kind := sevkString;
   SetLength(Result.VarString^, Round(Args[0].VarNumber));
-  Result.VarNumber := QWord(Result.VarString);
+  Result.VarNumber := QWord(Result.VarString^);
 end;
 
 class function TBuiltInFunction.SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -794,12 +794,12 @@ end;
 
 class function TBuiltInFunction.SEStringToBuffer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := QWord(Args[0].VarString);
+  Result := QWord(Args[0].VarString^);
 end;
 
 class function TBuiltInFunction.SEBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  if QWord(Args[0].VarString) = Round(Args[0].VarNumber) then
+  if QWord(Args[0].VarString^) = Round(Args[0].VarNumber) then
     Result := Args[0].VarString^
   else
     Result := PChar(Round(Args[0].VarNumber));
@@ -817,7 +817,7 @@ class function TBuiltInFunction.SETypeOf(const VM: TSEVM; const Args: array of T
 begin
   case Args[0].Kind of
     sevkMap:
-      Result := 'array';
+      Result := 'map';
     sevkSingle:
       Result := 'number';
     sevkString:
@@ -900,18 +900,20 @@ begin
   case Args[0].Kind of
     sevkString:
       {$ifdef SE_STRING_UTF8}
-      Exit(UTF8Length(String(Args[0].VarString)));
+      Exit(UTF8Length(String(Args[0].VarString^)));
       {$else}
-      Exit(Length(String(Args[0].VarString)));
+      Exit(Length(String(Args[0].VarString^)));
       {$endif}
     sevkMap:
       begin
         Exit(SESize(Args[0]));
       end;
+    else
+      Exit(0);
   end;
 end;
 
-class function TBuiltInFunction.SEMap(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+class function TBuiltInFunction.SEMapCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   GC.AllocMap(@Result);
 end;
@@ -1850,8 +1852,6 @@ begin
               if MS > 0 then
               begin
                 Self.FAllocatedMem := Self.FAllocatedMem - MS;
-                if Length(Value.Value.VarString^) < 80 then
-                  Writeln(Value.Value.VarString^);
                 Value.Value.VarString^ := '';
                 Dispose(Value.Value.VarString);
               end;
@@ -2803,7 +2803,7 @@ begin
   Self.RegisterFunc('number', @TBuiltInFunction(nil).SENumber, 1);
   Self.RegisterFunc('wait', @TBuiltInFunction(nil).SEWait, 1);
   Self.RegisterFunc('length', @TBuiltInFunction(nil).SELength, 1);
-  Self.RegisterFunc('map', @TBuiltInFunction(nil).SEMap, 1);
+  Self.RegisterFunc('map_create', @TBuiltInFunction(nil).SEMapCreate, 0);
   Self.RegisterFunc('map_create_array', @TBuiltInFunction(nil).SEMapCreateArray, -1);
   Self.RegisterFunc('map_delete', @TBuiltInFunction(nil).SEMapDelete, 3);
   Self.RegisterFunc('map_index_to_key', @TBuiltInFunction(nil).SEMapKey, 2);
