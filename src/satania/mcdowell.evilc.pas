@@ -1398,10 +1398,9 @@ begin
         R.Kind := sevkSingle;
         R.VarNumber := V1.VarNumber + V2.VarNumber;
       end;
-    sevkPointer:
+    sevkString:
       begin
-        R.Kind := sevkPointer;
-        R.VarPointer := V1.VarPointer + V2.VarPointer;
+        GC.AllocString(@R, V1.VarString^ + V2.VarString^);
       end;
     sevkMap:
       begin
@@ -1413,9 +1412,10 @@ begin
           SEMapSet(TempArray, I, SEMapGet(V2, I - Len));
         R := TempArray;
       end;
-    sevkString:
+    sevkPointer:
       begin
-        GC.AllocString(@R, V1.VarString^ + V2.VarString^);
+        R.Kind := sevkPointer;
+        R.VarPointer := V1.VarPointer + V2.VarPointer;
       end;
   end;
 end;
@@ -1673,10 +1673,9 @@ begin
         R.Kind := sevkSingle;
         R.VarNumber := V1.VarNumber + V2.VarNumber;
       end;
-    sevkPointer:
+    sevkString:
       begin
-        R.Kind := sevkPointer;
-        R.VarPointer := V1.VarPointer + V2.VarPointer;
+        GC.AllocString(@R, V1.VarString^ + V2.VarString^);
       end;
     sevkMap:
       begin
@@ -1687,9 +1686,10 @@ begin
         for I := Len to Len + SESize(V2) - 1 do
           SEMapSet(R, I, SEMapGet(V2, I - Len));
       end;
-    sevkString:
+    sevkPointer:
       begin
-        GC.AllocString(@R, V1.VarString^ + V2.VarString^);
+        R.Kind := sevkPointer;
+        R.VarPointer := V1.VarPointer + V2.VarPointer;
       end;
   end;
 end;
