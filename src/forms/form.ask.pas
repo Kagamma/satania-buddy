@@ -124,7 +124,7 @@ begin
   Satania.ChatText.Text.Text := '';
   GC.AllocMap(@Answer);
   for I := 0 to Results.Count - 1 do
-    SEMapSet(Answer, I, Results[I]);
+    SEMapSet(Answer, Results.Names[I], Results.ValueFromIndex[I]);
 end;
 
 end.
