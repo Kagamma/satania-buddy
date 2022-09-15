@@ -575,7 +575,7 @@ begin
   try
     Result := TSEValueMap(V.VarMap)[IntToStr(I)];
   except
-    Result := 0;
+    Result := SENull;
   end;
 end;
 
@@ -584,7 +584,7 @@ begin
   try
     Result := TSEValueMap(V.VarMap)[S];
   except
-    Result := 0;
+    Result := SENull;
   end;
 end;
 
@@ -599,11 +599,11 @@ begin
       sevkSingle:
         S := IntToStr(Round(I.VarNumber));
       else
-        Exit(0);
+        Exit(SENull);
     end;
     Result := TSEValueMap(V.VarMap)[S];
   except
-    Result := 0;
+    Result := SENull;
   end;
 end;
 
@@ -879,7 +879,7 @@ begin
   if ScriptVarMap.ContainsKey(Args[0].VarString^) then
     Exit(ScriptVarMap[Args[0]])
   else
-    Exit(0);
+    Exit(SENull);
 end;
 
 class function TBuiltInFunction.SESet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

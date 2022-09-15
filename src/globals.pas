@@ -351,7 +351,7 @@ begin
   if Flag <> nil then
     GC.AllocString(@Result, Flag.Value)
   else
-    GC.AllocString(@Result, '');
+    Result := SENull;
 end;
 
 function TSave.SESetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
