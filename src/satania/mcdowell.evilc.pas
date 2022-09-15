@@ -3527,14 +3527,16 @@ var
     begin
       NextToken;
       if IsString then
-        PeekAtNextTokenExpected([tkBracketOpen, tkSquareBracketOpen, tkNumber, tkString, tkNegative, tkIdent])
+        PeekAtNextTokenExpected([tkBracketOpen, tkSquareBracketOpen, tkDot, tkNumber, tkString, tkNegative, tkIdent])
       else
-        PeekAtNextTokenExpected([tkBracketOpen, tkSquareBracketOpen, tkNumber, tkNegative, tkNot, tkIdent]);
+        PeekAtNextTokenExpected([tkBracketOpen, tkSquareBracketOpen, tkDot, tkNumber, tkNegative, tkNot, tkIdent]);
       Func;
       EmitExpr([Pointer({$ifdef CPU64}Int64(Op){$else}Op{$endif})]);
     end;
 
     procedure Tail;
+    var
+      Token: TSEToken;
     begin
       case PeekAtNextToken.Kind of
         tkSquareBracketOpen:
@@ -3544,17 +3546,25 @@ var
             NextTokenExpected([tkSquareBracketClose]);
             EmitExpr([Pointer(opPushLocalArrayPop)]);
             Tail;
+          end;             
+        tkDot:
+          begin
+            NextToken;
+            Token := NextTokenExpected([tkIdent]);
+            EmitExpr([Pointer(opPushConst), Token.Value]);
+            EmitExpr([Pointer(opPushLocalArrayPop)]);
+            Tail;
           end;
       end;
     end;
 
     procedure Factor;
     var
-      Token: TSEToken;
+      Token, Token2: TSEToken;
       Ident: PSEIdent;
     begin
       Token := PeekAtNextTokenExpected([
-        tkBracketOpen, tkBracketClose, tkSquareBracketOpen, tkNumber, tkEOF,
+        tkBracketOpen, tkBracketClose, tkSquareBracketOpen, tkDot, tkNumber, tkEOF,
         tkNegative, tkNot, tkString, tkIdent]);
       case Token.Kind of
         tkBracketOpen:
@@ -3593,6 +3603,14 @@ var
                         NextToken;
                         ParseExpr;
                         NextTokenExpected([tkSquareBracketClose]);
+                        EmitExpr([Pointer(opPushLocalArray), Ident^.Addr]);
+                        Tail;
+                      end;       
+                    tkDot:
+                      begin
+                        NextToken;
+                        Token2 := NextTokenExpected([tkIdent]);
+                        EmitExpr([Pointer(opPushConst), Token2.Value]);
                         EmitExpr([Pointer(opPushLocalArray), Ident^.Addr]);
                         Tail;
                       end;
@@ -4185,7 +4203,7 @@ var
   procedure ParseVarAssign(const Name: String);
   var
     Addr: Integer;
-    Token: TSEToken;
+    Token, Token2: TSEToken;
     IsArrayAssign: Boolean = False;
   begin
     Addr := FindVar(Name)^.Addr;
@@ -4196,6 +4214,13 @@ var
           NextToken;
           ParseExpr;
           NextTokenExpected([tkSquareBracketClose]);
+        end;                  
+      tkDot:
+        begin
+          IsArrayAssign := True;
+          NextToken;
+          Token2 := NextTokenExpected([tkIdent]);
+          Emit([Pointer(opPushConst), Token2.Value]);
         end;
     end;
     Token := NextTokenExpected([tkEqual, tkOpAssign]);
