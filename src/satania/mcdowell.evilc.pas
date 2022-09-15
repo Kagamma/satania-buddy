@@ -82,7 +82,7 @@ type
   TSEValueKind = (
     sevkSingle,
     sevkString,
-    sevkArray,
+    sevkMap,
     sevkPointer
   );
   PCommonString = ^String;
@@ -99,16 +99,16 @@ type
         (
           VarString: PCommonString;
         );
-      sevkArray:
+      sevkMap:
         (
-          VarArray: PSEValue;
+          VarMap: TObject;
         );
       sevkPointer:
         (
           VarPointer: Pointer;
         );
   end;
-
+  TSEValueMap = specialize TDictionary<String, TSEValue>;
   {$mode objfpc}
   TSEValueArray = array of TSEValue;
   PPSEValue = ^PSEValue;
@@ -133,7 +133,7 @@ type
     procedure AddToList(const PValue: PSEValue);
     procedure CheckForGC;
     procedure GC;
-    procedure AllocArray(const PValue: PSEValue; const ASize: Cardinal);
+    procedure AllocMap(const PValue: PSEValue);
     procedure AllocString(const PValue: PSEValue; const S: String);
     property AllocatedMem: Int64 read FAllocatedMem;
   end;
@@ -389,6 +389,12 @@ type
   end;
 
 function SESize(constref Value: TSEValue): Cardinal; inline;
+function SEMapGet(constref V: TSEValue; constref I: Integer): TSEValue; inline; overload;
+function SEMapGet(constref V: TSEValue; constref S: String): TSEValue; inline; overload;
+function SEMapGet(constref V, I: TSEValue): TSEValue; inline; overload;
+procedure SEMapSet(constref V: TSEValue; constref I: Integer; const A: TSEValue); inline; overload;
+procedure SEMapSet(constref V: TSEValue; constref S: String; const A: TSEValue); inline; overload;
+procedure SEMapSet(constref V, I: TSEValue; const A: TSEValue); inline; overload;
 
 operator := (V: TSENumber) R: TSEValue;
 operator := (V: String) R: TSEValue;
@@ -437,7 +443,7 @@ var
 implementation
 
 uses
-  Math, Strings, Globals, Utils.Strings;
+  Math, Strings;
 
 type
   TBuiltInFunction = class
@@ -477,9 +483,10 @@ type
     class function SENumber(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEWait(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SELength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEArrayCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEArrayDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEMap(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEMapCreateArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEMapDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+    class function SEMapKey(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SELerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESLerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESign(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -530,14 +537,97 @@ var
   DynlibMap: TDynlibMap;
   VMList: TSEVMList;
 
+function PointStrToFloat(S: String): Double; inline;
+var
+  fS: TFormatSettings;
+begin
+  FS := FormatSettings;
+  fS.DecimalSeparator := '.';
+  Result := StrToFloat(S, FS);
+end;
+
+function PointFloatToStr(X: Double): String; inline;
+var
+  FS: TFormatSettings;
+begin
+  FS := FormatSettings;
+  FS.DecimalSeparator := '.';
+  Result := FloatToStr(X, FS);
+end;
+
 function SESize(constref Value: TSEValue): Cardinal; inline;
 begin
-  Result := Value.Size;
-end; 
+  if Value.Kind = sevkMap then
+    Result := TSEValueMap(Value.VarMap).Count
+  else
+    Result := Value.Size;
+end;
+
+function SEMapGet(constref V: TSEValue; constref I: Integer): TSEValue; inline; overload;
+begin
+  try
+    Result := TSEValueMap(V.VarMap)[IntToStr(I)];
+  except
+    Result := 0;
+  end;
+end;
+
+function SEMapGet(constref V: TSEValue; constref S: String): TSEValue; inline; overload;
+begin
+  try
+    Result := TSEValueMap(V.VarMap)[S];
+  except
+    Result := 0;
+  end;
+end;
+
+function SEMapGet(constref V, I: TSEValue): TSEValue; inline; overload;
+var
+  S: String;
+begin
+  try
+    case I.Kind of
+      sevkString:
+        S := I.VarString^;
+      sevkSingle:
+        S := IntToStr(Round(I.VarNumber));
+      else
+        Exit(0);
+    end;
+    Result := TSEValueMap(V.VarMap)[S];
+  except
+    Result := 0;
+  end;
+end;
+
+procedure SEMapSet(constref V: TSEValue; constref I: Integer; const A: TSEValue); inline; overload;
+begin
+  TSEValueMap(V.VarMap).AddOrSetValue(IntToStr(I), A);
+end;
+
+procedure SEMapSet(constref V: TSEValue; constref S: String; const A: TSEValue); inline; overload;
+begin
+  TSEValueMap(V.VarMap).AddOrSetValue(S, A);
+end;   
+
+procedure SEMapSet(constref V, I: TSEValue; const A: TSEValue); inline; overload;
+var
+  S: String;
+begin
+  case I.Kind of
+    sevkString:
+      S := I.VarString^;
+    sevkSingle:
+      S := IntToStr(Round(I.VarNumber));
+    else
+      Exit;
+  end;
+  TSEValueMap(V.VarMap).AddOrSetValue(S, A);
+end;
 
 function SEClone(constref V: TSEValue): TSEValue;
 var
-  S: String;
+  S, Key: String;
 begin
   case V.Kind of
     sevkSingle:
@@ -555,10 +645,11 @@ begin
         S := V.VarString^;
         GC.AllocString(@Result, S);
       end;
-    sevkArray:
+    sevkMap:
       begin
-        GC.AllocArray(@Result, SESize(V.VarArray));
-        Move(V.VarArray^, Result.VarArray^, MemSize(V.VarArray));
+        GC.AllocMap(@Result);
+        for Key in TSEValueMap(V.VarMap).Keys do
+          SEMapSet(Result, Key, SEMapGet(V, Key))
       end;
   end;
 end;
@@ -725,7 +816,7 @@ end;
 class function TBuiltInFunction.SETypeOf(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   case Args[0].Kind of
-    sevkArray:
+    sevkMap:
       Result := 'array';
     sevkSingle:
       Result := 'number';
@@ -813,46 +904,54 @@ begin
       {$else}
       Exit(Length(String(Args[0].VarString)));
       {$endif}
-    sevkArray:
+    sevkMap:
       begin
         Exit(SESize(Args[0]));
       end;
   end;
 end;
 
-class function TBuiltInFunction.SEArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+class function TBuiltInFunction.SEMap(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  GC.AllocArray(@Result, Round(Args[0].VarNumber));
+  GC.AllocMap(@Result);
 end;
 
-class function TBuiltInFunction.SEArrayCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+class function TBuiltInFunction.SEMapCreateArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   I: Integer;
 begin
-  GC.AllocArray(@Result, Length(Args));
+  GC.AllocMap(@Result);
   for I := 0 to Length(Args) - 1 do
   begin
-    Result.VarArray[I] := Args[I];
+    SEMapSet(Result, I, Args[I]);
   end;
 end;
 
-class function TBuiltInFunction.SEArrayDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+class function TBuiltInFunction.SEMapDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
-  I, P, S, E: Integer;
+  Key: String;
 begin
-  S := Round(Args[1].VarNumber);
-  E := Round(Args[2].VarNumber);
-  GC.AllocArray(@Result, SESize(Args[0]) - 1);
-  P := 0;
-  for I := 0 to SESize(Args[0]) - 1 do
+  GC.AllocMap(@Result);
+  for Key in TSEValueMap(Args[0].VarMap).Keys do
   begin
-    if not (I in [S..E]) then
+    if Key <> Args[1] then
     begin
-      Result.VarArray[P] := Args[0].VarArray[I];
-      Inc(P);
+      SEMapSet(Result, Key, SEMapGet(Args[0], Key));
     end;
   end;
-  //Delete(Result.VarArray, Round(Args[1].VarNumber), Round(Args[2].VarNumber));
+end;
+
+class function TBuiltInFunction.SEMapKey(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Key: String;
+  I: Integer = 0;
+begin
+  for Key in TSEValueMap(Args[0].VarMap).Keys do
+  begin
+    if I = Args[1] then
+      Exit(Key);
+    I := I + 1;
+  end;
 end;
 
 class function TBuiltInFunction.SELerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -894,17 +993,16 @@ var
   V: TSENumber;
   I: Integer = 0;
 begin
-  GC.AllocArray(@Result, 0);
+  GC.AllocMap(@Result);
   V := Args[0];
   while EpsilonRound(V) <= Args[1].VarNumber do
   begin
-    Inc(I);
-    GC.AllocArray(@Result, 0);
-    Result.VarArray[I - 1] := V;
+    SEMapSet(Result, I, V);
     if Length(Args) = 3 then
       V := V + Args[2].VarNumber
     else
       V := V + 1;
+    Inc(I);
   end;
 end;
 
@@ -960,9 +1058,9 @@ var
   I: Integer;
 begin
   D := SplitString(Args[0], Args[1]);
-  GC.AllocArray(@Result, Length(D));
+  GC.AllocMap(@Result);
   for I := 0 to Length(D) - 1 do
-    Result.VarArray[I] := D[I];
+    SEMapSet(Result, I, D[I]);
 end;
 
 class function TBuiltInFunction.SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1002,16 +1100,18 @@ class function TBuiltInFunction.SEStringFormat(const VM: TSEVM; const Args: arra
 var
   I: Integer;
   S, V: String;
+  Value: TSEValue;
 begin
   S := Args[0].VarString^;
   for I := 0 to SESize(Args[1]) - 1 do
   begin
     V := '';
-    if Args[1].VarArray[I].Kind = sevkSingle then
-      V := PointFloatToStr(Args[1].VarArray[I].VarNumber)
+    Value := SEMapGet(Args[1], I);
+    if Value.Kind = sevkSingle then
+      V := PointFloatToStr(Value.VarNumber)
     else
-    if Args[1].VarArray[I].Kind = sevkString then
-      V := Args[1].VarArray[I].VarString^;
+    if Value.Kind = sevkString then
+      V := Value.VarString^;
     S := StringReplace(S, '{' + IntToStr(I) + '}', V, [rfReplaceAll]);
   end;
   Result := S;
@@ -1044,18 +1144,18 @@ var
   R: TRegExpr;
   I: Integer;
   C: Integer = 0;
+  V: TSEValue;
 begin
-  GC.AllocArray(@Result, 0);
+  GC.AllocMap(@Result);
   R := TRegExpr.Create(Args[1].VarString^);
   if R.Exec(Args[0]) then
   repeat
-    GC.AllocArray(@Result, SESize(Result) + R.SubExprMatchCount);
     for I := 1 to R.SubExprMatchCount do
     begin
-      Result.VarArray[C].Kind := sevkArray;
-      GC.AllocArray(@Result.VarArray[C], 2);
-      Result.VarArray[C].VarArray[0] := R.Match[I];
-      Result.VarArray[C].VarArray[1] := R.MatchPos[I] - 1;
+      GC.AllocMap(@V);
+      SEMapSet(V, 0, R.Match[I]);
+      SEMapSet(V, 1, R.MatchPos[I] - 1);
+      SEMapSet(Result, C, V);
       Inc(C);
     end;
   until not R.ExecNext;
@@ -1264,7 +1364,8 @@ end;
 procedure SEValueAdd(out R: TSEValue; constref V1, V2: TSEValue); inline; overload;
 var
   I, Len: Integer;
-  TempArray: TSEValueArray;
+  TempArray: TSEValue;
+  Key: String;
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
@@ -1278,19 +1379,15 @@ begin
         R.Kind := sevkPointer;
         R.VarPointer := V1.VarPointer + V2.VarPointer;
       end;
-    sevkArray:
+    sevkMap:
       begin
-        R.Kind := sevkArray;
-        SetLength(TempArray, SESize(V1) + SESize(V2));
+        GC.AllocMap(@TempArray);
         Len := SESize(V1);
         for I := 0 to Len - 1 do
-          TempArray[I] := V1.VarArray[I];
+          SEMapSet(TempArray, I, SEMapGet(V1, I));
         for I := Len to Len + SESize(V2) - 1 do
-          TempArray[I] := V2.VarArray[I - Len];
-        Len := Length(TempArray);
-        GC.AllocArray(@R, Len);
-        for I := 0 to Len - 1 do
-          R.VarArray[I] := TempArray[I];
+          SEMapSet(TempArray, I, SEMapGet(V2, I - Len));
+        R := TempArray;
       end;
     sevkString:
       begin
@@ -1439,9 +1536,9 @@ operator := (V: TSEValueArray) R: TSEValue; inline;
 var
   I: Integer;
 begin
-  GC.AllocArray(@R, Length(V));
+  GC.AllocMap(@R);
   for I := 0 to Length(V) - 1 do
-    R.VarArray[I] := V[I];
+    SEMapSet(R, I, V[I]);
 end;
 operator := (V: Pointer) R: TSEValue; inline;
 begin
@@ -1478,12 +1575,12 @@ operator := (V: TSEValue) R: TSEValueArray; inline;
 var
   Len, I: Integer;
 begin
-  if V.Kind <> sevkArray then
+  if V.Kind <> sevkMap then
     Exit;
-  Len := SESize(V.VarArray);
+  Len := SESize(V.VarMap);
   SetLength(R, Len);
   for I := 0 to Len - 1 do
-    R[I] := V.VarArray[I];
+    R[I] := SEMapGet(V, I);
 end;
 operator := (V: TSEValue) R: Pointer; inline;
 begin
@@ -1551,15 +1648,14 @@ begin
         R.Kind := sevkPointer;
         R.VarPointer := V1.VarPointer + V2.VarPointer;
       end;
-    sevkArray:
+    sevkMap:
       begin
-        R.Kind := sevkArray;
-        GC.AllocArray(@R, SESize(V1) + SESize(V2));
+        GC.AllocMap(@R);
         Len := SESize(V1);
         for I := 0 to Len - 1 do
-          R.VarArray[I] := V1.VarArray[I];
+          SEMapSet(R, I, SEMapGet(V1, I));
         for I := Len to Len + SESize(V2) - 1 do
-          R.VarArray[I] := V2.VarArray[I - Len];
+          SEMapSet(R, I, SEMapGet(V2, I - Len));
       end;
     sevkString:
       begin
@@ -1720,7 +1816,7 @@ end;
 
 procedure TGarbageCollector.CheckForGC; inline;
 begin
-  if (GetTickCount64 - Self.FTicks > 1000 * 60 * 2) or (Self.FAllocatedMem > 1024 * 1024 * 512) then
+  if (GetTickCount64 - Self.FTicks > 1000 * 60 * 2) or (Self.FAllocatedMem > 1024 * 1024 * 128) then
   begin
     Self.GC;
     Self.FTicks := GetTickCount64;
@@ -1738,16 +1834,12 @@ begin
     if Value.Garbage then
     begin
       case Value.Value.Kind of
-        sevkArray:
+        sevkMap:
           begin
-            if Value.Value.VarArray <> nil then
+            if Value.Value.VarMap <> nil then
             begin
-              MS := MemSize(Value.Value.VarArray);
-              if MS > 0 then
-              begin
-                Self.FAllocatedMem := Self.FAllocatedMem - MS;
-                FreeMem(Value.Value.VarArray);
-              end;
+              Self.FAllocatedMem := Self.FAllocatedMem - 1024;
+              Value.Value.VarMap.Free;
             end;
           end;
         sevkString:
@@ -1758,6 +1850,8 @@ begin
               if MS > 0 then
               begin
                 Self.FAllocatedMem := Self.FAllocatedMem - MS;
+                if Length(Value.Value.VarString^) < 80 then
+                  Writeln(Value.Value.VarString^);
                 Value.Value.VarString^ := '';
                 Dispose(Value.Value.VarString);
               end;
@@ -1775,17 +1869,19 @@ procedure TGarbageCollector.GC;
   procedure Mark(const PValue: PSEValue); inline;
   var           
     Value: TSEGCValue;
-    I: Integer;
+    RValue: TSEValue;
+    Key: String;
   begin
-    if (not Value.Garbage) or ((PValue^.Kind <> sevkArray) and (PValue^.Kind <> sevkString)) then
+    if (PValue^.Kind <> sevkMap) and (PValue^.Kind <> sevkString) then
       Exit;
     Value := Self.FValueList[PValue^.Ref];
     case Value.Value.Kind of
-      sevkArray:
+      sevkMap:
         begin
-          for I := 0 to SESize(PValue^) - 1 do
+          for Key in TSEValueMap(PValue^.VarMap).Keys do
           begin
-            Mark(@PValue^.VarArray[I]);
+            RValue := SEMapGet(PValue^, Key);
+            Mark(@RValue);
           end;
         end;
     end;
@@ -1834,31 +1930,22 @@ begin
   Sweep;
 end;
 
-procedure TGarbageCollector.AllocArray(const PValue: PSEValue; const ASize: Cardinal);
+procedure TGarbageCollector.AllocMap(const PValue: PSEValue);
 var
   Len: Integer;
 begin
-  PValue^.Kind := sevkArray;
-  if ASize > 0 then
-  begin
-    CheckForGC;
-    Len := SizeOf(TSEValue) * ASize;
-    GetMem(PValue^.VarArray, Len);
-    PValue^.Size := Len div SizeOf(TSEValue);
-    FillChar(PValue^.VarArray^, Len, 0);
-    Self.FAllocatedMem := Self.FAllocatedMem + MemSize(PValue^.VarArray);
-    Self.AddToList(PValue);
-  end else
-  begin
-    PValue^.VarArray := nil;
-    PValue^.Size := 0;
-  end;
+  CheckForGC;
+  PValue^.Kind := sevkMap;
+  PValue^.VarMap := TSEValueMap.Create;
+  PValue^.Size := 0;
+  Self.FAllocatedMem := Self.FAllocatedMem + 1024;
+  Self.AddToList(PValue);
 end;
 
 procedure TGarbageCollector.AllocString(const PValue: PSEValue; const S: String);
 begin
-  PValue^.Kind := sevkString;
   CheckForGC;
+  PValue^.Kind := sevkString;
   New(PValue^.VarString);
   PValue^.VarString^ := S;
   PValue^.Size := Length(S);
@@ -2112,8 +2199,8 @@ begin
                 {$else}
                   Push(B^.VarString[Integer(Pop^) + 1]);
                 {$endif}
-              sevkArray:
-                Push(B^.VarArray[Integer(Pop^)]);
+              sevkMap:
+                Push(SEMapGet(B^, Pop^));
               else
                 begin
                   Pop;
@@ -2133,8 +2220,8 @@ begin
                 {$else}
                   Push(B^.VarString[Integer(A^) + 1]);
                 {$endif}
-              sevkArray:
-                Push(B^.VarArray[Integer(A^)]);
+              sevkMap:
+                Push(SEMapGet(B^, A^));
               else
                 Push(0);
             end;
@@ -2590,13 +2677,13 @@ begin
                     // Self.Stack[A] := S;
                   end else
                   begin
-                    V^.VarArray[Integer(C^)] := B^;
+                    SEMapSet(V^, C^, B^);
                     Self.Stack[Integer(A^)] := V^;
                   end;
                 end;
               sevkSingle:
                 begin
-                  if V^.VarString <> nil then
+                  if V^.Kind = sevkString then
                   begin
                     {$ifdef SE_STRING_UTF8}
                       S1 := V^.VarString^;
@@ -2610,13 +2697,13 @@ begin
                     // Self.Stack[A] := S;
                   end else
                   begin
-                    V^.VarArray[Integer(C^)] := B^;
+                    SEMapSet(V^, C^, B^);
                     Self.Stack[Integer(A^)] := V^;
                   end;
                 end;
               else
                 begin
-                  V^.VarArray[Integer(C^)] := B^;
+                  SEMapSet(V^, C^, B^);
                   Self.Stack[Integer(A^)] := V^;
                 end;
             end;
@@ -2716,9 +2803,10 @@ begin
   Self.RegisterFunc('number', @TBuiltInFunction(nil).SENumber, 1);
   Self.RegisterFunc('wait', @TBuiltInFunction(nil).SEWait, 1);
   Self.RegisterFunc('length', @TBuiltInFunction(nil).SELength, 1);
-  Self.RegisterFunc('array', @TBuiltInFunction(nil).SEArray, 1);
-  Self.RegisterFunc('array_create', @TBuiltInFunction(nil).SEArrayCreate, -1);
-  Self.RegisterFunc('array_delete', @TBuiltInFunction(nil).SEArrayDelete, 3);
+  Self.RegisterFunc('map', @TBuiltInFunction(nil).SEMap, 1);
+  Self.RegisterFunc('map_create_array', @TBuiltInFunction(nil).SEMapCreateArray, -1);
+  Self.RegisterFunc('map_delete', @TBuiltInFunction(nil).SEMapDelete, 3);
+  Self.RegisterFunc('map_index_to_key', @TBuiltInFunction(nil).SEMapKey, 2);
   Self.RegisterFunc('sign', @TBuiltInFunction(nil).SESign, 1);
   Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, -1);
   Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 1);
@@ -3911,12 +3999,14 @@ var
     I: Integer;
     Token: TSEToken;
     VarName,
+    VarHiddenKeyName,
     VarHiddenCountName,
     VarHiddenArrayName: String;
     Ind,
     VarAddr,
     VarHiddenCountAddr,
-    VarHiddenArrayAddr: Integer;
+    VarHiddenArrayAddr,
+    VarHiddenKeyAddr: Integer;
   begin
     ContinueList := TList.Create;
     BreakList := TList.Create;
@@ -3976,17 +4066,21 @@ var
         if Token.Kind = tkComma then
         begin
           Token := NextTokenExpected([tkIdent]);
-          VarHiddenCountName := Token.Value;
+          VarHiddenKeyName := Token.Value;
           NextTokenExpected([tkIn]);
         end else
-          VarHiddenCountName := '___c' + VarName;
+          VarHiddenKeyName := '___k' + VarName;
         VarHiddenArrayName := '___a' + VarName;
+        VarHiddenCountName := '___c' + VarName;
+        Token.Value := VarHiddenKeyName;
+        Self.LocalVarList.Add(CreateIdent(ikVariable, Token));
         Token.Value := VarHiddenCountName;
         Self.LocalVarList.Add(CreateIdent(ikVariable, Token));
         Token.Value := VarHiddenArrayName;
         Self.LocalVarList.Add(CreateIdent(ikVariable, Token));
         VarHiddenCountAddr := FindVar(VarHiddenCountName)^.Addr;
-        VarHiddenArrayAddr := FindVar(VarHiddenArrayName)^.Addr;
+        VarHiddenArrayAddr := FindVar(VarHiddenArrayName)^.Addr; 
+        VarHiddenKeyAddr := FindVar(VarHiddenKeyName)^.Addr;
 
         ParseExpr;
 
@@ -4000,9 +4094,14 @@ var
         Emit([Pointer(opCallNative), FindFuncNative('length', Ind), 1]);
         Emit([Pointer(opPushLocalVar), VarHiddenCountAddr]);
         JumpEnd := Emit([Pointer(opJumpEqualOrLesser), 0]);
-
+                                                          
         Emit([Pointer(opPushLocalVar), VarHiddenArrayAddr]);
         Emit([Pointer(opPushLocalVar), VarHiddenCountAddr]);
+        Emit([Pointer(opCallNative), FindFuncNative('map_index_to_key', Ind), 2]);
+        Emit([Pointer(opAssignLocal), VarHiddenKeyAddr]);
+
+        Emit([Pointer(opPushLocalVar), VarHiddenArrayAddr]);
+        Emit([Pointer(opPushLocalVar), VarHiddenKeyAddr]);
         Emit([Pointer(opPushLocalArrayPop)]);
         Emit([Pointer(opAssignLocal), VarAddr]);
 
@@ -4065,7 +4164,7 @@ var
     ArgCount: Integer = 0;
     Token: TSEToken;
   begin
-    FuncNativeInfo := FindFuncNative('array_create', Ind);
+    FuncNativeInfo := FindFuncNative('map_create_array', Ind);
     repeat
       if PeekAtNextToken.Kind <> tkSquareBracketClose then
       begin

@@ -122,9 +122,9 @@ begin
   Satania.IsBlocked := False;
   Self.Visible := False;
   Satania.ChatText.Text.Text := '';
-  GC.AllocArray(@Answer, Results.Count);
+  GC.AllocMap(@Answer);
   for I := 0 to Results.Count - 1 do
-    Answer.VarArray[I] := Results[I];
+    SEMapSet(Answer, I, Results[I]);
 end;
 
 end.

@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;        
     function SESketchCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -97,19 +97,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 function SEValueToText(const Value: TSEValue): String;
 var
-  I: Integer;
+  Key: String;
+  I: Integer = 0;
 begin
   case Value.Kind of
     sevkSingle:
       Result := PointFloatToStr(Value.VarNumber);
-    sevkArray:
+    sevkMap:
       begin
         Result := '[';
-        for I := 0 to MemSize(Value.VarArray) div SizeOf(TSEValue) - 1 do
+        for Key in TSEValueMap(Value.VarMap).Keys do
         begin
           if I > 0 then
             Result := Result + ', ';
-          Result := Result + SEValueToText(Value.VarArray[I]);
+          Result := Result + SEValueToText(SEMapGet(Value, Key));
+          Inc(I);
         end;
         Result := Result + ']'
       end
@@ -205,7 +207,7 @@ begin
   begin
     for I := 0 to SESize(Args[2]) - 1 do
     begin
-      Self.AnimTalkScriptList.Add(Args[2].VarArray[I].VarString^);
+      Self.AnimTalkScriptList.Add(SEMapGet(Args[2], I).VarString^);
     end;
   end;
 end;
@@ -315,7 +317,7 @@ begin
   SataniaSMTP.Body := Args[4];
   SetLength(SataniaSMTP.Attachments, SESize(Args[5]));
   for I := 0 to SESize(Args[5]) - 1 do
-    SataniaSMTP.Attachments[I] := Args[5].VarArray[I];
+    SataniaSMTP.Attachments[I] := SEMapGet(Args[5], I);
 
   SataniaSMTP.Start;
 end;
@@ -407,7 +409,9 @@ end;
 function TSatania.SEURLPost(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   Thread: TSataniaHttpPostThread;
+  Key: String;
   I: Integer;
+  V: TSEValue;
 begin
   I := RunList.IndexOf(Args[0]);
   if I >= 0 then
@@ -416,12 +420,13 @@ begin
   Thread := TSataniaHttpPostThread.Create(True);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
-  for I := 0 to SESize(Args[1]) do
+  for Key in TSEValueMap(Args[1].VarMap).Keys do
   begin
-    if Args[1].VarArray[I].Kind = sevkSingle then
-      Thread.FormData.Add(PointFloatToStr(Args[1].VarArray[I].VarNumber))
+    V := SEMapGet(Args[1], Key);
+    if V.Kind = sevkSingle then
+      Thread.FormData.Values[Key] := PointFloatToStr(V.VarNumber)
     else
-      Thread.FormData.Add(Args[1].VarArray[I].VarString^);
+      Thread.FormData.Values[Key] := V.VarString^;
   end;
   Thread.Start;
   Result := Args[0].VarString^;
@@ -431,6 +436,8 @@ function TSatania.SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): T
 var
   Thread: TSataniaHttpPostThread;
   I, P: Integer;
+  Key: String;
+  V: TSEValue;
 begin
   I := RunList.IndexOf(Args[0]);
   if I >= 0 then
@@ -439,13 +446,13 @@ begin
   Thread := TSataniaHttpPostThread.Create(True);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
-  for I := 0 to SESize(Args[1]) div 2 - 1 do
+  for Key in TSEValueMap(Args[1].VarMap).Keys do
   begin
-    P := I * 2;
-    if Args[1].VarArray[I].Kind = sevkSingle then
-      Thread.FormData.Values[Args[1].VarArray[P].VarString^] := PointFloatToStr(Args[1].VarArray[P + 1].VarNumber)
+    V := SEMapGet(Args[1], Key);
+    if V.Kind = sevkSingle then
+      Thread.FormData.Values[Key] := PointFloatToStr(V.VarNumber)
     else
-      Thread.FormData.Values[Args[1].VarArray[P].VarString^] := Args[1].VarArray[P + 1].VarString^;
+      Thread.FormData.Values[Key] := V.VarString^;
   end;
   Thread.FieldName := Args[2];
   Thread.FileName := Args[3];
@@ -484,9 +491,9 @@ begin
     begin
       SL.Add(X.ToString);
     end;
-    GC.AllocArray(@Result, SL.Count);
+    GC.AllocMap(@Result);
     for I := 0 to SL.Count - 1 do
-      Result.VarArray[I] := SL[I];
+      SEMapSet(Result, I, SL[I]);
   finally
     SL.Free;
   end;
@@ -508,10 +515,10 @@ var
   I: Integer;
 begin
   A := WordsToNumbers(Args[0]);
-  GC.AllocArray(@Result, Length(A));
+  GC.AllocMap(@Result);
   for I := 0 to Length(A) - 1 do
   begin
-    Result.VarArray[I] := A[I];
+    SEMapSet(Result.VarMap, I, A[I]);
   end;
 end;
 
@@ -521,10 +528,10 @@ var
   I: Integer;
 begin
   A := WordsToDates(Args[0]);
-  GC.AllocArray(@Result, Length(A));
+  GC.AllocMap(@Result);
   for I := 0 to Length(A) - 1 do
   begin
-    Result.VarArray[I] := A[I];
+    SEMapSet(Result.VarMap, I, A[I]);
   end;
 end;
 
@@ -556,10 +563,11 @@ var
   Count, I, J: Integer;
   Y, M, D: Word;
   HA, MA: array of Word;
+  V: TSEValue;
 begin
   DecodeDate(Now, Y, M, D);
   Count := 0;
-  GC.AllocArray(@Result, Count + 1);
+  GC.AllocMap(@Result);
   for I := Save.Reminders.Count - 1 downto 0 do
   begin
     Reminder := TReminderCollectionItem(Save.Reminders.Items[I]);
@@ -574,12 +582,13 @@ begin
       Inc(Count);
     end;
   end;
-  GC.AllocArray(@Result, Count);
+  GC.AllocMap(@Result);
   for I := 0 to Count - 1 do
   begin
-    GC.AllocArray(@Result.VarArray[I], 2);
-    Result.VarArray[I].VarArray[0] := HA[I];    
-    Result.VarArray[I].VarArray[1] := MA[I];
+    GC.AllocMap(@V);
+    SEMapSet(V, 'hour', HA[I]);
+    SEMapSet(V, 'minute', MA[I]);
+    SEMapSet(Result, I, V);
   end;
 end;
 
@@ -686,9 +695,9 @@ begin
   SL := TStringList.Create;
   try
     FindAllFiles(SL, Args[0], Args[1], Boolean(Round(Args[2].VarNumber)), Round(Args[3].VarNumber));
-    GC.AllocArray(@Result, SL.Count);
+    GC.AllocMap(@Result);
     for I := 0 to SL.Count - 1 do
-      Result.VarArray[I] := SL[I];
+      SEMapSet(Result, I, SL[I]);
   finally
     SL.Free;
   end;
@@ -712,9 +721,9 @@ begin
   SL := TStringList.Create;
   try
     FindAllDirectories(SL, Args[0], Args[1]);
-    GC.AllocArray(@Result, SL.Count);
+    GC.AllocMap(@Result);
     for I := 0 to SL.Count - 1 do
-      Result.VarArray[I] := SL[I];
+      SEMapSet(Result, I, SL[I]);
   finally
     SL.Free;
   end;
@@ -725,48 +734,103 @@ begin
   Result := DirectoryExists(Args[0].VarString^);
 end;
 
-function TSatania.SEJSONGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-  function QueryForValue(D: TJSONData): TSEValue;
+function TSatania.SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+  procedure QueryForObject(out R: TSEValue; Data: TJSONData); forward;
+
+  procedure QueryForArray(out R: TSEValue; Data: TJSONData);
   var
     I: Integer;
+    D: TJSONData;
+    Name: String;
+    V: TSEValue;
   begin
-   Result := '';
-    if D <> nil then
+    GC.AllocMap(@R);
+    for I := 0 to Data.Count - 1 do
     begin
+      D := Data.Items[I];
       case D.JSONType of
         jtArray:
           begin
-            GC.AllocArray(@Result, D.Count);
-            for I := 0 to D.Count - 1 do
-            begin
-              Result.VarArray[I] := QueryForValue(D.Items[I]);
-            end;
+            QueryForArray(V, D);
+            SEMapSet(R, I, V);
           end;
         jtString:
-          Result := D.AsString;
+          begin
+            SEMapSet(R, I, D.AsString);
+          end;
         jtNumber:
-          Result := D.AsFloat;
+          begin
+            SEMapSet(R, I, D.AsFloat);
+          end;
         jtBoolean:
-          Result := D.AsBoolean;
+          begin
+            SEMapSet(R, I, D.AsBoolean);
+          end;
         jtNull:
           begin
-            Result.VarString^ := '';
-            Result := 0;
+            SEMapSet(R, I, 0);
           end;
-        else
-          Result := D.AsJSON;
+        jtObject:
+          begin
+            QueryForObject(V, D);
+            SEMapSet(R, I, V);
+          end;
+      end;
+    end;
+  end;
+
+  procedure QueryForObject(out R: TSEValue; Data: TJSONData);
+  var
+    I: Integer;
+    D: TJSONData;
+    Name: String;
+    V: TSEValue;
+  begin
+    GC.AllocMap(@R);
+    for I := 0 to Data.Count - 1 do
+    begin          
+      Name := TJSONObject(Data).Names[I];
+      D := Data.FindPath(Name);
+      case D.JSONType of
+        jtArray:
+          begin
+            QueryForArray(V, D);
+            SEMapSet(R, Name, V);
+          end;
+        jtString:
+          begin
+            SEMapSet(R, Name, D.AsString);
+          end;
+        jtNumber:
+          begin
+            SEMapSet(R, Name, D.AsFloat);
+          end;
+        jtBoolean:
+          begin
+            SEMapSet(R, Name, D.AsBoolean);
+          end;
+        jtNull:
+          begin
+            SEMapSet(R, Name, 0);
+          end;
+        jtObject:
+          begin
+            QueryForObject(V, D);
+            SEMapSet(R, Name, V);
+          end;
       end;
     end;
   end;
 
 var
-  JSON: TJSONObject;
-  D: TJSONData;
+  JSON: TJSONData;
 begin
-  JSON := GetJSON(Args[0].VarString^) as TJSONObject;
+  JSON := GetJSON(Args[0].VarString^);
   try
-    D := JSON.FindPath(Args[1].VarString^);
-    Result := QueryForValue(D);
+    if JSON.JSONType = jtArray then
+      QueryForArray(Result, JSON)
+    else
+      QueryForObject(Result, JSON);
   finally
     JSON.Free;
   end;
@@ -810,10 +874,13 @@ begin
   begin
     ColLen := SESize(Args[2]) - 1;
     if C > ColLen then
-      ColorValue := Round(Args[2].VarArray[ColLen].VarNumber)
+      ColorValue := Round(SEMapGet(Args[2], ColLen).VarNumber)
     else
-      ColorValue := Round(Args[2].VarArray[C].VarNumber);
-    Triangles[I].Vertex := Vector2(Args[1].VarArray[V].VarNumber, Args[1].VarArray[V + 1].VarNumber);
+      ColorValue := Round(SEMapGet(Args[2], C).VarNumber);
+    Triangles[I].Vertex := Vector2(
+      SEMapGet(Args[1], V).VarNumber,
+      SEMapGet(Args[1], V + 1).VarNumber
+    );
     Triangles[I].Color := Vector4(
       Byte(ColorValue) / 255,
       Byte(ColorValue shr 8) / 255,

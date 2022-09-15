@@ -251,7 +251,7 @@ begin
   S.RegisterFunc('fs_directory_delete', @SEDirectoryDelete, 1);
   S.RegisterFunc('fs_directory_find_all', @SEDirectoryFindAll, 2);
   S.RegisterFunc('fs_directory_exists', @SEDirectoryExists, 1);
-  S.RegisterFunc('json_get', @SEJSONGet, 2);
+  S.RegisterFunc('json_parse', @SEJSONParse, 1);
   S.RegisterFunc('sketch_create', @SESketchCreate, 1);
   S.RegisterFunc('sketch_draw_triangles', @SESketchDrawTriangles, 3);
   S.RegisterFunc('sketch_exists', @SESketchExists, 1);
