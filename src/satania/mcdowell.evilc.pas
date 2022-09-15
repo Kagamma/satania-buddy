@@ -485,7 +485,7 @@ type
     class function SELength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapCreateArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEMapDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+    class function SEMapDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapKey(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SELerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESLerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -608,7 +608,7 @@ end;
 procedure SEMapSet(constref V: TSEValue; constref S: String; const A: TSEValue); inline; overload;
 begin
   TSEValueMap(V.VarMap).AddOrSetValue(S, A);
-end;   
+end;
 
 procedure SEMapSet(constref V, I: TSEValue; const A: TSEValue); inline; overload;
 var
@@ -1324,13 +1324,13 @@ var
 begin
   DecodeTime(Args[0].VarNumber, H, M, S, MS);
   Result := M;
-end;  
+end;
 
 class function TBuiltInFunction.SEGCUsed(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := GC.AllocatedMem;
 end;
-       
+
 class function TBuiltInFunction.SEGCCollect(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   GC.GC;
@@ -1587,7 +1587,7 @@ end;
 operator := (V: TSEValue) R: Pointer; inline;
 begin
   R := V.VarPointer;
-end;                                                   
+end;
 var
   I, Len: Integer;
 
@@ -1867,7 +1867,7 @@ end;
 
 procedure TGarbageCollector.GC;
   procedure Mark(const PValue: PSEValue); inline;
-  var           
+  var
     Value: TSEGCValue;
     RValue: TSEValue;
     Key: String;
@@ -2724,7 +2724,7 @@ begin
             Self.CodePtr := CodePtrLocal;
             Self.StackPtr := StackPtrLocal;
             Exit;
-          end;  
+          end;
         opOperatorPow:
           begin
             B := Pop;
@@ -3066,7 +3066,7 @@ begin
             Token.Value := C;
             NextChar;
           end;
-        end;   
+        end;
       '^':
         begin
           Token.Kind := tkPow;
@@ -3255,7 +3255,7 @@ begin
             'else':
               Token.Kind := tkElse;
             'for':
-              Token.Kind := tkFor;       
+              Token.Kind := tkFor;
             'in':
               Token.Kind := tkIn;
             'to':
@@ -4066,26 +4066,22 @@ var
         if Token.Kind = tkComma then
         begin
           Token := NextTokenExpected([tkIdent]);
-          VarHiddenKeyName := Token.Value;
+          VarHiddenCountName := Token.Value;
           NextTokenExpected([tkIn]);
         end else
-          VarHiddenKeyName := '___k' + VarName;
+          VarHiddenCountName := '___c' + VarName;
         VarHiddenArrayName := '___a' + VarName;
-        VarHiddenCountName := '___c' + VarName;
-        Token.Value := VarHiddenKeyName;
-        Self.LocalVarList.Add(CreateIdent(ikVariable, Token));
         Token.Value := VarHiddenCountName;
         Self.LocalVarList.Add(CreateIdent(ikVariable, Token));
         Token.Value := VarHiddenArrayName;
         Self.LocalVarList.Add(CreateIdent(ikVariable, Token));
         VarHiddenCountAddr := FindVar(VarHiddenCountName)^.Addr;
-        VarHiddenArrayAddr := FindVar(VarHiddenArrayName)^.Addr; 
-        VarHiddenKeyAddr := FindVar(VarHiddenKeyName)^.Addr;
+        VarHiddenArrayAddr := FindVar(VarHiddenArrayName)^.Addr;
 
         ParseExpr;
 
         Emit([Pointer(opAssignLocal), VarHiddenArrayAddr]);
-        Emit([Pointer(opPushConst), 0]);      
+        Emit([Pointer(opPushConst), 0]);
         Emit([Pointer(opAssignLocal), VarHiddenCountAddr]);
 
         StartBlock := Self.VM.Binary.Count;
@@ -4094,14 +4090,9 @@ var
         Emit([Pointer(opCallNative), FindFuncNative('length', Ind), 1]);
         Emit([Pointer(opPushLocalVar), VarHiddenCountAddr]);
         JumpEnd := Emit([Pointer(opJumpEqualOrLesser), 0]);
-                                                          
-        Emit([Pointer(opPushLocalVar), VarHiddenArrayAddr]);
-        Emit([Pointer(opPushLocalVar), VarHiddenCountAddr]);
-        Emit([Pointer(opCallNative), FindFuncNative('map_index_to_key', Ind), 2]);
-        Emit([Pointer(opAssignLocal), VarHiddenKeyAddr]);
 
         Emit([Pointer(opPushLocalVar), VarHiddenArrayAddr]);
-        Emit([Pointer(opPushLocalVar), VarHiddenKeyAddr]);
+        Emit([Pointer(opPushLocalVar), VarHiddenCountAddr]);
         Emit([Pointer(opPushLocalArrayPop)]);
         Emit([Pointer(opAssignLocal), VarAddr]);
 
@@ -4194,10 +4185,10 @@ var
     end;
     Token := NextTokenExpected([tkEqual, tkOpAssign]);
     if Token.Kind = tkOpAssign then
-    begin          
+    begin
       if IsArrayAssign then
         Emit([Pointer(opPushLocalArray), Addr])
-      else    
+      else
         Emit([Pointer(opPushLocalVar), Addr]);
     end;
     ParseExpr;
@@ -4205,7 +4196,7 @@ var
     begin
       case Token.Value of
         '+':
-          Emit([Pointer(opOperatorAdd)]);      
+          Emit([Pointer(opOperatorAdd)]);
         '-':
           Emit([Pointer(opOperatorSub)]);
         '*':
