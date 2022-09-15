@@ -83,7 +83,8 @@ type
     sevkSingle,
     sevkString,
     sevkMap,
-    sevkPointer
+    sevkPointer,
+    sevkNull
   );
   PCommonString = ^String;
   {$mode delphi}
@@ -106,6 +107,10 @@ type
       sevkPointer:
         (
           VarPointer: Pointer;
+        );  
+      sevkNull:
+        (
+          VarNull: Pointer;
         );
   end;
   TSEValueMap = specialize TDictionary<String, TSEValue>;
@@ -439,6 +444,7 @@ var
   ScriptVarMap: TSEVarMap;
   GC: TGarbageCollector;
   ScriptCacheMap: TSECacheMap;
+  SENull: TSEValue;
 
 implementation
 
@@ -822,7 +828,9 @@ begin
     sevkSingle:
       Result := 'number';
     sevkString:
-      Result := 'string';
+      Result := 'string'; 
+    sevkNull:
+      Result := 'null';
     sevkPointer:
       Result := 'pointer';
   end;
@@ -1773,7 +1781,10 @@ begin
       R := V1.VarNumber = V2.VarNumber;
     sevkString:
       R := V1.VarString^ = V2.VarString^;
-  end;
+    sevkNull:
+      R := True;
+  end else
+    R := False;
 end;
 operator <> (V1, V2: TSEValue) R: Boolean; inline;
 begin
@@ -1783,7 +1794,10 @@ begin
       R := V1.VarNumber <> V2.VarNumber;
     sevkString:
       R := V1.VarString^ <> V2.VarString^;
-  end;
+    sevkNull:
+      R := False;
+  end else
+    R := True;
 end;
 
 constructor TGarbageCollector.Create;
@@ -2893,7 +2907,8 @@ procedure TEvilC.AddDefaultConsts;
 begin
   Self.ConstMap.Add('PI', PI);
   Self.ConstMap.Add('true', True);
-  Self.ConstMap.Add('false', False);
+  Self.ConstMap.Add('false', False); 
+  Self.ConstMap.Add('null', SENull);
 end;
 
 procedure TEvilC.SetSource(V: String);
@@ -4527,6 +4542,7 @@ begin
 end;
 
 initialization
+  SENull.Kind := sevkNull;
   DynlibMap := TDynlibMap.Create;
   ScriptVarMap := TSEVarMap.Create;
   GC := TGarbageCollector.Create;

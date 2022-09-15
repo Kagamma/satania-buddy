@@ -115,7 +115,9 @@ begin
           Inc(I);
         end;
         Result := Result + ']'
-      end
+      end; 
+    sevkNull:
+      Result := 'null';
     else
       Result := Value;
   end;
@@ -769,7 +771,7 @@ function TSatania.SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): T
           end;
         jtNull:
           begin
-            SEMapSet(R, I, 0);
+            SEMapSet(R, I, SENull);
           end;
         jtObject:
           begin
@@ -812,7 +814,7 @@ function TSatania.SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): T
           end;
         jtNull:
           begin
-            SEMapSet(R, Name, 0);
+            SEMapSet(R, Name, SENull);
           end;
         jtObject:
           begin
@@ -884,6 +886,8 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
             if I < TSEValueMap(Map.VarMap).Count - 1 then
               JSONStr := JSONStr + ',';
           end;
+        sevkNull:
+          JSONStr := JSONStr + 'null';
       end;
       Inc(I);
     end;
@@ -914,6 +918,8 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
             if I < TSEValueMap(Map.VarMap).Count - 1 then
               JSONStr := JSONStr + ',';
           end;
+        sevkNull:
+          JSONStr := JSONStr + 'null';
       end;
       Inc(I);
     end;
