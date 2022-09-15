@@ -1777,7 +1777,7 @@ procedure TGarbageCollector.GC;
     Value: TSEGCValue;
     I: Integer;
   begin
-    if (PValue^.Kind <> sevkArray) and (PValue^.Kind <> sevkString) then
+    if (not Value.Garbage) or ((PValue^.Kind <> sevkArray) and (PValue^.Kind <> sevkString)) then
       Exit;
     Value := Self.FValueList[PValue^.Ref];
     case Value.Value.Kind of
