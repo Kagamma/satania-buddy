@@ -1481,7 +1481,10 @@ begin
       R := V1.VarNumber = V2.VarNumber;
     sevkString:
       R := V1.VarString^ = V2.VarString^;
-  end;
+    sevkNull:
+      R := True;
+  end else
+    R := False;
 end;
 
 procedure SEValueNotEqual(out R: TSEValue; constref V1, V2: TSEValue); inline; overload;
@@ -1492,7 +1495,10 @@ begin
       R := V1.VarNumber <> V2.VarNumber;
     sevkString:
       R := V1.VarString^ <> V2.VarString^;
-  end;
+    sevkNull:
+      R := False;
+  end else
+    R := True;
 end;
 
 function SEValueLesser(constref V1, V2: TSEValue): Boolean; inline; overload;
