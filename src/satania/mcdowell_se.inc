@@ -81,6 +81,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;        
     function SESketchCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -834,6 +835,97 @@ begin
   finally
     JSON.Free;
   end;
+end;
+
+function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+  function IsValidArray(const Map: TSEValue): Boolean;
+  var
+    I: Integer;
+  begin
+    for I := 0 to TSEValueMap(Map.VarMap).Count - 1 do
+    begin
+      if not TSEValueMap(Map.VarMap).ContainsKey(IntToStr(I)) then
+        Exit(False);
+    end;
+    Result := True;
+  end;
+
+  procedure DecodeJSONArray(var JSONStr: String; const Map: TSEValue); forward;
+  procedure DecodeJSONObject(var JSONStr: String; const Map: TSEValue); forward;
+
+  procedure Decide(var JSONStr: String; const Map: TSEValue);
+  begin
+    if IsValidArray(Map) then
+      DecodeJSONArray(JSONStr, Map)
+    else
+      DecodeJSONObject(JSONStr, Map);
+  end;
+
+  procedure DecodeJSONArray(var JSONStr: String; const Map: TSEValue);
+  var
+    I: Integer = 0;
+    V: TSEValue;
+    Key: String;
+  begin
+    JSONStr := JSONStr + '[';
+    for Key in TSEValueMap(Map.VarMap).Keys do
+    begin
+      if I > 0 then
+        JSONStr := JSONStr + ',';
+      V := SEMapGet(Map, Key);
+      case V.Kind of
+        sevkString:
+          JSONStr := JSONStr + '"' + StringReplace(V.VarString^, '"', '\"', [rfReplaceAll]) + '"';
+        sevkSingle:
+          JSONStr := JSONStr + PointFloatToStr(V.VarNumber);
+        sevkMap:
+          begin
+            Decide(JSONStr, V);
+            if I < TSEValueMap(Map.VarMap).Count - 1 then
+              JSONStr := JSONStr + ',';
+          end;
+      end;
+      Inc(I);
+    end;
+    JSONStr := JSONStr + ']';
+  end;
+
+  procedure DecodeJSONObject(var JSONStr: String; const Map: TSEValue);
+  var
+    I: Integer = 0;
+    V: TSEValue;  
+    Key: String;
+  begin
+    JSONStr := JSONStr + '{';
+    for Key in TSEValueMap(Map.VarMap).Keys do
+    begin
+      if I > 0 then
+        JSONStr := JSONStr + ',';
+      JSONStr := JSONStr + '"' + StringReplace(Key, '"', '\"', [rfReplaceAll]) + '":';
+      V := SEMapGet(Map, Key);
+      case V.Kind of
+        sevkString:
+          JSONStr := JSONStr + '"' + StringReplace(V.VarString^, '"', '\"', [rfReplaceAll]) + '"';
+        sevkSingle:
+          JSONStr := JSONStr + PointFloatToStr(V.VarNumber);
+        sevkMap:
+          begin
+            Decide(JSONStr, V);
+            if I < TSEValueMap(Map.VarMap).Count - 1 then
+              JSONStr := JSONStr + ',';
+          end;
+      end;
+      Inc(I);
+    end;
+    JSONStr := JSONStr + '}';
+  end;
+
+var
+  JSONStr: String = '';
+begin
+  if Args[0].Kind = sevkMap then
+    Decide(JSONStr, Args[0]);
+  Result := JSONStr;
 end;
 
 function TSatania.SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
