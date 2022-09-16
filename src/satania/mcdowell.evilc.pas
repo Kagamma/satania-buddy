@@ -2010,7 +2010,6 @@ procedure TGarbageCollector.AllocMap(const PValue: PSEValue);
 var
   Len: Integer;
 begin
-  CheckForGC;
   PValue^.Kind := sevkMap;
   PValue^.VarMap := TSEValueMap.Create;
   PValue^.Size := 0;
@@ -2020,7 +2019,6 @@ end;
 
 procedure TGarbageCollector.AllocString(const PValue: PSEValue; const S: String);
 begin
-  CheckForGC;
   PValue^.Kind := sevkString;
   New(PValue^.VarString);
   PValue^.VarString^ := S;
@@ -2341,6 +2339,7 @@ begin
           end;
         opCallNative:
           begin
+            GC.CheckForGC;
             FuncNativeInfo := PSEFuncNativeInfo(Pointer(BinaryLocal.Ptr(CodePtrLocal + 1)^));
             ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
             SetLength(Args, ArgCount);
@@ -2358,6 +2357,7 @@ begin
           end;
         opCallScript:
           begin
+            GC.CheckForGC;
             Self.Frame[Self.FramePtr] := CodePtrLocal + 3;
             Inc(Self.FramePtr);
             FuncScriptInfo := Self.Parent.FuncScriptList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
@@ -2372,6 +2372,7 @@ begin
           end;
         opCallImport:
           begin
+            GC.CheckForGC;
             FuncImportInfo := Self.Parent.FuncImportList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
             FuncImport := FuncImportInfo^.Func;
             if FuncImport = nil then
