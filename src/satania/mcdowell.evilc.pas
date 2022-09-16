@@ -1874,7 +1874,8 @@ begin
     GC.AllocatedMem := GC.AllocatedMem - Self.FList.Count * SizeOf(TSEValue)
   else
     GC.AllocatedMem := GC.AllocatedMem - 1024;
-  Self.FList.Free;
+  if Self.FList <> nil then
+    Self.FList.Free;
   inherited;
 end;
 
@@ -1898,7 +1899,7 @@ begin
       for I := 0 to Self.FList.Count - 1 do
         Self.AddOrSetValue(IntToStr(I), Self.FList[I]);
       GC.AllocatedMem := GC.AllocatedMem - Self.FList.Count * SizeOf(TSEValue) + 1024;
-      Self.FList.Clear;
+      FreeAndNil(Self.FList);
       Self.FIsValidArray := False;
     end;
   end;
