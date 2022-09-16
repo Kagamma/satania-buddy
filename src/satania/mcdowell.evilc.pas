@@ -400,6 +400,7 @@ function SEMapGet(constref V, I: TSEValue): TSEValue; inline; overload;
 procedure SEMapSet(constref V: TSEValue; constref I: Integer; const A: TSEValue); inline; overload;
 procedure SEMapSet(constref V: TSEValue; constref S: String; const A: TSEValue); inline; overload;
 procedure SEMapSet(constref V, I: TSEValue; const A: TSEValue); inline; overload;
+function SEMapIsValidArray(constref V: TSEValue): Boolean; inline;
 
 operator := (V: TSENumber) R: TSEValue;
 operator := (V: String) R: TSEValue;
@@ -494,6 +495,7 @@ type
     class function SEMapDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapKey(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
     class function SEMapKeysGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEMapIsValidArray2(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SELerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESLerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESign(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -630,6 +632,20 @@ begin
       Exit;
   end;
   TSEValueMap(V.VarMap).AddOrSetValue(S, A);
+end;
+
+function SEMapIsValidArray(constref V: TSEValue): Boolean; inline;
+var
+  I: Integer;
+begin
+  if V.Kind <> sevkMap then
+    Exit(False);
+  for I := 0 to TSEValueMap(V.VarMap).Count - 1 do
+  begin
+    if not TSEValueMap(V.VarMap).ContainsKey(IntToStr(I)) then
+      Exit(False);
+  end;
+  Result := True;
 end;
 
 function SEClone(constref V: TSEValue): TSEValue;
@@ -976,6 +992,11 @@ begin
     SEMapSet(Result, I, Key);
     Inc(I);
   end;
+end;
+
+class function TBuiltInFunction.SEMapIsValidArray2(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := SEMapIsValidArray(Args[0]);
 end;
 
 class function TBuiltInFunction.SELerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -2841,7 +2862,8 @@ begin
   Self.RegisterFunc('map_create_array', @TBuiltInFunction(nil).SEMapCreateArray, -1);
   Self.RegisterFunc('map_delete', @TBuiltInFunction(nil).SEMapDelete, 3);
   Self.RegisterFunc('map_index_to_key', @TBuiltInFunction(nil).SEMapKey, 2);
-  Self.RegisterFunc('map_keys_get', @TBuiltInFunction(nil).SEMapKeysGet, 1);
+  Self.RegisterFunc('map_keys_get', @TBuiltInFunction(nil).SEMapKeysGet, 1);   
+  Self.RegisterFunc('map_is_valid_array', @TBuiltInFunction(nil).SEMapIsValidArray2, 1);
   Self.RegisterFunc('sign', @TBuiltInFunction(nil).SESign, 1);
   Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, -1);
   Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 1);

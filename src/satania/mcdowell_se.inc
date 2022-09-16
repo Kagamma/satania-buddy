@@ -840,24 +840,12 @@ begin
 end;
 
 function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-  function IsValidArray(const Map: TSEValue): Boolean;
-  var
-    I: Integer;
-  begin
-    for I := 0 to TSEValueMap(Map.VarMap).Count - 1 do
-    begin
-      if not TSEValueMap(Map.VarMap).ContainsKey(IntToStr(I)) then
-        Exit(False);
-    end;
-    Result := True;
-  end;
-
   procedure DecodeJSONArray(var JSONStr: String; const Map: TSEValue); forward;
   procedure DecodeJSONObject(var JSONStr: String; const Map: TSEValue); forward;
 
   procedure Decide(var JSONStr: String; const Map: TSEValue);
   begin
-    if IsValidArray(Map) then
+    if SEMapIsValidArray(Map) then
       DecodeJSONArray(JSONStr, Map)
     else
       DecodeJSONObject(JSONStr, Map);
