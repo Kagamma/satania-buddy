@@ -140,6 +140,7 @@ type
     procedure GC;
     procedure AllocMap(const PValue: PSEValue);
     procedure AllocString(const PValue: PSEValue; const S: String);
+    property ValueList: TSEGCValueList read FValueList;
     property AllocatedMem: Int64 read FAllocatedMem;
   end;
 
@@ -535,7 +536,8 @@ type
     class function SEDTGetMonth(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTGetDay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTGetHour(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEDTGetMinute(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEDTGetMinute(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    class function SEGCObjectCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGCUsed(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGCCollect(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   end;
@@ -1367,6 +1369,11 @@ var
 begin
   DecodeTime(Args[0].VarNumber, H, M, S, MS);
   Result := M;
+end;  
+
+class function TBuiltInFunction.SEGCObjectCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := GC.ValueList.Count - 1;
 end;
 
 class function TBuiltInFunction.SEGCUsed(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -2914,6 +2921,7 @@ begin
   Self.RegisterFunc('tan', @TBuiltInFunction(nil).SETan, 1);
   Self.RegisterFunc('cot', @TBuiltInFunction(nil).SECot, 1);
   Self.RegisterFunc('os', @TBuiltInFunction(nil).SEOS, 0);
+  Self.RegisterFunc('mem_object_count', @TBuiltInFunction(nil).SEGCObjectCount, 0);
   Self.RegisterFunc('mem_used', @TBuiltInFunction(nil).SEGCUsed, 0);
   Self.RegisterFunc('mem_gc', @TBuiltInFunction(nil).SEGCCollect, 0);
   Self.AddDefaultConsts;
