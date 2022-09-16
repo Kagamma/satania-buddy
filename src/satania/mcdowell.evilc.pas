@@ -1828,9 +1828,12 @@ begin
 end;
 
 constructor TGarbageCollector.Create;
+var
+  Ref0: TSEGCValue;
 begin
   inherited;
   Self.FValueList := TSEGCValueList.Create;
+  Self.FValueList.Add(Ref0);
   Self.FValueAvailList := TSEGCValueAvailList.Create;;
   Self.FTicks := GetTickCount64;
   Self.FAllocatedMem := 0;
@@ -1841,7 +1844,7 @@ var
   I: Integer;
   Value: TSEGCValue;
 begin
-  for I := 0 to Self.FValueList.Count - 1 do
+  for I := 1 to Self.FValueList.Count - 1 do
   begin
     Value := Self.FValueList[I];
     Value.Garbage := True;
@@ -1885,7 +1888,7 @@ var
   Value: TSEGCValue;
   I, J, MS: Integer;
 begin
-  for I := Self.FValueList.Count - 1 downto 0 do
+  for I := Self.FValueList.Count - 1 downto 1 do
   begin
     Value := Self.FValueList[I];
     if Value.Garbage then
@@ -1954,7 +1957,7 @@ var
   Key: String;
   Cache: TSECache;
 begin
-  for I := 0 to Self.FValueList.Count - 1 do
+  for I := 1 to Self.FValueList.Count - 1 do
   begin
     Value := Self.FValueList[I];
     Value.Garbage := True;
@@ -4573,6 +4576,7 @@ end;
 
 initialization
   SENull.Kind := sevkNull;
+  SENull.Ref := 0;
   DynlibMap := TDynlibMap.Create;
   ScriptVarMap := TSEVarMap.Create;
   GC := TGarbageCollector.Create;
