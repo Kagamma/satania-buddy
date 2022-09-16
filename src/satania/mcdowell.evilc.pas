@@ -141,7 +141,7 @@ type
     procedure AllocMap(const PValue: PSEValue);
     procedure AllocString(const PValue: PSEValue; const S: String);
     property ValueList: TSEGCValueList read FValueList;
-    property AllocatedMem: Int64 read FAllocatedMem;
+    property AllocatedMem: Int64 read FAllocatedMem write FAllocatedMem;
   end;
 
   TSEAtomKind = (
@@ -511,7 +511,8 @@ type
     class function SEStringSplit(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+    class function SEStringConcat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFormat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringUpperCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1118,6 +1119,15 @@ begin
   Delete(Args[0].VarString^, Round(Args[1].VarNumber + 1), Round(Args[2].VarNumber));
   {$endif}
   Result := Args[0].VarString^;
+end;
+
+class function TBuiltInFunction.SEStringConcat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := Args[0];
+  // Since we mess with GC, manually update mem used
+  GC.AllocatedMem := GC.AllocatedMem - ByteLength(Args[1].VarString^);
+  Result.VarString^ := Args[1].VarString^ + Args[2].VarString^;
+  GC.AllocatedMem := GC.AllocatedMem + ByteLength(Args[1].VarString^);
 end;
 
 class function TBuiltInFunction.SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -2884,7 +2894,8 @@ begin
   Self.RegisterFunc('string_replace', @TBuiltInFunction(nil).SEStringReplace, 3);
   Self.RegisterFunc('string_uppercase', @TBuiltInFunction(nil).SEStringUpperCase, 1);
   Self.RegisterFunc('string_lowercase', @TBuiltInFunction(nil).SEStringLowerCase, 1);
-  Self.RegisterFunc('string_find_regex', @TBuiltInFunction(nil).SEStringFindRegex, 2);
+  Self.RegisterFunc('string_find_regex', @TBuiltInFunction(nil).SEStringFindRegex, 2);  
+  Self.RegisterFunc('string_concat', @TBuiltInFunction(nil).SEStringConcat, 3);
   Self.RegisterFunc('lerp', @TBuiltInFunction(nil).SELerp, 3);
   Self.RegisterFunc('slerp', @TBuiltInFunction(nil).SESLerp, 3);
   Self.RegisterFunc('write', @TBuiltInFunction(nil).SEWrite, -1);
