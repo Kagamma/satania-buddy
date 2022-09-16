@@ -43,11 +43,14 @@ type
     procedure AskTextImageRequest(Sender: TObject; const SRC: ThtString;
       var Stream: TStream);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure PanelPaint(Sender: TObject);
   private
 
   public
-    Answer: TSEValue;
+    IsAnswerText: Boolean;
+    AnswerText: String;
+    Answer: TStringList;
   end;
 
 var
@@ -68,6 +71,12 @@ uses
 procedure TFormAsk.FormCreate(Sender: TObject);
 begin
   AddFormToIgnoreHandleList(Self);
+  Answer := TStringList.Create;
+end;
+
+procedure TFormAsk.FormDestroy(Sender: TObject);
+begin
+  Answer.Free;
 end;
 
 procedure TFormAsk.PanelPaint(Sender: TObject);
@@ -82,7 +91,8 @@ begin
   Satania.IsBlocked := False;
   Self.Visible := False;
   Satania.ChatText.Text.Text := '';
-  Answer := SRC;
+  IsAnswerText := True;
+  AnswerText := SRC;
 end;
 
 procedure TFormAsk.AskTextImageRequest(Sender: TObject;
@@ -122,9 +132,12 @@ begin
   Satania.IsBlocked := False;
   Self.Visible := False;
   Satania.ChatText.Text.Text := '';
-  GC.AllocMap(@Answer);
+  Answer.Clear;
+  IsAnswerText := False;
   for I := 0 to Results.Count - 1 do
-    SEMapSet(Answer, Results.Names[I], Results.ValueFromIndex[I]);
+  begin
+    Answer.AddDelimitedtext(Results.Names[I] + '=' + Results.ValueFromIndex[I]);
+  end;
 end;
 
 end.

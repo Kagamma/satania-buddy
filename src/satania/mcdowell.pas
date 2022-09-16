@@ -506,7 +506,7 @@ begin
     ChatText.ResetText;
     ChatText.MaxDisplayChars := 0;
     ChatText.Text.Text := S;
-    FormAsk.Answer := '';
+    FormAsk.Answer.Clear;
     FormAsk.AskText.Text := S;
     if ChatText.Text.Count > 25 then
     begin

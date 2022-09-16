@@ -182,8 +182,17 @@ begin
 end;
 
 function TSatania.SEAnswer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  I: Integer;
 begin
-  Result := FormAsk.Answer;
+  if FormAsk.IsAnswerText then
+    GC.AllocString(@Result, FormAsk.AnswerText)
+  else
+  begin
+    GC.AllocMap(@Result);
+    for I := 0 to FormAsk.Answer.Count - 1 do
+      SEMapSet(Result, FormAsk.Answer.Names[I], FormAsk.Answer.ValueFromIndex[I]);
+  end;
 end;
 
 function TSatania.SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
