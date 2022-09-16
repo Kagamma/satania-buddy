@@ -1930,6 +1930,8 @@ procedure TGarbageCollector.GC;
     if (PValue^.Kind <> sevkMap) and (PValue^.Kind <> sevkString) then
       Exit;
     Value := Self.FValueList[PValue^.Ref];
+    if not Value.Garbage then
+      Exit;
     case Value.Value.Kind of
       sevkMap:
         begin
