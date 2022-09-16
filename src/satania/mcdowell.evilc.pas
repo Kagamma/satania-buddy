@@ -492,7 +492,6 @@ type
     class function SEWait(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SELength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEMapCreateArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapKey(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
     class function SEMapKeysGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -941,18 +940,14 @@ begin
 end;
 
 class function TBuiltInFunction.SEMapCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-begin
-  GC.AllocMap(@Result);
-end;
-
-class function TBuiltInFunction.SEMapCreateArray(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
-  I: Integer;
+  I: Integer = 0;
 begin
   GC.AllocMap(@Result);
-  for I := 0 to Length(Args) - 1 do
+  while I < Length(Args) - 1 do
   begin
-    SEMapSet(Result, I, Args[I]);
+    SEMapSet(Result, Args[I].VarString^, Args[I + 1]);
+    Inc(I, 2);
   end;
 end;
 
@@ -2870,8 +2865,7 @@ begin
   Self.RegisterFunc('number', @TBuiltInFunction(nil).SENumber, 1);
   Self.RegisterFunc('wait', @TBuiltInFunction(nil).SEWait, 1);
   Self.RegisterFunc('length', @TBuiltInFunction(nil).SELength, 1);
-  Self.RegisterFunc('map_create', @TBuiltInFunction(nil).SEMapCreate, 0);
-  Self.RegisterFunc('map_create_array', @TBuiltInFunction(nil).SEMapCreateArray, -1);
+  Self.RegisterFunc('map_create', @TBuiltInFunction(nil).SEMapCreate, -1);
   Self.RegisterFunc('map_delete', @TBuiltInFunction(nil).SEMapDelete, 3);
   Self.RegisterFunc('map_index_to_key', @TBuiltInFunction(nil).SEMapKey, 2);
   Self.RegisterFunc('map_keys_get', @TBuiltInFunction(nil).SEMapKeysGet, 1);   
@@ -3473,6 +3467,16 @@ var
     P := Pos + 1;
     if P >= Self.TokenList.Count then
       P := P - 1;
+    Exit(Self.TokenList[P]);
+  end;
+
+  function PeekAtNextNextToken: TSEToken; inline;
+  var
+    P: Integer;
+  begin
+    P := Pos + 2;
+    if P >= Self.TokenList.Count then
+      P := P - 2;
     Exit(Self.TokenList[P]);
   end;
 
@@ -4244,12 +4248,25 @@ var
     ArgCount: Integer = 0;
     Token: TSEToken;
   begin
-    FuncNativeInfo := FindFuncNative('map_create_array', Ind);
+    I := 0;
+    FuncNativeInfo := FindFuncNative('map_create', Ind);
     repeat
       if PeekAtNextToken.Kind <> tkSquareBracketClose then
       begin
-        ParseExpr;
-        Inc(ArgCount);
+        if ((PeekAtNextToken.Kind = tkIdent) or (PeekAtNextToken.Kind = tkString)) and (PeekAtNextNextToken.Kind = tkColon) then
+        begin
+          Token := NextToken;
+          Emit([Pointer(opPushConst), Token.Value]);
+          NextToken;
+          ParseExpr;
+          Inc(ArgCount, 2);
+        end else
+        begin
+          Emit([Pointer(opPushConst), IntToStr(I)]);
+          ParseExpr;
+          Inc(ArgCount, 2);
+          Inc(I);
+        end;
       end;
       Token := NextTokenExpected([tkComma, tkSquareBracketClose]);
     until Token.Kind = tkSquareBracketClose;
