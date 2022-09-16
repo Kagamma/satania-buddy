@@ -96,23 +96,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {$ifdef unit_implementation}
 
-function SEValueToText(const Value: TSEValue): String;
+function SEValueToText(const Value: TSEValue; const IsRoot: Boolean = True): String;
 var
   Key: String;
+  IsValidArray: Boolean;
   I: Integer = 0;
 begin
-  case Value.Kind of
+  case Value.Kind of 
+    sevkString:
+      begin
+        if IsRoot then
+          Result := Value.VarString^
+        else
+          Result := '"' + Value.VarString^ + '"';
+      end;
     sevkSingle:
       Result := PointFloatToStr(Value.VarNumber);
     sevkMap:
       begin
         Result := '[';
-        for Key in TSEValueMap(Value.VarMap).Keys do
+        IsValidArray := SEMapIsValidArray(Value);
+        if IsValidArray then
         begin
-          if I > 0 then
-            Result := Result + ', ';
-          Result := Result + Key + ' => ' + SEValueToText(SEMapGet(Value, Key));
-          Inc(I);
+          for I := 0 to TSEValueMap(Value.VarMap).Count - 1 do
+          begin
+            if I > 0 then
+              Result := Result + ', ';
+            Result := Result + SEValueToText(SEMapGet(Value, I), False);
+          end;
+        end else
+        begin 
+          for Key in TSEValueMap(Value.VarMap).Keys do
+          begin
+            if I > 0 then
+              Result := Result + ', ';
+            Result := Result + '"' + Key + '": ' + SEValueToText(SEMapGet(Value, Key), False);
+            Inc(I);
+          end;
         end;
         Result := Result + ']'
       end; 
