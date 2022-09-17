@@ -899,8 +899,8 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
         sevkMap:
           begin
             Decide(JSONStr, V);
-            if (SEMapIsValidArray(Map) and (I < TSEValueMap(Map.VarMap).Count - 1)) or
-              ((not SEMapIsValidArray(Map)) and (I < TSEValueMap(Map.VarMap).List.Count - 1))then
+            if (SEMapIsValidArray(Map) and (I < TSEValueMap(Map.VarMap).List.Count - 1)) or
+              ((not SEMapIsValidArray(Map)) and (I < TSEValueMap(Map.VarMap).Count - 1))then
               JSONStr := JSONStr + ',';
           end;
         sevkNull:
@@ -931,8 +931,8 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
         sevkMap:
           begin
             Decide(JSONStr, V);
-            if (SEMapIsValidArray(Map) and (I < TSEValueMap(Map.VarMap).Count - 1)) or
-              ((not SEMapIsValidArray(Map)) and (I < TSEValueMap(Map.VarMap).List.Count - 1))then
+            if (SEMapIsValidArray(Map) and (I < TSEValueMap(Map.VarMap).List.Count - 1)) or
+              ((not SEMapIsValidArray(Map)) and (I < TSEValueMap(Map.VarMap).Count - 1))then
               JSONStr := JSONStr + ',';
           end;
         sevkNull:
