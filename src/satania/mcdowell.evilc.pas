@@ -690,7 +690,8 @@ end;
 
 class function TBuiltInFunction.SEBufferCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result.Kind := sevkString;
+  GC.AllocString(@Result, '');
+  Result.Kind := sevkSingle;
   SetLength(Result.VarString^, Round(Args[0].VarNumber));
   Result.VarNumber := QWord(Result.VarString^);
 end;
@@ -2570,7 +2571,7 @@ begin
                     A := Pop;
                     if A^.Kind = sevkString then
                     begin
-                      ImportBufferString[I] := A^.VarString + #0;
+                      ImportBufferString[I] := A^.VarString^ + #0;
                       PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferString[I]);
                     end else
                       QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
