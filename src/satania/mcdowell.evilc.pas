@@ -2967,7 +2967,7 @@ begin
   Self.IncludeList := TStringList.Create;
   Self.CurrentFileList := TStringList.Create;
   Self.VM.Parent := Self;
-  {Self.RegisterFunc('buffer_create', @TBuiltInFunction(nil).SEBufferCreate, 1);
+  Self.RegisterFunc('buffer_create', @TBuiltInFunction(nil).SEBufferCreate, 1);
   Self.RegisterFunc('buffer_length', @TBuiltInFunction(nil).SEBufferLength, 1);
   Self.RegisterFunc('buffer_u8_get', @TBuiltInFunction(nil).SEBufferGetU8, 1);
   Self.RegisterFunc('buffer_u16_get', @TBuiltInFunction(nil).SEBufferGetU16, 1);
@@ -2989,7 +2989,7 @@ begin
   Self.RegisterFunc('buffer_f64_set', @TBuiltInFunction(nil).SEBufferSetF64, 2);
   Self.RegisterFunc('string_to_buffer', @TBuiltInFunction(nil).SEStringToBuffer, 1);
   Self.RegisterFunc('buffer_to_string', @TBuiltInFunction(nil).SEBufferToString, 1);
-  Self.RegisterFunc('wbuffer_to_string', @TBuiltInFunction(nil).SEWBufferToString, 1);}
+  Self.RegisterFunc('wbuffer_to_string', @TBuiltInFunction(nil).SEWBufferToString, 1);
   Self.RegisterFunc('typeof', @TBuiltInFunction(nil).SETypeOf, 1);
   Self.RegisterFunc('get', @TBuiltInFunction(nil).SEGet, 1);
   Self.RegisterFunc('set', @TBuiltInFunction(nil).SESet, 2);
