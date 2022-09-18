@@ -1221,7 +1221,7 @@ var
 begin
   GC.AllocMap(@Result);
   R := TRegExpr.Create(Args[1].VarString^);
-  if R.Exec(Args[0]) then
+  if R.Exec(Args[0].VarString^) then
   repeat
     for I := 1 to R.SubExprMatchCount do
     begin
