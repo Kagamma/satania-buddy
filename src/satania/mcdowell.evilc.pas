@@ -4679,6 +4679,8 @@ var
       tkFunctionDecl:
         begin
           Inc(FuncTraversal);
+          if FuncTraversal > 1 then
+            Error('Nested functions are not supported', Token);
           Self.LocalVarCount := -1;
           NextToken;
           Self.ScopeStack.Push(Self.VarList.Count);
