@@ -353,7 +353,6 @@ type
     Addr: Integer;
     IsUsed: Boolean;
     IsLocal: Boolean;
-    ArgCount: Integer;
     Ln: Integer;
     Col: Integer;
     Name: String;
@@ -4781,6 +4780,7 @@ begin
   Ident.Kind := ikVariable;
   Ident.Addr := 0;
   Ident.Name := 'result';
+  Ident.IsLocal := False;
   Self.VarList.Add(Ident);
   ErrorLn := -1;
   ErrorCol := -1;
