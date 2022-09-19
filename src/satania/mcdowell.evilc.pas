@@ -2436,7 +2436,7 @@ begin
                 {$ifdef SE_STRING_UTF8}
                   Push(UTF8Copy(B^.VarString^, Integer(Pop^) + 1, 1));
                 {$else}
-                  Push(B^.VarString[Integer(Pop^) + 1]);
+                  Push(B^.VarString^[Integer(Pop^) + 1]);
                 {$endif}
               sevkMap:
                 Push(SEMapGet(B^, Pop^));
@@ -2457,7 +2457,7 @@ begin
                 {$ifdef SE_STRING_UTF8}
                   Push(UTF8Copy(B^.VarString^, Integer(Pop^) + 1, 1));
                 {$else}
-                  Push(B^.VarString[Integer(Pop^) + 1]);
+                  Push(B^.VarString^[Integer(Pop^) + 1]);
                 {$endif}
               sevkMap:
                 Push(SEMapGet(B^, Pop^));
@@ -2478,7 +2478,7 @@ begin
                 {$ifdef SE_STRING_UTF8}
                   Push(UTF8Copy(B^.VarString^, Integer(A^) + 1, 1));
                 {$else}
-                  Push(B^.VarString[Integer(A^) + 1]);
+                  Push(B^.VarString^[Integer(A^) + 1]);
                 {$endif}
               sevkMap:
                 Push(SEMapGet(B^, A^));
