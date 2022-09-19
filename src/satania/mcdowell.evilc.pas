@@ -1117,8 +1117,8 @@ begin
   Result := '';
   A := SplitString(Args[0], #10);
   for V in A do
-    for I := 1 to Length(Args) - 1 do
-      if V.IndexOf(Args[I]) >= 0 then
+    for I := 0 to SESize(Args[1]) - 1 do
+      if V.IndexOf(SEMapGet(Args[1], I).VarString^) >= 0 then
       begin
         if Result = '' then
           Result := V
@@ -3134,7 +3134,7 @@ begin
   Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 1);
   Self.RegisterFunc('range', @TBuiltInFunction(nil).SERange, -1);
   Self.RegisterFunc('pow', @TBuiltInFunction(nil).SEPow, 2);
-  Self.RegisterFunc('string_grep', @TBuiltInFunction(nil).SEStringGrep, -1);
+  Self.RegisterFunc('string_grep', @TBuiltInFunction(nil).SEStringGrep, 2);
   Self.RegisterFunc('string_format', @TBuiltInFunction(nil).SEStringFormat, 2);
   Self.RegisterFunc('string_split', @TBuiltInFunction(nil).SEStringSplit, 2);
   Self.RegisterFunc('string_find', @TBuiltInFunction(nil).SEStringFind, 2);
