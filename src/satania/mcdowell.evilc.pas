@@ -138,11 +138,12 @@ type
   TSEGCValue = record
     Garbage: Boolean;
     Value: TSEValue;
+    Lock: Boolean;
   end;
   TSEGCValueList = specialize TList<TSEGCValue>;
   TSEGCValueAvailList = specialize TList<Integer>;
 
-  TGarbageCollector = class
+  TSEGarbageCollector = class
   private
     FAllocatedMem: Int64;
     FValueList: TSEGCValueList;
@@ -157,6 +158,8 @@ type
     procedure GC;
     procedure AllocMap(const PValue: PSEValue);
     procedure AllocString(const PValue: PSEValue; const S: String);
+    procedure Lock(const PValue: PSEValue);
+    procedure Unlock(const PValue: PSEValue);
     property ValueList: TSEGCValueList read FValueList;
     property AllocatedMem: Int64 read FAllocatedMem write FAllocatedMem;
   end;
@@ -468,7 +471,7 @@ operator <> (V1, V2: TSEValue) R: Boolean;
 
 var
   ScriptVarMap: TSEVarMap;
-  GC: TGarbageCollector;
+  GC: TSEGarbageCollector;
   ScriptCacheMap: TSECacheMap;
   SENull: TSEValue;
 
@@ -1958,7 +1961,7 @@ begin
   end;
 end;
 
-constructor TGarbageCollector.Create;
+constructor TSEGarbageCollector.Create;
 var
   Ref0: TSEGCValue;
 begin
@@ -1970,7 +1973,7 @@ begin
   Self.FAllocatedMem := 0;
 end;
 
-destructor TGarbageCollector.Destroy;
+destructor TSEGarbageCollector.Destroy;
 var
   I: Integer;
   Value: TSEGCValue;
@@ -1987,25 +1990,27 @@ begin
   inherited;
 end;
 
-procedure TGarbageCollector.AddToList(const PValue: PSEValue); inline;
+procedure TSEGarbageCollector.AddToList(const PValue: PSEValue); inline;
 var
   Value: TSEGCValue;
 begin
   if Self.FValueAvailList.Count = 0 then
   begin
     PValue^.Ref := Self.FValueList.Count;
-    Value.Value := PValue^;
+    Value.Value := PValue^; 
+    Value.Lock := False;
     Self.FValueList.Add(Value);
   end else
   begin
     PValue^.Ref := Self.FValueAvailList[Self.FValueAvailList.Count - 1];
     Value.Value := PValue^;
+    Value.Lock := False;
     Self.FValueList[PValue^.Ref] := Value;
     Self.FValueAvailList.Delete(Self.FValueAvailList.Count - 1);
   end;
 end;
 
-procedure TGarbageCollector.CheckForGC; inline;
+procedure TSEGarbageCollector.CheckForGC; inline;
 begin
   if (GetTickCount64 - Self.FTicks > 1000 * 60 * 2) or (Self.FAllocatedMem > 1024 * 1024 * 128) then
   begin
@@ -2014,7 +2019,7 @@ begin
   end;
 end;
 
-procedure TGarbageCollector.Sweep; inline;
+procedure TSEGarbageCollector.Sweep; inline;
 var
   Value: TSEGCValue;
   I, J, MS: Integer;
@@ -2053,7 +2058,7 @@ begin
   end;
 end;
 
-procedure TGarbageCollector.GC;
+procedure TSEGarbageCollector.GC;
   procedure Mark(const PValue: PSEValue); inline;
   var
     Value: TSEGCValue;
@@ -2102,7 +2107,7 @@ begin
   for I := 1 to Self.FValueList.Count - 1 do
   begin
     Value := Self.FValueList[I];
-    Value.Garbage := True;
+    Value.Garbage := not Value.Lock;
     Self.FValueList[I] := Value;
   end;
   for I := 0 to VMList.Count - 1 do
@@ -2135,7 +2140,7 @@ begin
   Sweep;
 end;
 
-procedure TGarbageCollector.AllocMap(const PValue: PSEValue);
+procedure TSEGarbageCollector.AllocMap(const PValue: PSEValue);
 var
   Len: Integer;
 begin
@@ -2145,7 +2150,7 @@ begin
   Self.AddToList(PValue);
 end;
 
-procedure TGarbageCollector.AllocString(const PValue: PSEValue; const S: String);
+procedure TSEGarbageCollector.AllocString(const PValue: PSEValue; const S: String);
 begin
   PValue^.Kind := sevkString;
   New(PValue^.VarString);
@@ -2153,6 +2158,28 @@ begin
   PValue^.Size := Length(S);
   Self.FAllocatedMem := Self.FAllocatedMem + ByteLength(PValue^.VarString^);
   Self.AddToList(PValue);
+end;
+
+procedure TSEGarbageCollector.Lock(const PValue: PSEValue);
+var
+  Value: TSEGCValue;
+begin
+  if (PValue^.Kind <> sevkMap) and (PValue^.Kind <> sevkString) then
+    Exit;
+  Value := Self.FValueList[PValue^.Ref];
+  Value.Lock := True;
+  Self.FValueList[PValue^.Ref] := Value;
+end;
+
+procedure TSEGarbageCollector.Unlock(const PValue: PSEValue);
+var
+  Value: TSEGCValue;
+begin
+  if (PValue^.Kind <> sevkMap) and (PValue^.Kind <> sevkString) then
+    Exit;
+  Value := Self.FValueList[PValue^.Ref];
+  Value.Lock := False;
+  Self.FValueList[PValue^.Ref] := Value;
 end;
 
 constructor TSEVM.Create;
@@ -2168,7 +2195,7 @@ begin
   if VMList = nil then
     VMList := TSEVMList.Create;
   if GC = nil then
-    GC := TGarbageCollector.Create;
+    GC := TSEGarbageCollector.Create;
   VMList.Add(Self);
 end;
 
@@ -4906,7 +4933,7 @@ initialization
   SENull.Ref := 0;
   DynlibMap := TDynlibMap.Create;
   ScriptVarMap := TSEVarMap.Create;
-  GC := TGarbageCollector.Create;
+  GC := TSEGarbageCollector.Create;
   ScriptCacheMap := TSECacheMap.Create;
 
 finalization
