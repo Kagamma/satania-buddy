@@ -3492,52 +3492,56 @@ begin
             C := PeekAtNextChar;
           end;
 
-          if Token.Value <> 'include' then
-            Error('Expected "include"');
+          case Token.Value of
+            'include':
+              begin
+                C := PeekAtNextChar;
+                while C = ' ' do
+                begin
+                  NextChar;
+                  C := PeekAtNextChar;
+                end;
 
-          C := PeekAtNextChar;
-          while C = ' ' do
-          begin
-            NextChar;
-            C := PeekAtNextChar;
-          end;
+                C := NextChar;
+                if not (C in ['''', '"']) then
+                  Error('Expected "''"');
 
-          C := NextChar;
-          if not (C in ['''', '"']) then
-            Error('Expected "''"');
+                Token.Value := '';
+                C := PeekAtNextChar;
+                while (C <> '''') and (C <> '"') and (C <> #10) and (C <> #0) do
+                begin
+                  Token.Value := Token.Value + NextChar;
+                  C := PeekAtNextChar;
+                end;
 
-          Token.Value := '';
-          C := PeekAtNextChar;
-          while (C <> '''') and (C <> '"') and (C <> #10) and (C <> #0) do
-          begin
-            Token.Value := Token.Value + NextChar;
-            C := PeekAtNextChar;
-          end;
+                C := NextChar;
+                if not (C in ['''', '"']) then
+                  Error('Expected "''"');
 
-          C := NextChar;
-          if not (C in ['''', '"']) then
-            Error('Expected "''"');
-
-          Token.Value := Trim(Token.Value);
-          if not FileExists(Token.Value) then
-          begin
-            Error(Format('"%s" not found', [Token.Value]));
-          end;
-          if Self.IncludeList.IndexOf(Token.Value) < 0 then
-          begin
-            BackupSource := Source;
-            SL := TStringList.Create;
-            try
-              Self.CurrentFileList.Add(Token.Value);
-              SL.LoadFromFile(Token.Value);
-              FSource := SL.Text;
-              Self.Lex(True);
-              Self.CurrentFileList.Pop;
-            finally
-              SL.Free;
-            end;
-            FSource := BackupSource;
-            Self.IncludeList.Add(Token.Value);
+                Token.Value := Trim(Token.Value);
+                if not FileExists(Token.Value) then
+                begin
+                  Error(Format('"%s" not found', [Token.Value]));
+                end;
+                if Self.IncludeList.IndexOf(Token.Value) < 0 then
+                begin
+                  BackupSource := Source;
+                  SL := TStringList.Create;
+                  try
+                    Self.CurrentFileList.Add(Token.Value);
+                    SL.LoadFromFile(Token.Value);
+                    FSource := SL.Text;
+                    Self.Lex(True);
+                    Self.CurrentFileList.Pop;
+                  finally
+                    SL.Free;
+                  end;
+                  FSource := BackupSource;
+                  Self.IncludeList.Add(Token.Value);
+                end;
+              end
+            else
+              Error('Unknown preprocessor "' + Token.Value + '"');
           end;
           continue;
         end;
