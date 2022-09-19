@@ -210,7 +210,7 @@ end;
 
 procedure TFormEvilCEditor.ToolButtonHelpClick(Sender: TObject);
 begin
-  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Scripting-References-&-APIs');
+  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Scripting-Reference');
 end;
 
 procedure TFormEvilCEditor.FormCreate(Sender: TObject);

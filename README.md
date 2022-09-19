@@ -42,7 +42,7 @@ A: Satania Buddy works completely offline without any connections to remote serv
 
 ##### Q: Scripting API?
 
-A: https://github.com/Kagamma/satania-buddy/wiki/Scripting-References-&-APIs
+A: https://github.com/Kagamma/satania-buddy/wiki/Scripting-Reference
 
 ##### Q: How to make her speaks in my language? She only shows `_` in her chat bubble.
 

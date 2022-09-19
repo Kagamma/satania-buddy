@@ -301,7 +301,7 @@ end;
 
 procedure TFormMain.MenuItemScriptingAPIsClick(Sender: TObject);
 begin
-  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Scripting-References-&-APIs');
+  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Scripting-Reference');
 end;
 
 procedure TFormMain.MenuItemSettingsClick(Sender: TObject);
