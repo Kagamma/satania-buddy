@@ -264,6 +264,7 @@ begin
     WorkingFile := OpenDialog.FileName;
     Editor.Lines.LoadFromFile(OpenDialog.FileName);
     StatusBar.Panels[1].Text := '';
+    ErrorPos.Y := -1;
   end;
 end;
 
