@@ -616,7 +616,7 @@ begin
       end;
     sevkBuffer:
       begin
-        Result := ByteLength(Value.VarBuffer^.Base);
+        Result := Length(Value.VarBuffer^.Base);
       end;
     else
       Result := Value.Size;
@@ -871,6 +871,8 @@ begin
       Result := 'null';
     sevkPointer:
       Result := 'pointer';
+    sevkBuffer:
+      Result := 'buffer';
   end;
 end;
 
