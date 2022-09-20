@@ -254,7 +254,8 @@ begin
   S.RegisterFunc('json_parse', @SEJSONParse, 1);
   S.RegisterFunc('json_stringify', @SEJSONStringify, 1);
   S.RegisterFunc('sketch_create', @SESketchCreate, 1);
-  S.RegisterFunc('sketch_draw_triangles', @SESketchDrawTriangles, 3);
+  S.RegisterFunc('sketch_render_triangles', @SESketchDrawTriangles, 4);
+  S.RegisterFunc('sketch_load_texture', @SESketchLoadTexture, 3);
   S.RegisterFunc('sketch_exists', @SESketchExists, 1);
   S.RegisterFunc('sketch_delete', @SESketchClear, 1);
   S.RegisterFunc('sketch_delete_all', @SESketchClearAll, 0); 

@@ -2710,6 +2710,9 @@ begin
                       ImportBufferString[I] := A^.VarString^ + #0;
                       PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferString[I]);
                     end else
+                    if A^.Kind = sevkBuffer then
+                      PChar((@ImportBufferData[I * 8])^) := PChar(A^.VarBuffer^.Ptr)
+                    else
                       QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
                     ImportBufferIndex[I] := 0;
                     Inc(RegCount);
@@ -2720,8 +2723,11 @@ begin
                     if A^.Kind = sevkString then
                     begin
                       ImportBufferWideString[I] := UTF8Decode(A^.VarString^ + #0);
-                      PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferWideString[I]);
+                      PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferWideString[I]); 
                     end else
+                    if A^.Kind = sevkBuffer then
+                      PWideChar((@ImportBufferData[I * 8])^) := PWideChar(A^.VarBuffer^.Ptr)
+                    else
                       QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
                     ImportBufferIndex[I] := 0;
                     Inc(RegCount);

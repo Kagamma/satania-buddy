@@ -27,7 +27,8 @@ interface
 uses
   Classes, SysUtils, GL, GLExt,
   CastleVectors, CastleTransform, CastleGLShaders, CastleApplicationProperties,
-  CastleRenderContext;
+  CastleRenderContext, CastleGLImages,
+  globals;
 
 type
   TSataniaSketchData = record
@@ -42,7 +43,10 @@ type
     VBO: GLuint;
     FSketchData: array of TSataniaSketchData;
     FSketchDataPreviousLength: Integer;
+    FTexture: String;
+    FGLTexture: TGLuint;
     procedure SetSketchData(const Data: TSataniaSketchDataArray);
+    procedure SetTexture(const AValue: String);
     procedure GLContextOpen;
   public
     IsRemoved: Boolean;
@@ -53,6 +57,7 @@ type
     procedure LocalRender(const Params: TRenderParams); override;
 
     property SketchData: TSataniaSketchDataArray write SetSketchData;
+    property Texture: String read FTexture write SetTexture;
   end;
 
   TSataniaSketch = class
@@ -61,6 +66,8 @@ type
     function CreateSketch(const AName: String): TSataniaSketchItem;
     { Find a sketch by name, return nil if none is found }
     function Find(const AName: String): TSataniaSketchItem;
+    { Load Texture }
+    function LoadTexture(const AName, ATexName: String): TSataniaSketchItem;
     { Draw triangles }
     function DrawTriangles(const AName: String; const ATriangles: TSataniaSketchDataArray): TSataniaSketchItem;
     { Delete sketch by name, return true if delete successfully }
@@ -100,14 +107,23 @@ const
 'varying vec2 fragTexCoord;'nl
 'varying vec4 fragColor;'nl
 
-'uniform sampler2D baseColor;'nl
-
 'void main() {'nl
 '  gl_FragColor = fragColor;'nl
 '}';
 
+    FragmentTextureShaderSource: String =
+'varying vec2 fragTexCoord;'nl
+'varying vec4 fragColor;'nl
+
+'uniform sampler2D baseColor;'nl
+
+'void main() {'nl
+'  gl_FragColor = texture2D(baseColor, fragTexCoord) * fragColor;'nl
+'}';
+
 var
-  RenderProgram: TGLSLProgram;
+  RenderProgram,
+  RenderTextureProgram: TGLSLProgram;
 
 { Call when OpenGL context is closed }
 procedure FreeGLContext;
@@ -115,6 +131,7 @@ begin
   if RenderProgram <> nil then
   begin
     FreeAndNil(RenderProgram);
+    FreeAndNil(RenderTextureProgram);
   end;
 end;
 
@@ -135,6 +152,21 @@ begin
   Self.FSketchDataPreviousLength := Len;
 end;
 
+procedure TSataniaSketchItem.SetTexture(const AValue: String);
+begin
+  if Self.FGLTexture <> 0 then
+    glFreeTexture(Self.FGLTexture);
+  if AValue <> '' then
+  begin
+    Self.FGLTexture := LoadGLTexture(
+      PATH_SPRITES + Save.Settings.Skin + '/' + Self.FTexture,
+      TextureFilter(minLinear, magLinear),
+      Texture2DClampToEdge
+    );
+  end;
+  Self.FTexture := AValue;
+end;
+
 procedure TSataniaSketchItem.GLContextOpen;
 begin
   if RenderProgram = nil then
@@ -142,7 +174,11 @@ begin
     RenderProgram := TGLSLProgram.Create;
     RenderProgram.AttachVertexShader(VertexShaderSource);
     RenderProgram.AttachFragmentShader(FragmentShaderSource);
-    RenderProgram.Link;
+    RenderProgram.Link;  
+    RenderTextureProgram := TGLSLProgram.Create;
+    RenderTextureProgram.AttachVertexShader(VertexShaderSource);
+    RenderTextureProgram.AttachFragmentShader(FragmentTextureShaderSource);
+    RenderTextureProgram.Link;
     ApplicationProperties.OnGLContextClose.Add(@FreeGLContext);
   end;
   if Self.VBO = 0 then
@@ -161,6 +197,8 @@ begin
     glDeleteBuffers(1, @Self.VBO);
     Self.VBO := 0;
   end;
+  if Self.FGLTexture <> 0 then
+    glFreeTexture(Self.FGLTexture);
   inherited;
 end;
 
@@ -198,15 +236,22 @@ begin
   Inc(Params.Statistics.ShapesVisible);
 
   PreviousProgram := RenderContext.CurrentProgram;
-  RenderProgram.Enable;
-
-  RenderProgram.Uniform('mvMatrix').SetValue(Params.RenderingCamera.Matrix * Params.Transform^);
-  RenderProgram.Uniform('pMatrix').SetValue(RenderContext.ProjectionMatrix);
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   glDepthMask(GL_FALSE);
-  // glActiveTexture(GL_TEXTURE0);
+  glActiveTexture(GL_TEXTURE0);
+
+  if Self.FGLTexture <> 0 then
+  begin
+    RenderTextureProgram.Enable;
+    glBindTexture(GL_TEXTURE_2D, Self.FGLTexture);
+  end else
+  begin
+    RenderProgram.Enable;
+  end;
+  RenderProgram.Uniform('mvMatrix').SetValue(Params.RenderingCamera.Matrix * Params.Transform^);
+  RenderProgram.Uniform('pMatrix').SetValue(RenderContext.ProjectionMatrix);
 
   glBindBuffer(GL_ARRAY_BUFFER, Self.VBO);
   glEnableVertexAttribArray(0);
@@ -243,6 +288,12 @@ begin
   Result := TSataniaSketchItem(Satania.SketchBefore.FindComponent(AName));
   if Result = nil then
     Result := TSataniaSketchItem(Satania.SketchAfter.FindComponent(AName));
+end;
+
+function TSataniaSketch.LoadTexture(const AName, ATexName: String): TSataniaSketchItem;
+begin
+  Result := CreateSketch(AName);
+  Result.Texture := ATexName;
 end;
 
 function TSataniaSketch.DrawTriangles(const AName: String; const ATriangles: TSataniaSketchDataArray): TSataniaSketchItem;
