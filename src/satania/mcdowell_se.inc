@@ -169,11 +169,12 @@ function TSatania.SEAsk(const VM: TSEVM; const Args: array of TSEValue): TSEValu
 var
   I: Integer;
 begin
-  Ask(SEValueToText(Args[0]));
-  if Length(Args) = 3 then
+  FormAsk.Caption := Args[0].VarString^;
+  Ask(SEValueToText(Args[1]));
+  if Length(Args) = 4 then
   begin
-    FormAsk.Width := Args[1];
-    FormAsk.Height := Args[2];
+    FormAsk.Width := Args[2];
+    FormAsk.Height := Args[3];
   end else
   begin
     FormAsk.Width := 314;

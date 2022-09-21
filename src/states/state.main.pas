@@ -193,33 +193,37 @@ begin
           BubbleSideY := 0;
       end;
   end;
-  case AskSideX of
-    0:
-      begin
-        FormAsk.Left := Round(Box.Min.X - FormAsk.Width) + FormMain.Monitor.Left;
-        if FormAsk.Left < FormMain.Monitor.Left then
-          AskSideX := 1;
-      end;
-    1:
-      begin
-        FormAsk.Left := Round(Box.Max.X) + FormMain.Monitor.Left;
-        if FormAsk.Left + FormAsk.Width > FormAsk.Width * 2 + (Box.Max.X - Box.Min.X) + FormMain.Monitor.Left then
-          AskSideX := 0;
-      end;
-  end;
-  case AskSideY of
-    0:
-      begin
-        FormAsk.Top := UIToScreenCoord(Box.Max.Y) - FormAsk.Height;
-        if FormAsk.Top < 0 then
-          AskSideY := 1;
-      end;
-    1:
-      begin
-        FormAsk.Top := UIToScreenCoord(Box.Min.Y);
-        if FormAsk.Top + FormAsk.Height > Application.ScreenHeight then
-          AskSideY := 0;
-      end;
+  if FormAsk.IsPositionUpdated < 15 then
+  begin
+    case AskSideX of
+      0:
+        begin
+          FormAsk.Left := Round(Box.Min.X - FormAsk.Width) + FormMain.Monitor.Left;
+          if FormAsk.Left < FormMain.Monitor.Left then
+            AskSideX := 1;
+        end;
+      1:
+        begin
+          FormAsk.Left := Round(Box.Max.X) + FormMain.Monitor.Left;
+          if FormAsk.Left + FormAsk.Width > FormAsk.Width * 2 + (Box.Max.X - Box.Min.X) + FormMain.Monitor.Left then
+            AskSideX := 0;
+        end;
+    end;
+    case AskSideY of
+      0:
+        begin
+          FormAsk.Top := UIToScreenCoord(Box.Max.Y) - FormAsk.Height;
+          if FormAsk.Top < 0 then
+            AskSideY := 1;
+        end;
+      1:
+        begin
+          FormAsk.Top := UIToScreenCoord(Box.Min.Y);
+          if FormAsk.Top + FormAsk.Height > Application.ScreenHeight then
+            AskSideY := 0;
+        end;
+    end;
+    Inc(FormAsk.IsPositionUpdated);
   end;
   // Hide arrow if size is larger than bubble
   if ChatBubble.EffectiveWidth < ChatBubbleArrow.EffectiveWidth then

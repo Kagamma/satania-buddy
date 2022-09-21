@@ -4,12 +4,12 @@ object FormAsk: TFormAsk
   Top = 250
   Width = 314
   BorderIcons = []
-  BorderStyle = bsNone
   Caption = 'Ask'
   ClientHeight = 148
   ClientWidth = 314
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
+  OnShow = FormShow
   ShowInTaskBar = stNever
   LCLVersion = '2.3.0.0'
   object Panel: TPanel

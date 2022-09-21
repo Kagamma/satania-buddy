@@ -44,10 +44,12 @@ type
       var Stream: TStream);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure PanelPaint(Sender: TObject);
   private
 
   public
+    IsPositionUpdated: Integer;
     IsAnswerText: Boolean;
     AnswerText: String;
     Answer: TStringList;
@@ -77,6 +79,11 @@ end;
 procedure TFormAsk.FormDestroy(Sender: TObject);
 begin
   Answer.Free;
+end;
+
+procedure TFormAsk.FormShow(Sender: TObject);
+begin
+  IsPositionUpdated := 0;
 end;
 
 procedure TFormAsk.PanelPaint(Sender: TObject);
