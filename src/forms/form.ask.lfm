@@ -3,7 +3,7 @@ object FormAsk: TFormAsk
   Height = 148
   Top = 250
   Width = 314
-  BorderIcons = []
+  BorderIcons = [biMaximize]
   Caption = 'Ask'
   ClientHeight = 148
   ClientWidth = 314

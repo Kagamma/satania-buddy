@@ -25,7 +25,7 @@ unit Mcdowell;
 interface
 
 uses
-  Classes, SysUtils, Generics.Collections,
+  Classes, SysUtils, Generics.Collections, Controls,
   Forms, Menus, FileUtil, simpleinternet,
   fpjson, jsonparser, Process, LCLType, Types, LCLIntf, Graphics, syncobjs,
   CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,

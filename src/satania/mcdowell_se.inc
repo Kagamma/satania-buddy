@@ -170,6 +170,14 @@ var
   I: Integer;
 begin
   FormAsk.Caption := Args[0].VarString^;
+  if FormAsk.Caption = '' then
+  begin
+    FormAsk.BorderStyle := Controls.bsNone;
+  end else
+  begin
+    FormAsk.BorderStyle := Controls.bsSizeable;
+  end;
+  FormAsk.WindowState := wsNormal;
   Ask(SEValueToText(Args[1]));
   if Length(Args) = 4 then
   begin
