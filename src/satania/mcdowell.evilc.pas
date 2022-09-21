@@ -84,12 +84,12 @@ type
   TSENestedProc = procedure is nested;
 
   TSEValueKind = (
+    sevkNull,
     sevkNumber,
     sevkString,
     sevkMap,
     sevkBuffer,
-    sevkPointer,
-    sevkNull
+    sevkPointer
   );
   PSECommonString = ^String;
   TSEBuffer = record
