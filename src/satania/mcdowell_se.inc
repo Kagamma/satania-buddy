@@ -111,7 +111,7 @@ begin
         else
           Result := '"' + Value.VarString^ + '"';
       end;
-    sevkSingle:
+    sevkNumber:
       Result := PointFloatToStr(Value.VarNumber);
     sevkMap:
       begin
@@ -216,7 +216,7 @@ end;
 
 function TSatania.SEProcessResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := '';
+  Result := SENull;
   try
     Result := RunResultList[Args[0].VarString^];
     RunResultList.Remove(Args[0].VarString^);
@@ -456,7 +456,7 @@ begin
   for Key in TSEValueMap(Args[1].VarMap).Keys do
   begin
     V := SEMapGet(Args[1], Key);
-    if V.Kind = sevkSingle then
+    if V.Kind = sevkNumber then
       Thread.FormData.Values[Key] := PointFloatToStr(V.VarNumber)
     else
       Thread.FormData.Values[Key] := V.VarString^;
@@ -482,7 +482,7 @@ begin
   for Key in TSEValueMap(Args[1].VarMap).Keys do
   begin
     V := SEMapGet(Args[1], Key);
-    if V.Kind = sevkSingle then
+    if V.Kind = sevkNumber then
       Thread.FormData.Values[Key] := PointFloatToStr(V.VarNumber)
     else
       Thread.FormData.Values[Key] := V.VarString^;
@@ -503,7 +503,7 @@ end;
 
 function TSatania.SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := '';
+  Result := SENull;
   try
     Result := RunResultList[Args[0].VarString^];
     RunResultList.Remove(Args[0].VarString^);
@@ -630,7 +630,7 @@ begin
   if Clipboard.HasFormat(PredefinedClipboardFormat(pcfText)) then
     Result := StringReplace(Clipboard.AsText, 'file://', '', [rfReplaceAll])
   else
-    Result := '';
+    Result := SENull;
 end;
 
 function TSatania.SEClipboardToFile(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -895,7 +895,7 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
       case V.Kind of
         sevkString:
           JSONStr := JSONStr + '"' + StringReplace(V.VarString^, '"', '\"', [rfReplaceAll]) + '"';
-        sevkSingle:
+        sevkNumber:
           JSONStr := JSONStr + PointFloatToStr(V.VarNumber);
         sevkMap:
           begin
@@ -927,7 +927,7 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
       case V.Kind of
         sevkString:
           JSONStr := JSONStr + '"' + StringReplace(V.VarString^, '"', '\"', [rfReplaceAll]) + '"';
-        sevkSingle:
+        sevkNumber:
           JSONStr := JSONStr + PointFloatToStr(V.VarNumber);
         sevkMap:
           begin

@@ -696,7 +696,7 @@ begin
   try
     try
       V := SE.Exec;
-      if V.Kind = sevkSingle then
+      if V.Kind = sevkNumber then
         Result := PointFloatToStr(V.VarNumber)
       else
       if V.Kind = sevkString then
