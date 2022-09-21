@@ -6,7 +6,7 @@
 {"hash":106940228,"name":"tformsettings.labeltextspeed.caption","sourcebytes":[84,101,120,116,32,83,112,101,101,100],"value":"Text Speed"},
 {"hash":157919653,"name":"tformsettings.labeldefaultevilscheme.caption","sourcebytes":[68,101,102,97,117,108,116,32,69,118,105,108,32,83,99,104,101,109,101],"value":"Default Evil Scheme"},
 {"hash":90566245,"name":"tformsettings.labelfontsize.caption","sourcebytes":[70,111,110,116,32,83,105,122,101],"value":"Font Size"},
-{"hash":90508117,"name":"tformsettings.labelfontname.caption","sourcebytes":[70,111,110,116,32,78,97,109,101],"value":"Font Name"},
+{"hash":317012,"name":"tformsettings.labelfontname.caption","sourcebytes":[70,111,110,116],"value":"Font"},
 {"hash":65861731,"name":"tformsettings.labelfontcharset.caption","sourcebytes":[70,111,110,116,32,67,104,97,114,115,101,116,115],"value":"Font Charsets"},
 {"hash":317789,"name":"tformsettings.editcharsetfrom.editlabel.caption","sourcebytes":[70,114,111,109],"value":"From"},
 {"hash":1455,"name":"tformsettings.editcharsetto.editlabel.caption","sourcebytes":[84,111],"value":"To"},

@@ -42,6 +42,7 @@ type
     CheckBoxEmailSmtpUseSSL: TCheckBox;
     CheckBoxLewd: TCheckBox;
     CheckBoxDeveloperMode: TCheckBox;
+    ComboBoxFont: TComboBox;
     ComboBoxSTTVoskModel: TComboBox;
     ComboBoxSkin: TComboBox;
     ComboBoxSTTBackend: TComboBox;
@@ -61,7 +62,6 @@ type
     EditEmailUsername: TEdit;
     EditEmailSmtpUsername: TEdit;
     EditFrameSkip: TSpinEdit;
-    EditFontName: TEdit;
     EditFPS: TSpinEdit;
     EditSoWRightMargin: TSpinEdit;
     EditFontSize: TSpinEdit;
@@ -225,7 +225,20 @@ begin
   end;
   SL.Free;
 
-  EditFontName.Text := Save.Settings.Font;
+  ComboBoxFont.Clear;
+  SL := TStringList.Create;
+  FindAllFiles(SL, 'data/fonts', '', False);
+  for I := 0 to SL.Count - 1 do
+  begin
+    S := ExtractFileName(SL[I]);
+    ComboBoxFont.Items.Add(S);
+    if S = Save.Settings.Font then
+    begin
+      ComboBoxFont.ItemIndex := ComboBoxFont.Items.Count - 1;
+    end;
+  end;
+  SL.Free;
+
   EditFontSize.Value := Save.Settings.FontSize;
   ListBoxCharset.Clear;
   EditCharsetFrom.Text := '';
@@ -295,7 +308,7 @@ begin
     Save.Settings.EmailSMTPPort := EditEmailSMTPPort.Value;
     Save.Settings.EmailSMTPUsername := EditEmailSMTPUsername.Text;
 
-    Save.Settings.Font := EditFontName.Text;
+    Save.Settings.Font := ComboBoxFont.Items[ComboBoxFont.ItemIndex];
     Save.Settings.FontSize := EditFontSize.Value;
     Save.Settings.Charset := SettingsToCharset(TStringList(ListBoxCharset.Items));
     Save.Settings.FontSize := EditFontSize.Value;
