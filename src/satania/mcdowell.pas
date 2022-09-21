@@ -334,7 +334,7 @@ begin
     begin
       ExposeTransforms.Add('Bone_touch');
       TCastleScene(Sprite).ExposeTransforms := ExposeTransforms;
-      if Sprite.Count > 0 then
+      if (Sprite.Count > 0) and (TCastleScene(Sprite).RootNode.FindNode('Bone_touch') <> nil) then
         TouchBone := Sprite.Items[0];
     end else
     begin
