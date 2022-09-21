@@ -332,10 +332,12 @@ begin
     ExposeTransforms := TStringList.Create;
     if Sprite = Self.SpriteAsX3D then
     begin
-      ExposeTransforms.Add('Bone_touch');
-      TCastleScene(Sprite).ExposeTransforms := ExposeTransforms;
-      if (Sprite.Count > 0) and (TCastleScene(Sprite).RootNode.FindNode('Bone_touch') <> nil) then
+      if TCastleScene(Sprite).RootNode.FindNode('Bone_touch') <> nil then
+      begin
+        ExposeTransforms.Add('Bone_touch');
+        TCastleScene(Sprite).ExposeTransforms := ExposeTransforms;
         TouchBone := Sprite.Items[0];
+      end;
     end else
     begin
       ExposeTransforms.Add('touch');
