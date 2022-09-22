@@ -545,6 +545,7 @@ type
     class function SEMin(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMax(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEPow(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringEmpty(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringGrep(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringSplit(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1107,6 +1108,12 @@ end;
 class function TBuiltInFunction.SEPow(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Exit(Power(Args[0].VarNumber, Args[1].VarNumber));
+end;
+
+class function TBuiltInFunction.SEStringEmpty(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  if Args[0].Kind = sevkString then
+    Args[0].VarString^ := '';
 end;
 
 class function TBuiltInFunction.SEStringGrep(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -3218,7 +3225,8 @@ begin
   Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, -1);
   Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 1);
   Self.RegisterFunc('range', @TBuiltInFunction(nil).SERange, -1);
-  Self.RegisterFunc('pow', @TBuiltInFunction(nil).SEPow, 2);
+  Self.RegisterFunc('pow', @TBuiltInFunction(nil).SEPow, 2);           
+  Self.RegisterFunc('string_empty', @TBuiltInFunction(nil).SEStringEmpty, 1);
   Self.RegisterFunc('string_grep', @TBuiltInFunction(nil).SEStringGrep, 2);
   Self.RegisterFunc('string_format', @TBuiltInFunction(nil).SEStringFormat, 2);
   Self.RegisterFunc('string_split', @TBuiltInFunction(nil).SEStringSplit, 2);
