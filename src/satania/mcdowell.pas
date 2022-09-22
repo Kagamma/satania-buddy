@@ -518,7 +518,7 @@ begin
     ChatBubbleDelay := 1;
     IsTalking := True;
     IsAsking := True;
-    IsBlocked := True;
+   // IsBlocked := True;
     if S <> '' then
     begin
       ChatBubbleDelay := Save.Settings.ChatBubbleDelay;

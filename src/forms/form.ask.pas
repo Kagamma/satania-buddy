@@ -97,7 +97,7 @@ end;
 procedure TFormAsk.AskTextHotSpotClick(Sender: TObject;
   const SRC: ThtString; var Handled: Boolean);
 begin
-  Satania.IsBlocked := False;
+ // Satania.IsBlocked := False;
   Self.Visible := False;
   Satania.ChatText.Text.Text := '';
   IsAnswerText := True;
@@ -138,7 +138,7 @@ procedure TFormAsk.AskTextFormSubmit(Sender: TObject; const Act,
 var
   I: Integer;
 begin
-  Satania.IsBlocked := False;
+ // Satania.IsBlocked := False;
   Self.Visible := False;
   Satania.ChatText.Text.Text := '';
   Answer.Clear;
