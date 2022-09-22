@@ -74,6 +74,8 @@ procedure TFormAsk.FormCreate(Sender: TObject);
 begin
   AddFormToIgnoreHandleList(Self);
   Answer := TStringList.Create;
+  Answer.StrictDelimiter := True;
+  Answer.NameValueSeparator := '=';
 end;
 
 procedure TFormAsk.FormDestroy(Sender: TObject);
