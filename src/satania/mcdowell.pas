@@ -228,9 +228,9 @@ begin
   S.RegisterFunc('email_smtp_send', @SEEmailSMTPSend, 6);
   S.RegisterFunc('sound_play', @SESoundPlay, 1);
   S.RegisterFunc('url_open', @SEOpenURL, 1);
-  S.RegisterFunc('url_get', @SEURLGet, 1);
-  S.RegisterFunc('url_post', @SEURLPost, 2);
-  S.RegisterFunc('url_upload', @SEURLUpload, 4);
+  S.RegisterFunc('url_get', @SEURLGet, 2);
+  S.RegisterFunc('url_post', @SEURLPost, 3);
+  S.RegisterFunc('url_upload', @SEURLUpload, 5);
   S.RegisterFunc('url_is_success', @SEURLIsSuccess, 1);
   S.RegisterFunc('url_result_get', @SEURLGetResult, 1);
   S.RegisterFunc('url_query', @SEURLProcess, 2);

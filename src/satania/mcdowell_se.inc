@@ -464,9 +464,9 @@ begin
   Thread.URL := Args[0];
   case Args[1].Kind of
     sevkMap:
-      Thread.FormData.Text := SEJSONStringify(VM, [Args[1]]);
+      Thread.FormData.Text := SEJSONStringify(VM, [Args[2]]);
     sevkString:
-      Thread.FormData.Text := Args[1];
+      Thread.FormData.Text := Args[2];
   end;
   Thread.Start;
   Result := Args[0].VarString^;
@@ -490,10 +490,10 @@ begin
     sevkMap:
       Thread.FormData.Text := SEJSONStringify(VM, [Args[1]]);
     sevkString:
-      Thread.FormData.Text := Args[1];
+      Thread.FormData.Text := Args[2];
   end;
-  Thread.FieldName := Args[2];
-  Thread.FileName := Args[3];
+  Thread.FieldName := Args[3];
+  Thread.FileName := Args[4];
   Thread.Start;
   Result := Args[0].VarString^;
 end;
