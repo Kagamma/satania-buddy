@@ -36,6 +36,7 @@ type
     AskText: THtmlViewer;
     Panel: TPanel;
     Panel1: TPanel;
+    Timer: TTimer;
     procedure AskTextFormSubmit(Sender: TObject; const Act, Target, EncType,
       Method: ThtString; Results: ThtStringList);
     procedure AskTextHotSpotClick(Sender: TObject; const SRC: ThtString;
@@ -46,12 +47,13 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure PanelPaint(Sender: TObject);
+    procedure TimerTimer(Sender: TObject);
   private
 
   public
     IsPositionUpdated: Integer;
     IsAnswerText: Boolean;
-    AnswerText: String;
+    AnswerText, Ask: String;
     Answer: TStringList;
   end;
 
@@ -85,13 +87,23 @@ end;
 
 procedure TFormAsk.FormShow(Sender: TObject);
 begin
+  AskText.Hide;
   IsPositionUpdated := 0;
+  Timer.Enabled := True;
 end;
 
 procedure TFormAsk.PanelPaint(Sender: TObject);
 begin
   Panel.Canvas.Pen.Color := clBlack;
   Panel.Canvas.Rectangle(0, 0, Panel.Width, Panel.Height);
+end;
+
+procedure TFormAsk.TimerTimer(Sender: TObject);
+begin
+  AskText.Show;
+  Timer.Enabled := False;
+  if Ask <> FormAsk.AskText.Text then
+    FormAsk.AskText.Text := Ask;
 end;
 
 procedure TFormAsk.AskTextHotSpotClick(Sender: TObject;

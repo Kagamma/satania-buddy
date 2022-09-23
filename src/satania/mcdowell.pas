@@ -510,7 +510,8 @@ begin
     ChatText.MaxDisplayChars := 0;
     ChatText.Text.Text := S;
     FormAsk.Answer.Clear;
-    FormAsk.AskText.Text := S;
+    FormAsk.AskText.Clear;
+    FormAsk.Ask := S;
     if ChatText.Text.Count > 25 then
     begin
       ChatText.Text.Text := 'too much words... please check the history instead!';
