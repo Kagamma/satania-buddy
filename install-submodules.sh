@@ -9,6 +9,7 @@ rm -rf src/components/richmemo
 rm -rf src/components/KControls
 rm -rf src/components/HtmlViewer
 rm -rf src/components/spine-runtimes
+rm -rf src/components/csscontrols
 
 git clone --depth 1 https://github.com/Kagamma/satania-buddy-data.git data
 cd src/components
