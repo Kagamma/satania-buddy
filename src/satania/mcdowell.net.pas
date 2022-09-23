@@ -98,7 +98,7 @@ begin
           Response.Free;
         end;
       end else
-        Data := HTTP.FormPost(URL, FormData);
+        Data := HTTP.FormPost(URL, FormData.Text);
       Synchronize(@SendToHer);
     except
       on E: Exception do

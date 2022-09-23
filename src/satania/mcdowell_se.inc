@@ -462,13 +462,11 @@ begin
   Thread := TSataniaHttpPostThread.Create(True);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
-  for Key in TSEValueMap(Args[1].VarMap).Keys do
-  begin
-    V := SEMapGet(Args[1], Key);
-    if V.Kind = sevkNumber then
-      Thread.FormData.Values[Key] := PointFloatToStr(V.VarNumber)
-    else
-      Thread.FormData.Values[Key] := V.VarString^;
+  case Args[1].Kind of
+    sevkMap:
+      Thread.FormData.Text := SEJSONStringify(VM, [Args[1]]);
+    sevkString:
+      Thread.FormData.Text := Args[1];
   end;
   Thread.Start;
   Result := Args[0].VarString^;
@@ -488,13 +486,11 @@ begin
   Thread := TSataniaHttpPostThread.Create(True);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
-  for Key in TSEValueMap(Args[1].VarMap).Keys do
-  begin
-    V := SEMapGet(Args[1], Key);
-    if V.Kind = sevkNumber then
-      Thread.FormData.Values[Key] := PointFloatToStr(V.VarNumber)
-    else
-      Thread.FormData.Values[Key] := V.VarString^;
+  case Args[1].Kind of
+    sevkMap:
+      Thread.FormData.Text := SEJSONStringify(VM, [Args[1]]);
+    sevkString:
+      Thread.FormData.Text := Args[1];
   end;
   Thread.FieldName := Args[2];
   Thread.FileName := Args[3];
