@@ -1048,7 +1048,7 @@ end;
 function TSatania.SEWorkerCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   Item: TSataniaBackgroundScript;
-  Key: String;
+  Key, ConstKey: String;
 begin
   Key := Args[0];
   // We do not allow duplicate of the same worker
@@ -1065,6 +1065,11 @@ begin
   else
     Item.Interval := 0;
   Item.LastTimestamp := GetTickCount64;
+  if Length(Args) >= 4 then
+  begin
+    for ConstKey in TSEValueMap(Args[2].VarMap).Keys do
+      Item.Script.ConstMap.AddOrSetValue(ConstKey, SEMapGet(Args[2], ConstKey));
+  end;
   Self.BackgroundScriptDict.AddOrSetValue(Key, Item);
   Result := Key;
 end;
