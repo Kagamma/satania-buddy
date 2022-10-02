@@ -2,25 +2,16 @@
 contains information that doesn't exist in released version/
 
 ** What is this?
-:PROPERTIES:
-:CUSTOM_ID: what-is-this
-:END:
 Evil script is a simple and lightweight scripting language, designed
 specially for satania-buddy. It's syntax is influenced by C, Pascal and
 Lua.
 
 ** Hello World
-:PROPERTIES:
-:CUSTOM_ID: hello-world
-:END:
 #+begin_example
 talk('Hello, World!')
 #+end_example
 
 ** Language
-:PROPERTIES:
-:CUSTOM_ID: language
-:END:
 *Include other scripts*
 
 #+begin_example
@@ -71,19 +62,19 @@ Operator                       Precedence
 *Variable declarations / assignments*
 
 #+begin_example
-a = 5 
+a = 5
 // Assign 5 to a
 
-a += 2 * 5 
+a += 2 * 5
 // a = a + (2 * 5)
 
-a = 'a string' 
+a = 'a string'
 // 'a' is now a string
 
-a[2] = 'S' 
+a[2] = 'S'
 // Replace char "s" with "S" in string 'a'
 
-c = [] 
+c = []
 // Create an empty map and store its reference in 'c'
 // By default a newly created empty map is considered as a valid array. It will lose it's array status
 // once we start adding entries that doesn't make sense to the map.
@@ -92,22 +83,22 @@ c = []
 // A nice trick to create array with size is to set the last index, for example: c[99] = null
 // This will increase array size to 100
 
-c = [ name: 'Satania', race: 'Demon' ] 
+c = [ name: 'Satania', race: 'Demon' ]
 // Create a map with 2 entries and store its reference in 'c'
 
-c['item'] = 'orange' 
+c['item'] = 'orange'
 // New entry, with key="item" and value="orange"
 
-c.item = 'orange' 
+c.item = 'orange'
 // Same as above, but use dot notation instead of square bracket notation
 
-d = [2, 3, 4, 'a string', 'another string'] 
+d = [2, 3, 4, 'a string', 'another string']
 // Create a map as a valid array, with 5 items
 
-d[1] = 'another string' 
+d[1] = 'another string'
 // The second element of array 'd' is replaced with 'another string'
 
-d['a'] = 5 
+d['a'] = 5
 // 'd' is no longer a valid array
 #+end_example
 
@@ -124,7 +115,7 @@ s_concat = 'a string ' + "another string"
 
 m_concat = [1, 2, 'pine'] + [5, 7]
 // Concat arrays. This only work correctly if maps are valid array.
- 
+
 and = a & b
 
 or = a | b
@@ -227,9 +218,6 @@ c = add(5, 3)
 #+end_example
 
 ** Import external functions from dynamic libraries
-:PROPERTIES:
-:CUSTOM_ID: import-external-functions-from-dynamic-libraries
-:END:
 #+begin_example
 import 'test.dll' {
   fn Add(i32, i32): i32
@@ -237,7 +225,7 @@ import 'test.dll' {
 }
 import 'user32.dll' fn MessageBox(i32, buffer, buffer, i32): void 'MessageBoxA' // Map MessageBoxA external function to MessageBox
 
-MessageBox(0, 'Hello, World!', 'Message Box', 0) // Strings are automatically converted to null-terminated strings   
+MessageBox(0, 'Hello, World!', 'Message Box', 0) // Strings are automatically converted to null-terminated strings
 #+end_example
 
 List of supported data types:
@@ -255,18 +243,15 @@ List of supported data types:
 - void: This simply tell the app the function does not return any value.
 
 ** Constants
-:PROPERTIES:
-:CUSTOM_ID: constants
-:END:
 *PI: number*
+
 *true: number*
+
 *false: number*
+
 *name: string*
 
 ** Common functions
-:PROPERTIES:
-:CUSTOM_ID: common-functions
-:END:
 *typeof(v: any): string*
 - Returns type of variable.
 *string(n: number): string*
@@ -314,9 +299,6 @@ List of supported data types:
 *max(...): number*
 
 ** Buffers
-:PROPERTIES:
-:CUSTOM_ID: buffers
-:END:
 *buffer_create(size: number): buffer*
 - Create a new buffer. The result is a pointer point to the start of allocated memory.
 *buffer_length(buffer: buffer): number*
@@ -365,9 +347,6 @@ List of supported data types:
 - Copy wbuffer content to string.
 
 ** Strings
-:PROPERTIES:
-:CUSTOM_ID: strings
-:END:
 *numbers(s: string): map*
 - Convert words to map of numbers.
   + Input: two thousands five hundreds kg of stones arrived at ten o'clock
@@ -405,9 +384,6 @@ List of supported data types:
 - Returns map of matched string + matched location.
 
 ** Datetime
-:PROPERTIES:
-:CUSTOM_ID: datetime
-:END:
 *ticks: number*
 - Returns system's ticks, in miliseconds.
 *dt_now: number*
@@ -434,9 +410,6 @@ List of supported data types:
 - Encode time from hour, minute, second and milisecond.
 
 ** File system
-:PROPERTIES:
-:CUSTOM_ID: file-system
-:END:
 *fs_directory_create(path: string)*
 - Create new directory.
 *fs_directory_delete(path: string)*
@@ -468,18 +441,12 @@ number): map*
 - Delete a file.
 
 ** Clipboard
-:PROPERTIES:
-:CUSTOM_ID: clipboard
-:END:
 *clipboard_get: string*
 - Get text from clipboard.
 *clipboard_to_file(filename: string)*
 - Save content (image, text) from clipboard to a file.
 
 ** HTTP requests
-:PROPERTIES:
-:CUSTOM_ID: http-requests
-:END:
 *url_encode(s: string): string*
 - Encode URL element.
 *url_decode(s: string): string*
@@ -501,9 +468,6 @@ string): string*
 - Extract data from HTML string.
 
 ** Email
-:PROPERTIES:
-:CUSTOM_ID: email
-:END:
 *email_load: boolean*
 - Tells Satania to check for email's connection.
 *email_unseen_count: number*
@@ -520,9 +484,6 @@ string): string*
 - Returns true if IMAP is configured in Settings.
 
 ** JSON
-:PROPERTIES:
-:CUSTOM_ID: json
-:END:
 *json_parse(json: string): map*
 - Parse a JSON string to map.
   + json = json_parse('{ "a": 5, "b": 2, "c": { "d": "a text", "e": ["another text", 2] } }') will return a map, which can be accessed for values for example: =json.c.e[0] // another text=
@@ -531,9 +492,6 @@ string): string*
 - Convert a map to JSON string.
 
 ** Workers
-:PROPERTIES:
-:CUSTOM_ID: workers
-:END:
 #+begin_example
 Please note workers run on the same thread as main script. Make sure to use yield to avoid infinite loop.
 #+end_example
@@ -553,9 +511,6 @@ number; consts: map): string*
 - Delete a worker by name.
 
 ** Memory management
-:PROPERTIES:
-:CUSTOM_ID: memory-management
-:END:
 *mem_used: number*
 - Returns memory usage by script engine in bytes.
 *mem_object_count: number*
@@ -563,10 +518,7 @@ number; consts: map): string*
 *mem_gc*
 - Trigger garbage collection.
 
-** Satania-specific functions
-:PROPERTIES:
-:CUSTOM_ID: satania-specific-functions
-:END:
+** Satania-specific function
 *talk(message: string)*
 - Tells Satania to talk. Supports a subset of HTML (bold, italic, colors, sizes).
 - The script engine will be blocked until all the text is shown on screen.
