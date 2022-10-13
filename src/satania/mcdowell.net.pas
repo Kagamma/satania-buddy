@@ -9,22 +9,26 @@ uses
 
 type
   TSataniaHttpGetThread = class(TThread)
-  protected            
+  protected
     ErrorMessage: String;
-    procedure SendToHer;   
+    procedure SendToHer;
     procedure ResetToDefault;
   public
+    HTTP: TFPHTTPClient;
     Data,
-    URL: String;
+    URL: String;   
+    constructor Create(CreateSuspend: Boolean);
     procedure Execute; override;
+    destructor Destroy; override;
   end;
 
   TSataniaHttpPostThread = class(TThread)
   protected
     ErrorMessage: String;
-    procedure SendToHer;  
+    procedure SendToHer;
     procedure ResetToDefault;
   public
+    HTTP: TFPHTTPClient;
     FormData: TStrings;
     FieldName,
     FileName,
@@ -51,11 +55,17 @@ begin
   Satania.TalkReset(ErrorMessage);
 end;
 
+constructor TSataniaHttpGetThread.Create(CreateSuspend: Boolean);
+begin
+  inherited Create(CreateSuspend);  
+  Self.HTTP := TFPHTTPClient.Create(nil);
+end;
+
 procedure TSataniaHttpGetThread.Execute;
 begin
   try
     try
-      Data := TFPHTTPClient.SimpleGet(URL);
+      Data := HTTP.Get(URL);
       Synchronize(@SendToHer);
     except
       on E: Exception do
@@ -67,13 +77,19 @@ begin
   finally
     Terminate;
   end;
+end; 
+
+destructor TSataniaHttpGetThread.Destroy;
+begin
+  Self.HTTP.Free;
+  inherited;
 end;
 
 procedure TSataniaHttpPostThread.SendToHer;
 begin
   RunList.Delete(RunList.IndexOf(URL));
   RunResultList.AddOrSetValue(URL, Data);
-end;        
+end;
 
 procedure TSataniaHttpPostThread.ResetToDefault;
 begin
@@ -82,10 +98,8 @@ end;
 
 procedure TSataniaHttpPostThread.Execute;
 var
-  HTTP: TFPHTTPClient;
   Response: TStringStream;
 begin
-  HTTP := TFPHTTPClient.Create(nil);
   try
     try
       if (FieldName <> '') and (FileName <> '') then
@@ -108,7 +122,6 @@ begin
       end;
     end;
   finally
-    HTTP.Free;
     Terminate;
   end;
 end;
@@ -117,11 +130,13 @@ constructor TSataniaHttpPostThread.Create(CreateSuspend: Boolean);
 begin
   inherited Create(CreateSuspend);
   FormData := TStringList.Create;
+  Self.HTTP := TFPHTTPClient.Create(nil);
 end;
 
 destructor TSataniaHttpPostThread.Destroy;
 begin
-  FormData.Free;
+  Self.FormData.Free;
+  Self.HTTP.Free;
   inherited;
 end;
 

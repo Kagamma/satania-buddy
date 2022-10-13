@@ -436,6 +436,7 @@ function TSatania.SEURLGet(const VM: TSEVM; const Args: array of TSEValue): TSEV
 var
   Thread: TSataniaHttpGetThread;
   I: Integer;
+  S: String;
 begin
   I := RunList.IndexOf(Args[0]);
   if I >= 0 then
@@ -444,6 +445,11 @@ begin
   Thread := TSataniaHttpGetThread.Create(True);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
+  if Args[1].Kind = sevkMap then
+    for S in TSEValueMap(Args[1].VarMap).Keys do
+    begin
+      Thread.HTTP.AddHeader(S, SEMapGet(Args[1], S));
+    end;
   Thread.Start;
   Result := Args[0].VarString^;
 end;
@@ -454,6 +460,7 @@ var
   Key: String;
   I: Integer;
   V: TSEValue;
+  S: String;
 begin
   I := RunList.IndexOf(Args[0]);
   if I >= 0 then
@@ -462,7 +469,12 @@ begin
   Thread := TSataniaHttpPostThread.Create(True);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
-  case Args[1].Kind of
+  if Args[1].Kind = sevkMap then
+    for S in TSEValueMap(Args[1].VarMap).Keys do
+    begin
+      Thread.HTTP.AddHeader(S, SEMapGet(Args[1], S));
+    end;
+  case Args[2].Kind of
     sevkMap:
       Thread.FormData.Text := SEJSONStringify(VM, [Args[2]]);
     sevkString:
