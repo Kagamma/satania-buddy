@@ -1439,10 +1439,17 @@ object FormMain: TFormMain
         Caption = 'Scripting APIs'
         OnClick = MenuItemScriptingAPIsClick
       end
-    end
-    object MenuItemAbout: TMenuItem
-      Caption = 'About'
-      OnClick = MenuItemAboutClick
+      object Separator2: TMenuItem
+        Caption = '-'
+      end
+      object MenuItemMemoryUsage: TMenuItem
+        Caption = 'Memory Usage'
+        OnClick = MenuItemMemoryUsageClick
+      end
+      object MenuItemAbout: TMenuItem
+        Caption = 'About'
+        OnClick = MenuItemAboutClick
+      end
     end
     object MenuItemQuit: TMenuItem
       Caption = 'Quit'

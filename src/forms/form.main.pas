@@ -75,6 +75,8 @@ type
   TFormMain = class(TForm)
     CastleControl: TCastleControl;
     MenuItem1: TMenuItem;
+    MenuItemMemoryUsage: TMenuItem;
+    MenuItemAbout: TMenuItem;
     MenuItemEmailCompose: TMenuItem;
     MenuItemEmail: TMenuItem;
     MenuItemHelpCreateNewCharacter: TMenuItem;
@@ -86,7 +88,6 @@ type
     MenuItemScriptingAPIs: TMenuItem;
     MenuItemSpeechRecognition: TMenuItem;
     MenuItemSilent: TMenuItem;
-    MenuItemAbout: TMenuItem;
     MenuItemRefreshMenu: TMenuItem;
     MenuItemEditor: TMenuItem;
     MenuItemActions: TMenuItem;
@@ -97,6 +98,7 @@ type
     MenuItemQuit: TMenuItem;
     PopupNotifier: TPopupNotifier;
     Separator1: TMenuItem;
+    Separator2: TMenuItem;
     TimerMainLoop: TTimer;
     TimerReminders: TTimer;
     TrayMenu: TPopupMenu;
@@ -114,6 +116,7 @@ type
     procedure MenuItemHelpRulesClick(Sender: TObject);
     procedure MenuItemHelpVoiceCommandClick(Sender: TObject);
     procedure MenuItemHideShowClick(Sender: TObject);
+    procedure MenuItemMemoryUsageClick(Sender: TObject);
     procedure MenuItemQuitClick(Sender: TObject);
     procedure MenuItemRefreshMenuClick(Sender: TObject);
     procedure MenuItemRulesClick(Sender: TObject);
@@ -236,7 +239,7 @@ end;
 
 procedure TFormMain.MenuItemAboutClick(Sender: TObject);
 begin
-  Satania.Talk('Satania Buddy'#10'Homepage: https://kgm.itch.io/satania-buddy'#10#10'Evil Script Memory Usage: ' + IntToStr(GC.AllocatedMem div 1024) + 'KB');
+  Satania.Talk('Satania Buddy'#10'Homepage: https://kgm.itch.io/satania-buddy');
 end;
 
 procedure TFormMain.MenuItemAlarmsAndRemindersClick(Sender: TObject);
@@ -282,6 +285,13 @@ end;
 procedure TFormMain.MenuItemHideShowClick(Sender: TObject);
 begin
   Satania.SetVisible(not Satania.Sprite.Visible);
+end;
+
+procedure TFormMain.MenuItemMemoryUsageClick(Sender: TObject);
+begin
+  Satania.Talk(
+    'Evil Script Memory Usage: ' + IntToStr(GC.AllocatedMem div 1024) + 'KB' + #10 +
+    'Object Count: ' + IntToStr(GC.ValueList.Count - 1));
 end;
 
 procedure TFormMain.MenuItemQuitClick(Sender: TObject);
