@@ -1,0 +1,55 @@
+** Define new character
+
+You can create your own character in ~satania-buddy~.
+
+Characters are defined by directories of the same name in ~data/scripts~ and ~data/sprites~, which can be switched in ~Settings~. To help you start, a simple ~template~ character is available for you to play with. It's contents looks like this:
+#+begin_example
+scripts
+  template
+    menu
+      A Simple Menu.evil
+    system
+      loading-start.evil
+      loading-stop.evil
+    main.evil
+    meta.json
+sprites
+  template
+    sprites.plist
+    sprites.png
+#+end_example
+- ~main.evil~ is the main script. It will be executed when your character is loaded, and when your character finish executing another script.
+- ~meta.json~ is optional, it is mainly used to set up character's name, and other constants needed to access within scripts. A basic ~meta.json~
+#+begin_example
+{
+  "name": "You character's name"
+}
+#+end_example
+
+Any ~.evil~ scripts in ~menu~ directory will appears on ~Scripts~ menu. For example this is how ~A Simple Menu.evil~ looks like:
+
+[[https://user-images.githubusercontent.com/7451778/161190869-405255ec-d368-4a1f-8d78-94b5c072d3f7.png]]
+
+Any scripts in ~system~ is used by the app. Currently the app expects ~loading-start.evil~ for loading animation, and ~loading-stop.evil~ to tell your character to stop loading animation when the app finish a task. These two scripts are optional and you can leave them empty.
+
+~sprites.plist~ and ~sprites.png~ are character's spritesheet in Cocos2D format.
+
+** Supported sprite data formats
+~satania-buddy~ uses [[https://castle-engine.io/][Castle Game Engine]] (CGE) as rendering engine, thus it can use all CGE's [[https://castle-engine.io/creating_data_model_formats.php][supported formats]]. In particular you can:
+- Use any supported 3D model formats: ~glTF~, ~X3D~, ~VRML~, ...
+- Use any supported 2D skeletal formats: ~Spine JSON~
+- Use any supported 2D spritesheet formats: ~Cocos2D~, ~Starling~
+
+There're however a few limitations that you need to aware when choosing a format:
+- CGE doesn't support GPU skinning, so high-poly 3D models are not recommended at the moment, although it is planned to add support for GPU skinning in near future: [[https://forum.castle-engine.io/t/joint-bone-controlled-mesh-animation/546/2]]
+- 2D spritesheets, while simple to use, lack the ability to perform multiple animations at once. For example if you want your character keeps talking while blinking their eyes, then you will need to implement a lot of frames for this, instead of 2 separate animations, one for eyes blinking, and one for talking.
+- 2D skeletal is the recommended way to create characters for ~satania-buddy~. This is how I created ~satania~, although the downside is that ~Spine~ is not free. You can also try ~Dragon Bones~, which is a free alternative to Spine and can export data in Spine JSON format. Since CGE has it's own Spine runtime implementation, there are limitations compare to official Spine runtime, see [[https://castle-engine.io/spine]] (_Update_: ~satania-buddy~ now come with it's own official spine runtime 4.0 integration, so if you use Spine 4.0 or above to create models, then CGE's limitations will not apply. ~Dragon Bones~ still works, but you need to use CGE's ~view3dscene~ to convert your model from .json to .x3d/x3dv in order to use with ~satania-buddy~)
+
+** Prepare animations
+For each spritesheet/model, ~satania-buddy~ expects 2 default animations:
+- ~talking-loop~ is used when character is talking.
+- ~talking-finish~ is used when character is done talking. This is usually used to set the lips close in skeletal models.
+
+You can of course change these default talking animations via script, see ~sprite_animation_talk_set~ in [[https://github.com/Kagamma/satania-buddy/wiki/Scripting-Reference][Scripting Reference]]
+
+If you use 3D / 2D skeletal model formats, then you can create a ~touch~ bone. This bone is used by the app to create a small area which you can use your mouse cursor to right click, or to drag your character around. If no ~touch~ bone is found (2D spritesheets), then the area will be around your character's pivot.

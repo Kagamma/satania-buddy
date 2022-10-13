@@ -2077,25 +2077,19 @@ begin
             if Value.Value.VarString <> nil then
             begin
               MS := ByteLength(Value.Value.VarString^);
-              if MS > 0 then
-              begin
-                Self.FAllocatedMem := Self.FAllocatedMem - MS;
-                Value.Value.VarString^ := '';
-                Dispose(Value.Value.VarString);
-              end;
+              Self.FAllocatedMem := Self.FAllocatedMem - MS;
+              Value.Value.VarString^ := '';
+              Dispose(Value.Value.VarString);
             end;
-          end;     
+          end;
         sevkBuffer:
           begin
             if Value.Value.VarBuffer <> nil then
             begin
               MS := ByteLength(Value.Value.VarBuffer^.Base);
-              if MS > 0 then
-              begin
-                Self.FAllocatedMem := Self.FAllocatedMem - MS;
-                Value.Value.VarBuffer^.Base := '';
-                Dispose(Value.Value.VarBuffer);
-              end;
+              Self.FAllocatedMem := Self.FAllocatedMem - MS;
+              Value.Value.VarBuffer^.Base := '';
+              Dispose(Value.Value.VarBuffer);
             end;
           end;
       end;

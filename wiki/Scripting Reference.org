@@ -1,0 +1,621 @@
+/Note: This wiki entry is for development version therefore it may
+contains information that doesn't exist in released version/
+
+** What is this?
+Evil script is a simple and lightweight scripting language, designed
+specially for satania-buddy. It's syntax is influenced by C, Pascal and
+Lua.
+
+** Hello World
+#+begin_example
+talk('Hello, World!')
+#+end_example
+
+** Language
+*Include other scripts*
+
+#+begin_example
+#include 'absolute/path/to/script.evil'
+#+end_example
+
+*Types*
+
+#+begin_example
+string, number/boolean, map, buffer, null
+#+end_example
+
+Evil script is a dynamic language. This means that a variable can point
+to any type at runtime.
+
+Numbers/Booleans are stored as 64-bit floating point number.
+
+Strings are by default in UTF-8 format.
+
+Maps are the only data structure available in evil script that helps us
+create different types like arrays and dictionaries. Maps can be indexed
+with both numbers and strings. Maps have no fixed size and can grow
+based on our need.
+
+For those who familiar with Lua, maps are basically the same as Lua's
+tables.
+
+Buffers are used to interface with DLL libraries written in native
+languages like C or Pascal. It is basically a space within the system
+memory that is used to store raw data for just about anything.
+
+Strings, Maps and Buffers are subject to automatic memory management.
+You do not have to worry about allocation and deallocation of these data
+types.
+
+*Operators*
+
+#+begin_example
+Operator                       Precedence
+============================== ==========
+ !, sign "-"                    5
+ *, /                           4
+ +, -                           3
+ =, !=, <, <=, >, >=, &, |, ^   2
+ =, +=, -=, *=, /=              1
+#+end_example
+
+*Variable declarations / assignments*
+
+#+begin_example
+a = 5
+// Assign 5 to a
+
+a += 2 * 5
+// a = a + (2 * 5)
+
+a = 'a string'
+// 'a' is now a string
+
+a[2] = 'S'
+// Replace char "s" with "S" in string 'a'
+
+c = []
+// Create an empty map and store its reference in 'c'
+// By default a newly created empty map is considered as a valid array. It will lose it's array status
+// once we start adding entries that doesn't make sense to the map.
+// Evil script optimizes maps with valid array status, by storing values in an actual array underneath
+// for quick access.
+// A nice trick to create array with size is to set the last index, for example: c[99] = null
+// This will increase array size to 100
+
+c = [ name: 'Satania', race: 'Demon' ]
+// Create a map with 2 entries and store its reference in 'c'
+
+c['item'] = 'orange'
+// New entry, with key="item" and value="orange"
+
+c.item = 'orange'
+// Same as above, but use dot notation instead of square bracket notation
+
+d = [2, 3, 4, 'a string', 'another string']
+// Create a map as a valid array, with 5 items
+
+d[1] = 'another string'
+// The second element of array 'd' is replaced with 'another string'
+
+d['a'] = 5
+// 'd' is no longer a valid array
+#+end_example
+
+#+begin_example
+Strings are copy-of-write, while maps are passed by reference.
+#+end_example
+
+*Statements*
+
+#+begin_example
+expressions = a + b * c / d + (5 - 2)
+
+s_concat = 'a string ' + "another string"
+
+m_concat = [1, 2, 'pine'] + [5, 7]
+// Concat arrays. This only work correctly if maps are valid array.
+
+and = a & b
+
+or = a | b
+
+not = !a
+
+pow = a^b
+#+end_example
+
+*If block*
+
+#+begin_example
+if (a < b) & (c < d) {
+  // Do something
+} else if (a > b) {
+  // Do something
+} else {
+  // Do something
+}
+#+end_example
+
+*While block*
+
+#+begin_example
+i = 0
+while i < a {
+  if b = i {
+    break
+  }
+  if c = i {
+    continue
+  }
+  i = i + 1
+}
+#+end_example
+
+*For block*
+
+#+begin_example
+for i = 0 to 4 {
+  if i < 2
+    continue
+  break
+}
+
+for i = 4 downto 0 {
+  if i > 2
+    continue
+  break
+}
+#+end_example
+
+*For-in block*
+
+#+begin_example
+For-in block only work correctly with valid array.
+#+end_example
+
+#+begin_example
+for value in [1, 2, 5, 7, 9] {
+  if value = 5
+    break
+}
+
+for value, index in [1, 2, 5, 7, 9] {
+  talk(string(index) + ": " + string(value))
+}
+#+end_example
+
+*Function declaration*
+
+#+begin_example
+fn foo {
+  talk('Hello')
+  return
+  talk("This text won't show on screen")
+}
+
+fn add(a, b) {
+  result = a + b
+}
+
+foo
+c = add(5, 3)
+#+end_example
+
+- /Unlike C, you need to assign return values to/ =result=
+- /You cannot declare a function inside another function/
+
+*Comment*
+
+#+begin_example
+// A comment
+
+/*
+  A
+  multi-line
+  comment
+*/
+#+end_example
+
+** Import external functions from dynamic libraries
+#+begin_example
+import 'test.dll' {
+  fn Add(i32, i32): i32
+  fn AddDouble(f64, f64): f64
+}
+import 'user32.dll' fn MessageBox(i32, buffer, buffer, i32): void 'MessageBoxA' // Map MessageBoxA external function to MessageBox
+
+MessageBox(0, 'Hello, World!', 'Message Box', 0) // Strings are automatically converted to null-terminated strings
+#+end_example
+
+List of supported data types:
+- i8: char
+- u8: unsigned char
+- i16: short
+- u16: unsigned short
+- i32: long
+- u32: unsigned long
+- i64: long long
+- u64: unsigned long long
+- f64: double
+- buffer: char
+- wbuffer: wchar
+- void: This simply tell the app the function does not return any value.
+
+** Constants
+*PI: number*
+
+*true: number*
+
+*false: number*
+
+*name: string*
+
+** Common functions
+*typeof(v: any): string*
+- Returns type of variable.
+*string(n: number): string*
+- Convert n to string.
+*number(s: string): number*
+- Convert s to number.
+*wait(seconds: number)*
+- Wait in seconds. This won't block the main process.
+*yield*
+- Quit the script and returns to main process. When the process execute the script in next frame, it will continue at where yield's called.
+*map_create(): map*
+- Create a new map. This function is comparable to [] syntax.
+*map_delete(a: map; key: number): map*
+- Delete map elements.
+*map_keys_get(a: map): map*
+- Returns map contains all keys from map a.
+*map_is_valid_array(a: map): boolean*
+- Check if map is valid array.
+*length(a: map/string)*
+- Returns length of string or map.
+*random(n: number): number*
+- Returns a random number range from 0 - (n-1)
+*rnd: number*
+- Returns a random number range from 0 - 1
+*os: string*
+- Get OS name
+*sign(n: number): number*
+
+*round(n: number): number*
+
+*sin(n: number): number*
+
+*cos(n: number): number*
+
+*tan(n: number): number*
+
+*cot(n: number): number*
+
+*range(x, y: number): map*
+
+*range(x, y, step: number): map*
+
+*min(...): number*
+
+*max(...): number*
+
+** Buffers
+*buffer_create(size: number): buffer*
+- Create a new buffer. The result is a pointer point to the start of allocated memory.
+*buffer_length(buffer: buffer): number*
+- Returns length of a buffer.
+*buffer_u8_get(buffer: buffer): number*
+- Get 1-byte unsigned data from buffer.
+*buffer_i8_get(buffer: buffer): number*
+- Get 1-byte data from buffer.
+*buffer_u16_get(buffer: buffer): number*
+- Get 2-byte unsigned data from buffer.
+*buffer_i16_get(buffer: buffer): number*
+- Get 2-byte data from buffer.
+*buffer_u32_get(buffer: buffer): number*
+- Get 4-byte unsigned data from buffer.
+*buffer_i32_get(buffer: buffer): number*
+- Get 4-byte data from buffer.
+*buffer_u6_get4(buffer: buffer): number*
+- Get 8-byte unsigned data from buffer.
+*buffer_i64_get(buffer: buffer): number*
+- Get 8-byte data from buffer.
+*buffer_f64_get(buffer: buffer): number*
+- Get double-type data from buffer.
+*buffer_u8_set(buffer: buffer; data: number): number*
+- Write 1-byte unsigned data to buffer.
+*buffer_i8_set(buffer: buffer; data: number): number*
+- Write 1-byte data to buffer.
+*buffer_u16_set(buffer: buffer; data: number): number*
+- Write 2-byte unsigned data to buffer.
+*buffer_i16_set(buffer: buffer; data: number): number*
+- Write 2-byte data to buffer.
+*buffer_u32_set(buffer: buffer; data: number): number*
+- Write 4-byte unsigned data to buffer.
+*buffer_i32_set(buffer: buffer; data: number): number*
+- Write 4-byte data to buffer.
+*buffer_u64_set(buffer: buffer; data: number): number*
+- Write 8-byte unsigned data to buffer.
+*buffer_i64_set(buffer: buffer; data: number): number*
+- Write 8-byte data to buffer.
+*buffer_f64_set(buffer: buffer; data: number): number*
+- Write double-type data to buffer.
+*string_to_buffer(s: string): buffer*
+- Returns pointer point to the first element of the string.
+*buffer_to_string(b: buffer): string*
+- Copy buffer content to string.
+*wbuffer_to_string(b: buffer): string*
+- Copy wbuffer content to string.
+
+** Strings
+*numbers(s: string): map*
+- Convert words to map of numbers.
+  + Input: two thousands five hundreds kg of stones arrived at ten o'clock
+  + Output: [2500, 10]
+
+*months_to_numbers(s: string): map*
+- Convert words to map of numbers represent month.
+  + Input: february and november
+  + Output: [2, 11]
+
+*string_concat(s, s1, s2: string)*
+- Concatenate s1 and s2 and save result to s, without creating a new copy of s. Use this instead of =s = s1 + s2= if you try to concatenate a lot of strings.
+*string_empty(s)*
+- Empty string s. It is used to set a string built by /string_concat()/ back to an empty string.
+*string_insert(source, substring: string; index: number): string*
+- Insert a string at index.
+*string_grep(s: string; subs: map of strings): string*
+- grep a string
+*string_split(s, delimiter: string): map*
+- Split a string into multiple parts.
+*string_find(s, sub: string): number*
+- Find location of substring in a string.
+*string_delete(s: string; index, count: number): string*
+- Delete part of a string at index.
+*string_replace(s, old, new: string): string*
+- Replace all old with new.
+*string_uppercase(s: string): string*
+- Returns uppercase string.
+*string_lowercase(s: string): string*
+- Returns lowercase string.
+*string_format(s: string; subs: map): string*
+- Replace a string with contents from map
+  + Example: ~string_format('{0} is {1} gold', ['Key', 500])~ => Key is 500 gold
+*string_find_regex(s, regex: string): map*
+- Returns map of matched string + matched location.
+
+** Datetime
+*ticks: number*
+- Returns system's ticks, in miliseconds.
+*dt_now: number*
+- Return current time in datetime format.
+*dt_year_get(dt: number): number*
+- Return year in number.
+*dt_month_get(dt): number*
+- Return month number.
+*dt_day_get(dt): number*
+- Return day number.
+*dt_hour_get(dt): number*
+- Return hour number.
+*dt_minute_get(dt): number*
+- Return minute number.
+*dt_day_add(dt, days: number): number*
+- Increase dt by number of days.
+*dt_month_add(dt, months: number): number*
+- Increase dt by number of months.
+*dt_year_add(dt, years: number): number*
+- Increase dt by number of years.
+*dt_date_set(year, month, day: number): number*
+- Encode date from year, month and day.
+*dt_time_set(hour, minute, second, milisecond: number): number*
+- Encode time from hour, minute, second and milisecond.
+
+** File system
+*fs_directory_create(path: string)*
+- Create new directory.
+*fs_directory_delete(path: string)*
+- Delete directory.
+*fs_directory_find_all(path: string; is_subdir: boolean)*
+- Perform search for directories in certain paths. Returns map of paths.
+*fs_directory_exists(path: string): boolean*.
+- Check if a directory is exists.
+*fs_file_read(filename: string): string*
+- Read text from file.
+*fs_file_write(filename, text: string)*
+- Write text to file. If the file is not exist then create a new file.
+*fs_file_find_all(path, mask: string; is_subdir: boolean; attribute:
+number): map*
+- Perform search for files in certain paths. Returns map of paths.
+- List of attributes:
+  + FA_DIRECTORY
+  + FA_READONLY
+  + FA_NORMAL
+  + FA_ENCRYPTED
+  + FA_COMPRESSED
+  + FA_SYMLINK
+  + FA_SYSFILE
+  + FA_ANYFILE
+
+*fs_file_exists(filename: string): boolean*
+- Check if a file is exists.
+*fs_file_delete(filename: string)*
+- Delete a file.
+
+** Clipboard
+*clipboard_get: string*
+- Get text from clipboard.
+*clipboard_to_file(filename: string)*
+- Save content (image, text) from clipboard to a file.
+
+** HTTP requests
+*url_encode(s: string): string*
+- Encode URL element.
+*url_decode(s: string): string*
+- Decode URL element.
+*url_open(url: string)*
+- Open an URL using default web browser.
+*url_get(url: string; headers: map): string*
+- Retrieve HTML from URL.
+*url_post(url: string; headers: map; data: string/map): string*
+- Make a POST request to URL.
+*url_upload(url: string; headers: map; data: string/map; field, file:
+string): string*
+- Upload a file to URL.
+*url_is_success(url: string): boolean*
+- Check if url query (get, post, etc) is finished.
+*url_result_get(url: string): string*
+- Get HTML result from url_get.
+*url_query(data, xpath: string): map*
+- Extract data from HTML string.
+
+** Email
+*email_load: boolean*
+- Tells Satania to check for email's connection.
+*email_unseen_count: number*
+- Returns number of unread emails.
+*email_sender_get(email_index: number): string*
+- Get email's sender.
+*email_subject_get(email_index: number): string*
+- Get email's subject.
+*email_is_loading: boolean*
+- Returns true if Satania is loading emails.
+*email_is_success: boolean*
+- Returns true if Satania is succeeded in loading emails.
+*email_is_configured: boolean*
+- Returns true if IMAP is configured in Settings.
+
+** JSON
+*json_parse(json: string): map*
+- Parse a JSON string to map.
+  + json = json_parse('{ "a": 5, "b": 2, "c": { "d": "a text", "e": ["another text", 2] } }') will return a map, which can be accessed for values for example: =json.c.e[0] // another text=
+
+*json_stringify(map: map): string*
+- Convert a map to JSON string.
+
+** Workers
+#+begin_example
+Please note workers run on the same thread as main script. Make sure to use yield to avoid infinite loop.
+#+end_example
+
+*worker_create(worker_name: string; evil_script: string; interval:
+number; consts: map): string*
+- Create a new worker. Unlike main script, workers will automatically delete itself once its done executing.
+  + ~worker_name~: Name of worker.
+  + ~evil_script~: The script that will be executed by worker.
+  + ~interval~: Optional. Measure in seconds. This tells how frequent this worker run. By default this value is 0.
+  + ~consts~: Optional. Map of constant values that will be passed to worker.
+  + ~Return~: Worker name.
+
+*worker_exists(worker_name: string): boolean*
+- Check if a worker exists.
+*worker_delete(worker_name: string)*
+- Delete a worker by name.
+
+** Memory management
+*mem_used: number*
+- Returns memory usage by script engine in bytes.
+*mem_object_count: number*
+- Returns number of objects allocated by script engine.
+*mem_gc*
+- Trigger garbage collection.
+
+** Satania-specific function
+*talk(message: string)*
+- Tells Satania to talk. Supports a subset of HTML (bold, italic, colors, sizes).
+- The script engine will be blocked until all the text is shown on screen.
+*notify(message: string)*
+- Shows a notification at top-left of the screen.
+*ask(caption, message: string; width, height: number)*
+- Shows asking dialog. Supports HTML 4.01. /width/ and /height/ are optional parameters allows to change dialog's size. Satania will be blocked until one answer is provided so make sure to provide at least 1 way to answer the question. Look at examples below for ways to provide answers.
+- Example #1:
+
+#+begin_example
+ask('', '
+<font color="red"><b>Are you sure?</b></font><br />
+<a href="Yes">Yes</a><br />
+<a href="No">No</a><br />
+', 250, 80)
+#+end_example
+
+[[https://user-images.githubusercontent.com/7451778/181904981-09e09a03-e7e1-466c-a743-c8d163c2c62a.png]]
+- Example #2:
+
+#+begin_example
+ask('', '
+What do you think about me?<br />
+<form>
+  <input style="width:100%" name="thought" value="Your answer" /><br />
+  <input type="submit" value="Tell her!" />
+</form>
+')
+#+end_example
+
+[[https://user-images.githubusercontent.com/7451778/181904113-fc4b3e03-76d8-406b-8b03-1baffcaa55a0.png]]
+
+*answer: any*
+- Returns result value from ask(). If no answer is found, then it returns null.
+- For example #1, the result is a string, either /Yes/ or /No/, taken from /href/ attribute.
+- For example #2, the result is a map, which is /[ "thought": "Your answer" ]/.
+*process_run(process: string): string*
+- Run a process by name. Returns the same parameter passed to the function.
+*process_is_running(process: string): boolean*
+- Check if a process is running by process_run().
+*process_result_get(process: string): string*
+- Returns process's output pipeline. This function should be called after process_is_running() returns false.
+*sprite_animation_stop_all*
+- Stop all animations.
+*sprite_load(sprite: string)*
+- Load a model (supports X3D, Spine, images, glTF, Cocos2D, Starling) in /data/sprites/current_character/
+*sprite_animation_speed_set(animation_name: string; total_time:
+number)*
+- Set animation's interval in seconds.
+*sprite_animation_play(animation_name: string; loop: boolean = false)*
+- Play an animation by name
+- For skeletal animations, the animations are not override each other so you can play multiple animations at once.
+*sprite_animation_is_playing(animation_name: string): boolean*
+- Returns true if animation is playing.
+*sprite_animation_stop(animation_name: string)*
+- Stop an animation.
+*sprite_animation_talk_set(loop, finish: string; random_script_files: map of strings)*
+-  Set default talking animations.
+- ~random_script_files~ is optional, which indicates which script to run when start talking
+*sprite_scale_set(scale: number)*
+- Scale the sprite.
+*sprite_visible_set(visible: boolean)*
+- Set sprite visibility
+*sprite_visible_get: boolean*
+- Get sprite visibility
+*is_sow: boolean*
+- Returns true if Sit on Window is turned on.
+*is_lewd: boolean*
+- Returns true if Fanservice is turned on.
+*is_silent: boolean*
+- Returns true if Silent is turned on.
+*is_speech_to_text: boolean*
+- Returns true if Speech Recognition is turned on.
+*flag_global_get(flag: string): string*
+- Set a flag. Result stores in ~configs.json~.
+*flag_global_set(flag: string; value: string)*
+- Get a flag from ~configs.json~.
+*flag_local_get(flag: string): string*
+- Set a flag. Result stores in ~scripts/flags.ini~.
+*flag_local_set(flag: string; value: string)*
+- Get a flag from ~scripts/flags.ini~.
+*get(flag: string): any*
+- Set a flag. Result stores in memory.
+*set(flag: string; value: any)*
+- Get a flag from memory.
+*scheme_load(scheme_name: string)*
+- Load an .evil scheme file in ~data/scripts/current_character~. This will also stop the current script.
+*scheme_default: string*
+- Returns Default Evil Script.
+*delta_time: number*
+- Delta Time, in seconds.
+*sound_play(sound_name: string)*
+- Play a sound in /sounds/ directory.
+*chat_mode_set(chatmode: number)*
+- Set chat mode:
+  + CHATMODE_CHAT
+  + CHATMODE_SCRIPT: Tell Satania we will process chat messages in script.
+
+*chat_result_get: string*
+- This function only useful when chat mode = CHATMODE_SCRIPT. Get chat message input by users, from Speech Recognition or from Chat dialog. Chat message will be cleared once this function is called, so make sure to save the results somewhere. If no chat message is found, an empty string will be returned.
