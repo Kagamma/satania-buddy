@@ -40,6 +40,7 @@ type
     Timer: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormDblClick(Sender: TObject);
+    procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
     procedure FormMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
@@ -99,6 +100,12 @@ end;
 procedure TFormTouch.FormDblClick(Sender: TObject);
 begin
   FormChat.Show;
+end;
+
+procedure TFormTouch.FormDropFiles(Sender: TObject;
+  const FileNames: array of string);
+begin
+
 end;
 
 procedure TFormTouch.FormMouseDown(Sender: TObject; Button: TMouseButton;

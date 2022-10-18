@@ -2166,6 +2166,11 @@ begin
       P := VM.Binary.Ptr(J);
       Mark(P);
     end;
+    for Key in VM.Parent.ConstMap.Keys do
+    begin
+      V := VM.Parent.ConstMap[Key];
+      Mark(@V);
+    end;
   end;
   for Cache in ScriptCacheMap.Values do
   begin;

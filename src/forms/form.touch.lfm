@@ -4,17 +4,20 @@ object FormTouch: TFormTouch
   Height = 38
   Top = 0
   Width = 60
+  AllowDropFiles = True
   BorderStyle = bsNone
   Caption = 'Touch (Do not close)'
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnDblClick = FormDblClick
+  OnDropFiles = FormDropFiles
   OnMouseDown = FormMouseDown
   OnMouseMove = FormMouseMove
   OnMouseUp = FormMouseUp
   OnShow = FormShow
   PopupMenu = FormMain.TrayMenu
   ShowInTaskBar = stNever
+  LCLVersion = '2.3.0.0'
   object Timer: TTimer
     OnTimer = TimerTimer
     Left = 4
