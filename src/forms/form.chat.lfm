@@ -10,7 +10,6 @@ object FormChat: TFormChat
   FormStyle = fsStayOnTop
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '2.3.0.0'
   object PanelChatlog: TPanel
     Left = 0
     Height = 317
@@ -72,21 +71,21 @@ object FormChat: TFormChat
     TabOrder = 1
     object EditChat: TEdit
       Left = 8
-      Height = 27
+      Height = 23
       Top = 8
       Width = 624
       OnKeyPress = EditChatKeyPress
       TabOrder = 0
       TextHint = 'Say something!'
     end
-    object ButtonHistory: TBitBtn
-      Left = 637
-      Height = 27
-      Top = 7
-      Width = 35
-      Caption = 'H'
+    object ButtonHistory: TSpeedButton
+      Left = 640
+      Height = 23
+      Top = 8
+      Width = 24
+      Images = FormEvilCEditor.ImageList
+      ImageIndex = 14
       OnClick = ButtonHistoryClick
-      TabOrder = 1
     end
   end
 end

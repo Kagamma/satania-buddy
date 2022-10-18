@@ -35,13 +35,13 @@ type
 
   TFormChat = class(TForm)
     BttonClear: TBitBtn;
-    ButtonHistory: TBitBtn;
     EditChat: TEdit;
     MemoChatLog: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
     PanelChatlog: TPanel;
+    ButtonHistory: TSpeedButton;
     procedure BttonClearClick(Sender: TObject);
     procedure ButtonHistoryClick(Sender: TObject);
     procedure EditChatKeyPress(Sender: TObject; var Key: char);

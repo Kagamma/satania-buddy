@@ -2,6 +2,5 @@
 {"hash":302724,"name":"tformchat.caption","sourcebytes":[67,104,97,116],"value":"Chat"},
 {"hash":4860802,"name":"tformchat.bttonclear.caption","sourcebytes":[67,108,101,97,114],"value":"Clear"},
 {"hash":90721267,"name":"tformchat.panel3.caption","sourcebytes":[80,97,110,101,108,51],"value":"Panel3"},
-{"hash":68773169,"name":"tformchat.editchat.texthint","sourcebytes":[83,97,121,32,115,111,109,101,116,104,105,110,103,33],"value":"Say something!"},
-{"hash":72,"name":"tformchat.buttonhistory.caption","sourcebytes":[72],"value":"H"}
+{"hash":68773169,"name":"tformchat.editchat.texthint","sourcebytes":[83,97,121,32,115,111,109,101,116,104,105,110,103,33],"value":"Say something!"}
 ]}
