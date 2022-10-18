@@ -103,11 +103,14 @@ type
     LabelDefaultEvilScheme: TLabel;
     LabelImageQuality: TLabel;
     EditCharsetFrom: TLabeledEdit;
+    ListBoxSettings: TListBox;
     ListBoxCharset: TListBox;
     MenuItemDeleteCharset: TMenuItem;
     PageControl: TPageControl;
-    Panel1: TPanel;
+    PanelButtons: TPanel;
+    PanelSettings: TPanel;
     PopupMenuCharset: TPopupMenu;
+    Splitter1: TSplitter;
     TabSheet1: TTabSheet;
     TabSheetOptimization: TTabSheet;
     TabSheetSpeechRecognition: TTabSheet;
@@ -119,6 +122,7 @@ type
     procedure ButtonOkClick(Sender: TObject);
     procedure ComboBoxSTTBackendChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure ListBoxSettingsSelectionChange(Sender: TObject; User: boolean);
     procedure MenuItemDeleteCharsetClick(Sender: TObject);
   private
 
@@ -150,6 +154,7 @@ var
   SL, SL2: TStringList;
 begin
   PageControl.TabIndex := 0;
+  ListboxSettings.ItemIndex := 0;
   ComboBoxSTTBackend.Items.Clear;
   ComboBoxSTTBackend.Items.Add('Vosk');
   {$ifdef WINDOWS}
@@ -230,7 +235,7 @@ begin
   FindAllFiles(SL, 'data/fonts', '', False);
   for I := 0 to SL.Count - 1 do
   begin
-    S := ExtractFileName(SL[I]);
+    S := ExtractFileName(SL[I]);                   PageControl.ActivePageIndex := ListboxSettings.ItemIndex;
     ComboBoxFont.Items.Add(S);
     if S = Save.Settings.Font then
     begin
@@ -266,6 +271,12 @@ begin
       ComboBoxImageQuality.ItemIndex := I;
       break;
     end;
+end;
+
+procedure TFormSettings.ListBoxSettingsSelectionChange(Sender: TObject;
+  User: boolean);
+begin
+  PageControl.TabIndex := ListboxSettings.ItemIndex;
 end;
 
 procedure TFormSettings.MenuItemDeleteCharsetClick(Sender: TObject);
