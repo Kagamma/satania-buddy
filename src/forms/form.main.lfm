@@ -1,27 +1,26 @@
 object FormMain: TFormMain
   Left = -8
-  Height = 872
+  Height = 911
   Top = -8
-  Width = 715
+  Width = 731
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 872
-  ClientWidth = 715
+  ClientHeight = 888
+  ClientWidth = 731
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   PopupMenu = TrayMenu
   ShowInTaskBar = stNever
-  LCLVersion = '2.3.0.0'
   Scaled = False
   Visible = True
   WindowState = wsMaximized
   object CastleControl: TCastleControl
     Left = 0
-    Height = 849
+    Height = 888
     Top = 0
-    Width = 715
+    Width = 731
     Align = alClient
     AlphaBits = 8
     Options = []
@@ -1371,6 +1370,9 @@ object FormMain: TFormMain
       Caption = 'Speech Recognition'
       OnClick = MenuItemSpeechRecognitionClick
     end
+    object Separator6: TMenuItem
+      Caption = '-'
+    end
     object MenuItemSitOnWindow: TMenuItem
       Caption = 'Sit On Window'
       OnClick = MenuItemSitOnWindowClick
@@ -1382,6 +1384,9 @@ object FormMain: TFormMain
     object MenuItemHideShow: TMenuItem
       Caption = 'Hide'
       OnClick = MenuItemHideShowClick
+    end
+    object Separator5: TMenuItem
+      Caption = '-'
     end
     object MenuItemActions: TMenuItem
       Caption = 'Scripts'
@@ -1412,6 +1417,9 @@ object FormMain: TFormMain
     object MenuItemAlarmsAndReminders: TMenuItem
       Caption = 'Alarms and Reminders'
       OnClick = MenuItemAlarmsAndRemindersClick
+    end
+    object Separator4: TMenuItem
+      Caption = '-'
     end
     object MenuItemSettings: TMenuItem
       Caption = 'Settings'
@@ -1450,6 +1458,9 @@ object FormMain: TFormMain
         Caption = 'About'
         OnClick = MenuItemAboutClick
       end
+    end
+    object Separator3: TMenuItem
+      Caption = '-'
     end
     object MenuItemQuit: TMenuItem
       Caption = 'Quit'
