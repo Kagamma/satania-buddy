@@ -29,16 +29,6 @@ object FormChat: TFormChat
       ClientHeight = 265
       ClientWidth = 677
       TabOrder = 0
-      object MemoChatLogOld: TMemo
-        Left = 1
-        Height = 263
-        Top = 1
-        Width = 675
-        Align = alClient
-        ReadOnly = True
-        ScrollBars = ssAutoBoth
-        TabOrder = 0
-      end
       object MemoChatLog: TKMemo
         Left = 1
         Height = 263
@@ -50,7 +40,8 @@ object FormChat: TFormChat
         ContentPadding.Right = 5
         ContentPadding.Bottom = 5
         ParentFont = False
-        TabOrder = 1
+        ReadOnly = True
+        TabOrder = 0
         Visible = True
       end
     end

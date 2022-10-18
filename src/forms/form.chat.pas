@@ -37,7 +37,6 @@ type
     BttonClear: TBitBtn;
     EditChat: TEdit;
     MemoChatLog: TKMemo;
-    MemoChatLogOld: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
@@ -115,7 +114,7 @@ begin
 
   MemoChatLog.Blocks.AddParagraph(0);
 
-  TB := MemoChatLog.Blocks.AddTextBlock(Msg + #10#13, 0);
+  TB := MemoChatLog.Blocks.AddTextBlock(Msg, 0);
 
   TB := MemoChatLog.Blocks.AddTextBlock(LogName + ': ', 0);
   TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsBold];
