@@ -1391,7 +1391,7 @@ object FormMain: TFormMain
     object MenuItemActions: TMenuItem
       Caption = 'Scripts'
       object MenuItemEditor: TMenuItem
-        Caption = 'Evil Scheme Editor'
+        Caption = 'Script Editor'
         OnClick = MenuItemEditorClick
       end
       object MenuItemRefreshMenu: TMenuItem

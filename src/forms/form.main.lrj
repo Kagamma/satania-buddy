@@ -6,7 +6,7 @@
 {"hash":94383188,"name":"tformmain.menuitemsilent.caption","sourcebytes":[83,105,108,101,110,116],"value":"Silent"},
 {"hash":323493,"name":"tformmain.menuitemhideshow.caption","sourcebytes":[72,105,100,101],"value":"Hide"},
 {"hash":162072547,"name":"tformmain.menuitemactions.caption","sourcebytes":[83,99,114,105,112,116,115],"value":"Scripts"},
-{"hash":166287426,"name":"tformmain.menuitemeditor.caption","sourcebytes":[69,118,105,108,32,83,99,104,101,109,101,32,69,100,105,116,111,114],"value":"Evil Scheme Editor"},
+{"hash":219418194,"name":"tformmain.menuitemeditor.caption","sourcebytes":[83,99,114,105,112,116,32,69,100,105,116,111,114],"value":"Script Editor"},
 {"hash":85420037,"name":"tformmain.menuitemrefreshmenu.caption","sourcebytes":[82,101,102,114,101,115,104,32,83,99,114,105,112,116,115,32,77,101,110,117],"value":"Refresh Scripts Menu"},
 {"hash":4995068,"name":"tformmain.menuitememail.caption","sourcebytes":[69,109,97,105,108],"value":"Email"},
 {"hash":174356181,"name":"tformmain.menuitememailcompose.caption","sourcebytes":[67,111,109,112,111,115,101],"value":"Compose"},
