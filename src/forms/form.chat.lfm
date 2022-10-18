@@ -10,6 +10,7 @@ object FormChat: TFormChat
   FormStyle = fsStayOnTop
   OnCreate = FormCreate
   Position = poScreenCenter
+  LCLVersion = '2.3.0.0'
   object PanelChatlog: TPanel
     Left = 0
     Height = 317
@@ -28,7 +29,7 @@ object FormChat: TFormChat
       ClientHeight = 265
       ClientWidth = 677
       TabOrder = 0
-      object MemoChatLog: TMemo
+      object MemoChatLogOld: TMemo
         Left = 1
         Height = 263
         Top = 1
@@ -37,6 +38,20 @@ object FormChat: TFormChat
         ReadOnly = True
         ScrollBars = ssAutoBoth
         TabOrder = 0
+      end
+      object MemoChatLog: TKMemo
+        Left = 1
+        Height = 263
+        Top = 1
+        Width = 675
+        Align = alClient
+        ContentPadding.Left = 5
+        ContentPadding.Top = 5
+        ContentPadding.Right = 5
+        ContentPadding.Bottom = 5
+        ParentFont = False
+        TabOrder = 1
+        Visible = True
       end
     end
     object Panel2: TPanel

@@ -563,15 +563,8 @@ begin
 end;
 
 procedure TSatania.Log(LogName, S: String);
-var
-  H, M, SS, MS: Word;
 begin
-  DecodeTime(Now, H, M, SS, MS);
-  FormChat.MemoChatLog.Lines.BeginUpdate;
-  FormChat.MemoChatLog.Text := '[' + Format('%.*d', [2, H]) + ':' + Format('%.*d', [2, M]) + ':' + Format('%.*d', [2, SS]) + '] ' + LogName + ': ' + S + #13 + FormChat.MemoChatLog.Text;
-  while FormChat.MemoChatLog.Lines.Count > 2000 do
-    FormChat.MemoChatLog.Lines.Pop;
-  FormChat.MemoChatLog.Lines.EndUpdate;
+  FormChat.InsertLog(LogName, S);
 end;
 
 procedure TSatania.Chat(S: String);

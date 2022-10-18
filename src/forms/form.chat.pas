@@ -27,7 +27,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ExtCtrls, Process, CastleControls, CastleUIControls,
-  CastleURIUtils, LCLTranslator;
+  CastleURIUtils, LCLTranslator, kmemo;
 
 type
 
@@ -36,7 +36,8 @@ type
   TFormChat = class(TForm)
     BttonClear: TBitBtn;
     EditChat: TEdit;
-    MemoChatLog: TMemo;
+    MemoChatLog: TKMemo;
+    MemoChatLogOld: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
@@ -49,7 +50,7 @@ type
   private
     IsShowHistory: Boolean;
   public
-
+    procedure InsertLog(const LogName, Msg: String);
   end;
 
 var
@@ -100,7 +101,36 @@ end;
 
 procedure TFormChat.BttonClearClick(Sender: TObject);
 begin
-  MemoChatLog.Lines.Clear;
+  MemoChatLog.Blocks.Clear;
+end;
+
+procedure TFormChat.InsertLog(const LogName, Msg: String);
+var
+  H, M, SS, MS: Word;
+  TB: TKMemoTextBlock;
+  Time: String;
+begin
+  DecodeTime(Now, H, M, SS, MS);
+  Time := '[' + Format('%.*d', [2, H]) + ':' + Format('%.*d', [2, M]) + ':' + Format('%.*d', [2, SS]) + '] ';
+
+  MemoChatLog.Blocks.AddParagraph(0);
+
+  TB := MemoChatLog.Blocks.AddTextBlock(Msg + #10#13, 0);
+
+  TB := MemoChatLog.Blocks.AddTextBlock(LogName + ': ', 0);
+  TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsBold];
+  case LogName of
+    'System': TB.TextStyle.Font.Color := $008000;
+    '(you)': TB.TextStyle.Font.Color := $000000;
+    else TB.TextStyle.Font.Color := $000080;
+  end;
+
+  TB := MemoChatLog.Blocks.AddTextBlock(Time, 0);
+  TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
+  TB.TextStyle.Font.Color := $800000;
+
+  while FormChat.MemoChatLog.Blocks.Count > 10000 do
+    FormChat.MemoChatLog.Blocks.Delete(10000);
 end;
 
 end.
