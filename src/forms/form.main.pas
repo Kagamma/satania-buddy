@@ -99,6 +99,10 @@ type
     PopupNotifier: TPopupNotifier;
     Separator1: TMenuItem;
     Separator2: TMenuItem;
+    Separator3: TMenuItem;
+    Separator4: TMenuItem;
+    Separator5: TMenuItem;
+    Separator6: TMenuItem;
     TimerMainLoop: TTimer;
     TimerReminders: TTimer;
     TrayMenu: TPopupMenu;
