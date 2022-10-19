@@ -59,10 +59,12 @@ begin
   if ChatType = '' then Exit;
   if ChatResponse = '' then
   begin
-    ChatType := 'chat';
-    ChatResponse := 'I couldn''t find any process with that name.';
+   // ChatType := 'chat';
+   // ChatResponse := 'I couldn''t find any process with that name.';
+  end else
+  begin
+    Satania.Action(ChatType, ChatResponse);
   end;
-  Satania.Action(ChatType, ChatResponse);
 end;
 
 procedure TSataniaChatThread.Execute;
