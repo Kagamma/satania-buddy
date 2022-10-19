@@ -121,7 +121,7 @@ begin
   case LogName of
     'System': TB.TextStyle.Font.Color := $008000;
     '(you)': TB.TextStyle.Font.Color := $000000;
-    else TB.TextStyle.Font.Color := $000080;
+    else TB.TextStyle.Font.Color := $0000B0;
   end;
 
   TB := MemoChatLog.Blocks.AddTextBlock(Time, 0);
