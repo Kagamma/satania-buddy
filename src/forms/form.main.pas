@@ -167,6 +167,7 @@ uses
   form.evilc.editor,
   form.email.editor,
   form.rules,
+  form.tool.hexeditor,
   Mcdowell.EvilC,
   Mcdowell.chatbot,
   Mcdowell.chatbot.train,

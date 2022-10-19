@@ -1,0 +1,21 @@
+object FormHexEditor: TFormHexEditor
+  Left = 342
+  Height = 381
+  Top = 250
+  Width = 502
+  Caption = 'Satania Hex Editor'
+  ClientHeight = 381
+  ClientWidth = 502
+  object HexEditor: TKHexEditor
+    Left = 0
+    Height = 381
+    Top = 0
+    Width = 502
+    Align = alClient
+    Font.Height = -15
+    Font.Name = 'Courier New'
+    Font.Pitch = fpFixed
+    Font.Style = [fsBold]
+    TabOrder = 0
+  end
+end

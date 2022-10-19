@@ -510,6 +510,10 @@ number; consts: map): string*
 *worker_delete(worker_name: string)*
 - Delete a worker by name.
 
+** Tools
+*tool_evilc_editor(filename: string)*
+- Open a file with built-in EvilC editor.
+
 ** Memory management
 *mem_used: number*
 - Returns memory usage by script engine in bytes.

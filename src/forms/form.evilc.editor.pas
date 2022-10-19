@@ -88,6 +88,7 @@ type
   public
     ErrorPos: TPoint;
     WorkingFile: String;
+    procedure LoadFromFile(const AFileName: String);
   end;
 
 var
@@ -260,11 +261,7 @@ procedure TFormEvilCEditor.ToolButtonOpenClick(Sender: TObject);
 begin
   if OpenDialog.Execute then
   begin
-    Caption := ExtractFileName(OpenDialog.FileName);
-    WorkingFile := OpenDialog.FileName;
-    Editor.Lines.LoadFromFile(OpenDialog.FileName);
-    StatusBar.Panels[1].Text := '';
-    ErrorPos.Y := -1;
+    Self.LoadFromFile(OpenDialog.FileName);
   end;
 end;
 
@@ -333,6 +330,15 @@ end;
 procedure TFormEvilCEditor.ToolButtonUndoClick(Sender: TObject);
 begin
   Editor.Undo;
+end;
+
+procedure TFormEvilCEditor.LoadFromFile(const AFileName: String);
+begin
+  Caption := ExtractFileName(AFileName);
+  WorkingFile := AFileName;
+  Editor.Lines.LoadFromFile(AFileName);
+  StatusBar.Panels[1].Text := '';
+  ErrorPos.Y := -1;
 end;
 
 end.

@@ -360,6 +360,12 @@
         <Filename Value="satania/mcdowell.sketch.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="forms/form.tool.hexeditor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormHexEditor"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

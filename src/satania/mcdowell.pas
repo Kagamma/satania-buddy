@@ -138,6 +138,7 @@ uses
   form.chat,
   form.touch,
   form.ask,
+  form.evilc.editor,
   mcdowell.chatbot,
   mcdowell.sound,
   mcdowell.net,
@@ -262,6 +263,7 @@ begin
   S.RegisterFunc('worker_create', @SEWorkerCreate, -1);
   S.RegisterFunc('worker_exists', @SEWorkerExists, 1);  
   S.RegisterFunc('worker_delete', @SEWorkerDelete, 1);
+  S.RegisterFunc('tool_evilc_editor', @SEToolEvilCEditor, 1);
 end;
 
 procedure TSatania.DefaultPosition;

@@ -93,6 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEWorkerCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
     function SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
@@ -1098,6 +1099,11 @@ begin
     Self.BackgroundScriptDict[Args[0]].Script.Free;
     Self.BackgroundScriptDict.Remove(Args[0]);
   end;
+end;
+
+function TSatania.SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  FormEvilCEditor.LoadFromFile(Args[0]);
 end;
 
 {$endif}
