@@ -68,6 +68,7 @@ uses
   Form.evilc.editor,
   Form.settings,
   Form.Chat,
+  mcdowell.EvilC,
   Mcdowell;
 
 { TFormTouch }
@@ -104,8 +105,15 @@ end;
 
 procedure TFormTouch.FormDropFiles(Sender: TObject;
   const FileNames: array of string);
+var
+  V: TSEValue;
+  I: Integer;
 begin
-
+  GC.AllocMap(@V);
+  for I := 0 to High(FileNames) do
+    SEMapSet(V, I, FileNames[I]);
+  Satania.Script.ConstMap.AddOrSetValue('drop_files', V);
+  Satania.ActionFromFile('system/drop-files.evil', False);
 end;
 
 procedure TFormTouch.FormMouseDown(Sender: TObject; Button: TMouseButton;
@@ -140,7 +148,7 @@ begin
     begin
       Save.SitOnWindow := False;
       FormMain.MenuItemSitOnWindow.Checked := False;
-    end;  
+    end;
     if Monitor <> FormMain.Monitor then
     begin
       FormMain.Left := Monitor.Left;

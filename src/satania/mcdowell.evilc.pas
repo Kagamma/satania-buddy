@@ -3292,10 +3292,10 @@ end;
 
 procedure TEvilC.AddDefaultConsts;
 begin
-  Self.ConstMap.Add('PI', PI);
-  Self.ConstMap.Add('true', True);
-  Self.ConstMap.Add('false', False); 
-  Self.ConstMap.Add('null', SENull);
+  Self.ConstMap.AddOrSetValue('PI', PI);
+  Self.ConstMap.AddOrSetValue('true', True);
+  Self.ConstMap.AddOrSetValue('false', False); 
+  Self.ConstMap.AddOrSetValue('null', SENull);
 end;
 
 procedure TEvilC.SetSource(V: String);

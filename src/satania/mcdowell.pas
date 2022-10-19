@@ -836,16 +836,16 @@ var
 begin
   Script.ConstMap.Clear;
   Script.AddDefaultConsts;
-  Script.ConstMap.Add('CHATMODE_CHAT', CHATMODE_CHAT);
-  Script.ConstMap.Add('CHATMODE_SCRIPT', CHATMODE_SCRIPT);
-  Script.ConstMap.Add('FA_DIRECTORY', faDirectory);
-  Script.ConstMap.Add('FA_READONLY', faReadOnly);
-  Script.ConstMap.Add('FA_NORMAL', faNormal);
-  Script.ConstMap.Add('FA_ENCRYPTED', faEncrypted);
-  Script.ConstMap.Add('FA_COMPRESSED', faCompressed);
-  Script.ConstMap.Add('FA_SYMLINK', faSymLink);
-  Script.ConstMap.Add('FA_SYSFILE', faSysFile);
-  Script.ConstMap.Add('FA_ANYFILE', faAnyFile);
+  Script.ConstMap.AddOrSetValue('CHATMODE_CHAT', CHATMODE_CHAT);
+  Script.ConstMap.AddOrSetValue('CHATMODE_SCRIPT', CHATMODE_SCRIPT);
+  Script.ConstMap.AddOrSetValue('FA_DIRECTORY', faDirectory);
+  Script.ConstMap.AddOrSetValue('FA_READONLY', faReadOnly);
+  Script.ConstMap.AddOrSetValue('FA_NORMAL', faNormal);
+  Script.ConstMap.AddOrSetValue('FA_ENCRYPTED', faEncrypted);
+  Script.ConstMap.AddOrSetValue('FA_COMPRESSED', faCompressed);
+  Script.ConstMap.AddOrSetValue('FA_SYMLINK', faSymLink);
+  Script.ConstMap.AddOrSetValue('FA_SYSFILE', faSysFile);
+  Script.ConstMap.AddOrSetValue('FA_ANYFILE', faAnyFile);
   MetaPath := 'data/scripts/' + Save.Settings.Skin + '/meta.json';
   Name := 'Satania';
   if FileExists(MetaPath) then
@@ -856,7 +856,7 @@ begin
       JSON := GetJSON(SL.Text) as TJSONObject;
       for I := 0 to JSON.Count - 1 do
       begin
-        Script.ConstMap.Add(JSON.Names[I], JSON.Items[I].AsString);
+        Script.ConstMap.AddOrSetValue(JSON.Names[I], JSON.Items[I].AsString);
         if JSON.Names[I] = 'name' then
         begin
           IsNamed := True;
@@ -869,7 +869,7 @@ begin
     end;
   end;
   if not IsNamed then
-    Script.ConstMap.Add('name', Name);
+    Script.ConstMap.AddOrSetValue('name', Name);
 end;
 
 procedure TSatania.CleanUpCache;
