@@ -27,7 +27,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ExtCtrls, Process, CastleControls, CastleUIControls,
-  CastleURIUtils, LCLTranslator, kmemo;
+  CastleURIUtils, LCLTranslator, kmemo, Types, StrUtils;
 
 type
 
@@ -108,13 +108,21 @@ var
   H, M, SS, MS: Word;
   TB: TKMemoTextBlock;
   Time: String;
+  MsgSplit: TStringDynArray;
+  I: Integer;
 begin
   DecodeTime(Now, H, M, SS, MS);
   Time := '[' + Format('%.*d', [2, H]) + ':' + Format('%.*d', [2, M]) + ':' + Format('%.*d', [2, SS]) + '] ';
 
   MemoChatLog.Blocks.AddParagraph(0);
 
-  TB := MemoChatLog.Blocks.AddTextBlock(Msg, 0);
+  MsgSplit := SplitString(Msg, #10);
+  for I := High(MsgSplit) downto 0 do
+  begin
+    MemoChatLog.Blocks.AddTextBlock(MsgSplit[I], 0);
+    if I > 0 then
+      MemoChatLog.Blocks.AddParagraph(0);
+  end;
 
   TB := MemoChatLog.Blocks.AddTextBlock(LogName + ': ', 0);
   TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsBold];
