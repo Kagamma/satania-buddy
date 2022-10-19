@@ -1103,6 +1103,7 @@ end;
 
 function TSatania.SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
+  FormEvilCEditor.Show;
   FormEvilCEditor.LoadFromFile(Args[0]);
 end;
 
