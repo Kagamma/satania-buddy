@@ -84,8 +84,8 @@ begin
   AlphaBlendValue := 1;
   AddFormToIgnoreHandleList(Self);
   LastVirtualDesktop := 1;
-  Width := 38;
-  Height := 38;
+  Width := 40;
+  Height := 40;
 end;
 
 procedure TFormTouch.UpdateMonitor;
@@ -109,6 +109,7 @@ var
   V: TSEValue;
   I: Integer;
 begin
+  ScriptCacheMap.ClearSingle(PATH_SCRIPTS + Save.Settings.Skin + '/' + 'system/drop-files.evil');
   GC.AllocMap(@V);
   for I := 0 to High(FileNames) do
     SEMapSet(V, I, FileNames[I]);

@@ -292,6 +292,7 @@ type
   TSECacheMapAncestor = specialize TDictionary<String, TSECache>;
   TSECacheMap = class(TSECacheMapAncestor)
   public
+    procedure ClearSingle(const AName: String);
     procedure Clear; override;
   end;
 
@@ -4975,6 +4976,21 @@ begin
     Self.FuncImportList.Add(Cache.FuncImportList[I]);
   Self.GlobalVarCount := Cache.GlobalVarCount;
   Self.IsParsed := True;
+end;
+
+procedure TSECacheMap.ClearSingle(const AName: String);
+var
+  Cache: TSECache;
+begin
+  try
+    Cache := Self[AName];
+    Cache.Binary.Free;
+    Cache.LineOfCodeList.Free;
+    Cache.FuncScriptList.Free;
+    Cache.FuncImportList.Free;
+    Self.Remove(AName);
+  except
+  end;
 end;
 
 procedure TSECacheMap.Clear;
