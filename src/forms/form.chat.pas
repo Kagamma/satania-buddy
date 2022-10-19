@@ -128,8 +128,8 @@ begin
   TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
   TB.TextStyle.Font.Color := $800000;
 
-  while FormChat.MemoChatLog.Blocks.Count > 10000 do
-    FormChat.MemoChatLog.Blocks.Delete(10000);
+  while FormChat.MemoChatLog.Blocks.LineCount > 2000 do
+    FormChat.MemoChatLog.Blocks.DeleteLine(2000);
 end;
 
 end.
