@@ -109,6 +109,8 @@ var
   V: TSEValue;
   I: Integer;
 begin
+  // Do not cache drop-files.evil, as we will need to recompile the bytecode in
+  // order to inject new constant
   ScriptCacheMap.ClearSingle(PATH_SCRIPTS + Save.Settings.Skin + '/' + 'system/drop-files.evil');
   GC.AllocMap(@V);
   for I := 0 to High(FileNames) do
