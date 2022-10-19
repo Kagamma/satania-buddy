@@ -11,6 +11,7 @@ scripts
     system
       loading-start.evil
       loading-stop.evil
+      drop-files.evil
     main.evil
     meta.json
 sprites
@@ -30,7 +31,11 @@ Any ~.evil~ scripts in ~menu~ directory will appears on ~Scripts~ menu. For exam
 
 [[https://user-images.githubusercontent.com/7451778/161190869-405255ec-d368-4a1f-8d78-94b5c072d3f7.png]]
 
-Any scripts in ~system~ is used by the app. Currently the app expects ~loading-start.evil~ for loading animation, and ~loading-stop.evil~ to tell your character to stop loading animation when the app finish a task. These two scripts are optional and you can leave them empty.
+Any scripts in ~system~ is used by the app. Currently the app expects:
+- ~loading-start.evil~ for loading animation
+- ~loading-stop.evil~ to tell your character to stop loading animation when the app finish a task.
+- ~drop-files~ triggers when users drag files onto the character's touch panel. Files is stored in ~drop_files~ constant.
+These scripts are optional and no need for the app to work.
 
 ~sprites.plist~ and ~sprites.png~ are character's spritesheet in Cocos2D format.
 
