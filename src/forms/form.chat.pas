@@ -128,13 +128,13 @@ begin
   TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsBold];
   case LogName of
     'System': TB.TextStyle.Font.Color := $008000;
-    '(you)': TB.TextStyle.Font.Color := $000000;
+    '(you)': TB.TextStyle.Font.Color := $800000;
     else TB.TextStyle.Font.Color := $0000B0;
   end;
 
   TB := MemoChatLog.Blocks.AddTextBlock(Time, 0);
   TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
-  TB.TextStyle.Font.Color := $800000;
+  TB.TextStyle.Font.Color := $808080;
 
   while FormChat.MemoChatLog.Blocks.LineCount > 2000 do
     FormChat.MemoChatLog.Blocks.DeleteLine(2000);
