@@ -499,9 +499,9 @@ begin
   Thread := TSataniaHttpPostThread.Create(True);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
-  case Args[1].Kind of
+  case Args[2].Kind of
     sevkMap:
-      Thread.FormData.Text := SEJSONStringify(VM, [Args[1]]);
+      Thread.FormData.Text := SEJSONStringify(VM, [Args[2]]);
     sevkString:
       Thread.FormData.Text := Args[2];
   end;
