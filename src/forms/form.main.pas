@@ -114,7 +114,6 @@ type
     procedure MenuItemAlarmsAndRemindersClick(Sender: TObject);
     procedure MenuItemChatWithHerClick(Sender: TObject);
     procedure MenuItemEditorClick(Sender: TObject);
-    procedure MenuItemEmailComposeClick(Sender: TObject);
     procedure MenuItemHelpAlarmsAndRemindersClick(Sender: TObject);
     procedure MenuItemHelpCreateNewCharacterClick(Sender: TObject);
     procedure MenuItemHelpRulesClick(Sender: TObject);
@@ -165,7 +164,6 @@ uses
   form.reminders,
   form.settings,
   form.evilc.editor,
-  form.email.editor,
   form.rules,
   form.tool.hexeditor,
   Mcdowell.EvilC,
@@ -260,11 +258,6 @@ end;
 procedure TFormMain.MenuItemEditorClick(Sender: TObject);
 begin
   FormEvilCEditor.Show;
-end;
-
-procedure TFormMain.MenuItemEmailComposeClick(Sender: TObject);
-begin
-  FormEmailEditor.Show;
 end;
 
 procedure TFormMain.MenuItemHelpAlarmsAndRemindersClick(Sender: TObject);
