@@ -39,7 +39,7 @@ uses
   form.Main, form.touch, mcdowell.sound, form.rules, frame.rules.item,
   frame.rules.edititem, vosk, voskthread, voskbassaudiosource, mcdowell.chat,
   mcdowell.net, mcdowell.numbers, utils.strings, utils.encdec, utils.coords,
-  utils.threads, utils.files, mcdowell.smtp, form.email.editor, utils.smartptr,
+  utils.threads, utils.files, mcdowell.smtp, utils.smartptr,
   form.ask, utils.htmltext, utils.sprites, mcdowell.sketch, form.tool.hexeditor;
 
 {$R *.res}
@@ -55,7 +55,6 @@ begin
   Application.CreateForm(TFormEvilCEditor, FormEvilCEditor);
   Application.CreateForm(TFormReminders, FormReminders);
   Application.CreateForm(TFormRules, FormRules);
-  Application.CreateForm(TFormEmailEditor, FormEmailEditor);
   Application.CreateForm(TFormAsk, FormAsk);
   Application.CreateForm(TFormHexEditor, FormHexEditor);
   Application.Run;
