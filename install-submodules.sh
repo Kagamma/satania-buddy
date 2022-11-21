@@ -10,6 +10,7 @@ rm -rf src/components/KControls
 rm -rf src/components/HtmlViewer
 rm -rf src/components/spine-runtimes
 rm -rf src/components/csscontrols
+rm -rf src/components/cge-spine-mixer
 
 git clone --depth 1 https://github.com/Kagamma/satania-buddy-data.git data
 cd src/components
@@ -38,4 +39,6 @@ git clone https://github.com/Kagamma/spine-runtimes.git
 cd spine-runtimes
 git checkout 4.1
 cd ..
+git clone --depth 1 https://github.com/Kagamma/cge-spine-mixer.git
+
 cd ..
