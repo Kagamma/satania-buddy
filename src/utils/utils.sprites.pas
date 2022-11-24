@@ -6,13 +6,13 @@ interface
 
 uses
   Classes, SysUtils, CastleScene, CastleTransform, CastleRenderOptions, X3DNodes,
-  CastleSpine, globals;
+  CastleSpine, CastleSpineMixer, globals;
 
 procedure SpriteSetFilter(const Sprite: TCastleTransform; const S: String);
 procedure SpriteSetAnimationSpeed(const Sprite: TCastleTransform; const AnimName: String; const Speed: Single);
-procedure SpriteStartAnimation(const Sprite: TCastleTransform; const AnimName: String; const IsRepeat: Boolean);
-procedure SpriteStopAnimation(const Sprite: TCastleTransform; const AnimName: String);
-procedure SpriteStopAllAnimations(const Sprite: TCastleTransform);
+procedure SpriteStartAnimation(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior; const AnimName: String; const IsRepeat: Boolean);
+procedure SpriteStopAnimation(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior; const AnimName: String);
+procedure SpriteStopAllAnimations(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior);
 
 var
   TrackDict: TTrackDict;
@@ -79,7 +79,7 @@ begin
   end;
 end;    
 
-procedure SpriteStartAnimation(const Sprite: TCastleTransform; const AnimName: String; const IsRepeat: Boolean);
+procedure SpriteStartAnimation(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior; const AnimName: String; const IsRepeat: Boolean);
 var
   TimeSensor: TTimeSensorNode;
   Track: Integer;
@@ -96,19 +96,25 @@ begin
     end;
   end else
   if Sprite is TCastleSpine then
-  begin                                          
-    if TrackDict.ContainsKey(AnimName) then
-      Track := TrackDict[AnimName]
-    else
+  begin
+    if Mixer.Data.FindAnimation(AnimName) <> nil then
     begin
-      Track := TrackDict.Count;
-      TrackDict.Add(AnimName, Track);
+      Mixer.PlayAnimation(AnimName, IsRepeat);
+    end else
+    begin
+      if TrackDict.ContainsKey(AnimName) then
+        Track := TrackDict[AnimName]
+      else
+      begin
+        Track := TrackDict.Count;
+        TrackDict.Add(AnimName, Track);
+      end;
+      TCastleSpine(Sprite).PlayAnimation(AnimName, IsRepeat, True, Track);
     end;
-    TCastleSpine(Sprite).PlayAnimation(AnimName, IsRepeat, True, Track);
   end;
 end;
 
-procedure SpriteStopAnimation(const Sprite: TCastleTransform; const AnimName: String);
+procedure SpriteStopAnimation(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior; const AnimName: String);
 var
   TimeSensor: TTimeSensorNode;
 begin
@@ -125,12 +131,18 @@ begin
   end else
   if Sprite is TCastleSpine then
   begin
+    if Mixer.Data.FindAnimation(AnimName) <> nil then
+    begin
+      Mixer.StopAnimation;
+    end else
     if TrackDict.ContainsKey(AnimName) then
+    begin
       TCastleSpine(Sprite).StopAnimation(TrackDict[AnimName]);
+    end;
   end;
 end;
 
-procedure SpriteStopAllAnimations(const Sprite: TCastleTransform);
+procedure SpriteStopAllAnimations(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior);
   procedure StopButNotResetAnimation(AnimName: String);
   var
     TimeSensor: TTimeSensorNode;
@@ -155,6 +167,7 @@ begin
   if Sprite is TCastleSpine then
   begin
     TCastleSpine(Sprite).StopAnimation;
+    Mixer.StopAnimation;
   end;
 end;
 

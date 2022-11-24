@@ -9,7 +9,7 @@ uses Classes,
   CastleVectors, CastleUIState, CastleComponentSerialize,
   CastleUIControls, CastleControls, CastleKeysMouse, CastleScene, CastleTransform,
   X3DNodes, CastleBoxes, CastleRectangles, CastleTypingLabel, CastleViewport,
-  CastleFonts, LCLTranslator, CastleSceneCore, CastleSpine,
+  CastleFonts, LCLTranslator, CastleSceneCore, CastleSpine, CastleSpineMixer,
   Globals;
 
 type
@@ -24,6 +24,7 @@ type
     ChatBubbleArrow: TCastleImageControl;
     FontSystem: TCastleFont;
     SpriteTransform: TCastleTransform;
+    Mixer: TCastleSpineMixerBehavior;
     SpriteAsX3D: TCastleScene;                   
     SpriteAsSpine: TCastleSpine;
     Sprite: TCastleSceneCore;
@@ -76,6 +77,7 @@ begin
 
   SpriteAsX3D := DesignedComponent('Sprite') as TCastleScene;     
   SpriteAsSpine := DesignedComponent('Spine') as TCastleSpine;
+  Mixer := DesignedComponent('Mixer') as TCastleSpineMixerBehavior;
   Sprite := SpriteAsX3D;
   SpriteTransform := DesignedComponent('SpriteTransform') as TCastleTransform;
   Viewport := DesignedComponent('Viewport') as TCastleViewport;
@@ -93,6 +95,7 @@ begin
   Satania.FontSystem := FontSystem;
   Satania.SketchBefore := Self.SketchBefore;
   Satania.SketchAfter := Self.SketchAfter;
+  Satania.Mixer := Self.Mixer;
   try
     BubbleSideY := 1;
     Satania.DefaultPosition;

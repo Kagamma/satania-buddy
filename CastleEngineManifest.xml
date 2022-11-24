@@ -11,6 +11,7 @@
       <path value="src/" />
       <path value="src/components/typing-label/typinglabel"/>
       <path value="src/components/spine-runtimes/src"/>
+      <path value="src/components/cge-spine-mixer/src"/>
     </search_paths>
   </compiler_options>
 </project>

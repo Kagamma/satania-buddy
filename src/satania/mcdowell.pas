@@ -31,7 +31,7 @@ uses
   CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
   CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts,
-  CastleSceneCore, CastleSpine, strutils,
+  CastleSceneCore, CastleSpine, CastleSpineMixer, strutils,
   CastleBehaviors, Clipbrd, fphttpclient, LazUTF8, IniFiles,
   Mcdowell.EvilC, Mcdowell.Chat, Globals;
 
@@ -62,6 +62,7 @@ type
     Sprite: TCastleTransform;
     SpriteAsX3D: TCastleScene;
     SpriteAsSpine: TCastleSpine;
+    Mixer: TCastleSpineMixerBehavior;
     Viewport: TCastleViewport;
     LocalBoundingBoxSnapshot: TBox3D;
     ChatMode: Integer;
@@ -369,7 +370,7 @@ end;
 
 procedure TSatania.StartAnimation(AnimName: String; IsRepeat: Boolean = True);
 begin
-  SpriteStartAnimation(Self.Sprite, AnimName, IsRepeat);
+  SpriteStartAnimation(Self.Sprite, Self.Mixer, AnimName, IsRepeat);
 end;
 
 procedure TSatania.StartAnimation(URL, AnimName: String; IsRepeat: Boolean = True);
@@ -380,12 +381,12 @@ end;
 
 procedure TSatania.StopAnimation(AnimName: String);
 begin
-  SpriteStopAnimation(Self.Sprite, AnimName);
+  SpriteStopAnimation(Self.Sprite, Self.Mixer, AnimName);
 end;
 
 procedure TSatania.StopAllAnimations;
 begin
-  SpriteStopAllAnimations(Self.Sprite);
+  SpriteStopAllAnimations(Self.Sprite, Self.Mixer);
 end;
 
 procedure TSatania.Action(Typ, Message: String);
