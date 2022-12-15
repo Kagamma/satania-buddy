@@ -73,6 +73,7 @@ type
     opOperatorNotEqual,
     opOperatorAnd,
     opOperatorOr,
+    opOperatorXor,
     opOperatorNot,
     opCallNative,
     opCallScript,
@@ -338,6 +339,7 @@ type
     tkSquareBracketClose,
     tkAnd,
     tkOr,
+    tkXor,
     tkNot,
     tkFor,
     tkIn,
@@ -354,7 +356,7 @@ const TokenNames: array[TSETokenKind] of String = (
   '>', '<=', '>=', '{', '}', ':', '(', ')', 'neg', 'number', 'string',
   ',', 'if', 'identity', 'function', 'fn', 'variable', 'const',
   'unknown', 'else', 'while', 'break', 'continue', 'pause', 'yield',
-  '[', ']', 'and', 'or', 'not', 'for', 'in', 'to', 'downto', 'return',
+  '[', ']', 'and', 'or', 'xor', 'not', 'for', 'in', 'to', 'downto', 'return',
   'atom', 'import'
 );
 
@@ -2484,6 +2486,13 @@ begin
             Push(Integer(A^) or Integer(B^));
             Inc(CodePtrLocal);
           end;
+        opOperatorXor:
+          begin
+            B := Pop;
+            A := Pop;
+            Push(Integer(A^) xor Integer(B^));
+            Inc(CodePtrLocal);
+          end;
         opOperatorNot:
           begin
             A := Pop;
@@ -3412,6 +3421,14 @@ begin
           end;
           Token.Kind := tkOr;
         end;
+      '~':
+        begin
+          if PeekAtNextChar = '~' then
+          begin
+            NextChar;
+          end;
+          Token.Kind := tkXor;
+        end;
       '!':
         begin
           if PeekAtNextChar = '=' then
@@ -4205,7 +4222,9 @@ var
           tkAnd:
             BinaryOp(opOperatorAnd, @Expr, True);
           tkOr:
-            BinaryOp(opOperatorOr, @Expr, True);
+            BinaryOp(opOperatorOr, @Expr, True);      
+          tkXor:
+            BinaryOp(opOperatorXor, @Expr, True);
           else
             Exit;
         end;
