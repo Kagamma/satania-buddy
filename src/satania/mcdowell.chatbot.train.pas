@@ -60,7 +60,7 @@ type
   end;
 
   TMessage = class
-    class procedure NoMessageProc(const S: string);  
+    class procedure NoMessageProc(const S: string);
     class procedure EpochMessageProc(const S: string);
   end;
 
@@ -70,7 +70,7 @@ var
   PairList: TPairList;
   RuleArray: array of TRuleData;
   InputSize, OutputSize, HiddenSize: Integer;
-  XData, YData: TNeuralData;  
+  XData, YData: TNeuralData;
   NFit: TNeuralFit;
 
 class procedure TMessage.NoMessageProc(const S: string);
@@ -279,7 +279,7 @@ end;
 
 procedure TTrainThread.Execute;
 begin
-  Satania.IsBlocked := True;    
+  Satania.IsBlocked := True;
   Prepare;
   try
     try
@@ -291,7 +291,7 @@ begin
         Satania.Talk(E.Message);
     end;
   finally
-    Cleanup; 
+    Cleanup;
     Reload;
   end;
   Satania.IsBlocked := False;

@@ -32,7 +32,7 @@ type
   TSataniaChatThread = class(TThread)
   protected
     procedure SendToHer;
-  public   
+  public
     ChatSend,
     ChatResponse,
     ChatType: String;
@@ -42,7 +42,7 @@ type
   TSataniaExecThread = class(TThread)
   protected
     procedure SendToHer;
-  public     
+  public
     ChatSend,
     ChatResponse: String;
     RunName: String;

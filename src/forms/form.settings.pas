@@ -163,7 +163,7 @@ begin
   ComboBoxSTTBackend.ItemIndex := Save.Settings.STTBackend;
   ComboBoxSTTBackendChange(Self);
 
-  CheckBoxLewd.Checked := Save.Settings.Lewd;     
+  CheckBoxLewd.Checked := Save.Settings.Lewd;
   CheckBoxDeveloperMode.Checked := Save.Settings.DeveloperMode;
   EditBotServer.Text := Save.Settings.BotServer;
   EditBotVolframAlphaAppID.Text := Save.Settings.BotVolframAlphaAppID;
@@ -183,7 +183,7 @@ begin
   for I := 0 to SL.Count - 1 do
   begin
     SL[I] := ExtractFileName(SL[I]);
-  end;                                              
+  end;
   for I := 0 to SL2.Count - 1 do
   begin
     SL2[I] := ExtractFileName(SL2[I]);
@@ -194,7 +194,7 @@ begin
     for J := 0 to SL2.Count - 1 do
     begin
       if S = SL2[J] then
-      begin    
+      begin
         ComboBoxSkin.Items.Add(S);
         if S = Save.Settings.Skin then
         begin
@@ -256,7 +256,7 @@ begin
   if Save.Settings.EmailPassword <> '' then
     EditEmailPassword.Text := Decrypt(Save.Settings.EmailPassword)
   else
-    EditEmailPassword.Text := '';                            
+    EditEmailPassword.Text := '';
   if Save.Settings.EmailSMTPPassword <> '' then
     EditEmailSMTPPassword.Text := Decrypt(Save.Settings.EmailSMTPPassword)
   else
@@ -290,7 +290,7 @@ var
   IniFilePath: String;
 begin
   try
-    Save.Settings.Lewd := CheckBoxLewd.Checked;    
+    Save.Settings.Lewd := CheckBoxLewd.Checked;
     Save.Settings.DeveloperMode := CheckBoxDeveloperMode.Checked;
     Save.Settings.BotServer := EditBotServer.Text;
     Save.Settings.BotVolframAlphaAppID := EditBotVolframAlphaAppID.Text;
@@ -327,27 +327,27 @@ begin
     if EditEmailPassword.Text <> '' then
       Save.Settings.EmailPassword := Encrypt(EditEmailPassword.Text)
     else
-      Save.Settings.EmailPassword := '';         
+      Save.Settings.EmailPassword := '';
     if EditEmailSMTPPassword.Text <> '' then
       Save.Settings.EmailSMTPPassword := Encrypt(EditEmailSMTPPassword.Text)
     else
       Save.Settings.EmailSMTPPassword := '';
 
-    Save.Settings.EmailUseSSL := CheckBoxEmailUseSSL.Checked;        
+    Save.Settings.EmailUseSSL := CheckBoxEmailUseSSL.Checked;
     Save.Settings.EmailSMTPUseSSL := CheckBoxEmailSMTPUseSSL.Checked;
     Save.SaveToFile('configs.json');
     SataniaIMAP.Disconnect;
     //
     ApplicationProperties.LimitFPS := Save.Settings.FPS;
     Satania.ChatText.TypingSpeed := Save.Settings.TextSpeed;
-    Satania.SetImageQuality(Save.Settings.ImageQuality);   
+    Satania.SetImageQuality(Save.Settings.ImageQuality);
     Satania.UpdateMeta;
     Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
     Satania.FontSystem.URL := PATH_FONT + Save.Settings.Font;
     Satania.FontSystem.OptimalSize := Save.Settings.FontSize;
     Satania.FontSystem.LoadCharacters := CharsetToCharacters(Save.Settings.Charset);
     Satania.ChatText.FontSize := Save.Settings.FontSize;
-    Satania.SpriteAsSpine.AnimateSkipTicks := Save.Settings.FrameSkip;  
+    Satania.SpriteAsSpine.AnimateSkipTicks := Save.Settings.FrameSkip;
     Satania.SpriteAsX3D.AnimateSkipTicks := Save.Settings.FrameSkip;
     Satania.UpdateMenuItems;
 
@@ -356,8 +356,8 @@ begin
 
     if (ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex] <> Save.Settings.STTVoskModel)
       or (ComboBoxSTTBackend.ItemIndex <> Save.Settings.STTBackend) then
-    begin                             
-      Save.Settings.STTBackend := ComboBoxSTTBackend.ItemIndex;  
+    begin
+      Save.Settings.STTBackend := ComboBoxSTTBackend.ItemIndex;
       Save.Settings.STTVoskModel := ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex];
       if Save.SpeechToText then
         SataniaSpeechToText.Enable;

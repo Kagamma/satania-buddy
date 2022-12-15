@@ -147,7 +147,7 @@ begin
   if Len <> Self.FSketchDataPreviousLength then
     glBufferData(GL_ARRAY_BUFFER, Len * SizeOf(TSataniaSketchData), @Self.FSketchData[0], GL_STATIC_DRAW)
   else
-    glBufferSubData(GL_ARRAY_BUFFER, 0, Len * SizeOf(TSataniaSketchData), @Self.FSketchData[0]); 
+    glBufferSubData(GL_ARRAY_BUFFER, 0, Len * SizeOf(TSataniaSketchData), @Self.FSketchData[0]);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   Self.FSketchDataPreviousLength := Len;
 end;
@@ -174,7 +174,7 @@ begin
     RenderProgram := TGLSLProgram.Create;
     RenderProgram.AttachVertexShader(VertexShaderSource);
     RenderProgram.AttachFragmentShader(FragmentShaderSource);
-    RenderProgram.Link;  
+    RenderProgram.Link;
     RenderTextureProgram := TGLSLProgram.Create;
     RenderTextureProgram.AttachVertexShader(VertexShaderSource);
     RenderTextureProgram.AttachFragmentShader(FragmentTextureShaderSource);
@@ -270,7 +270,7 @@ begin
   PreviousProgram.Enable;
 end;
 
-// ----- TSataniaSketch ----- 
+// ----- TSataniaSketch -----
 
 function TSataniaSketch.CreateSketch(const AName: String): TSataniaSketchItem;
 begin

@@ -66,7 +66,7 @@ uses
   Utils.Encdec,
   globals,
   mcdowell,
-  mcdowell.chatbot,  
+  mcdowell.chatbot,
   mcdowell.chatbot.train,
   frame.rules.item,
   frame.rules.edititem,
@@ -103,7 +103,7 @@ var
   EditFrame: TFrameRulesEditItem;
   FS: TStringList;
   I, J: Integer;
-begin     
+begin
   JSONArray := TJSONArray.Create;
   IsSaved := False;
   try
@@ -122,7 +122,7 @@ begin
           EditFrame := TFrameRulesEditItem(Frame.ScrollBoxPatterns.Controls[I]);
           JSONArraySub.Add(Trim(EditFrame.EditText.Text));
         end;
-        JSONItem.Add('patterns', JSONArraySub);      
+        JSONItem.Add('patterns', JSONArraySub);
         JSONArraySub := TJSONArray.Create;
         for I := 0 to Frame.ScrollBoxResponses.ControlCount - 1 do
         begin
@@ -135,7 +135,7 @@ begin
       FS := TStringList.Create;
       FS.Text := JSONArray.AsJSON;
       FS.SaveToFile('data/nn/chatbot/rules.json');
-      FS.Free;       
+      FS.Free;
       ReadRules;
       IsSaved := True;
     except
@@ -176,7 +176,7 @@ var
   I, J: Integer;
   key: String;
 begin
-  ReadRules;                    
+  ReadRules;
   for I := ScrollBoxRules.ControlCount - 1 downto 0 do
     ScrollBoxRules.RemoveControl(ScrollBoxRules.Controls[I]);
   KeyList := TStringList.Create;
@@ -194,7 +194,7 @@ begin
     for J := 0 to Length(Rule.Patterns) - 1 do
     begin
       Frame.AddPattern(Rule.Patterns[J]);
-    end;                       
+    end;
     for J := 0 to Length(Rule.Responses) - 1 do
     begin
       Frame.AddResponse(Rule.Responses[J]);
@@ -209,7 +209,7 @@ var
   Frame: TFrameRulesItem;
 begin
   Frame := TFrameRulesItem.Create(Self);
-  Frame.Name := GUIDName;         
+  Frame.Name := GUIDName;
   Frame.ButtonDelete.OnClick := @DoDeleteRule;
   ScrollBoxRules.InsertControl(Frame, 0);
 end;

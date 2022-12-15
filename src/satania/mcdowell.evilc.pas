@@ -51,7 +51,7 @@ type
     opPopConst,
     opPopFrame,
     opAssignGlobalVar,
-    opAssignGlobalArray,   
+    opAssignGlobalArray,
     opAssignLocalVar,
     opAssignLocalArray,
     opJumpEqual,
@@ -122,12 +122,12 @@ type
       sevkPointer:
         (
           VarPointer: Pointer;
-        );  
+        );
       sevkNull:
         (
           VarNull: Pointer;
         );
-  end;                                                
+  end;
   TSEValueList = specialize TList<TSEValue>;
   TSEValueMap = class(specialize TDictionary<String, TSEValue>)
   private
@@ -551,7 +551,7 @@ type
     class function SEStringSplit(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFind(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+    class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringConcat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFormat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -576,7 +576,7 @@ type
     class function SEDTGetMonth(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTGetDay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEDTGetHour(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEDTGetMinute(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    class function SEDTGetMinute(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGCObjectCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGCUsed(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGCCollect(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -856,7 +856,7 @@ var
   S: String;
 begin
   WS := PWideChar(Args[0].VarBuffer^.Ptr);
-  S := UTF8Encode(WS); 
+  S := UTF8Encode(WS);
   GC.AllocString(@Result, S);
 end;
 
@@ -868,7 +868,7 @@ begin
     sevkNumber:
       Result := 'number';
     sevkString:
-      Result := 'string'; 
+      Result := 'string';
     sevkNull:
       Result := 'null';
     sevkPointer:
@@ -1010,7 +1010,7 @@ var
   Key: String;
   I: Integer = 0;
 begin
-  GC.AllocMap(@Result); 
+  GC.AllocMap(@Result);
   if SEMapIsValidArray(Args[0]) then
   begin
     for Key in TSEValueMap(Args[0].VarMap).Keys do
@@ -1415,7 +1415,7 @@ var
 begin
   DecodeTime(Args[0].VarNumber, H, M, S, MS);
   Result := M;
-end;  
+end;
 
 class function TBuiltInFunction.SEGCObjectCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
@@ -2033,7 +2033,7 @@ begin
   if Self.FValueAvailList.Count = 0 then
   begin
     PValue^.Ref := Self.FValueList.Count;
-    Value.Value := PValue^; 
+    Value.Value := PValue^;
     Value.Lock := False;
     Self.FValueList.Add(Value);
   end else
@@ -2506,7 +2506,7 @@ begin
           begin
             Push(GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^);
             Inc(CodePtrLocal, 2);
-          end;   
+          end;
         opPushLocalVar:
           begin
             Push(GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^);
@@ -2630,7 +2630,7 @@ begin
           begin
             GC.CheckForGC;
             ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
-            FuncScriptInfo := Self.Parent.FuncScriptList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);     
+            FuncScriptInfo := Self.Parent.FuncScriptList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
             Inc(Self.FramePtr);
             if Self.FramePtr >= @Self.Frame[Self.FrameSize] then
               raise Exception.Create('Too much recursion');
@@ -2739,7 +2739,7 @@ begin
                     if A^.Kind = sevkString then
                     begin
                       ImportBufferWideString[I] := UTF8Decode(A^.VarString^ + #0);
-                      PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferWideString[I]); 
+                      PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferWideString[I]);
                     end else
                     if A^.Kind = sevkBuffer then
                       PWideChar((@ImportBufferData[I * 8])^) := PWideChar(A^.VarBuffer^.Ptr)
@@ -3005,7 +3005,7 @@ begin
           begin
             AssignGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Pop);
             Inc(CodePtrLocal, 2);
-          end;      
+          end;
         opAssignLocalVar:
           begin
             AssignLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Pop);
@@ -3219,13 +3219,13 @@ begin
   Self.RegisterFunc('length', @TBuiltInFunction(nil).SELength, 1);
   Self.RegisterFunc('map_create', @TBuiltInFunction(nil).SEMapCreate, -1);
   Self.RegisterFunc('map_delete', @TBuiltInFunction(nil).SEMapDelete, 2);
-  Self.RegisterFunc('map_keys_get', @TBuiltInFunction(nil).SEMapKeysGet, 1);   
+  Self.RegisterFunc('map_keys_get', @TBuiltInFunction(nil).SEMapKeysGet, 1);
   Self.RegisterFunc('map_is_valid_array', @TBuiltInFunction(nil).SEMapIsValidArray2, 1);
   Self.RegisterFunc('sign', @TBuiltInFunction(nil).SESign, 1);
   Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, -1);
   Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 1);
   Self.RegisterFunc('range', @TBuiltInFunction(nil).SERange, -1);
-  Self.RegisterFunc('pow', @TBuiltInFunction(nil).SEPow, 2);           
+  Self.RegisterFunc('pow', @TBuiltInFunction(nil).SEPow, 2);
   Self.RegisterFunc('string_empty', @TBuiltInFunction(nil).SEStringEmpty, 1);
   Self.RegisterFunc('string_grep', @TBuiltInFunction(nil).SEStringGrep, 2);
   Self.RegisterFunc('string_format', @TBuiltInFunction(nil).SEStringFormat, 2);
@@ -3236,7 +3236,7 @@ begin
   Self.RegisterFunc('string_replace', @TBuiltInFunction(nil).SEStringReplace, 3);
   Self.RegisterFunc('string_uppercase', @TBuiltInFunction(nil).SEStringUpperCase, 1);
   Self.RegisterFunc('string_lowercase', @TBuiltInFunction(nil).SEStringLowerCase, 1);
-  Self.RegisterFunc('string_find_regex', @TBuiltInFunction(nil).SEStringFindRegex, 2);  
+  Self.RegisterFunc('string_find_regex', @TBuiltInFunction(nil).SEStringFindRegex, 2);
   Self.RegisterFunc('string_concat', @TBuiltInFunction(nil).SEStringConcat, 3);
   Self.RegisterFunc('lerp', @TBuiltInFunction(nil).SELerp, 3);
   Self.RegisterFunc('slerp', @TBuiltInFunction(nil).SESLerp, 3);
@@ -3295,7 +3295,7 @@ procedure TEvilC.AddDefaultConsts;
 begin
   Self.ConstMap.AddOrSetValue('PI', PI);
   Self.ConstMap.AddOrSetValue('true', True);
-  Self.ConstMap.AddOrSetValue('false', False); 
+  Self.ConstMap.AddOrSetValue('false', False);
   Self.ConstMap.AddOrSetValue('null', SENull);
 end;
 
@@ -4004,7 +4004,7 @@ var
             NextTokenExpected([tkSquareBracketClose]);
             EmitExpr([Pointer(opPushArrayPop)]);
             Tail;
-          end;             
+          end;
         tkDot:
           begin
             NextToken;
@@ -4063,7 +4063,7 @@ var
                         NextTokenExpected([tkSquareBracketClose]);
                         EmitPushArray(Ident^);
                         Tail;
-                      end;       
+                      end;
                     tkDot:
                       begin
                         NextToken;
@@ -4240,7 +4240,7 @@ var
         if FuncImportInfo <> nil then
           DefinedArgCount := Length(FuncImportInfo^.Args);
       end;
-    end; 
+    end;
     if FuncScriptInfo <> nil then // Allocate stack for result
       Emit([Pointer(opPushConst), 0]);
     if DefinedArgCount > 0 then
@@ -4326,7 +4326,7 @@ var
       BreakList := BreakStack.Pop;
       for I := 0 to BreakList.Count - 1 do
         Patch(Integer(BreakList[I]), Self.VM.Binary.Count);
-                       
+
       // EmitPushVar(ResultIdent);
       Emit([Pointer(opPopFrame)]);
       Patch(JumpBlock - 1, Self.VM.Binary.Count);
@@ -4574,7 +4574,7 @@ var
         Emit([Pointer(opCallNative), FindFuncNative('length', Ind), 1]);
         EmitPushVar(VarHiddenCountIdent);
         JumpEnd := Emit([Pointer(opJumpEqualOrLesser), 0]);
-                                         
+
         EmitPushVar(VarHiddenArrayIdent);
         EmitPushVar(VarHiddenCountIdent);
         Emit([Pointer(opPushArrayPop)]);
@@ -4678,7 +4678,7 @@ var
           NextToken;
           ParseExpr;
           NextTokenExpected([tkSquareBracketClose]);
-        end;                  
+        end;
       tkDot:
         begin
           IsArrayAssign := True;

@@ -25,7 +25,7 @@ type
     FontSystem: TCastleFont;
     SpriteTransform: TCastleTransform;
     Mixer: TCastleSpineMixerBehavior;
-    SpriteAsX3D: TCastleScene;                   
+    SpriteAsX3D: TCastleScene;
     SpriteAsSpine: TCastleSpine;
     Sprite: TCastleSceneCore;
     SketchBefore,
@@ -75,14 +75,14 @@ begin
   ChatBubbleArrow.Exists := False;
   FontSystem := DesignedComponent('FontSystem') as TCastleFont;
 
-  SpriteAsX3D := DesignedComponent('Sprite') as TCastleScene;     
+  SpriteAsX3D := DesignedComponent('Sprite') as TCastleScene;
   SpriteAsSpine := DesignedComponent('Spine') as TCastleSpine;
   Mixer := DesignedComponent('Mixer') as TCastleSpineMixerBehavior;
   Sprite := SpriteAsX3D;
   SpriteTransform := DesignedComponent('SpriteTransform') as TCastleTransform;
   Viewport := DesignedComponent('Viewport') as TCastleViewport;
   ChatText.TypingSpeed := Save.Settings.TextSpeed;
-  SketchBefore := DesignedComponent('SketchBefore') as TCastleTransform;   
+  SketchBefore := DesignedComponent('SketchBefore') as TCastleTransform;
   SketchAfter := DesignedComponent('SketchAfter') as TCastleTransform;
 
   //

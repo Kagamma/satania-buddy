@@ -266,7 +266,7 @@ begin
 end;
 
 procedure TFormMain.MenuItemHelpCreateNewCharacterClick(Sender: TObject);
-begin     
+begin
   OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Create-new-character');
 end;
 

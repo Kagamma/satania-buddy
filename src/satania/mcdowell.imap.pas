@@ -61,7 +61,7 @@ procedure TSataniaIMAP.GetMessagesParallel;
 var
   I, J, Count, SubPartCount: Integer;
   Mail: TMailRec;
-  MimePart: TMimePart; 
+  MimePart: TMimePart;
   MimeMess: TMimeMess;
   S: String;
 begin

@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Types, StrUtils, Generics.Collections, Math;
 
-function WordsToNumbers(const Sentence: String): TDoubleDynArray; 
+function WordsToNumbers(const Sentence: String): TDoubleDynArray;
 function WordsToDates(const Sentence: String): TDoubleDynArray;
 
 implementation
@@ -50,9 +50,9 @@ begin
         else
           Fragment := Fragment * 10 + T;
         IsAdd := False;
-      end else 
+      end else
       if AddDict.ContainsKey(Token) then
-      begin       
+      begin
         IsMag := False;
         IsNumbered := True;
         if IsAdd then
@@ -72,7 +72,7 @@ begin
         begin
           Number := Number * MagDict[Token];
         end;
-        Fragment := 0; 
+        Fragment := 0;
         IsAdd := False;
         IsMag := True;
       end else
@@ -118,7 +118,7 @@ begin
   end;
 end;
 
-initialization                   
+initialization
   DateDict := TNumberDict.Create;
   NumberDict := TNumberDict.Create;
   AddDict := TNumberDict.Create;
@@ -136,9 +136,9 @@ initialization
   DateDict.Add('october', 10);
   DateDict.Add('november', 11);
   DateDict.Add('december', 12);
-                     
+
   NumberDict.Add('zero', 0);
-  NumberDict.Add('one', 1);     
+  NumberDict.Add('one', 1);
   NumberDict.Add('two', 2);
   NumberDict.Add('three', 3);
   NumberDict.Add('four', 4);
@@ -156,7 +156,7 @@ initialization
   NumberDict.Add('sixth', 6);
   NumberDict.Add('seventh', 7);
   NumberDict.Add('eighth', 8);
-  NumberDict.Add('ninth', 9);   
+  NumberDict.Add('ninth', 9);
   NumberDict.Add('tenth', 10);
   NumberDict.Add('eleventh', 11);
   NumberDict.Add('twelfth', 12);
@@ -166,7 +166,7 @@ initialization
   NumberDict.Add('sixteenth', 16);
   NumberDict.Add('seventeenth', 17);
   NumberDict.Add('eighteenth', 18);
-  NumberDict.Add('nineteenth', 19);   
+  NumberDict.Add('nineteenth', 19);
   NumberDict.Add('twentieth', 20);
   NumberDict.Add('thirtieth', 30);
 
@@ -198,7 +198,7 @@ initialization
   MagDict.Add('millions', 1000000);
   MagDict.Add('billion', 1000000000);
   MagDict.Add('billions', 1000000000);
-  MagDict.Add('trillion', 1000000000000);   
+  MagDict.Add('trillion', 1000000000000);
   MagDict.Add('trillions', 1000000000000);
 
 finalization

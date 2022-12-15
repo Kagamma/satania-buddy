@@ -74,7 +74,7 @@ end;
 procedure Cleanup;
 begin
   if NN <> nil then
-    FreeAndNil(NN); 
+    FreeAndNil(NN);
   if Output <> nil then
     FreeAndNil(Output);
   if TagList <> nil then
@@ -119,7 +119,7 @@ begin
   S.LoadFromFile('data/nn/chatbot/rules.json');
   JSONArray := GetJSON(S.Text) as TJSONArray;
   for I := 0 to JSONArray.Count - 1 do
-  begin         
+  begin
     SetLength(Rule.Patterns, 0);
     SetLength(Rule.Responses, 0);
     JSONItem := JSONArray[I] as TJSONObject;

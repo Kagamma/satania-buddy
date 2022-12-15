@@ -26,7 +26,7 @@ interface
 
 uses
   {$define unit_declare_interface}
-  {$I mcdowell.speechtotext_windows.inc} 
+  {$I mcdowell.speechtotext_windows.inc}
   {$undef unit_declare_interface}
   Classes, SysUtils,
   vosk, voskthread, voskbassaudiosource;

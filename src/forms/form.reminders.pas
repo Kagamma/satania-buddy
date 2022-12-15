@@ -73,7 +73,7 @@ begin
   Frame := TFrameRemindersItem.Create(Self);
   Frame.Name := GUIDName;
   Frame.ButtonDelete.OnClick := @DoDelete;
-  Frame.DateTimePicker.Date := Now;   
+  Frame.DateTimePicker.Date := Now;
   Frame.DateTimePicker.Time := EncodeTime(0, 0, 0, 0);
   ScrollBoxReminders.InsertControl(Frame);
   Frame.Align := alTop;
@@ -99,7 +99,7 @@ begin
     Item := Save.Reminders.Add as TReminderCollectionItem;
     Item.Kind := Frame.ComboBoxKind.ItemIndex;
     if Item.Kind = 1 then
-    begin            
+    begin
       DecodeDate(Frame.DateTimePicker.Date, A, B, C);
       Item.Year := A;
       Item.Month := B;
@@ -117,9 +117,9 @@ begin
     Item.Saturday := Frame.CheckBoxSaturday.Checked;
     Item.Sunday := Frame.CheckBoxSunday.Checked;
     Item.Name := GUIDName;
-    Item.Script := Frame.EditScript.Text; 
+    Item.Script := Frame.EditScript.Text;
     Save.SaveToFile('configs.json');
-  end;     
+  end;
   Satania.UsedRemindersList.Clear;
 end;
 
@@ -152,7 +152,7 @@ begin
       for J := I + 1 to Save.Reminders.Count - 1 do
       begin
         Item2 := A[J];
-        S1 := StrToQWord(Format('%d%.4d%.2d%.2d%.2d%.2d', [Item.Kind, Item.Year, Item.Month, Item.Day, Item.Hour, Item.Minute])); 
+        S1 := StrToQWord(Format('%d%.4d%.2d%.2d%.2d%.2d', [Item.Kind, Item.Year, Item.Month, Item.Day, Item.Hour, Item.Minute]));
         S2 := StrToQWord(Format('%d%.4d%.2d%.2d%.2d%.2d', [Item2.Kind, Item2.Year, Item2.Month, Item2.Day, Item2.Hour, Item2.Minute]));
         if S1 < S2 then
         begin

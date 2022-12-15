@@ -40,14 +40,14 @@ type
     FTalk: String;
     procedure Talk;
     procedure Execute; override;
-  public                 
+  public
     Attachments: TStringDynArray;
     constructor Create;
     destructor Destroy; override;
     class function IsEmailConfigured: Boolean;
 
     property Sender: String read FSender write FSender;
-    property MailTo: String read FMailTo write FMailTo;  
+    property MailTo: String read FMailTo write FMailTo;
     property ReplyTo: String read FReplyTo write FReplyTo;
     property Subject: String read FSubject write FSubject;
     property Body: String read FBody write FBody;
@@ -72,7 +72,7 @@ end;
 constructor TSataniaSMTP.Create;
 begin
   inherited Create(True);
-  FreeOnTerminate := True;   
+  FreeOnTerminate := True;
   Self.Smtp := TSMTPSend.Create;
   Self.Smtp.TargetHost := Save.Settings.EmailSmtpServer;
   Self.Smtp.TargetPort := IntToStr(Save.Settings.EmailSmtpPort);
@@ -82,7 +82,7 @@ begin
 end;
 
 destructor TSataniaSMTP.Destroy;
-begin    
+begin
   Self.Smtp.Free;
   inherited;
 end;
@@ -102,7 +102,7 @@ var
 begin
   Mime := TMimeMess.Create;
   SL := TStringList.Create;
-  try        
+  try
     Mime.Header.ToList.Text := Self.FMailTo;
     Mime.Header.ReplyTo := Self.FReplyTo;
     Mime.Header.Subject := Self.FSubject;
@@ -137,13 +137,13 @@ begin
       FTalk := 'SMTP ERROR: MailData: ' + Self.Smtp.EnhCodeString;
       Self.Synchronize(@Self.Talk);
       Exit;
-    end;                
+    end;
     if not Self.Smtp.Logout then
     begin
       FTalk := 'SMTP ERROR: Logout: ' + Self.Smtp.EnhCodeString;
       Self.Synchronize(@Self.Talk);
       Exit;
-    end;   
+    end;
     FTalk := 'E-mail sent OK';
     Self.Synchronize(@Self.Talk);
   finally

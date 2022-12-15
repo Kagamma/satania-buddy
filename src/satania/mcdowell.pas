@@ -184,7 +184,7 @@ begin
 end;
 
 procedure TSatania.RegisterFuncs(const S: TEvilC; const IsSafe: Boolean = False);
-begin      
+begin
   if not IsSafe then
   begin
     S.RegisterFunc('talk', @SETalk, -1);
@@ -260,9 +260,9 @@ begin
   S.RegisterFunc('sketch_load_texture', @SESketchLoadTexture, 3);
   S.RegisterFunc('sketch_exists', @SESketchExists, 1);
   S.RegisterFunc('sketch_delete', @SESketchClear, 1);
-  S.RegisterFunc('sketch_delete_all', @SESketchClearAll, 0); 
+  S.RegisterFunc('sketch_delete_all', @SESketchClearAll, 0);
   S.RegisterFunc('worker_create', @SEWorkerCreate, -1);
-  S.RegisterFunc('worker_exists', @SEWorkerExists, 1);  
+  S.RegisterFunc('worker_exists', @SEWorkerExists, 1);
   S.RegisterFunc('worker_delete', @SEWorkerDelete, 1);
   S.RegisterFunc('tool_evilc_editor', @SEToolEvilCEditor, 1);
 end;

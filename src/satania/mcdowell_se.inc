@@ -83,15 +83,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;        
+    function SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchLoadTexture(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchDrawTriangles(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchClear(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    function SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEWorkerCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    function SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
@@ -104,7 +104,7 @@ var
   IsValidArray: Boolean;
   I: Integer = 0;
 begin
-  case Value.Kind of 
+  case Value.Kind of
     sevkString:
       begin
         if IsRoot then
@@ -127,7 +127,7 @@ begin
             Result := Result + SEValueToText(SEMapGet(Value, I), False);
           end;
         end else
-        begin 
+        begin
           for Key in TSEValueMap(Value.VarMap).Keys do
           begin
             if I > 0 then
@@ -137,7 +137,7 @@ begin
           end;
         end;
         Result := Result + ']'
-      end; 
+      end;
     sevkNull:
       Result := 'null';
     else
@@ -839,7 +839,7 @@ function TSatania.SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): T
   begin
     GC.AllocMap(@R);
     for I := 0 to Data.Count - 1 do
-    begin          
+    begin
       Name := TJSONObject(Data).Names[I];
       D := Data.FindPath(Name);
       case D.JSONType of
@@ -932,7 +932,7 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
   procedure DecodeJSONObject(var JSONStr: String; const Map: TSEValue);
   var
     I: Integer = 0;
-    V: TSEValue;  
+    V: TSEValue;
     Key: String;
   begin
     JSONStr := JSONStr + '{';
@@ -997,7 +997,7 @@ begin
   // Do not draw if vertex count <> color count, count = 0, or is not triangles
   if (VertexLen = 0) or ((VertexLen mod 6) <> 0) then
     Exit(0);
-  
+
   TexCoords := Args[2];
   Colors := Args[3];
   ColorLen := SESize(Colors) - 1;

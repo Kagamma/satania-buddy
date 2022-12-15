@@ -16,7 +16,7 @@ type
   public
     HTTP: TFPHTTPClient;
     Data,
-    URL: String;   
+    URL: String;
     constructor Create(CreateSuspend: Boolean);
     procedure Execute; override;
     destructor Destroy; override;
@@ -57,7 +57,7 @@ end;
 
 constructor TSataniaHttpGetThread.Create(CreateSuspend: Boolean);
 begin
-  inherited Create(CreateSuspend);  
+  inherited Create(CreateSuspend);
   Self.HTTP := TFPHTTPClient.Create(nil);
 end;
 
@@ -77,7 +77,7 @@ begin
   finally
     Terminate;
   end;
-end; 
+end;
 
 destructor TSataniaHttpGetThread.Destroy;
 begin
