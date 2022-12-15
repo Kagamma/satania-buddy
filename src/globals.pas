@@ -36,7 +36,7 @@ const
   PATH_SCRIPTS_RAW = 'data/scripts/';
   PATH_SCRIPTS = 'castle-data:/scripts/';
   PATH_SPRITES = 'castle-data:/sprites/';
-  PATH_FONT = 'castle-data:/fonts/';         
+  PATH_FONT = 'castle-data:/fonts/';
   PATH_SOUND = 'castle-data:/sounds/';
   PATH_VOSK = 'data/nn/vosk/';
   SECRET_KEY = 'satania_mcdowell';
@@ -85,7 +85,7 @@ type
     FMonth,
     FDay,
     FHour,
-    FMinute: Integer;  
+    FMinute: Integer;
     FScript: String;
     FMonday,
     FTuesday,
@@ -98,12 +98,12 @@ type
   public
     constructor Create;
   published
-    property Kind: Integer read FKind write FKind;   
+    property Kind: Integer read FKind write FKind;
     property Year: Integer read FYear write FYear;
     property Month: Integer read FMonth write FMonth;
     property Day: Integer read FDay write FDay;
     property Hour: Integer read FHour write FHour;
-    property Minute: Integer read FMinute write FMinute;  
+    property Minute: Integer read FMinute write FMinute;
     property Script: String read FScript write FScript;
     property Monday: Boolean read FMonday write FMonday default True;
     property Tuesday: Boolean read FTuesday write FTuesday default True;
@@ -137,7 +137,7 @@ type
     FEmailUsername,
     FEmailPassword,
     FEmailFetchFrom,
-    FEmailSmtpServer, 
+    FEmailSmtpServer,
     FEmailSmtpUsername,
     FEmailSmtpPassword,
     FCharset,
@@ -156,7 +156,7 @@ type
   published
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;
     property TextSpeed: Integer read FTextSpeed write FTextSpeed;
-    property SitOnWindowRightMargin: Integer read FSitOnWindowRightMargin write FSitOnWindowRightMargin;   
+    property SitOnWindowRightMargin: Integer read FSitOnWindowRightMargin write FSitOnWindowRightMargin;
     property BotServer: String read FBotServer write FBotServer;
     property BotVolframAlphaAppID: String read FBotVolframAlphaAppID write FBotVolframAlphaAppID;
     property FPS: Integer read FFPS write FFPS;
@@ -168,7 +168,7 @@ type
     property EmailUsername: String read FEmailUsername write FEmailUsername;
     property EmailPassword: String read FEmailPassword write FEmailPassword;
     property EmailFetchFrom: String read FEmailFetchFrom write FEmailFetchFrom;
-    property EmailUseSSL: Boolean read FEmailUseSSL write FEmailUseSSL;       
+    property EmailUseSSL: Boolean read FEmailUseSSL write FEmailUseSSL;
     property EmailSmtpServer: String read FEmailSmtpServer write FEmailSmtpServer;
     property EmailSmtpPort: Word read FEmailSmtpPort write FEmailSmtpPort;
     property EmailSmtpUsername: String read FEmailSmtpUsername write FEmailSmtpUsername;
@@ -203,7 +203,7 @@ type
     function SEGetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   published
-    property Flags: TSaveCollection read FFlags;      
+    property Flags: TSaveCollection read FFlags;
     property Reminders: TSaveCollection read FReminders;
     property Settings: TSaveSettings read FSettings;
     property SitOnWindow: Boolean read FSitOnWindow write FSitOnWindow default false;
@@ -228,7 +228,7 @@ uses
 constructor TReminderCollectionItem.Create;
 begin
   inherited;
-  Monday := True;   
+  Monday := True;
   Tuesday := True;
   Wednesday := True;
   Thursday := True;
@@ -272,7 +272,7 @@ begin
   SitOnWindow := False;
   SpriteDefaultLocationX := -1;
   SpriteDefaultLocationY := -1;
-  FFlags := TSaveCollection.Create(TSaveFlagCollectionItem);   
+  FFlags := TSaveCollection.Create(TSaveFlagCollectionItem);
   FReminders := TSaveCollection.Create(TReminderCollectionItem);
   FSilent := False;
   FSettings := TSaveSettings.Create;
