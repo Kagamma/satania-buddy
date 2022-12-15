@@ -69,7 +69,7 @@ procedure TFormChat.EditChatKeyPress(Sender: TObject; var Key: char);
 begin
   if Key = #13 then
   begin
-    Satania.Log('(you)', FormChat.EditChat.Text);
+    Satania.Log('(You)', FormChat.EditChat.Text);
     Satania.Chat(EditChat.Text);
     EditChat.Text := '';
   end;
