@@ -31,7 +31,7 @@ uses
 type
   TTalkAction = class(TBrookAction)
   public
-    procedure Get; override;   
+    procedure Get; override;
     procedure Post; override;
   end;
 

@@ -71,7 +71,7 @@ procedure TSataniaChatThread.Execute;
 var
   S, JsonString: String;
   JsonObject: TJSONObject;
-  FormData: TStringList;
+  Client: TFPHTTPClient;
 begin
   ChatResponse := '';
   S := ChatSend;
@@ -93,11 +93,16 @@ begin
       begin
         if Save.Settings.BotServer <> '' then
         begin
-          FormData := TStringList.Create;
+          Client := TFPHTTPClient.Create(nil);
           try
             try
-              FormData.Add('message=' + S);
-              JsonString := TFPHTTPClient.SimpleFormPost(Save.Settings.BotServer, FormData);
+              JsonObject := TJSONObject.Create;
+              try
+                JsonObject.Add('message', S);
+                JsonString := Client.FormPost(Save.Settings.BotServer, JsonObject.AsString);
+              finally
+                FreeAndNil(JsonObject);
+              end;
               JsonObject := GetJSON(JsonString) as TJSONObject;
               ChatType := JsonObject['type'].AsString;
               ChatResponse := JsonObject['message'].AsString;
@@ -110,7 +115,7 @@ begin
               end;
             end;
           finally
-            FreeAndNil(FormData);
+            FreeAndNil(Client);
           end;
         end else
         if Save.Settings.BotVolframAlphaAppID <> '' then

@@ -58,7 +58,7 @@ If none of the above apply, then she will send your messages to https://www.wolf
 ***** Q: What is Chatbot > Custom Server in Settings?
 A: She can send messages that she doesn't understand to another 3rd
 chatbot service if you have one available. Basically she will:
-- Make a POST to chatbot's URL, with formdata format: ~message=<her message>~
+- Make a POST to chatbot's URL in JSON format: ~{ "message": "<satania's message>" }~
 - Wait for chatbot server to respond in JSON format: ~{ "type": <"chat"> or <"script">, "message": <"response data"> }~
 
 By setting a custom server, she will ignore WolframAlpha setting and
