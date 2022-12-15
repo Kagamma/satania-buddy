@@ -50,13 +50,22 @@ types.
 *Operators*
 
 #+begin_example
-Operator                       Precedence
-============================== ==========
- !, sign "-"                    5
- *, /                           4
- +, -                           3
- =, !=, <, <=, >, >=, &, |, ^   2
- =, +=, -=, *=, /=              1
+Operator                         Precedence
+================================ ==========
+ !, sign "-"                      5
+ *, /                             4
+ +, -                             3
+ =, !=, <, <=, >, >=, &, |, ~, ^  2
+ =, +=, -=, *=, /=                1
+#+end_example
+
+#+begin_example
+Bitwise operator Description
+================ ==========
+ &                and
+ |                or
+ ~                xor
+ !                not
 #+end_example
 
 *Variable declarations / assignments*
