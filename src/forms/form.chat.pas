@@ -127,8 +127,8 @@ begin
   TB := MemoChatLog.Blocks.AddTextBlock(LogName + ': ', 0);
   TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsBold];
   case LogName of
-    'System': TB.TextStyle.Font.Color := $008000;
-    '(You)': TB.TextStyle.Font.Color := $800000;
+    'System': TB.TextStyle.Font.Color := $800000;
+    '(You)': TB.TextStyle.Font.Color := $008000;
     else TB.TextStyle.Font.Color := $0000B0;
   end;
 
