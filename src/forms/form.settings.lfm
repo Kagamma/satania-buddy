@@ -59,14 +59,13 @@ object FormSettings: TFormSettings
       Height = 467
       Top = 1
       Width = 707
-      ActivePage = TabSheet1
+      ActivePage = TabSheetEmbeddedServer
       Align = alClient
-      ShowTabs = False
-      TabIndex = 0
+      TabIndex = 3
       TabOrder = 0
       object TabSheet1: TTabSheet
         Caption = 'General'
-        ClientHeight = 459
+        ClientHeight = 439
         ClientWidth = 699
         object LabelChatBubbleDelay: TLabel
           Left = 24
@@ -244,7 +243,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetGraphics: TTabSheet
         Caption = 'Graphics'
-        ClientHeight = 459
+        ClientHeight = 439
         ClientWidth = 699
         object EditFPS: TSpinEdit
           Left = 192
@@ -322,8 +321,8 @@ object FormSettings: TFormSettings
         end
       end
       object TabSheetBot: TTabSheet
-        Caption = 'Chatbot'
-        ClientHeight = 459
+        Caption = 'External Services'
+        ClientHeight = 439
         ClientWidth = 699
         object GroupBox1: TGroupBox
           Left = 24
@@ -374,9 +373,51 @@ object FormSettings: TFormSettings
           end
         end
       end
+      object TabSheetEmbeddedServer: TTabSheet
+        Caption = 'Embedded Server'
+        ClientHeight = 439
+        ClientWidth = 699
+        object EditEmbeddedServerPort: TSpinEdit
+          Left = 192
+          Height = 23
+          Top = 48
+          Width = 98
+          MaxValue = 65535
+          TabOrder = 0
+          Value = 8666
+        end
+        object LabelEmbeddedServerPort: TLabel
+          Left = 23
+          Height = 15
+          Top = 48
+          Width = 22
+          Caption = 'Port'
+        end
+        object LabelEmbeddedServiceNotice: TLabel
+          Left = 23
+          Height = 15
+          Top = 88
+          Width = 318
+          Caption = '(Restart satania-buddy is required for changes to take effect)'
+        end
+        object LabelEmbeddedServerEnable: TLabel
+          Left = 25
+          Height = 15
+          Top = 16
+          Width = 35
+          Caption = 'Enable'
+        end
+        object CheckBoxEmbeddedServerEnable: TCheckBox
+          Left = 192
+          Height = 17
+          Top = 16
+          Width = 18
+          TabOrder = 1
+        end
+      end
       object TabSheetIMAP: TTabSheet
         Caption = 'Email'
-        ClientHeight = 459
+        ClientHeight = 439
         ClientWidth = 699
         object GroupBoxEmailIMAP: TGroupBox
           Left = 24
@@ -563,7 +604,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetSpeechRecognition: TTabSheet
         Caption = 'Speech Recognition'
-        ClientHeight = 459
+        ClientHeight = 439
         ClientWidth = 699
         object LabelSTTBackend: TLabel
           Left = 24
@@ -611,7 +652,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetOptimization: TTabSheet
         Caption = 'Developer'
-        ClientHeight = 459
+        ClientHeight = 439
         ClientWidth = 699
         object LabelDeveloperMode: TLabel
           Left = 25
@@ -645,13 +686,13 @@ object FormSettings: TFormSettings
       Items.Strings = (
         'General'
         'Graphics'
-        'Chatbot'
+        'External Services'
+        'Embedded Server'
         'Email'
         'Speech Recognition'
         'Developer'
       )
       ItemHeight = 15
-      ItemIndex = 0
       OnSelectionChange = ListBoxSettingsSelectionChange
       TabOrder = 1
     end

@@ -32,14 +32,14 @@ uses
   {$ENDIF}
   LCLPlatformDef,
   Interfaces, // this includes the LCL widgetset
-  FrameViewer09, opensslsockets, globals, Com.Talk, Com.Brokers, Forms,
+  FrameViewer09, opensslsockets, globals, Forms,
   datetimectrls, utils.activewindow, mcdowell, State.Main, form.settings,
   form.chat, mcdowell.chatbot, mcdowell.chatbot.train, form.evilc.editor,
   mcdowell.imap, Mcdowell.SpeechToText, frame.reminders.item, form.reminders,
   form.Main, form.touch, mcdowell.sound, form.rules, frame.rules.item,
   frame.rules.edititem, vosk, voskthread, voskbassaudiosource, mcdowell.chat,
   mcdowell.net, mcdowell.numbers, utils.strings, utils.encdec, utils.coords,
-  utils.threads, utils.files, mcdowell.smtp, utils.smartptr,
+  utils.threads, utils.files, mcdowell.smtp, utils.smartptr, Com.Talk, Com.Brokers,
   form.ask, utils.htmltext, utils.sprites, mcdowell.sketch, form.tool.hexeditor;
 
 {$R *.res}

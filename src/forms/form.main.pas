@@ -157,6 +157,7 @@ implementation
 {$R *.lfm}
 
 uses
+  Com.Brokers,
   Utils.ActiveWindow,
   Utils.Coords,
   form.touch,
@@ -232,6 +233,9 @@ begin
     // Generate script menu
     Satania.UpdateMenuItems;
     Mcdowell.Chatbot.Reload;
+
+    if Save.Settings.EmbeddedServerEnable then
+      EmbeddedServerStart;
   end;
 end;
 

@@ -143,6 +143,8 @@ type
     FCharset,
     FFont: String;
     FFontSize: Integer;
+    FEmbeddedServerEnable: Boolean;
+    FEmbeddedServerPort,
     FEmailSmtpPort,
     FEmailPort: Word;
     FEmailSmtpUseSSL: Boolean;
@@ -153,7 +155,9 @@ type
     FSkin: String;
     FSTTVoskModel: String;
     FSTTBackend: Integer;
-  published
+  published 
+    property EmbeddedServerPort: Word read FEmbeddedServerPort write FEmbeddedServerPort default 8666;  
+    property EmbeddedServerEnable: Boolean read FEmbeddedServerEnable write FEmbeddedServerEnable default False;
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;
     property TextSpeed: Integer read FTextSpeed write FTextSpeed;
     property SitOnWindowRightMargin: Integer read FSitOnWindowRightMargin write FSitOnWindowRightMargin;
@@ -291,6 +295,8 @@ begin
   FSettings.STTBackend := SPEECH_RECOGNIZER_BACKEND_VOSK;
   FSettings.FSitOnWindowRightMargin := 86;
   FSettings.FBotVolframAlphaAppID := 'XPP79K-99H9A8AH32';
+  FSettings.FEmbeddedServerPort := 8666;
+  FSettings.FEmbeddedServerEnable := False;
 end;
 
 destructor TSave.Destroy;

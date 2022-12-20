@@ -29,16 +29,25 @@ uses
   BrookAction;
 
 type
+  TGreetAction = class(TBrookAction)
+  public
+    procedure Get; override;
+  end;
+
   TTalkAction = class(TBrookAction)
   public
     procedure Get; override;
-    procedure Post; override;
   end;
 
 implementation
 
 uses
   Mcdowell;
+
+procedure TGreetAction.Get;
+begin
+  Write('satania-buddy<br /><li><a href="/talk">/talk</a></li>');
+end;
 
 procedure TTalkAction.Get;
 var
@@ -57,16 +66,12 @@ begin
   end;
   if Message <> '' then
     Satania.Action(Typ, Message);
-  Write('satania-buddy');
-end;
-
-procedure TTalkAction.Post;
-begin
-  Write('satania-buddy');
+  Write('method=GET<br /><li>message=' + Message + '</li><li>type=' + Typ + '</li>');
 end;
 
 initialization
-  TTalkAction.Register('*');
+  TTalkAction.Register('/talk');  
+  TGreetAction.Register('*');
 
 end.
 

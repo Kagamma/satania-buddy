@@ -25,36 +25,63 @@ unit Com.Brokers;
 interface
 
 uses
-  Classes, BrookFCLHttpAppBroker, BrookUtils, BrookApplication;
+  Classes, SysUtils, BrookFCLHttpAppBroker, BrookUtils, BrookApplication;
 
 type
   TBrookThread = class(TThread)
   public
     constructor Create;
+    destructor Destroy; override;
     procedure Execute; override;
   end;
+
+procedure EmbeddedServerStart;
 
 var
   BrookThread: TBrookThread;
 
 implementation
 
+uses
+  Globals,
+  Mcdowell;
+
+procedure EmbeddedServerStart;
+begin
+  BrookSettings.Port := Save.Settings.EmbeddedServerPort;
+  TBrookHTTPApplication(BrookApp.Instance).Threaded := False;
+  BrookThread := TBrookThread.Create;
+  BrookThread.Start;
+end;
+
 constructor TBrookThread.Create;
 begin
-  inherited Create(false);
+  inherited Create(False);
   FreeOnTerminate := true;
 end;
 
 procedure TBrookThread.Execute;
 begin
-  BrookApp.Run;
+  try
+    BrookApp.Run;
+  except
+    on E: Exception do
+      Satania.Talk(E.Message);
+  end;
+end;
+
+destructor TBrookThread.Destroy;
+begin
+  BrookApp.Terminate;
+  inherited;
 end;
 
 initialization
- // BrookSettings.Port := 6666;
- // TBrookHTTPApplication(BrookApp.Instance).Threaded := True;
- // BrookThread := TBrookThread.Create;
- // BrookThread.Start;
+  BrookThread := nil;
+
+finalization
+  if BrookThread <> nil then
+    BrookThread.Terminate;
 
 end.
 

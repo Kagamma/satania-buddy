@@ -42,6 +42,7 @@ type
     CheckBoxEmailSmtpUseSSL: TCheckBox;
     CheckBoxLewd: TCheckBox;
     CheckBoxDeveloperMode: TCheckBox;
+    CheckBoxEmbeddedServerEnable: TCheckBox;
     ComboBoxFont: TComboBox;
     ComboBoxSTTVoskModel: TComboBox;
     ComboBoxSkin: TComboBox;
@@ -61,6 +62,7 @@ type
     EditEmailSmtpServer: TEdit;
     EditEmailUsername: TEdit;
     EditEmailSmtpUsername: TEdit;
+    EditEmbeddedServerPort: TSpinEdit;
     EditFrameSkip: TSpinEdit;
     EditFPS: TSpinEdit;
     EditSoWRightMargin: TSpinEdit;
@@ -73,6 +75,7 @@ type
     GroupBoxEmailSMTP: TGroupBox;
     GroupBoxSTTVosk: TGroupBox;
     Label1: TLabel;
+    LabelEmbeddedServiceNotice: TLabel;
     LabelChatbotServer: TLabel;
     LabelChatbotServer1: TLabel;
     LabelDeveloperMode: TLabel;
@@ -87,6 +90,8 @@ type
     LabelEmailUseSSL: TLabel;
     LabelEmailSmtpUseSSL: TLabel;
     LabelFetchFrom: TLabel;
+    LabelEmbeddedServerPort: TLabel;
+    LabelEmbeddedServerEnable: TLabel;
     LabelSTTBackend: TLabel;
     LabelBaseScaling: TLabel;
     LabelFontSkin: TLabel;
@@ -112,6 +117,7 @@ type
     PopupMenuCharset: TPopupMenu;
     Splitter1: TSplitter;
     TabSheet1: TTabSheet;
+    TabSheetEmbeddedServer: TTabSheet;
     TabSheetOptimization: TTabSheet;
     TabSheetSpeechRecognition: TTabSheet;
     TabSheetIMAP: TTabSheet;
@@ -142,6 +148,7 @@ uses
   Utils.Strings,
   Mcdowell.smtp,
   Mcdowell.sketch,
+  com.Brokers,
   Utils.Encdec;
 
 { TFormSettings }
@@ -235,7 +242,8 @@ begin
   FindAllFiles(SL, 'data/fonts', '', False);
   for I := 0 to SL.Count - 1 do
   begin
-    S := ExtractFileName(SL[I]);                   PageControl.ActivePageIndex := ListboxSettings.ItemIndex;
+    S := ExtractFileName(SL[I]);
+    PageControl.ActivePageIndex := ListboxSettings.ItemIndex;
     ComboBoxFont.Items.Add(S);
     if S = Save.Settings.Font then
     begin
@@ -243,6 +251,9 @@ begin
     end;
   end;
   SL.Free;
+
+  CheckBoxEmbeddedServerEnable.Checked := Save.Settings.EmbeddedServerEnable;
+  EditEmbeddedServerPort.Value := Save.Settings.EmbeddedServerPort;
 
   EditFontSize.Value := Save.Settings.FontSize;
   ListBoxCharset.Clear;
@@ -318,6 +329,9 @@ begin
     Save.Settings.EmailSMTPServer := EditEmailSMTPServer.Text;
     Save.Settings.EmailSMTPPort := EditEmailSMTPPort.Value;
     Save.Settings.EmailSMTPUsername := EditEmailSMTPUsername.Text;
+
+    Save.Settings.EmbeddedServerPort := EditEmbeddedServerPort.Value;     
+    Save.Settings.EmbeddedServerEnable := CheckBoxEmbeddedServerEnable.Checked;
 
     Save.Settings.Font := ComboBoxFont.Items[ComboBoxFont.ItemIndex];
     Save.Settings.FontSize := EditFontSize.Value;

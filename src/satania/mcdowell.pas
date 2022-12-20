@@ -147,7 +147,8 @@ uses
   form.main,
   mcdowell.imap,
   mcdowell.smtp,
-  mcdowell.sketch;
+  mcdowell.sketch,
+  com.Brokers;
 
 {$define unit_implementation}
 {$I mcdowell_se.inc}
@@ -897,6 +898,7 @@ initialization
   Save := TSave.Create;
   if FileExists('configs.json') then
     Save.LoadFromFile('configs.json');
+
   Satania := TSatania.Create;
   RunList := TStringList.Create;
   RunResultList := TStringDict.Create;
