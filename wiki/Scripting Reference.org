@@ -41,7 +41,8 @@ tables.
 
 Buffers are used to interface with DLL libraries written in native
 languages like C or Pascal. It is basically a space within the system
-memory that is used to store raw data for just about anything.
+memory that is used to store raw data for just about anything. Underneath
+a buffer is just a pointer and you can perform pointer arimethic on it.
 
 Strings, Maps and Buffers are subject to automatic memory management.
 You do not have to worry about allocation and deallocation of these data
