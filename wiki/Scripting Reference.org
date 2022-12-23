@@ -377,7 +377,7 @@ List of supported data types:
 *string_split(s, delimiter: string): map*
 - Split a string into multiple parts.
 *string_find(s, sub: string): number*
-- Find location of substring in a string.
+- Find location of substring in a string. Returns -1 if no substring is found.
 *string_delete(s: string; index, count: number): string*
 - Delete part of a string at index.
 *string_replace(s, old, new: string): string*
@@ -399,13 +399,13 @@ List of supported data types:
 - Return current time in datetime format.
 *dt_year_get(dt: number): number*
 - Return year in number.
-*dt_month_get(dt): number*
+*dt_month_get(dt: number): number*
 - Return month number.
-*dt_day_get(dt): number*
+*dt_day_get(dt: number): number: number*
 - Return day number.
-*dt_hour_get(dt): number*
+*dt_hour_get(dt: number): number*
 - Return hour number.
-*dt_minute_get(dt): number*
+*dt_minute_get(dt: number): number*
 - Return minute number.
 *dt_day_add(dt, days: number): number*
 - Increase dt by number of days.
