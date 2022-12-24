@@ -473,7 +473,7 @@ string): string*
 *url_is_success(url: string): boolean*
 - Check if url query (get, post, etc) is finished.
 *url_result_get(url: string): string*
-- Get HTML result from url_get.
+- Get HTML result from url_get / url_post / url_upload.
 *url_query(data, xpath: string): map*
 - Extract data from HTML string.
 
