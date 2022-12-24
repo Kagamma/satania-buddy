@@ -89,6 +89,7 @@ type
     LabelEmailSmtpUsername: TLabel;
     LabelEmailUseSSL: TLabel;
     LabelEmailSmtpUseSSL: TLabel;
+    LabelExternalServiceNotice1: TLabel;
     LabelFetchFrom: TLabel;
     LabelEmbeddedServerPort: TLabel;
     LabelEmbeddedServerEnable: TLabel;

@@ -26,6 +26,7 @@
 {"hash":4748500,"name":"tformsettings.labelchatbotserver1.caption","sourcebytes":[65,112,112,73,68],"value":"AppID"},
 {"hash":257304946,"name":"tformsettings.groupbox2.caption","sourcebytes":[67,117,115,116,111,109,32,83,101,114,118,101,114],"value":"Custom Server"},
 {"hash":23148,"name":"tformsettings.labelchatbotserver.caption","sourcebytes":[85,82,76],"value":"URL"},
+{"hash":36822905,"name":"tformsettings.labelexternalservicenotice1.caption","sourcebytes":[40,73,102,32,98,111,116,104,32,97,114,101,32,115,101,116,44,32,116,104,101,110,32,115,97,116,97,110,105,97,45,98,117,100,100,121,32,119,105,108,108,32,115,101,110,100,32,109,101,115,115,97,103,101,115,32,116,111,32,67,117,115,116,111,109,32,83,101,114,118,101,114,41],"value":"(If both are set, then satania-buddy will send messages to Custom Server)"},
 {"hash":220625810,"name":"tformsettings.tabsheetembeddedserver.caption","sourcebytes":[69,109,98,101,100,100,101,100,32,83,101,114,118,101,114],"value":"Embedded Server"},
 {"hash":358036,"name":"tformsettings.labelembeddedserverport.caption","sourcebytes":[80,111,114,116],"value":"Port"},
 {"hash":167792281,"name":"tformsettings.labelembeddedservicenotice.caption","sourcebytes":[40,82,101,115,116,97,114,116,32,115,97,116,97,110,105,97,45,98,117,100,100,121,32,105,115,32,114,101,113,117,105,114,101,100,32,102,111,114,32,99,104,97,110,103,101,115,32,116,111,32,116,97,107,101,32,101,102,102,101,99,116,41],"value":"(Restart satania-buddy is required for changes to take effect)"},
