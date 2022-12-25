@@ -62,7 +62,7 @@ Operator                         Precedence
 
 #+begin_example
 Bitwise operator Description
-================ ==========
+================ ===========
  &                and
  |                or
  ~                xor
@@ -263,7 +263,7 @@ List of supported data types:
 
 ** Common functions
 *typeof(v: any): string*
-- Returns type of variable.
+- Returns type of variable (number / string / map / array / buffer / null).
 *string(n: number): string*
 - Convert n to string.
 *number(s: string): number*
@@ -278,8 +278,6 @@ List of supported data types:
 - Delete map elements.
 *map_keys_get(a: map): map*
 - Returns map contains all keys from map a.
-*map_is_valid_array(a: map): boolean*
-- Check if map is valid array.
 *length(a: map/string)*
 - Returns length of string or map.
 *random(n: number): number*
@@ -325,7 +323,7 @@ List of supported data types:
 - Get 4-byte unsigned data from buffer.
 *buffer_i32_get(buffer: buffer): number*
 - Get 4-byte data from buffer.
-*buffer_u6_get4(buffer: buffer): number*
+*buffer_u64_get(buffer: buffer): number*
 - Get 8-byte unsigned data from buffer.
 *buffer_i64_get(buffer: buffer): number*
 - Get 8-byte data from buffer.

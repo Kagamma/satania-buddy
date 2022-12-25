@@ -536,7 +536,6 @@ type
     class function SEMapCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapKeysGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEMapIsValidArray2(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SELerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESLerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESign(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -866,7 +865,10 @@ class function TBuiltInFunction.SETypeOf(const VM: TSEVM; const Args: array of T
 begin
   case Args[0].Kind of
     sevkMap:
-      Result := 'map';
+      if SEMapIsValidArray(Args[0]) then
+        Result := 'array'
+      else
+        Result := 'map';
     sevkNumber:
       Result := 'number';
     sevkString:
@@ -1027,11 +1029,6 @@ begin
       SEMapSet(Result, I, I);
     end;
   end;
-end;
-
-class function TBuiltInFunction.SEMapIsValidArray2(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-begin
-  Result := SEMapIsValidArray(Args[0]);
 end;
 
 class function TBuiltInFunction.SELerp(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -3229,7 +3226,6 @@ begin
   Self.RegisterFunc('map_create', @TBuiltInFunction(nil).SEMapCreate, -1);
   Self.RegisterFunc('map_delete', @TBuiltInFunction(nil).SEMapDelete, 2);
   Self.RegisterFunc('map_keys_get', @TBuiltInFunction(nil).SEMapKeysGet, 1);
-  Self.RegisterFunc('map_is_valid_array', @TBuiltInFunction(nil).SEMapIsValidArray2, 1);
   Self.RegisterFunc('sign', @TBuiltInFunction(nil).SESign, 1);
   Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, -1);
   Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 1);
