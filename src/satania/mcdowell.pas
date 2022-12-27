@@ -870,9 +870,17 @@ begin
         end;
       end;
       JSON.Free;
+      // Create a new meta constant and map meta data there
+      if SL.Text = '' then
+        Script.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))
+      else
+        Script.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, [SL.Text]));
     finally
       SL.Free;
     end;
+  end else
+  begin
+    Script.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))
   end;
   if not IsNamed then
     Script.ConstMap.AddOrSetValue('name', Name);

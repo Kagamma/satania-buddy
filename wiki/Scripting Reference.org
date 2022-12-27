@@ -261,6 +261,8 @@ List of supported data types:
 
 *name: string*
 
+*meta: map*
+
 ** Common functions
 *typeof(v: any): string*
 - Returns type of variable (number / string / map / array / buffer / null).
