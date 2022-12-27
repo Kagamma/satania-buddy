@@ -1,4 +1,6 @@
 {"version":1,"strings":[
-{"hash":236408706,"name":"tformhexeditor.caption","sourcebytes":[83,97,116,97,110,105,97,32,72,101,120,32,69,100,105,116,111,114],"value":"Satania Hex Editor"},
-{"hash":106991073,"name":"tformhexeditor.toolbar1.caption","sourcebytes":[84,111,111,108,66,97,114,49],"value":"ToolBar1"}
+{"hash":79685570,"name":"tformhexeditor.caption","sourcebytes":[72,101,120,32,69,100,105,116,111,114],"value":"Hex Editor"},
+{"hash":106991073,"name":"tformhexeditor.toolbar1.caption","sourcebytes":[84,111,111,108,66,97,114,49],"value":"ToolBar1"},
+{"hash":208967589,"name":"tformhexeditor.savedialog.title","sourcebytes":[83,97,118,101,32,70,105,108,101],"value":"Save File"},
+{"hash":201628229,"name":"tformhexeditor.opendialog.title","sourcebytes":[79,112,101,110,32,70,105,108,101],"value":"Open File"}
 ]}

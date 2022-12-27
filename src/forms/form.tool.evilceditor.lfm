@@ -11,7 +11,6 @@ object FormEvilCEditor: TFormEvilCEditor
   OnShow = FormShow
   Position = poDefault
   ShowInTaskBar = stAlways
-  LCLVersion = '2.3.0.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
@@ -38,7 +37,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator2: TToolButton
       Left = 101
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator2'
       Style = tbsSeparator
@@ -61,7 +60,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator1: TToolButton
       Left = 24
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator1'
       Style = tbsSeparator
@@ -75,7 +74,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator3: TToolButton
       Left = 186
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator3'
       Style = tbsSeparator
@@ -90,7 +89,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton2: TToolButton
       Left = 155
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButton2'
       Style = tbsSeparator
@@ -112,7 +111,7 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   inline Editor: TSynEdit
     Left = 0
-    Height = 506
+    Height = 507
     Top = 26
     Width = 927
     Align = alClient
@@ -617,8 +616,8 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   object StatusBar: TStatusBar
     Left = 0
-    Height = 24
-    Top = 532
+    Height = 23
+    Top = 533
     Width = 927
     Panels = <    
       item

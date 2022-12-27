@@ -164,7 +164,7 @@ uses
   form.chat,
   form.reminders,
   form.settings,
-  form.evilc.editor,
+  form.tool.evilceditor,
   form.rules,
   form.tool.hexeditor,
   Mcdowell.EvilC,

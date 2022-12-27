@@ -2,16 +2,16 @@ object FormHexEditor: TFormHexEditor
   Left = 342
   Height = 381
   Top = 250
-  Width = 502
-  Caption = 'Satania Hex Editor'
+  Width = 725
+  Caption = 'Hex Editor'
   ClientHeight = 381
-  ClientWidth = 502
-  LCLVersion = '2.3.0.0'
+  ClientWidth = 725
+  OnShow = FormShow
   object HexEditor: TKHexEditor
     Left = 0
     Height = 355
     Top = 26
-    Width = 502
+    Width = 725
     Align = alClient
     Font.Height = -15
     Font.Name = 'Courier New'
@@ -23,19 +23,40 @@ object FormHexEditor: TFormHexEditor
     Left = 0
     Height = 26
     Top = 0
-    Width = 502
+    Width = 725
     Caption = 'ToolBar1'
     Images = FormEvilCEditor.ImageList
     TabOrder = 1
-    object ButtonSave: TToolButton
-      Left = 1
-      Top = 2
-      ImageIndex = 1
-    end
-    object ButtonSaveAs: TToolButton
+    object ToolButtonSave: TToolButton
       Left = 24
       Top = 2
-      ImageIndex = 4
+      ImageIndex = 1
+      OnClick = ToolButtonSaveClick
     end
+    object ToolButtonSaveAs: TToolButton
+      Left = 47
+      Top = 2
+      ImageIndex = 4
+      OnClick = ToolButtonSaveAsClick
+    end
+    object ToolButtonOpen: TToolButton
+      Left = 1
+      Top = 2
+      ImageIndex = 0
+      OnClick = ToolButtonOpenClick
+    end
+  end
+  object SaveDialog: TSaveDialog
+    Title = 'Save File'
+    Filter = 'All|*.*'
+    Left = 268
+    Top = 92
+  end
+  object OpenDialog: TOpenDialog
+    Title = 'Open File'
+    Filter = 'All|*.*'
+    InitialDir = 'data/scripts'
+    Left = 164
+    Top = 92
   end
 end

@@ -94,6 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEToolHexEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
@@ -1105,6 +1106,12 @@ function TSatania.SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEVal
 begin
   FormEvilCEditor.Show;
   FormEvilCEditor.LoadFromFile(Args[0]);
+end;
+
+function TSatania.SEToolHexEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  FormHexEditor.Show;
+  FormHexEditor.LoadFromFile(Args[0]);
 end;
 
 {$endif}

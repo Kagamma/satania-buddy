@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 }
 
-unit form.evilc.editor;
+unit form.tool.evilceditor;
 
 {$I configs.inc}
 
@@ -184,6 +184,7 @@ begin
   {$ifdef WINDOWS}
   Editor.Font.Name := 'Consolas';
   {$endif}
+  Self.ToolButtonSave.Enabled := Self.WorkingFile <> '';
 end;
 
 procedure TFormEvilCEditor.MenuItemEditorCopyClick(Sender: TObject);
@@ -262,6 +263,7 @@ begin
   if OpenDialog.Execute then
   begin
     Self.LoadFromFile(OpenDialog.FileName);
+    Self.ToolButtonSave.Enabled := True;
   end;
 end;
 
@@ -301,6 +303,7 @@ begin
     Caption := ExtractFileName(SaveDialog.FileName);
     WorkingFile := SaveDialog.FileName;
     Editor.Lines.SaveToFile(WorkingFile);
+    Self.ToolButtonSave.Enabled := True;
   end;
 end;
 
@@ -339,6 +342,7 @@ begin
   Editor.Lines.LoadFromFile(AFileName);
   StatusBar.Panels[1].Text := '';
   ErrorPos.Y := -1;
+  Self.ToolButtonSave.Enabled := True;
 end;
 
 end.

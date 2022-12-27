@@ -65,7 +65,7 @@ implementation
 uses
   Form.Main, Utils.ActiveWindow,
   Globals,
-  Form.evilc.editor,
+  form.tool.evilceditor,
   Form.settings,
   Form.Chat,
   mcdowell.EvilC,
