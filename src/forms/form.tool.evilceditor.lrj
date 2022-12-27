@@ -1,5 +1,5 @@
 {"version":1,"strings":[
-{"hash":5033987,"name":"tformevilceditor.caption","sourcebytes":[69,118,105,108,67],"value":"EvilC"},
+{"hash":7867186,"name":"tformevilceditor.caption","sourcebytes":[69,118,105,108,67,32,69,100,105,116,111,114],"value":"EvilC Editor"},
 {"hash":106991073,"name":"tformevilceditor.toolbar1.caption","sourcebytes":[84,111,111,108,66,97,114,49],"value":"ToolBar1"},
 {"hash":353982,"name":"tformevilceditor.toolbuttonopen.hint","sourcebytes":[79,112,101,110],"value":"Open"},
 {"hash":353982,"name":"tformevilceditor.toolbuttonopen.caption","sourcebytes":[79,112,101,110],"value":"Open"},

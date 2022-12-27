@@ -3,7 +3,7 @@ object FormEvilCEditor: TFormEvilCEditor
   Height = 556
   Top = 256
   Width = 927
-  Caption = 'EvilC'
+  Caption = 'EvilC Editor'
   ClientHeight = 556
   ClientWidth = 927
   OnCreate = FormCreate
