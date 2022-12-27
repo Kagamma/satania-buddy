@@ -106,6 +106,7 @@ type
     function Exec(S: String): String;
     procedure Chat(S: String);
     procedure Action(Typ, Message: String);
+    procedure Worker(const AKey, AScript: String; const ATime: Single);
     procedure ActionFromFile(FileName: String; IsChecked: Boolean = True);
     procedure SetScale(Scale: Single);
     procedure ResetScript;
@@ -189,10 +190,10 @@ procedure TSatania.RegisterFuncs(const S: TEvilC; const IsSafe: Boolean = False)
 begin
   if not IsSafe then
   begin
-    S.RegisterFunc('talk', @SETalk, -1);
     S.RegisterFunc('ask', @SEAsk, -1);
     S.RegisterFunc('scheme_load', @SESchemeLoad, 1);
   end;
+  S.RegisterFunc('talk', @SETalk, -1);
   S.RegisterFunc('numbers', @SENumbers, 1);
   S.RegisterFunc('months_to_numbers', @SEMonthsToNumbers, 1);
   S.RegisterFunc('answer', @SEAnswer, 0);
@@ -404,7 +405,7 @@ begin
           ResetScript;
           Script.Source := Message + ' scheme_load(scheme_default)';
           IsAction := True;
-        end
+        end;
       else
         begin
           raise Exception.Create('Type unknown "' + Typ + '"');
@@ -413,6 +414,11 @@ begin
   finally
     CSAction.Leave;
   end;
+end;
+
+procedure TSatania.Worker(const AKey, AScript: String; const ATime: Single);
+begin
+  Self.SEWorkerCreate(nil, [AKey, AScript, ATime]);
 end;
 
 procedure TSatania.ActionFromFile(FileName: String; IsChecked: Boolean = True);

@@ -32,6 +32,7 @@ type
   TSataniaChatThread = class(TThread)
   protected
     procedure SendToHer;
+    procedure ExecuteCustomEvilWorkerScript;
   public
     ChatSend,
     ChatResponse,
@@ -67,11 +68,84 @@ begin
   end;
 end;
 
+procedure TSataniaChatThread.ExecuteCustomEvilWorkerScript;
+var
+  SL: TStringList;
+  S: String;
+begin
+  SL := TStringList.Create;
+  try
+    SL.LoadFromFile(Save.Settings.CustomBotScript);
+    Satania.Worker('___worker', 'chat_message = "' + StringReplace(Self.ChatSend, '"', '\"', [rfReplaceAll]) + '" ' + SL.Text, 0);
+  finally
+    SL.Free;
+  end;
+end;
+
 procedure TSataniaChatThread.Execute;
 var
   S, JsonString: String;
   JsonObject: TJSONObject;
   Client: TFPHTTPClient;
+
+  procedure PerformVolframAlphaRequest;
+  begin
+    if Save.Settings.BotVolframAlphaAppID <> '' then
+    begin
+      try
+        JsonString := TFPHTTPClient.SimpleGet('https://api.wolframalpha.com/v1/result?appid=' + Save.Settings.BotVolframAlphaAppID + '&i=' + EncodeURLElement(S));
+        ChatType := 'chat';
+        ChatResponse := JsonString;
+        FreeAndNil(JsonObject);
+      except
+        on E: Exception do
+        begin
+          if E.Message.IndexOf('status code: 501') >= 0 then
+            ChatResponse := 'Sorry I don''t understand.'
+          else
+            ChatResponse := E.Message;
+          ChatType := 'chat';
+        end;
+      end;
+    end;
+  end;
+
+  procedure PerformCustomServerRequest;
+  begin
+    if Save.Settings.BotServer <> '' then
+    begin
+      Client := TFPHTTPClient.Create(nil);
+      try
+        try
+          JsonObject := TJSONObject.Create;
+          try
+            JsonObject.Add('message', S);
+            JsonString := Client.FormPost(Save.Settings.BotServer, JsonObject.AsString);
+          finally
+            FreeAndNil(JsonObject);
+          end;
+          JsonObject := GetJSON(JsonString) as TJSONObject;
+          ChatType := JsonObject['type'].AsString;
+          ChatResponse := JsonObject['message'].AsString;
+          FreeAndNil(JsonObject);
+        except
+          on E: Exception do
+          begin
+            ChatResponse := E.Message;
+            ChatType := 'chat';
+          end;
+        end;
+      finally
+        FreeAndNil(Client);
+      end;
+    end;
+  end;
+
+  procedure PerformCustomScriptRequest;
+  begin
+    Self.Synchronize(@Self.ExecuteCustomEvilWorkerScript);
+  end;
+
 begin
   ChatResponse := '';
   S := ChatSend;
@@ -91,58 +165,10 @@ begin
       ChatResponse := Inference(S);
       if ChatResponse = '' then
       begin
-        if Save.Settings.BotServer <> '' then
-        begin
-          Client := TFPHTTPClient.Create(nil);
-          try
-            try
-              JsonObject := TJSONObject.Create;
-              try
-                JsonObject.Add('message', S);
-                JsonString := Client.FormPost(Save.Settings.BotServer, JsonObject.AsString);
-              finally
-                FreeAndNil(JsonObject);
-              end;
-              JsonObject := GetJSON(JsonString) as TJSONObject;
-              ChatType := JsonObject['type'].AsString;
-              ChatResponse := JsonObject['message'].AsString;
-              FreeAndNil(JsonObject);
-            except
-              on E: Exception do
-              begin
-                ChatResponse := E.Message;
-                ChatType := 'chat';
-              end;
-            end;
-          finally
-            FreeAndNil(Client);
-          end;
-        end else
-        if Save.Settings.BotVolframAlphaAppID <> '' then
-        begin
-          try
-            JsonString := TFPHTTPClient.SimpleGet('https://api.wolframalpha.com/v1/result?appid=' + Save.Settings.BotVolframAlphaAppID + '&i=' + EncodeURLElement(S));
-            ChatType := 'chat';
-            ChatResponse := JsonString;
-            FreeAndNil(JsonObject);
-          except
-            on E: Exception do
-            begin
-              if E.Message.IndexOf('status code: 501') >= 0 then
-                ChatResponse := 'Sorry I don''t understand.'
-              else
-                ChatResponse := E.Message;
-              ChatType := 'chat';
-            end;
-          end;
-        end else
-        begin
-          if not Save.SpeechToText then
-          begin
-            ChatType := 'chat';
-            ChatResponse := 'Sorry I don''t understand.';
-          end else
-            ChatType := '';
+        case Save.Settings.ExternalServiceSelect of
+          0: PerformVolframAlphaRequest;
+          1: PerformCustomServerRequest;
+          2: PerformCustomScriptRequest;
         end;
       end else
         ChatType := 'script';

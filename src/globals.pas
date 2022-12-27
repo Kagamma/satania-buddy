@@ -124,6 +124,7 @@ type
 
   TSaveSettings = class(TPersistent)
   protected
+    FExternalServiceSelect: Integer;
     FDefaultEvilScheme: String;
     FBotVolframAlphaAppID,
     FBotServer: String;
@@ -156,7 +157,8 @@ type
     FSkin: String;
     FSTTVoskModel: String;
     FSTTBackend: Integer;
-  published                                                                              
+  published
+    property ExternalServiceSelect: Integer read FExternalServiceSelect write FExternalServiceSelect default 0;
     property CustomBotScript: String read FCustomBotScript write FCustomBotScript;
     property EmbeddedServerPort: Word read FEmbeddedServerPort write FEmbeddedServerPort default 8666;  
     property EmbeddedServerEnable: Boolean read FEmbeddedServerEnable write FEmbeddedServerEnable default False;

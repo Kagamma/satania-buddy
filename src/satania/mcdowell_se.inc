@@ -1081,8 +1081,8 @@ begin
   Item.LastTimestamp := GetTickCount64;
   if Length(Args) >= 4 then
   begin
-    for ConstKey in TSEValueMap(Args[2].VarMap).Keys do
-      Item.Script.ConstMap.AddOrSetValue(ConstKey, SEMapGet(Args[2], ConstKey));
+    for ConstKey in TSEValueMap(Args[3].VarMap).Keys do
+      Item.Script.ConstMap.AddOrSetValue(ConstKey, SEMapGet(Args[3], ConstKey));
   end;
   Self.BackgroundScriptDict.AddOrSetValue(Key, Item);
   Result := Key;

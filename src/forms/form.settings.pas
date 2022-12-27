@@ -70,13 +70,14 @@ type
     EditFontSize: TSpinEdit;
     EditTextSpeed: TSpinEdit;
     EditBaseScaling: TFloatSpinEdit;
-    GroupBox1: TGroupBox;
-    GroupBox2: TGroupBox;
-    GroupBox3: TGroupBox;
+    GroupBoxVolframAlpha: TGroupBox;
+    GroupBoxChatbotServer: TGroupBox;
+    GroupBoxCustomBotScript: TGroupBox;
     GroupBoxEmailIMAP: TGroupBox;
     GroupBoxEmailSMTP: TGroupBox;
     GroupBoxSTTVosk: TGroupBox;
     Label1: TLabel;
+    Label2: TLabel;
     LabelCustomBotScript: TLabel;
     LabelEmbeddedServiceNotice: TLabel;
     LabelChatbotServer: TLabel;
@@ -92,7 +93,6 @@ type
     LabelEmailSmtpUsername: TLabel;
     LabelEmailUseSSL: TLabel;
     LabelEmailSmtpUseSSL: TLabel;
-    LabelExternalServiceNotice1: TLabel;
     LabelFetchFrom: TLabel;
     LabelEmbeddedServerPort: TLabel;
     LabelEmbeddedServerEnable: TLabel;
@@ -121,6 +121,9 @@ type
     PanelSettings: TPanel;
     PopupMenuCharset: TPopupMenu;
     ButtonCustomBotScriptOpen: TSpeedButton;
+    RadioButtonCustomScript: TRadioButton;
+    RadioButtonChatbotServer: TRadioButton;
+    RadioButtonWolframAlpha: TRadioButton;
     Splitter1: TSplitter;
     TabSheet1: TTabSheet;
     TabSheetEmbeddedServer: TTabSheet;
@@ -137,6 +140,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure ListBoxSettingsSelectionChange(Sender: TObject; User: boolean);
     procedure MenuItemDeleteCharsetClick(Sender: TObject);
+    procedure RadioButtonWolframAlphaChange(Sender: TObject);
   private
 
   public
@@ -177,6 +181,13 @@ begin
   {$endif}
   ComboBoxSTTBackend.ItemIndex := Save.Settings.STTBackend;
   ComboBoxSTTBackendChange(Self);
+
+  RadioButtonWolframAlpha.Checked := Save.Settings.ExternalServiceSelect = 0;
+  RadioButtonChatbotServer.Checked := Save.Settings.ExternalServiceSelect = 1;
+  RadioButtonCustomScript.Checked := Save.Settings.ExternalServiceSelect = 2;
+  GroupBoxVolframAlpha.Enabled := RadioButtonWolframAlpha.Checked; 
+  GroupBoxChatbotServer.Enabled := RadioButtonChatbotServer.Checked;
+  GroupBoxCustomBotScript.Enabled := RadioButtonCustomScript.Checked;
 
   CheckBoxLewd.Checked := Save.Settings.Lewd;
   CheckBoxDeveloperMode.Checked := Save.Settings.DeveloperMode;
@@ -305,11 +316,25 @@ begin
     ListBoxCharset.Items.Delete(ListBoxCharset.ItemIndex);
 end;
 
+procedure TFormSettings.RadioButtonWolframAlphaChange(Sender: TObject);
+begin
+  GroupBoxVolframAlpha.Enabled := RadioButtonWolframAlpha.Checked;
+  GroupBoxChatbotServer.Enabled := RadioButtonChatbotServer.Checked;
+  GroupBoxCustomBotScript.Enabled := RadioButtonCustomScript.Checked;
+end;
+
 procedure TFormSettings.ButtonOkClick(Sender: TObject);
 var
   IniFilePath: String;
 begin
   try
+    if RadioButtonWolframAlpha.Checked then
+      Save.Settings.ExternalServiceSelect := 0
+    else if RadioButtonChatbotServer.Checked then
+      Save.Settings.ExternalServiceSelect := 1
+    else if RadioButtonCustomScript.Checked then
+      Save.Settings.ExternalServiceSelect := 2;
+
     Save.Settings.Lewd := CheckBoxLewd.Checked;
     Save.Settings.DeveloperMode := CheckBoxDeveloperMode.Checked;
     Save.Settings.CustomBotScript := EditCustomBotScript.Text;

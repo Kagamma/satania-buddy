@@ -1,7 +1,7 @@
 object FormSettings: TFormSettings
-  Left = 364
+  Left = 666
   Height = 511
-  Top = 31
+  Top = 86
   Width = 886
   BorderStyle = bsDialog
   Caption = 'Settings'
@@ -9,6 +9,7 @@ object FormSettings: TFormSettings
   ClientWidth = 886
   OnShow = FormShow
   Position = poScreenCenter
+  LCLVersion = '2.3.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -324,20 +325,20 @@ object FormSettings: TFormSettings
         Caption = 'External Services'
         ClientHeight = 439
         ClientWidth = 699
-        object GroupBox1: TGroupBox
-          Left = 24
+        object GroupBoxVolframAlpha: TGroupBox
+          Left = 39
           Height = 80
-          Top = 192
-          Width = 593
+          Top = 40
+          Width = 577
           Caption = 'WolframAlpha'
           ClientHeight = 60
-          ClientWidth = 589
+          ClientWidth = 573
           TabOrder = 0
           object EditBotVolframAlphaAppID: TEdit
             Left = 168
             Height = 23
             Top = 16
-            Width = 400
+            Width = 377
             TabOrder = 0
           end
           object LabelChatbotServer1: TLabel
@@ -348,14 +349,14 @@ object FormSettings: TFormSettings
             Caption = 'AppID'
           end
         end
-        object GroupBox2: TGroupBox
-          Left = 23
+        object GroupBoxChatbotServer: TGroupBox
+          Left = 39
           Height = 80
-          Top = 104
-          Width = 593
-          Caption = 'Custom Server'
+          Top = 216
+          Width = 576
+          Caption = 'Server'
           ClientHeight = 60
-          ClientWidth = 589
+          ClientWidth = 572
           TabOrder = 1
           object LabelChatbotServer: TLabel
             Left = 23
@@ -368,25 +369,18 @@ object FormSettings: TFormSettings
             Left = 167
             Height = 23
             Top = 16
-            Width = 400
+            Width = 378
             TabOrder = 0
           end
         end
-        object LabelExternalServiceNotice1: TLabel
-          Left = 23
-          Height = 15
-          Top = 288
-          Width = 386
-          Caption = '(If both are set, then satania-buddy will send messages to Custom Server)'
-        end
-        object GroupBox3: TGroupBox
-          Left = 24
+        object GroupBoxCustomBotScript: TGroupBox
+          Left = 39
           Height = 80
-          Top = 16
-          Width = 593
-          Caption = 'Custom Script'
+          Top = 128
+          Width = 577
+          Caption = 'Evil Scheme'
           ClientHeight = 60
-          ClientWidth = 589
+          ClientWidth = 573
           TabOrder = 2
           object LabelCustomBotScript: TLabel
             Left = 23
@@ -399,11 +393,11 @@ object FormSettings: TFormSettings
             Left = 167
             Height = 23
             Top = 16
-            Width = 378
+            Width = 354
             TabOrder = 0
           end
           object ButtonCustomBotScriptOpen: TSpeedButton
-            Left = 543
+            Left = 520
             Height = 23
             Top = 16
             Width = 25
@@ -411,6 +405,39 @@ object FormSettings: TFormSettings
             ImageIndex = 0
             OnClick = ButtonCustomBotScriptOpenClick
           end
+        end
+        object RadioButtonCustomScript: TRadioButton
+          Left = 15
+          Height = 17
+          Top = 143
+          Width = 18
+          OnChange = RadioButtonWolframAlphaChange
+          TabOrder = 4
+        end
+        object RadioButtonChatbotServer: TRadioButton
+          Left = 15
+          Height = 17
+          Top = 232
+          Width = 18
+          OnChange = RadioButtonWolframAlphaChange
+          TabOrder = 5
+        end
+        object RadioButtonWolframAlpha: TRadioButton
+          Left = 15
+          Height = 17
+          Top = 56
+          Width = 18
+          Checked = True
+          OnChange = RadioButtonWolframAlphaChange
+          TabOrder = 3
+          TabStop = True
+        end
+        object Label2: TLabel
+          Left = 37
+          Height = 15
+          Top = 16
+          Width = 481
+          Caption = '*These services will be used when Satania does not understand the content you type in chat'
         end
       end
       object TabSheetEmbeddedServer: TTabSheet
@@ -437,8 +464,8 @@ object FormSettings: TFormSettings
           Left = 23
           Height = 15
           Top = 88
-          Width = 318
-          Caption = '(Restart satania-buddy is required for changes to take effect)'
+          Width = 315
+          Caption = '*Restart satania-buddy is required for changes to take effect'
         end
         object LabelEmbeddedServerEnable: TLabel
           Left = 25
