@@ -220,6 +220,7 @@ begin
   ErrorPos.Y := -1;
   Self.Script := TEvilC.Create;
   Satania.RegisterFuncs(Self.Script);
+  Satania.UpdateMeta(Self.Script);
 end;
 
 procedure TFormEvilCEditor.FormDestroy(Sender: TObject);

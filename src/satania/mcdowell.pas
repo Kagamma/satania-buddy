@@ -115,7 +115,7 @@ type
     procedure UpdateMenuItems;
     procedure SetVisible(const V: Boolean);
     procedure UpdateReminders;
-    procedure UpdateMeta;
+    procedure UpdateMeta(const S: TEvilC);
     procedure CleanUpCache;
     procedure BackgroundScriptClearAll;
   end;
@@ -169,7 +169,7 @@ begin
   AnimTalkFinish := 'talk_finish';
   Self.AnimTalkScriptList := TStringList.Create;
   Self.RegisterFuncs(Self.Script);
-  UpdateMeta;
+  UpdateMeta(Self.Script);
   Self.LoadLocalFlags;
 end;
 
@@ -832,7 +832,7 @@ begin
   end;
 end;
 
-procedure TSatania.UpdateMeta;
+procedure TSatania.UpdateMeta(const S: TEvilC);
 var
   JSON: TJSONObject;
   SL: TStrings;
@@ -840,18 +840,18 @@ var
   IsNamed: Boolean = False;
   I: Integer;
 begin
-  Script.ConstMap.Clear;
-  Script.AddDefaultConsts;
-  Script.ConstMap.AddOrSetValue('CHATMODE_CHAT', CHATMODE_CHAT);
-  Script.ConstMap.AddOrSetValue('CHATMODE_SCRIPT', CHATMODE_SCRIPT);
-  Script.ConstMap.AddOrSetValue('FA_DIRECTORY', faDirectory);
-  Script.ConstMap.AddOrSetValue('FA_READONLY', faReadOnly);
-  Script.ConstMap.AddOrSetValue('FA_NORMAL', faNormal);
-  Script.ConstMap.AddOrSetValue('FA_ENCRYPTED', faEncrypted);
-  Script.ConstMap.AddOrSetValue('FA_COMPRESSED', faCompressed);
-  Script.ConstMap.AddOrSetValue('FA_SYMLINK', faSymLink);
-  Script.ConstMap.AddOrSetValue('FA_SYSFILE', faSysFile);
-  Script.ConstMap.AddOrSetValue('FA_ANYFILE', faAnyFile);
+  S.ConstMap.Clear;
+  S.AddDefaultConsts;
+  S.ConstMap.AddOrSetValue('CHATMODE_CHAT', CHATMODE_CHAT);
+  S.ConstMap.AddOrSetValue('CHATMODE_SCRIPT', CHATMODE_SCRIPT);
+  S.ConstMap.AddOrSetValue('FA_DIRECTORY', faDirectory);
+  S.ConstMap.AddOrSetValue('FA_READONLY', faReadOnly);
+  S.ConstMap.AddOrSetValue('FA_NORMAL', faNormal);
+  S.ConstMap.AddOrSetValue('FA_ENCRYPTED', faEncrypted);
+  S.ConstMap.AddOrSetValue('FA_COMPRESSED', faCompressed);
+  S.ConstMap.AddOrSetValue('FA_SYMLINK', faSymLink);
+  S.ConstMap.AddOrSetValue('FA_SYSFILE', faSysFile);
+  S.ConstMap.AddOrSetValue('FA_ANYFILE', faAnyFile);
   MetaPath := 'data/scripts/' + Save.Settings.Skin + '/meta.json';
   Name := 'Satania';
   if FileExists(MetaPath) then
@@ -862,7 +862,7 @@ begin
       JSON := GetJSON(SL.Text) as TJSONObject;
       for I := 0 to JSON.Count - 1 do
       begin
-        Script.ConstMap.AddOrSetValue(JSON.Names[I], JSON.Items[I].AsString);
+        S.ConstMap.AddOrSetValue(JSON.Names[I], JSON.Items[I].AsString);
         if JSON.Names[I] = 'name' then
         begin
           IsNamed := True;
@@ -872,18 +872,18 @@ begin
       JSON.Free;
       // Create a new meta constant and map meta data there
       if SL.Text = '' then
-        Script.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))
+        S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))
       else
-        Script.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, [SL.Text]));
+        S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, [SL.Text]));
     finally
       SL.Free;
     end;
   end else
   begin
-    Script.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))
+    S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))
   end;
   if not IsNamed then
-    Script.ConstMap.AddOrSetValue('name', Name);
+    S.ConstMap.AddOrSetValue('name', Name);
 end;
 
 procedure TSatania.CleanUpCache;

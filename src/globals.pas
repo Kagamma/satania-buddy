@@ -143,6 +143,7 @@ type
     FCharset,
     FFont: String;
     FFontSize: Integer;
+    FCustomBotScript: String;
     FEmbeddedServerEnable: Boolean;
     FEmbeddedServerPort,
     FEmailSmtpPort,
@@ -155,7 +156,8 @@ type
     FSkin: String;
     FSTTVoskModel: String;
     FSTTBackend: Integer;
-  published 
+  published                                                                              
+    property CustomBotScript: String read FCustomBotScript write FCustomBotScript;
     property EmbeddedServerPort: Word read FEmbeddedServerPort write FEmbeddedServerPort default 8666;  
     property EmbeddedServerEnable: Boolean read FEmbeddedServerEnable write FEmbeddedServerEnable default False;
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;

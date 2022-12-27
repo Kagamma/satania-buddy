@@ -49,6 +49,7 @@ type
     ComboBoxSTTBackend: TComboBox;
     ComboBoxImageQuality: TComboBox;
     EditBotServer: TEdit;
+    EditCustomBotScript: TEdit;
     EditBotVolframAlphaAppID: TEdit;
     EditCharsetTo: TLabeledEdit;
     EditDefaultEvilScheme: TEdit;
@@ -71,10 +72,12 @@ type
     EditBaseScaling: TFloatSpinEdit;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
+    GroupBox3: TGroupBox;
     GroupBoxEmailIMAP: TGroupBox;
     GroupBoxEmailSMTP: TGroupBox;
     GroupBoxSTTVosk: TGroupBox;
     Label1: TLabel;
+    LabelCustomBotScript: TLabel;
     LabelEmbeddedServiceNotice: TLabel;
     LabelChatbotServer: TLabel;
     LabelChatbotServer1: TLabel;
@@ -112,10 +115,12 @@ type
     ListBoxSettings: TListBox;
     ListBoxCharset: TListBox;
     MenuItemDeleteCharset: TMenuItem;
+    OpenDialogEvilScript: TOpenDialog;
     PageControl: TPageControl;
     PanelButtons: TPanel;
     PanelSettings: TPanel;
     PopupMenuCharset: TPopupMenu;
+    ButtonCustomBotScriptOpen: TSpeedButton;
     Splitter1: TSplitter;
     TabSheet1: TTabSheet;
     TabSheetEmbeddedServer: TTabSheet;
@@ -126,6 +131,7 @@ type
     TabSheetBot: TTabSheet;
     procedure ButtonCancelClick(Sender: TObject);
     procedure ButtonCharsetAddClick(Sender: TObject);
+    procedure ButtonCustomBotScriptOpenClick(Sender: TObject);
     procedure ButtonOkClick(Sender: TObject);
     procedure ComboBoxSTTBackendChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -174,6 +180,7 @@ begin
 
   CheckBoxLewd.Checked := Save.Settings.Lewd;
   CheckBoxDeveloperMode.Checked := Save.Settings.DeveloperMode;
+  EditCustomBotScript.Text := Save.Settings.CustomBotScript;
   EditBotServer.Text := Save.Settings.BotServer;
   EditBotVolframAlphaAppID.Text := Save.Settings.BotVolframAlphaAppID;
   EditFPS.Value := Save.Settings.FPS;
@@ -305,6 +312,7 @@ begin
   try
     Save.Settings.Lewd := CheckBoxLewd.Checked;
     Save.Settings.DeveloperMode := CheckBoxDeveloperMode.Checked;
+    Save.Settings.CustomBotScript := EditCustomBotScript.Text;
     Save.Settings.BotServer := EditBotServer.Text;
     Save.Settings.BotVolframAlphaAppID := EditBotVolframAlphaAppID.Text;
     Save.Settings.FPS := EditFPS.Value;
@@ -357,7 +365,7 @@ begin
     ApplicationProperties.LimitFPS := Save.Settings.FPS;
     Satania.ChatText.TypingSpeed := Save.Settings.TextSpeed;
     Satania.SetImageQuality(Save.Settings.ImageQuality);
-    Satania.UpdateMeta;
+    Satania.UpdateMeta(Satania.Script);
     Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
     Satania.FontSystem.URL := PATH_FONT + Save.Settings.Font;
     Satania.FontSystem.OptimalSize := Save.Settings.FontSize;
@@ -412,6 +420,14 @@ begin
   except
     on E: Exception do
       Satania.Talk(E.Message);
+  end;
+end;
+
+procedure TFormSettings.ButtonCustomBotScriptOpenClick(Sender: TObject);
+begin
+  if OpenDialogEvilScript.Execute then
+  begin
+    Self.EditCustomBotScript.Text := OpenDialogEvilScript.FileName;
   end;
 end;
 
