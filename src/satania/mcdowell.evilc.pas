@@ -129,6 +129,7 @@ type
           VarNull: Pointer;
         );
   end;
+  {$mode objfpc}
   TSEValueList = specialize TList<TSEValue>;
   TSEValueMap = class(specialize TDictionary<String, TSEValue>)
   private
@@ -143,7 +144,6 @@ type
     property List: TSEValueList read FList;
     property IsValidArray: Boolean read FIsValidArray;
   end;
-  {$mode objfpc}
   TSEValueArray = array of TSEValue;
   PPSEValue = ^PSEValue;
 

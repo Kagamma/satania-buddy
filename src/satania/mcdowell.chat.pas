@@ -53,7 +53,7 @@ type
 implementation
 
 uses
-  mcdowell, globals, mcdowell.chatbot;
+  mcdowell, globals, mcdowell.chatbot, Mcdowell.EvilC;
 
 procedure TSataniaChatThread.SendToHer;
 begin
@@ -72,11 +72,15 @@ procedure TSataniaChatThread.ExecuteCustomEvilWorkerScript;
 var
   SL: TStringList;
   S: String;
+  V: TSEValue;
 begin
   SL := TStringList.Create;
   try
     SL.LoadFromFile(Save.Settings.CustomBotScript);
-    Satania.Worker('___worker', 'chat_message = "' + StringReplace(Self.ChatSend, '"', '\"', [rfReplaceAll]) + '" ' + SL.Text, 0);
+    GC.AllocMap(@V);
+    S := 'chat_message';
+    SEMapSet(V, S, Self.ChatSend);
+    Satania.Worker('___worker', SL.Text, 0, V);
   finally
     SL.Free;
   end;

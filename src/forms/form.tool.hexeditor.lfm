@@ -1,18 +1,21 @@
 object FormHexEditor: TFormHexEditor
-  Left = 342
-  Height = 381
-  Top = 250
-  Width = 725
+  Left = 362
+  Height = 532
+  Top = 134
+  Width = 814
   Caption = 'Hex Editor'
-  ClientHeight = 381
-  ClientWidth = 725
+  ClientHeight = 532
+  ClientWidth = 814
   OnShow = FormShow
+  Position = poScreenCenter
+  LCLVersion = '2.3.0.0'
   object HexEditor: TKHexEditor
     Left = 0
-    Height = 355
+    Height = 506
     Top = 26
-    Width = 725
+    Width = 814
     Align = alClient
+    DigitGrouping = 1
     Font.Height = -15
     Font.Name = 'Courier New'
     Font.Pitch = fpFixed
@@ -23,7 +26,7 @@ object FormHexEditor: TFormHexEditor
     Left = 0
     Height = 26
     Top = 0
-    Width = 725
+    Width = 814
     Caption = 'ToolBar1'
     Images = FormEvilCEditor.ImageList
     TabOrder = 1

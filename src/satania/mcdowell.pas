@@ -106,7 +106,7 @@ type
     function Exec(S: String): String;
     procedure Chat(S: String);
     procedure Action(Typ, Message: String);
-    procedure Worker(const AKey, AScript: String; const ATime: Single);
+    procedure Worker(const AKey, AScript: String; const ATime: Single; const AArgs: TSEValue);
     procedure ActionFromFile(FileName: String; IsChecked: Boolean = True);
     procedure SetScale(Scale: Single);
     procedure ResetScript;
@@ -416,9 +416,9 @@ begin
   end;
 end;
 
-procedure TSatania.Worker(const AKey, AScript: String; const ATime: Single);
+procedure TSatania.Worker(const AKey, AScript: String; const ATime: Single; const AArgs: TSEValue);
 begin
-  Self.SEWorkerCreate(nil, [AKey, AScript, ATime]);
+  Self.SEWorkerCreate(nil, [AKey, AScript, ATime, AArgs]);
 end;
 
 procedure TSatania.ActionFromFile(FileName: String; IsChecked: Boolean = True);
