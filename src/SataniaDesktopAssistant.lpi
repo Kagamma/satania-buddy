@@ -354,6 +354,7 @@
         <Filename Value="forms/form.tool.hexeditor.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FormHexEditor"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>

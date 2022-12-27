@@ -5,7 +5,7 @@ unit form.tool.hexeditor;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, khexeditor;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, khexeditor;
 
 type
 
@@ -13,6 +13,9 @@ type
 
   TFormHexEditor = class(TForm)
     HexEditor: TKHexEditor;
+    ToolBar1: TToolBar;
+    ButtonSave: TToolButton;
+    ButtonSaveAs: TToolButton;
   private
 
   public

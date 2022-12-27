@@ -1,3 +1,4 @@
 {"version":1,"strings":[
-{"hash":236408706,"name":"tformhexeditor.caption","sourcebytes":[83,97,116,97,110,105,97,32,72,101,120,32,69,100,105,116,111,114],"value":"Satania Hex Editor"}
+{"hash":236408706,"name":"tformhexeditor.caption","sourcebytes":[83,97,116,97,110,105,97,32,72,101,120,32,69,100,105,116,111,114],"value":"Satania Hex Editor"},
+{"hash":106991073,"name":"tformhexeditor.toolbar1.caption","sourcebytes":[84,111,111,108,66,97,114,49],"value":"ToolBar1"}
 ]}
