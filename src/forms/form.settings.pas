@@ -162,6 +162,7 @@ var
   SL, SL2: TStringList;
 begin
   PageControl.TabIndex := 0;
+  PageControl.ShowTabs := False;
   ListboxSettings.ItemIndex := 0;
   ComboBoxSTTBackend.Items.Clear;
   ComboBoxSTTBackend.Items.Add('Vosk');
