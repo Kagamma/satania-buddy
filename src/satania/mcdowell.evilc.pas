@@ -527,6 +527,8 @@ type
     class function SERandom(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SERnd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SERound(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEFloor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SECeil(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -918,6 +920,16 @@ end;
 class function TBuiltInFunction.SERound(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Exit(Round(Args[0].VarNumber));
+end;
+
+class function TBuiltInFunction.SEFloor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Exit(Floor(Args[0].VarNumber));
+end;
+
+class function TBuiltInFunction.SECeil(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Exit(Ceil(Args[0].VarNumber));
 end;
 
 class function TBuiltInFunction.SEGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -3268,6 +3280,8 @@ begin
   Self.RegisterFunc('random', @TBuiltInFunction(nil).SERandom, 1);
   Self.RegisterFunc('rnd', @TBuiltInFunction(nil).SERnd, 0);
   Self.RegisterFunc('round', @TBuiltInFunction(nil).SERound, 1);
+  Self.RegisterFunc('floor', @TBuiltInFunction(nil).SEFloor, 1);
+  Self.RegisterFunc('ceil', @TBuiltInFunction(nil).SECeil, 1);
   Self.RegisterFunc('sin', @TBuiltInFunction(nil).SESin, 1);
   Self.RegisterFunc('cos', @TBuiltInFunction(nil).SECos, 1);
   Self.RegisterFunc('tan', @TBuiltInFunction(nil).SETan, 1);

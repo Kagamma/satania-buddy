@@ -61,12 +61,12 @@ Operator                         Precedence
 #+end_example
 
 #+begin_example
-Bitwise operator Description
-================ ===========
- &                and
- |                or
- ~                xor
- !                not
+Bitwise operator     Description
+==================== ===========
+ &                    and
+ |                    or
+ ~                    xor
+ !                    not
 #+end_example
 
 *Variable declarations / assignments*
@@ -291,6 +291,10 @@ List of supported data types:
 *sign(n: number): number*
 
 *round(n: number): number*
+
+*floor(n: number): number*
+
+*ceil(n: number): number*
 
 *sin(n: number): number*
 
