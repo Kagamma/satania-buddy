@@ -1,18 +1,19 @@
 object FormSettings: TFormSettings
   Left = 666
-  Height = 511
+  Height = 556
   Top = 86
   Width = 886
   BorderStyle = bsDialog
   Caption = 'Settings'
-  ClientHeight = 511
+  ClientHeight = 556
   ClientWidth = 886
   OnShow = FormShow
   Position = poScreenCenter
+  LCLVersion = '2.3.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
-    Top = 469
+    Top = 514
     Width = 886
     Align = alBottom
     ClientHeight = 42
@@ -47,25 +48,25 @@ object FormSettings: TFormSettings
   end
   object PanelSettings: TPanel
     Left = 0
-    Height = 469
+    Height = 514
     Top = 0
     Width = 886
     Align = alClient
-    ClientHeight = 469
+    ClientHeight = 514
     ClientWidth = 886
     TabOrder = 1
     object PageControl: TPageControl
       Left = 178
-      Height = 467
+      Height = 512
       Top = 1
       Width = 707
-      ActivePage = TabSheetBot
+      ActivePage = TabSheetEmbeddedServer
       Align = alClient
-      TabIndex = 2
+      TabIndex = 3
       TabOrder = 0
       object TabSheet1: TTabSheet
         Caption = 'General'
-        ClientHeight = 439
+        ClientHeight = 484
         ClientWidth = 699
         object LabelChatBubbleDelay: TLabel
           Left = 24
@@ -243,7 +244,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetGraphics: TTabSheet
         Caption = 'Graphics'
-        ClientHeight = 439
+        ClientHeight = 484
         ClientWidth = 699
         object EditFPS: TSpinEdit
           Left = 192
@@ -322,7 +323,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetBot: TTabSheet
         Caption = 'External Services'
-        ClientHeight = 439
+        ClientHeight = 484
         ClientWidth = 699
         object GroupBoxVolframAlpha: TGroupBox
           Left = 39
@@ -463,7 +464,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetEmbeddedServer: TTabSheet
         Caption = 'Embedded Server'
-        ClientHeight = 439
+        ClientHeight = 484
         ClientWidth = 699
         object EditEmbeddedServerPort: TSpinEdit
           Left = 192
@@ -489,7 +490,7 @@ object FormSettings: TFormSettings
           Caption = '*Restart satania-buddy is required for changes to take effect'
         end
         object LabelEmbeddedServerEnable: TLabel
-          Left = 25
+          Left = 23
           Height = 15
           Top = 16
           Width = 35
@@ -505,16 +506,16 @@ object FormSettings: TFormSettings
       end
       object TabSheetIMAP: TTabSheet
         Caption = 'Email'
-        ClientHeight = 439
+        ClientHeight = 484
         ClientWidth = 699
         object GroupBoxEmailIMAP: TGroupBox
           Left = 24
           Height = 224
           Top = 16
-          Width = 593
+          Width = 594
           Caption = 'IMAP'
           ClientHeight = 204
-          ClientWidth = 589
+          ClientWidth = 590
           TabOrder = 0
           object LabelEmailServer: TLabel
             Left = 24
@@ -606,13 +607,13 @@ object FormSettings: TFormSettings
           end
         end
         object GroupBoxEmailSMTP: TGroupBox
-          Left = 26
+          Left = 24
           Height = 198
           Top = 250
-          Width = 593
+          Width = 594
           Caption = 'SMTP'
           ClientHeight = 178
-          ClientWidth = 589
+          ClientWidth = 590
           TabOrder = 1
           object LabelEmailSmtpServer: TLabel
             Left = 24
@@ -692,7 +693,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetSpeechRecognition: TTabSheet
         Caption = 'Speech Recognition'
-        ClientHeight = 439
+        ClientHeight = 484
         ClientWidth = 699
         object LabelSTTBackend: TLabel
           Left = 24
@@ -740,7 +741,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetOptimization: TTabSheet
         Caption = 'Developer'
-        ClientHeight = 439
+        ClientHeight = 484
         ClientWidth = 699
         object LabelDeveloperMode: TLabel
           Left = 25
@@ -767,7 +768,7 @@ object FormSettings: TFormSettings
     end
     object ListBoxSettings: TListBox
       Left = 1
-      Height = 467
+      Height = 512
       Top = 1
       Width = 172
       Align = alLeft
@@ -786,7 +787,7 @@ object FormSettings: TFormSettings
     end
     object Splitter1: TSplitter
       Left = 173
-      Height = 467
+      Height = 512
       Top = 1
       Width = 5
     end
