@@ -9,7 +9,6 @@ object FormSettings: TFormSettings
   ClientWidth = 886
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.3.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -352,7 +351,7 @@ object FormSettings: TFormSettings
         object GroupBoxChatbotServer: TGroupBox
           Left = 39
           Height = 80
-          Top = 216
+          Top = 248
           Width = 576
           Caption = 'Server'
           ClientHeight = 60
@@ -375,11 +374,11 @@ object FormSettings: TFormSettings
         end
         object GroupBoxCustomBotScript: TGroupBox
           Left = 39
-          Height = 80
+          Height = 112
           Top = 128
           Width = 577
           Caption = 'Evil Scheme'
-          ClientHeight = 60
+          ClientHeight = 92
           ClientWidth = 573
           TabOrder = 2
           object LabelCustomBotScript: TLabel
@@ -405,6 +404,28 @@ object FormSettings: TFormSettings
             ImageIndex = 0
             OnClick = ButtonCustomBotScriptOpenClick
           end
+          object Label3: TLabel
+            Left = 23
+            Height = 15
+            Top = 49
+            Width = 24
+            Caption = 'Type'
+          end
+          object ComboBoxCustomBotScriptType: TComboBox
+            Left = 167
+            Height = 23
+            Top = 48
+            Width = 185
+            ItemHeight = 15
+            ItemIndex = 0
+            Items.Strings = (
+              'Worker Script'
+              'Main Script'
+            )
+            ReadOnly = True
+            TabOrder = 1
+            Text = 'Worker Script'
+          end
         end
         object RadioButtonCustomScript: TRadioButton
           Left = 15
@@ -417,7 +438,7 @@ object FormSettings: TFormSettings
         object RadioButtonChatbotServer: TRadioButton
           Left = 15
           Height = 17
-          Top = 232
+          Top = 264
           Width = 18
           OnChange = RadioButtonWolframAlphaChange
           TabOrder = 5

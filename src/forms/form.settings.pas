@@ -43,6 +43,7 @@ type
     CheckBoxLewd: TCheckBox;
     CheckBoxDeveloperMode: TCheckBox;
     CheckBoxEmbeddedServerEnable: TCheckBox;
+    ComboBoxCustomBotScriptType: TComboBox;
     ComboBoxFont: TComboBox;
     ComboBoxSTTVoskModel: TComboBox;
     ComboBoxSkin: TComboBox;
@@ -78,6 +79,7 @@ type
     GroupBoxSTTVosk: TGroupBox;
     Label1: TLabel;
     Label2: TLabel;
+    Label3: TLabel;
     LabelCustomBotScript: TLabel;
     LabelEmbeddedServiceNotice: TLabel;
     LabelChatbotServer: TLabel;
@@ -191,6 +193,7 @@ begin
 
   CheckBoxLewd.Checked := Save.Settings.Lewd;
   CheckBoxDeveloperMode.Checked := Save.Settings.DeveloperMode;
+  ComboBoxCustomBotScriptType.ItemIndex := Save.Settings.CustomBotScriptType;
   EditCustomBotScript.Text := Save.Settings.CustomBotScript;
   EditBotServer.Text := Save.Settings.BotServer;
   EditBotVolframAlphaAppID.Text := Save.Settings.BotVolframAlphaAppID;
@@ -336,7 +339,8 @@ begin
       Save.Settings.ExternalServiceSelect := 2;
 
     Save.Settings.Lewd := CheckBoxLewd.Checked;
-    Save.Settings.DeveloperMode := CheckBoxDeveloperMode.Checked;
+    Save.Settings.DeveloperMode := CheckBoxDeveloperMode.Checked; 
+    Save.Settings.CustomBotScriptType := ComboBoxCustomBotScriptType.ItemIndex;
     Save.Settings.CustomBotScript := EditCustomBotScript.Text;
     Save.Settings.BotServer := EditBotServer.Text;
     Save.Settings.BotVolframAlphaAppID := EditBotVolframAlphaAppID.Text;
@@ -355,7 +359,7 @@ begin
       Satania.BackgroundScriptClearAll;
     end;
     Save.Settings.Skin := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
-
+                                                                              Save.Settings.CustomBotScriptType := ComboBoxCustomBotScriptType.ItemIndex;
     Save.Settings.EmailServer := EditEmailServer.Text;
     Save.Settings.EmailPort := EditEmailPort.Value;
     Save.Settings.EmailUsername := EditEmailUsername.Text;

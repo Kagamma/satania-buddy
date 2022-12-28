@@ -28,6 +28,8 @@
 {"hash":23148,"name":"tformsettings.labelchatbotserver.caption","sourcebytes":[85,82,76],"value":"URL"},
 {"hash":97854933,"name":"tformsettings.groupboxcustombotscript.caption","sourcebytes":[69,118,105,108,32,83,99,104,101,109,101],"value":"Evil Scheme"},
 {"hash":354472,"name":"tformsettings.labelcustombotscript.caption","sourcebytes":[80,97,116,104],"value":"Path"},
+{"hash":376933,"name":"tformsettings.label3.caption","sourcebytes":[84,121,112,101],"value":"Type"},
+{"hash":200518756,"name":"tformsettings.comboboxcustombotscripttype.text","sourcebytes":[87,111,114,107,101,114,32,83,99,114,105,112,116],"value":"Worker Script"},
 {"hash":57538644,"name":"tformsettings.label2.caption","sourcebytes":[42,84,104,101,115,101,32,115,101,114,118,105,99,101,115,32,119,105,108,108,32,98,101,32,117,115,101,100,32,119,104,101,110,32,83,97,116,97,110,105,97,32,100,111,101,115,32,110,111,116,32,117,110,100,101,114,115,116,97,110,100,32,116,104,101,32,99,111,110,116,101,110,116,32,121,111,117,32,116,121,112,101,32,105,110,32,99,104,97,116],"value":"*These services will be used when Satania does not understand the content you type in chat"},
 {"hash":220625810,"name":"tformsettings.tabsheetembeddedserver.caption","sourcebytes":[69,109,98,101,100,100,101,100,32,83,101,114,118,101,114],"value":"Embedded Server"},
 {"hash":358036,"name":"tformsettings.labelembeddedserverport.caption","sourcebytes":[80,111,114,116],"value":"Port"},

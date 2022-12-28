@@ -77,10 +77,16 @@ begin
   SL := TStringList.Create;
   try
     SL.LoadFromFile(Save.Settings.CustomBotScript);
-    GC.AllocMap(@V);
-    S := 'chat_message';
-    SEMapSet(V, S, Self.ChatSend);
-    Satania.Worker('___worker', SL.Text, 0, V);
+    if Save.Settings.CustomBotScriptType = 0 then
+    begin
+      GC.AllocMap(@V);
+      S := 'chat_message';
+      SEMapSet(V, S, Self.ChatSend);
+      Satania.Worker('___worker', SL.Text, 0, V);
+    end else
+    begin
+      Satania.Action('script', 'chat_message = "' + StringReplace(Self.ChatSend, '"', '\"', [rfReplaceAll]) + '" ' + SL.Text);
+    end;
   finally
     SL.Free;
   end;
