@@ -131,7 +131,7 @@ begin
       except
         on E: Exception do
         begin
-          Satania.TalkReset(E.Message);
+          Satania.Log('System', E.Message);
           FreeAndNil(Stream);
         end;
       end;
