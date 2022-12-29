@@ -65,7 +65,6 @@ var
   MimeMess: TMimeMess;
   S: String;
   IsMixedHtml: Boolean = False;
-  IsMixedPlain: Boolean = False;
 begin
   FIsRunning := True;
   if Imap = nil then
@@ -97,16 +96,13 @@ begin
               begin
                 MimePart := MimeMess.MessagePart.GetSubPart(Count);
                 MimePart.DecodePart;
-                if MimePart.Secondary = 'PLAIN' then
-                  IsMixedHtml := True
-                else
                 if MimePart.Secondary = 'HTML' then
-                  IsMixedPlain := True;
+                  IsMixedHtml := True;
               end;
               for Count := 0 to SubPartCount - 1 do
               begin
                 MimePart := MimeMess.MessagePart.GetSubPart(Count);
-                if (IsMixedPlain and IsMixedHtml and (MimePart.Secondary = 'HTML')) or (not IsMixedHtml) or (not IsMixedPlain) then
+                if (IsMixedHtml and (MimePart.Secondary = 'HTML')) or (not IsMixedHtml) then
                 begin
                   Setlength(S, MimePart.DecodedLines.Size);
                   MimePart.DecodedLines.Read(S[1], Length(S));
