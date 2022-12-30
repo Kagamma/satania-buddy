@@ -59,16 +59,19 @@ uses
 
 procedure TSataniaIMAP.GetMessagesParallel;
 var
-  I, J, Count, SubPartCount: Integer;
+  I, J, Count, SubPartCount, Ind: Integer;
   Mail: TMailRec;
   MimePart: TMimePart;
   MimeMess: TMimeMess;
+  MailUniqueList: TStringList;
   S: String;
   IsMixedHtml: Boolean = False;
 begin
   FIsRunning := True;
   if Imap = nil then
     Connect;
+  MailUniqueList := TStringList.Create;
+  MailUniqueList.Sorted := True;
   if FIsSuccess then
   begin
     FolderList.Clear;
@@ -86,6 +89,10 @@ begin
           Imap.FetchMess(J, MimeMess.Lines);
           try
             MimeMess.DecodeMessage;
+            // Do not process duplicate emails
+            if MailUniqueList.Find(MimeMess.Header.MessageID, Ind) then
+              continue; 
+            MailUniqueList.Add(MimeMess.Header.MessageID);
             Mail.Sender := MimeMess.Header.From;
             Mail.Subject := MimeMess.Header.Subject;
             Mail.Body := '';
@@ -120,6 +127,7 @@ begin
       end;
     end;
   end;
+  MailUniqueList.Free;
   FIsRunning := False;
 end;
 
