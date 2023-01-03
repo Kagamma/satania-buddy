@@ -43,6 +43,7 @@ type
       var Handled: Boolean);
     procedure AskTextImageRequest(Sender: TObject; const SRC: ThtString;
       var Stream: TStream);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -142,6 +143,16 @@ begin
   begin
     if FileExists(SRC) then
       Stream := TFileStream.Create(SRC, fmOpenRead);
+  end;
+end;
+
+procedure TFormAsk.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  if not IsAnswerText then
+  begin
+    Satania.ChatText.Text.Text := '';
+    IsAnswerText := True;
+    AnswerText := '_close';
   end;
 end;
 

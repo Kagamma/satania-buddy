@@ -8,9 +8,11 @@ object FormAsk: TFormAsk
   ClientHeight = 148
   ClientWidth = 314
   FormStyle = fsSystemStayOnTop
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnShow = FormShow
   ShowInTaskBar = stNever
+  LCLVersion = '2.3.0.0'
   object Panel: TPanel
     Left = 0
     Height = 148
@@ -21,6 +23,7 @@ object FormAsk: TFormAsk
     ClientHeight = 148
     ClientWidth = 314
     Color = clInfoBk
+    ParentBackground = False
     ParentColor = False
     TabOrder = 0
     OnPaint = PanelPaint
@@ -35,6 +38,7 @@ object FormAsk: TFormAsk
       Caption = 'Loading'
       ClientHeight = 146
       ClientWidth = 312
+      ParentBackground = False
       TabOrder = 0
       object AskText: THtmlViewer
         Left = 0
