@@ -32,6 +32,7 @@ type
   TSataniaChatThread = class(TThread)
   protected
     procedure SendToHer;
+    procedure SpeakDontUnderstand;
     procedure ExecuteCustomEvilWorkerScript;
   public
     ChatSend,
@@ -68,28 +69,38 @@ begin
   end;
 end;
 
+procedure TSataniaChatThread.SpeakDontUnderstand;
+begin
+  ChatResponse := 'Sorry I don''t understand.';
+  ChatType := 'chat';
+end;
+
 procedure TSataniaChatThread.ExecuteCustomEvilWorkerScript;
 var
   SL: TStringList;
   S: String;
   V: TSEValue;
 begin
-  SL := TStringList.Create;
-  try
-    SL.LoadFromFile(Save.Settings.CustomBotScript);
-    if Save.Settings.CustomBotScriptType = 0 then
-    begin
-      GC.AllocMap(@V);
-      S := 'chat_message';
-      SEMapSet(V, S, Self.ChatSend);
-      Satania.Worker('___worker', SL.Text, 0, V);
-    end else
-    begin
-      Satania.Action('script', 'chat_message = "' + StringReplace(Self.ChatSend, '"', '\"', [rfReplaceAll]) + '" ' + SL.Text);
+  if Save.Settings.CustomBotScript <> '' then
+  begin
+    SL := TStringList.Create;
+    try
+      SL.LoadFromFile(Save.Settings.CustomBotScript);
+      if Save.Settings.CustomBotScriptType = 0 then
+      begin
+        GC.AllocMap(@V);
+        S := 'chat_message';
+        SEMapSet(V, S, Self.ChatSend);
+        Satania.Worker('___worker', SL.Text, 0, V);
+      end else
+      begin
+        Satania.Action('script', 'chat_message = "' + StringReplace(Self.ChatSend, '"', '\"', [rfReplaceAll]) + '" ' + SL.Text);
+      end;
+    finally
+      SL.Free;
     end;
-  finally
-    SL.Free;
-  end;
+  end else
+    SpeakDontUnderstand;
 end;
 
 procedure TSataniaChatThread.Execute;
@@ -111,13 +122,14 @@ var
         on E: Exception do
         begin
           if E.Message.IndexOf('status code: 501') >= 0 then
-            ChatResponse := 'Sorry I don''t understand.'
+            SpeakDontUnderstand
           else
             ChatResponse := E.Message;
           ChatType := 'chat';
         end;
       end;
-    end;
+    end else
+      SpeakDontUnderstand;
   end;
 
   procedure PerformCustomServerRequest;
@@ -148,7 +160,8 @@ var
       finally
         FreeAndNil(Client);
       end;
-    end;
+    end else
+      SpeakDontUnderstand;
   end;
 
   procedure PerformCustomScriptRequest;
