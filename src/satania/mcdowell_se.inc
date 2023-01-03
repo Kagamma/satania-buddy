@@ -205,6 +205,7 @@ begin
     for I := 0 to FormAsk.Answer.Count - 1 do
       SEMapSet(Result, FormAsk.Answer.Names[I], FormAsk.Answer.ValueFromIndex[I]);
   end;
+  FormAsk.IsAnswerText := False;
 end;
 
 function TSatania.SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
