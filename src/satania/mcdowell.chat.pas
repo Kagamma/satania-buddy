@@ -117,7 +117,6 @@ var
         JsonString := TFPHTTPClient.SimpleGet('https://api.wolframalpha.com/v1/result?appid=' + Save.Settings.BotVolframAlphaAppID + '&i=' + EncodeURLElement(S));
         ChatType := 'chat';
         ChatResponse := JsonString;
-        FreeAndNil(JsonObject);
       except
         on E: Exception do
         begin
