@@ -3,7 +3,7 @@ object FormAsk: TFormAsk
   Height = 148
   Top = 250
   Width = 314
-  BorderIcons = [biMaximize]
+  BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Ask'
   ClientHeight = 148
   ClientWidth = 314
@@ -12,7 +12,6 @@ object FormAsk: TFormAsk
   OnCreate = FormCreate
   OnShow = FormShow
   ShowInTaskBar = stNever
-  LCLVersion = '2.3.0.0'
   object Panel: TPanel
     Left = 0
     Height = 148
