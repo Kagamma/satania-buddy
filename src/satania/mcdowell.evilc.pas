@@ -561,6 +561,7 @@ type
     class function SEStringUpperCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringLowerCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFindRegex(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringTrim(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseOutQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1263,6 +1264,11 @@ begin
       Inc(C);
     end;
   until not R.ExecNext;
+end;
+
+class function TBuiltInFunction.SEStringTrim(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := Trim(Args[0]);
 end;
 
 class function TBuiltInFunction.SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -3255,6 +3261,7 @@ begin
   Self.RegisterFunc('string_lowercase', @TBuiltInFunction(nil).SEStringLowerCase, 1);
   Self.RegisterFunc('string_find_regex', @TBuiltInFunction(nil).SEStringFindRegex, 2);
   Self.RegisterFunc('string_concat', @TBuiltInFunction(nil).SEStringConcat, 3);
+  Self.RegisterFunc('string_trim', @TBuiltInFunction(nil).SEStringTrim, 1);
   Self.RegisterFunc('lerp', @TBuiltInFunction(nil).SELerp, 3);
   Self.RegisterFunc('slerp', @TBuiltInFunction(nil).SESLerp, 3);
   Self.RegisterFunc('write', @TBuiltInFunction(nil).SEWrite, -1);
