@@ -79,8 +79,8 @@ end;
 
 class procedure TMessage.EpochMessageProc(const S: string);
 begin
-  if (NFit.CurrentEpoch <> 0) and (NFit.CurrentEpoch mod 100 = 0) then
-    Satania.Talk(IntToStr(NFit.CurrentEpoch) + ' epochs');
+ // if (NFit.CurrentEpoch <> 0) and (NFit.CurrentEpoch mod 100 = 0) then
+ //   Satania.Talk(IntToStr(NFit.CurrentEpoch) + ' epochs');
 end;
 
 procedure Prepare;

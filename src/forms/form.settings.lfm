@@ -9,7 +9,6 @@ object FormSettings: TFormSettings
   ClientWidth = 886
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.3.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -60,9 +59,9 @@ object FormSettings: TFormSettings
       Height = 512
       Top = 1
       Width = 707
-      ActivePage = TabSheetEmbeddedServer
+      ActivePage = TabSheetBot
       Align = alClient
-      TabIndex = 3
+      TabIndex = 2
       TabOrder = 0
       object TabSheet1: TTabSheet
         Caption = 'General'
@@ -335,7 +334,7 @@ object FormSettings: TFormSettings
           ClientWidth = 573
           TabOrder = 0
           object EditBotVolframAlphaAppID: TEdit
-            Left = 168
+            Left = 167
             Height = 23
             Top = 16
             Width = 377
@@ -352,7 +351,7 @@ object FormSettings: TFormSettings
         object GroupBoxChatbotServer: TGroupBox
           Left = 39
           Height = 80
-          Top = 248
+          Top = 392
           Width = 576
           Caption = 'Server'
           ClientHeight = 60
@@ -376,7 +375,7 @@ object FormSettings: TFormSettings
         object GroupBoxCustomBotScript: TGroupBox
           Left = 39
           Height = 112
-          Top = 128
+          Top = 272
           Width = 577
           Caption = 'Evil Scheme'
           ClientHeight = 92
@@ -431,7 +430,7 @@ object FormSettings: TFormSettings
         object RadioButtonCustomScript: TRadioButton
           Left = 15
           Height = 17
-          Top = 143
+          Top = 287
           Width = 18
           OnChange = RadioButtonWolframAlphaChange
           TabOrder = 4
@@ -439,7 +438,7 @@ object FormSettings: TFormSettings
         object RadioButtonChatbotServer: TRadioButton
           Left = 15
           Height = 17
-          Top = 264
+          Top = 408
           Width = 18
           OnChange = RadioButtonWolframAlphaChange
           TabOrder = 5
@@ -460,6 +459,70 @@ object FormSettings: TFormSettings
           Top = 16
           Width = 481
           Caption = '*These services will be used when Satania does not understand the content you type in chat'
+        end
+        object GroupBoxChatGPT: TGroupBox
+          Left = 39
+          Height = 136
+          Top = 128
+          Width = 576
+          Caption = 'ChatGPT'
+          ClientHeight = 116
+          ClientWidth = 572
+          TabOrder = 6
+          OnClick = GroupBoxChatGPTClick
+          object LabelChatGPTSecretKey: TLabel
+            Left = 23
+            Height = 15
+            Top = 16
+            Width = 54
+            Caption = 'Secret Key'
+          end
+          object EditChatGPTSecretKey: TEdit
+            Left = 167
+            Height = 23
+            Top = 16
+            Width = 378
+            TabOrder = 0
+          end
+          object LabelChatGPTModel: TLabel
+            Left = 23
+            Height = 15
+            Top = 48
+            Width = 34
+            Caption = 'Model'
+          end
+          object LabelChatGPTToken: TLabel
+            Left = 23
+            Height = 15
+            Top = 80
+            Width = 62
+            Caption = 'Max Tokens'
+          end
+          object EditChatGPTModel: TEdit
+            Left = 167
+            Height = 23
+            Top = 48
+            Width = 378
+            TabOrder = 1
+          end
+          object EditChatGPTToken: TSpinEdit
+            Left = 167
+            Height = 23
+            Top = 80
+            Width = 154
+            MaxValue = 100000
+            MinValue = 1
+            TabOrder = 2
+            Value = 50
+          end
+        end
+        object RadioButtonChatGPT: TRadioButton
+          Left = 15
+          Height = 17
+          Top = 144
+          Width = 18
+          OnChange = RadioButtonWolframAlphaChange
+          TabOrder = 7
         end
       end
       object TabSheetEmbeddedServer: TTabSheet
@@ -791,6 +854,13 @@ object FormSettings: TFormSettings
       Top = 1
       Width = 5
     end
+  end
+  object LabelChatbotServer4: TLabel
+    Left = 23
+    Height = 15
+    Top = 16
+    Width = 54
+    Caption = 'Secret Key'
   end
   object PopupMenuCharset: TPopupMenu
     Left = 568

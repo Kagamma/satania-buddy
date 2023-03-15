@@ -49,7 +49,9 @@ type
     ComboBoxSkin: TComboBox;
     ComboBoxSTTBackend: TComboBox;
     ComboBoxImageQuality: TComboBox;
+    EditChatGPTModel: TEdit;
     EditBotServer: TEdit;
+    EditChatGPTSecretKey: TEdit;
     EditCustomBotScript: TEdit;
     EditBotVolframAlphaAppID: TEdit;
     EditCharsetTo: TLabeledEdit;
@@ -71,6 +73,7 @@ type
     EditFontSize: TSpinEdit;
     EditTextSpeed: TSpinEdit;
     EditBaseScaling: TFloatSpinEdit;
+    GroupBoxChatGPT: TGroupBox;
     GroupBoxVolframAlpha: TGroupBox;
     GroupBoxChatbotServer: TGroupBox;
     GroupBoxCustomBotScript: TGroupBox;
@@ -80,6 +83,10 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    LabelChatGPTSecretKey: TLabel;
+    LabelChatGPTModel: TLabel;
+    LabelChatbotServer4: TLabel;
+    LabelChatGPTToken: TLabel;
     LabelCustomBotScript: TLabel;
     LabelEmbeddedServiceNotice: TLabel;
     LabelChatbotServer: TLabel;
@@ -123,9 +130,11 @@ type
     PanelSettings: TPanel;
     PopupMenuCharset: TPopupMenu;
     ButtonCustomBotScriptOpen: TSpeedButton;
+    RadioButtonChatGPT: TRadioButton;
     RadioButtonCustomScript: TRadioButton;
     RadioButtonChatbotServer: TRadioButton;
     RadioButtonWolframAlpha: TRadioButton;
+    EditChatGPTToken: TSpinEdit;
     Splitter1: TSplitter;
     TabSheet1: TTabSheet;
     TabSheetEmbeddedServer: TTabSheet;
@@ -140,6 +149,7 @@ type
     procedure ButtonOkClick(Sender: TObject);
     procedure ComboBoxSTTBackendChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure GroupBoxChatGPTClick(Sender: TObject);
     procedure ListBoxSettingsSelectionChange(Sender: TObject; User: boolean);
     procedure MenuItemDeleteCharsetClick(Sender: TObject);
     procedure RadioButtonWolframAlphaChange(Sender: TObject);
@@ -187,9 +197,11 @@ begin
   RadioButtonWolframAlpha.Checked := Save.Settings.ExternalServiceSelect = 0;
   RadioButtonChatbotServer.Checked := Save.Settings.ExternalServiceSelect = 1;
   RadioButtonCustomScript.Checked := Save.Settings.ExternalServiceSelect = 2;
+  RadioButtonChatGPT.Checked := Save.Settings.ExternalServiceSelect = 3;
   GroupBoxVolframAlpha.Enabled := RadioButtonWolframAlpha.Checked; 
   GroupBoxChatbotServer.Enabled := RadioButtonChatbotServer.Checked;
-  GroupBoxCustomBotScript.Enabled := RadioButtonCustomScript.Checked;
+  GroupBoxCustomBotScript.Enabled := RadioButtonCustomScript.Checked; 
+  GroupBoxChatGPT.Enabled := RadioButtonChatGPT.Checked;
 
   CheckBoxLewd.Checked := Save.Settings.Lewd;
   CheckBoxDeveloperMode.Checked := Save.Settings.DeveloperMode;
@@ -197,6 +209,11 @@ begin
   EditCustomBotScript.Text := Save.Settings.CustomBotScript;
   EditBotServer.Text := Save.Settings.BotServer;
   EditBotVolframAlphaAppID.Text := Save.Settings.BotVolframAlphaAppID;
+  EditChatGPTSecretKey.Text := Save.Settings.ChatGPTSecretKey;
+  EditChatGPTModel.Text := Save.Settings.ChatGPTModel;
+  EditChatGPTToken.Value := Save.Settings.ChatGPTToken;
+  EditChatGPTSecretKey.Text := Save.Settings.ChatGPTSecretKey;
+
   EditFPS.Value := Save.Settings.FPS;
   EditChatBubbleDelay.Value := Save.Settings.ChatBubbleDelay;
   EditSoWRightMargin.Value := Save.Settings.SitOnWindowRightMargin;
@@ -307,6 +324,11 @@ begin
     end;
 end;
 
+procedure TFormSettings.GroupBoxChatGPTClick(Sender: TObject);
+begin
+
+end;
+
 procedure TFormSettings.ListBoxSettingsSelectionChange(Sender: TObject;
   User: boolean);
 begin
@@ -323,7 +345,8 @@ procedure TFormSettings.RadioButtonWolframAlphaChange(Sender: TObject);
 begin
   GroupBoxVolframAlpha.Enabled := RadioButtonWolframAlpha.Checked;
   GroupBoxChatbotServer.Enabled := RadioButtonChatbotServer.Checked;
-  GroupBoxCustomBotScript.Enabled := RadioButtonCustomScript.Checked;
+  GroupBoxCustomBotScript.Enabled := RadioButtonCustomScript.Checked; 
+  GroupBoxChatGPT.Enabled := RadioButtonChatGPT.Checked;
 end;
 
 procedure TFormSettings.ButtonOkClick(Sender: TObject);
@@ -336,12 +359,18 @@ begin
     else if RadioButtonChatbotServer.Checked then
       Save.Settings.ExternalServiceSelect := 1
     else if RadioButtonCustomScript.Checked then
-      Save.Settings.ExternalServiceSelect := 2;
+      Save.Settings.ExternalServiceSelect := 2
+    else if RadioButtonChatGPT.Checked then
+      Save.Settings.ExternalServiceSelect := 3;
 
     Save.Settings.Lewd := CheckBoxLewd.Checked;
     Save.Settings.DeveloperMode := CheckBoxDeveloperMode.Checked; 
     Save.Settings.CustomBotScriptType := ComboBoxCustomBotScriptType.ItemIndex;
-    Save.Settings.CustomBotScript := EditCustomBotScript.Text;
+    Save.Settings.CustomBotScript := EditCustomBotScript.Text;   
+    Save.Settings.ChatGPTSecretKey := EditChatGPTSecretKey.Text;
+    Save.Settings.ChatGPTSecretKey := Save.Settings.ChatGPTSecretKey;
+    Save.Settings.ChatGPTModel := EditChatGPTModel.Text;
+    Save.Settings.ChatGPTToken := EditChatGPTToken.Value;
     Save.Settings.BotServer := EditBotServer.Text;
     Save.Settings.BotVolframAlphaAppID := EditBotVolframAlphaAppID.Text;
     Save.Settings.FPS := EditFPS.Value;
@@ -359,7 +388,7 @@ begin
       Satania.BackgroundScriptClearAll;
     end;
     Save.Settings.Skin := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
-                                                                              Save.Settings.CustomBotScriptType := ComboBoxCustomBotScriptType.ItemIndex;
+    Save.Settings.CustomBotScriptType := ComboBoxCustomBotScriptType.ItemIndex;
     Save.Settings.EmailServer := EditEmailServer.Text;
     Save.Settings.EmailPort := EditEmailPort.Value;
     Save.Settings.EmailUsername := EditEmailUsername.Text;

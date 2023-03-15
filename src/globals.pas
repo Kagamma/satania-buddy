@@ -145,6 +145,9 @@ type
     FCharset,
     FFont: String;
     FFontSize: Integer;
+    FChatGPTSecretKey: String;
+    FChatGPTToken: Cardinal;
+    FChatGPTModel: String;
     FCustomBotScript: String;
     FEmbeddedServerEnable: Boolean;
     FEmbeddedServerPort,
@@ -164,6 +167,9 @@ type
     property CustomBotScript: String read FCustomBotScript write FCustomBotScript;
     property EmbeddedServerPort: Word read FEmbeddedServerPort write FEmbeddedServerPort default 8666;  
     property EmbeddedServerEnable: Boolean read FEmbeddedServerEnable write FEmbeddedServerEnable default False;
+    property ChatGPTSecretKey: String read FChatGPTSecretKey write FChatGPTSecretKey;
+    property ChatGPTToken: Cardinal read FChatGPTToken write FChatGPTToken default 50;
+    property ChatGPTModel: String read FChatGPTModel write FChatGPTModel;
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;
     property TextSpeed: Integer read FTextSpeed write FTextSpeed;
     property SitOnWindowRightMargin: Integer read FSitOnWindowRightMargin write FSitOnWindowRightMargin;
@@ -303,6 +309,8 @@ begin
   FSettings.FBotVolframAlphaAppID := 'XPP79K-99H9A8AH32';
   FSettings.FEmbeddedServerPort := 8666;
   FSettings.FEmbeddedServerEnable := False;
+  FSettings.FChatGPTModel := 'text-davinci-003';    
+  FSettings.FChatGPTToken := 50;
 end;
 
 destructor TSave.Destroy;

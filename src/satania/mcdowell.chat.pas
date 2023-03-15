@@ -54,7 +54,16 @@ type
 implementation
 
 uses
-  mcdowell, globals, mcdowell.chatbot, Mcdowell.EvilC;
+  utils.Encdec,
+  mcdowell,
+  globals,
+  mcdowell.chatbot,
+  Mcdowell.EvilC,
+  OpenAIClient,
+  OpenAIDtos;
+
+var
+  ChatGPTClient: TOpenAIClient;
 
 procedure TSataniaChatThread.SendToHer;
 begin
@@ -168,6 +177,43 @@ var
     Self.Synchronize(@Self.ExecuteCustomEvilWorkerScript);
   end;
 
+  procedure PerformChatGPTRequest;
+  var
+    Key: String;
+    Request: TCreateCompletionRequest;
+    Response: TCreateCompletionResponse;
+  begin
+    Key := Save.Settings.ChatGPTSecretKey;
+    if Key='' then
+    begin
+      SpeakDontUnderstand;
+      Exit;
+    end;
+    if (ChatGPTClient=nil) or (ChatGPTClient.Config.AccessToken<>Key) then
+    begin
+      if ChatGPTClient<>nil then
+        ChatGPTClient.Free;
+      ChatGPTClient := TOpenAIClient.Create;
+      ChatGPTClient.Config.AccessToken := Key;
+    end;
+    Response := nil;
+    Request := TCreateCompletionRequest.Create;
+    try
+      Request.Prompt := S;
+      Request.Model := Save.Settings.ChatGPTModel;
+      Request.MaxTokens := Save.Settings.ChatGPTToken;
+      Response := ChatGPTClient.OpenAI.CreateCompletion(Request);
+      if Assigned(Response.Choices) and (Response.Choices.Count > 0) then
+        ChatResponse := Trim(Response.Choices[0].Text)
+      else
+        SpeakDontUnderstand;
+      ChatType := 'chat';
+    finally
+      Request.Free;
+      Response.Free;
+    end;
+  end;
+
 begin
   ChatResponse := '';
   S := ChatSend;
@@ -191,6 +237,7 @@ begin
           0: PerformVolframAlphaRequest;
           1: PerformCustomServerRequest;
           2: PerformCustomScriptRequest;
+          3: PerformChatGPTRequest;
         end;
       end else
         ChatType := 'script';
@@ -226,6 +273,10 @@ begin
   Synchronize(@SendToHer);
   Terminate;
 end;
+
+finalization
+  if ChatGPTClient<>nil then
+    ChatGPTClient.Free;
 
 end.
 
