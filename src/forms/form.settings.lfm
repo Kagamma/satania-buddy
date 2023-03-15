@@ -1,18 +1,18 @@
 object FormSettings: TFormSettings
   Left = 666
-  Height = 556
+  Height = 590
   Top = 86
   Width = 886
   BorderStyle = bsDialog
   Caption = 'Settings'
-  ClientHeight = 556
+  ClientHeight = 590
   ClientWidth = 886
   OnShow = FormShow
   Position = poScreenCenter
   object PanelButtons: TPanel
     Left = 0
     Height = 42
-    Top = 514
+    Top = 548
     Width = 886
     Align = alBottom
     ClientHeight = 42
@@ -47,16 +47,16 @@ object FormSettings: TFormSettings
   end
   object PanelSettings: TPanel
     Left = 0
-    Height = 514
+    Height = 548
     Top = 0
     Width = 886
     Align = alClient
-    ClientHeight = 514
+    ClientHeight = 548
     ClientWidth = 886
     TabOrder = 1
     object PageControl: TPageControl
       Left = 178
-      Height = 512
+      Height = 546
       Top = 1
       Width = 707
       ActivePage = TabSheetBot
@@ -65,7 +65,7 @@ object FormSettings: TFormSettings
       TabOrder = 0
       object TabSheet1: TTabSheet
         Caption = 'General'
-        ClientHeight = 484
+        ClientHeight = 518
         ClientWidth = 699
         object LabelChatBubbleDelay: TLabel
           Left = 24
@@ -243,7 +243,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetGraphics: TTabSheet
         Caption = 'Graphics'
-        ClientHeight = 484
+        ClientHeight = 518
         ClientWidth = 699
         object EditFPS: TSpinEdit
           Left = 192
@@ -322,7 +322,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetBot: TTabSheet
         Caption = 'External Services'
-        ClientHeight = 484
+        ClientHeight = 518
         ClientWidth = 699
         object GroupBoxVolframAlpha: TGroupBox
           Left = 39
@@ -349,9 +349,9 @@ object FormSettings: TFormSettings
           end
         end
         object GroupBoxChatbotServer: TGroupBox
-          Left = 39
+          Left = 40
           Height = 80
-          Top = 392
+          Top = 424
           Width = 576
           Caption = 'Server'
           ClientHeight = 60
@@ -373,9 +373,9 @@ object FormSettings: TFormSettings
           end
         end
         object GroupBoxCustomBotScript: TGroupBox
-          Left = 39
+          Left = 40
           Height = 112
-          Top = 272
+          Top = 304
           Width = 577
           Caption = 'Evil Scheme'
           ClientHeight = 92
@@ -428,17 +428,17 @@ object FormSettings: TFormSettings
           end
         end
         object RadioButtonCustomScript: TRadioButton
-          Left = 15
+          Left = 16
           Height = 17
-          Top = 287
+          Top = 319
           Width = 18
           OnChange = RadioButtonWolframAlphaChange
           TabOrder = 4
         end
         object RadioButtonChatbotServer: TRadioButton
-          Left = 15
+          Left = 16
           Height = 17
-          Top = 408
+          Top = 440
           Width = 18
           OnChange = RadioButtonWolframAlphaChange
           TabOrder = 5
@@ -462,11 +462,11 @@ object FormSettings: TFormSettings
         end
         object GroupBoxChatGPT: TGroupBox
           Left = 39
-          Height = 136
+          Height = 168
           Top = 128
           Width = 576
           Caption = 'ChatGPT'
-          ClientHeight = 116
+          ClientHeight = 148
           ClientWidth = 572
           TabOrder = 6
           OnClick = GroupBoxChatGPTClick
@@ -515,6 +515,20 @@ object FormSettings: TFormSettings
             TabOrder = 2
             Value = 50
           end
+          object LabelChatGPTDescription: TLabel
+            Left = 24
+            Height = 15
+            Top = 112
+            Width = 60
+            Caption = 'Description'
+          end
+          object EditChatGPTDescription: TEdit
+            Left = 167
+            Height = 23
+            Top = 112
+            Width = 378
+            TabOrder = 3
+          end
         end
         object RadioButtonChatGPT: TRadioButton
           Left = 15
@@ -527,7 +541,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetEmbeddedServer: TTabSheet
         Caption = 'Embedded Server'
-        ClientHeight = 484
+        ClientHeight = 518
         ClientWidth = 699
         object EditEmbeddedServerPort: TSpinEdit
           Left = 192
@@ -569,7 +583,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetIMAP: TTabSheet
         Caption = 'Email'
-        ClientHeight = 484
+        ClientHeight = 518
         ClientWidth = 699
         object GroupBoxEmailIMAP: TGroupBox
           Left = 24
@@ -756,7 +770,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetSpeechRecognition: TTabSheet
         Caption = 'Speech Recognition'
-        ClientHeight = 484
+        ClientHeight = 518
         ClientWidth = 699
         object LabelSTTBackend: TLabel
           Left = 24
@@ -804,7 +818,7 @@ object FormSettings: TFormSettings
       end
       object TabSheetOptimization: TTabSheet
         Caption = 'Developer'
-        ClientHeight = 484
+        ClientHeight = 518
         ClientWidth = 699
         object LabelDeveloperMode: TLabel
           Left = 25
@@ -831,7 +845,7 @@ object FormSettings: TFormSettings
     end
     object ListBoxSettings: TListBox
       Left = 1
-      Height = 512
+      Height = 546
       Top = 1
       Width = 172
       Align = alLeft
@@ -850,7 +864,7 @@ object FormSettings: TFormSettings
     end
     object Splitter1: TSplitter
       Left = 173
-      Height = 512
+      Height = 546
       Top = 1
       Width = 5
     end

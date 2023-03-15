@@ -51,6 +51,7 @@ type
     ComboBoxImageQuality: TComboBox;
     EditChatGPTModel: TEdit;
     EditBotServer: TEdit;
+    EditChatGPTDescription: TEdit;
     EditChatGPTSecretKey: TEdit;
     EditCustomBotScript: TEdit;
     EditBotVolframAlphaAppID: TEdit;
@@ -83,6 +84,7 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    LabelChatGPTDescription: TLabel;
     LabelChatGPTSecretKey: TLabel;
     LabelChatGPTModel: TLabel;
     LabelChatbotServer4: TLabel;
@@ -212,7 +214,8 @@ begin
   EditChatGPTSecretKey.Text := Save.Settings.ChatGPTSecretKey;
   EditChatGPTModel.Text := Save.Settings.ChatGPTModel;
   EditChatGPTToken.Value := Save.Settings.ChatGPTToken;
-  EditChatGPTSecretKey.Text := Save.Settings.ChatGPTSecretKey;
+  EditChatGPTSecretKey.Text := Save.Settings.ChatGPTSecretKey;  
+  EditChatGPTDescription.Text := Save.Settings.ChatGPTDescription;
 
   EditFPS.Value := Save.Settings.FPS;
   EditChatBubbleDelay.Value := Save.Settings.ChatBubbleDelay;
@@ -371,6 +374,7 @@ begin
     Save.Settings.ChatGPTSecretKey := Save.Settings.ChatGPTSecretKey;
     Save.Settings.ChatGPTModel := EditChatGPTModel.Text;
     Save.Settings.ChatGPTToken := EditChatGPTToken.Value;
+    Save.Settings.ChatGPTDescription := EditChatGPTDescription.Text;
     Save.Settings.BotServer := EditBotServer.Text;
     Save.Settings.BotVolframAlphaAppID := EditBotVolframAlphaAppID.Text;
     Save.Settings.FPS := EditFPS.Value;

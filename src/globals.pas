@@ -149,6 +149,7 @@ type
     FChatGPTToken: Cardinal;
     FChatGPTModel: String;
     FCustomBotScript: String;
+    FChatGPTDescription: String;
     FEmbeddedServerEnable: Boolean;
     FEmbeddedServerPort,
     FEmailSmtpPort,
@@ -169,7 +170,8 @@ type
     property EmbeddedServerEnable: Boolean read FEmbeddedServerEnable write FEmbeddedServerEnable default False;
     property ChatGPTSecretKey: String read FChatGPTSecretKey write FChatGPTSecretKey;
     property ChatGPTToken: Cardinal read FChatGPTToken write FChatGPTToken default 50;
-    property ChatGPTModel: String read FChatGPTModel write FChatGPTModel;
+    property ChatGPTModel: String read FChatGPTModel write FChatGPTModel; 
+    property ChatGPTDescription: String read FChatGPTDescription write FChatGPTDescription;
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;
     property TextSpeed: Integer read FTextSpeed write FTextSpeed;
     property SitOnWindowRightMargin: Integer read FSitOnWindowRightMargin write FSitOnWindowRightMargin;
@@ -310,7 +312,8 @@ begin
   FSettings.FEmbeddedServerPort := 8666;
   FSettings.FEmbeddedServerEnable := False;
   FSettings.FChatGPTModel := 'text-davinci-003';    
-  FSettings.FChatGPTToken := 50;
+  FSettings.FChatGPTToken := 1024;
+  FSettings.FChatGPTDescription := 'Your name is Satania.';
 end;
 
 destructor TSave.Destroy;
