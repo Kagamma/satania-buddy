@@ -97,7 +97,7 @@ var
   S: String;
 begin
   Self.CalcHeights;
-  if (Key = 13) and not (Shift = [ssShift]) then
+  if (Key = 13) and not (Shift = [ssShift]) and (FormChat.EditChat.Lines.Text<>'') then
   begin
     S := Trim(FormChat.EditChat.Lines.Text);
     Satania.Log('(You)', S);
