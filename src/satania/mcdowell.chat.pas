@@ -199,7 +199,7 @@ var
     Response := nil;
     Request := TCreateCompletionRequest.Create;
     try
-      Request.Prompt := S;
+      Request.Prompt := Trim(Save.Settings.ChatGPTDescription + ' ') + S;
       Request.Model := Save.Settings.ChatGPTModel;
       Request.MaxTokens := Save.Settings.ChatGPTToken;
       Response := ChatGPTClient.OpenAI.CreateCompletion(Request);
