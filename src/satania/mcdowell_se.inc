@@ -909,7 +909,7 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
     JSONStr := JSONStr + '[';
     for I := 0 to TSEValueMap(Map.VarMap).List.Count - 1 do
     begin
-      if I > 0 then
+      if (I > 0) then
         JSONStr := JSONStr + ',';
       V := SEMapGet(Map, I);
       case V.Kind of
@@ -920,9 +920,6 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
         sevkMap:
           begin
             Decide(JSONStr, V);
-            if (SEMapIsValidArray(Map) and (I < TSEValueMap(Map.VarMap).List.Count - 1)) or
-              ((not SEMapIsValidArray(Map)) and (I < TSEValueMap(Map.VarMap).Count - 1))then
-              JSONStr := JSONStr + ',';
           end;
         sevkNull:
           JSONStr := JSONStr + 'null';
@@ -940,7 +937,7 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
     JSONStr := JSONStr + '{';
     for Key in TSEValueMap(Map.VarMap).Keys do
     begin
-      if I > 0 then
+      if (I > 0) then
         JSONStr := JSONStr + ',';
       JSONStr := JSONStr + '"' + StringReplace(Key, '"', '\"', [rfReplaceAll]) + '":';
       V := SEMapGet(Map, Key);
@@ -952,9 +949,6 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
         sevkMap:
           begin
             Decide(JSONStr, V);
-            if (SEMapIsValidArray(Map) and (I < TSEValueMap(Map.VarMap).List.Count - 1)) or
-              ((not SEMapIsValidArray(Map)) and (I < TSEValueMap(Map.VarMap).Count - 1))then
-              JSONStr := JSONStr + ',';
           end;
         sevkNull:
           JSONStr := JSONStr + 'null';
