@@ -391,6 +391,8 @@ List of supported data types:
 - Returns uppercase string.
 *string_lowercase(s: string): string*
 - Returns lowercase string.
+*string_trim(s: string): string*
+- Trim string.
 *string_format(s: string; subs: map): string*
 - Replace a string with contents from map
   + Example: ~string_format('{0} is {1} gold', ['Key', 500])~ => Key is 500 gold
