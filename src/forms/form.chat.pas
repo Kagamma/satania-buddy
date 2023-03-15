@@ -93,14 +93,16 @@ end;
 
 procedure TFormChat.EditChatKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+var
+  S: String;
 begin
   Self.CalcHeights;
   if (Key = 13) and not (Shift = [ssShift]) then
   begin
-    FormChat.EditChat.Lines.Text := Trim(FormChat.EditChat.Lines.Text);
-    Satania.Log('(You)', FormChat.EditChat.Lines.Text);
-    Satania.Chat(EditChat.Lines.Text);
-    EditChat.Lines.Text := '';
+    S := Trim(FormChat.EditChat.Lines.Text);
+    Satania.Log('(You)', S);
+    Satania.Chat(S);
+    EditChat.Lines.Clear;
   end;
   if Key = 27 then
   begin
@@ -112,6 +114,8 @@ procedure TFormChat.EditChatKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   Self.CalcHeights;
+  if Trim(FormChat.EditChat.Lines.Text) = '' then
+    FormChat.EditChat.Clear;
 end;
 
 procedure TFormChat.BttonClearClick(Sender: TObject);
