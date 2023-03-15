@@ -112,7 +112,10 @@ begin
           Response.Free;
         end;
       end else
-        Data := HTTP.FormPost(URL, FormData.Text);
+      begin
+        HTTP.RequestBody := TRawByteStringStream.Create(FormData.Text);
+        Data := HTTP.Post(URL);
+      end;
       Synchronize(@SendToHer);
     except
       on E: Exception do
@@ -136,6 +139,8 @@ end;
 destructor TSataniaHttpPostThread.Destroy;
 begin
   Self.FormData.Free;
+  if HTTP.RequestBody <> nil then
+    HTTP.RequestBody.Free;
   Self.HTTP.Free;
   inherited;
 end;
