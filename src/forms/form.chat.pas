@@ -35,21 +35,24 @@ type
 
   TFormChat = class(TForm)
     BttonClear: TBitBtn;
-    EditChat: TEdit;
+    EditChat: TMemo;
     MemoChatLog: TKMemo;
     Panel1: TPanel;
     Panel2: TPanel;
-    Panel3: TPanel;
+    PanelEdit: TPanel;
     PanelChatlog: TPanel;
     ButtonHistory: TSpeedButton;
     procedure BttonClearClick(Sender: TObject);
     procedure ButtonHistoryClick(Sender: TObject);
-    procedure EditChatKeyPress(Sender: TObject; var Key: char);
+    procedure EditChatKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
+      );
+    procedure EditChatKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
   private
     IsShowHistory: Boolean;
   public
     procedure InsertLog(const LogName, Msg: String);
+    procedure CalcHeights;
   end;
 
 var
@@ -60,42 +63,55 @@ implementation
 {$R *.lfm}
 
 uses
+  Math,
   Globals,
   Mcdowell;
 
 { TFormChat }
 
-procedure TFormChat.EditChatKeyPress(Sender: TObject; var Key: char);
+procedure TFormChat.CalcHeights;
 begin
-  if Key = #13 then
-  begin
-    Satania.Log('(You)', FormChat.EditChat.Text);
-    Satania.Chat(EditChat.Text);
-    EditChat.Text := '';
-  end;
-  if Key = #27 then
-  begin
-    Hide;
-  end;
+  EditChat.Height := 46;
+  PanelEdit.Height := 71;
+  if IsShowHistory then
+    Height := 500
+  else
+    Height := 71;
 end;
 
 procedure TFormChat.FormCreate(Sender: TObject);
 begin
-  Height := 45;
-  PanelChatlog.Visible := IsShowHistory;
+  Self.CalcHeights;
 end;
 
 procedure TFormChat.ButtonHistoryClick(Sender: TObject);
 begin
   IsShowHistory := not IsShowHistory;
   PanelChatlog.Visible := IsShowHistory;
-  if IsShowHistory then
+  Self.CalcHeights;
+end;
+
+procedure TFormChat.EditChatKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  Self.CalcHeights;
+  if (Key = 13) and not (Shift = [ssShift]) then
   begin
-    Height := 320;
-  end else
-  begin
-    Height := 45;
+    FormChat.EditChat.Lines.Text := Trim(FormChat.EditChat.Lines.Text);
+    Satania.Log('(You)', FormChat.EditChat.Lines.Text);
+    Satania.Chat(EditChat.Lines.Text);
+    EditChat.Lines.Text := '';
   end;
+  if Key = 27 then
+  begin
+    Hide;
+  end;
+end;
+
+procedure TFormChat.EditChatKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  Self.CalcHeights;
 end;
 
 procedure TFormChat.BttonClearClick(Sender: TObject);

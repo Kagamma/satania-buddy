@@ -10,28 +10,27 @@ object FormChat: TFormChat
   FormStyle = fsStayOnTop
   OnCreate = FormCreate
   Position = poScreenCenter
-  LCLVersion = '2.3.0.0'
   object PanelChatlog: TPanel
     Left = 0
-    Height = 315
-    Top = 48
+    Height = 292
+    Top = 71
     Width = 679
     Align = alClient
-    ClientHeight = 315
+    ClientHeight = 292
     ClientWidth = 679
     TabOrder = 0
     object Panel1: TPanel
       Left = 1
-      Height = 266
+      Height = 243
       Top = 1
       Width = 677
       Align = alClient
-      ClientHeight = 266
+      ClientHeight = 243
       ClientWidth = 677
       TabOrder = 0
       object MemoChatLog: TKMemo
         Left = 1
-        Height = 264
+        Height = 241
         Top = 1
         Width = 675
         Align = alClient
@@ -48,7 +47,7 @@ object FormChat: TFormChat
     object Panel2: TPanel
       Left = 1
       Height = 47
-      Top = 267
+      Top = 244
       Width = 677
       Align = alBottom
       ClientHeight = 47
@@ -69,25 +68,16 @@ object FormChat: TFormChat
       end
     end
   end
-  object Panel3: TPanel
+  object PanelEdit: TPanel
     Left = 0
-    Height = 48
+    Height = 71
     Top = 0
     Width = 679
     Align = alTop
-    Caption = 'Panel3'
-    ClientHeight = 48
+    Caption = 'PanelEdit'
+    ClientHeight = 71
     ClientWidth = 679
     TabOrder = 1
-    object EditChat: TEdit
-      Left = 8
-      Height = 23
-      Top = 8
-      Width = 624
-      OnKeyPress = EditChatKeyPress
-      TabOrder = 0
-      TextHint = 'Say something!'
-    end
     object ButtonHistory: TSpeedButton
       Left = 640
       Height = 23
@@ -96,6 +86,16 @@ object FormChat: TFormChat
       Images = FormEvilCEditor.ImageList
       ImageIndex = 14
       OnClick = ButtonHistoryClick
+    end
+    object EditChat: TMemo
+      Left = 8
+      Height = 23
+      Hint = 'Say something!'
+      Top = 8
+      Width = 624
+      OnKeyDown = EditChatKeyDown
+      OnKeyUp = EditChatKeyUp
+      TabOrder = 0
     end
   end
 end
