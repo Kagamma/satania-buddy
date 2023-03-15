@@ -1,38 +1,39 @@
 object FormChat: TFormChat
-  Left = 364
-  Height = 363
-  Top = 31
-  Width = 679
-  BorderStyle = bsDialog
+  Left = 635
+  Height = 275
+  Top = 318
+  Width = 580
   Caption = 'Chat'
-  ClientHeight = 363
-  ClientWidth = 679
+  ClientHeight = 275
+  ClientWidth = 580
   FormStyle = fsStayOnTop
   OnCreate = FormCreate
+  OnShow = FormShow
   Position = poScreenCenter
+  LCLVersion = '2.3.0.0'
   object PanelChatlog: TPanel
     Left = 0
-    Height = 292
-    Top = 71
-    Width = 679
+    Height = 199
+    Top = 76
+    Width = 580
     Align = alClient
-    ClientHeight = 292
-    ClientWidth = 679
+    ClientHeight = 199
+    ClientWidth = 580
     TabOrder = 0
     object Panel1: TPanel
       Left = 1
-      Height = 243
+      Height = 150
       Top = 1
-      Width = 677
+      Width = 578
       Align = alClient
-      ClientHeight = 243
-      ClientWidth = 677
+      ClientHeight = 150
+      ClientWidth = 578
       TabOrder = 0
       object MemoChatLog: TKMemo
         Left = 1
-        Height = 241
+        Height = 148
         Top = 1
-        Width = 675
+        Width = 576
         Align = alClient
         ContentPadding.Left = 5
         ContentPadding.Top = 5
@@ -47,14 +48,14 @@ object FormChat: TFormChat
     object Panel2: TPanel
       Left = 1
       Height = 47
-      Top = 244
-      Width = 677
+      Top = 151
+      Width = 578
       Align = alBottom
       ClientHeight = 47
-      ClientWidth = 677
+      ClientWidth = 578
       TabOrder = 1
       object BttonClear: TBitBtn
-        Left = 553
+        Left = 454
         Height = 29
         Top = 9
         Width = 115
@@ -72,30 +73,31 @@ object FormChat: TFormChat
     Left = 0
     Height = 71
     Top = 0
-    Width = 679
+    Width = 580
     Align = alTop
-    Caption = 'PanelEdit'
     ClientHeight = 71
-    ClientWidth = 679
+    ClientWidth = 580
     TabOrder = 1
-    object ButtonHistory: TSpeedButton
-      Left = 640
-      Height = 23
-      Top = 8
-      Width = 24
-      Images = FormEvilCEditor.ImageList
-      ImageIndex = 14
-      OnClick = ButtonHistoryClick
-    end
     object EditChat: TMemo
-      Left = 8
-      Height = 23
+      Left = 7
+      Height = 57
       Hint = 'Say something!'
-      Top = 8
-      Width = 624
+      Top = 7
+      Width = 566
+      Align = alClient
+      BorderSpacing.Around = 6
       OnKeyDown = EditChatKeyDown
       OnKeyUp = EditChatKeyUp
       TabOrder = 0
     end
+  end
+  object Splitter1: TSplitter
+    Cursor = crVSplit
+    Left = 0
+    Height = 5
+    Top = 71
+    Width = 580
+    Align = alTop
+    ResizeAnchor = akTop
   end
 end

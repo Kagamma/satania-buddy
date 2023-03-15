@@ -41,15 +41,13 @@ type
     Panel2: TPanel;
     PanelEdit: TPanel;
     PanelChatlog: TPanel;
-    ButtonHistory: TSpeedButton;
+    Splitter1: TSplitter;
     procedure BttonClearClick(Sender: TObject);
-    procedure ButtonHistoryClick(Sender: TObject);
     procedure EditChatKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
       );
     procedure EditChatKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
-  private
-    IsShowHistory: Boolean;
+    procedure FormShow(Sender: TObject);
   public
     procedure InsertLog(const LogName, Msg: String);
     procedure CalcHeights;
@@ -73,10 +71,6 @@ procedure TFormChat.CalcHeights;
 begin
   EditChat.Height := 46;
   PanelEdit.Height := 71;
-  if IsShowHistory then
-    Height := 500
-  else
-    Height := 71;
 end;
 
 procedure TFormChat.FormCreate(Sender: TObject);
@@ -84,11 +78,9 @@ begin
   Self.CalcHeights;
 end;
 
-procedure TFormChat.ButtonHistoryClick(Sender: TObject);
+procedure TFormChat.FormShow(Sender: TObject);
 begin
-  IsShowHistory := not IsShowHistory;
-  PanelChatlog.Visible := IsShowHistory;
-  Self.CalcHeights;
+  EditChat.SetFocus;
 end;
 
 procedure TFormChat.EditChatKeyDown(Sender: TObject; var Key: Word;
