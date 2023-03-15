@@ -26,7 +26,7 @@ interface
 
 uses
   Classes, SysUtils, fpjson, jsonparser, fphttpclient, CastleURIUtils,
-  Process, LCLIntf;
+  Process, LCLIntf, StrUtils;
 
 type
   TSataniaChatThread = class(TThread)
@@ -58,12 +58,7 @@ uses
   mcdowell,
   globals,
   mcdowell.chatbot,
-  Mcdowell.EvilC,
-  OpenAIClient,
-  OpenAIDtos;
-
-var
-  ChatGPTClient: TOpenAIClient;
+  Mcdowell.EvilC;
 
 procedure TSataniaChatThread.SendToHer;
 begin
@@ -180,38 +175,37 @@ var
   procedure PerformChatGPTRequest;
   var
     Key: String;
-    Request: TCreateCompletionRequest;
-    Response: TCreateCompletionResponse;
   begin
     Key := Save.Settings.ChatGPTSecretKey;
-    if Key='' then
+    if Key <> '' then
     begin
+      Client := TFPHTTPClient.Create(nil);
+      try
+        try
+          Client.AddHeader('Content-Type', 'application/json');
+          Client.AddHeader('Authorization', 'Bearer ' + Key);
+          JsonString := Format('{"model":"%s","messages":[{"role":"user","content":"%s"}]}',
+            [Save.Settings.ChatGPTModel,
+            StringsReplace(Trim(Save.Settings.ChatGPTDescription + ' ') + S, ['''', '"'], ['\''', '\"'], [rfReplaceAll])]);
+          Client.RequestBody := TRawByteStringStream.Create(JSONString);
+          JsonString := Client.Post('https://api.openai.com/v1/chat/completions');
+          JsonObject := GetJSON(JsonString) as TJSONObject;
+          ChatResponse := Trim(JsonObject.GetPath('choices[0].message.content').AsString);
+          ChatType := 'chat';
+          FreeAndNil(JsonObject);
+        except
+          on E: Exception do
+          begin
+            ChatResponse := E.Message;
+            ChatType := 'chat';
+          end;
+        end;
+      finally
+        Client.RequestBody.Free;
+        FreeAndNil(Client);
+      end;
+    end else
       SpeakDontUnderstand;
-      Exit;
-    end;
-    if (ChatGPTClient=nil) or (ChatGPTClient.Config.AccessToken<>Key) then
-    begin
-      if ChatGPTClient<>nil then
-        ChatGPTClient.Free;
-      ChatGPTClient := TOpenAIClient.Create;
-      ChatGPTClient.Config.AccessToken := Key;
-    end;
-    Response := nil;
-    Request := TCreateCompletionRequest.Create;
-    try
-      Request.Prompt := Trim(Save.Settings.ChatGPTDescription + ' ') + S;
-      Request.Model := Save.Settings.ChatGPTModel;
-      Request.MaxTokens := Save.Settings.ChatGPTToken;
-      Response := ChatGPTClient.OpenAI.CreateCompletion(Request);
-      if Assigned(Response.Choices) and (Response.Choices.Count > 0) then
-        ChatResponse := Trim(Response.Choices[0].Text)
-      else
-        SpeakDontUnderstand;
-      ChatType := 'chat';
-    finally
-      Request.Free;
-      Response.Free;
-    end;
   end;
 
 begin
@@ -275,10 +269,6 @@ begin
   Synchronize(@SendToHer);
   Terminate;
 end;
-
-finalization
-  if ChatGPTClient<>nil then
-    ChatGPTClient.Free;
 
 end.
 
