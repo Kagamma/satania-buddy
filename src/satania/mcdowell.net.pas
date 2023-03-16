@@ -15,6 +15,7 @@ type
     procedure ResetToDefault;
   public
     HTTP: TFPHTTPClient;
+    FormData: TStrings;
     HttpResponse: THttpResponseRec;
     URL: String;
     constructor Create(CreateSuspend: Boolean);
@@ -58,6 +59,7 @@ end;
 constructor TSataniaHttpGetThread.Create(CreateSuspend: Boolean);
 begin
   inherited Create(CreateSuspend);
+  FormData := TStringList.Create;
   Self.HTTP := TFPHTTPClient.Create(nil);
 end;
 
@@ -65,6 +67,7 @@ procedure TSataniaHttpGetThread.Execute;
 begin
   try
     try
+      HTTP.RequestBody := TRawByteStringStream.Create(FormData.Text);
       HttpResponse.Data := HTTP.Get(URL);
       HttpResponse.Status := HTTP.ResponseStatusCode;
       Synchronize(@SendToHer);
@@ -83,6 +86,9 @@ end;
 
 destructor TSataniaHttpGetThread.Destroy;
 begin
+  Self.FormData.Free;
+  if HTTP.RequestBody <> nil then
+    HTTP.RequestBody.Free;
   Self.HTTP.Free;
   inherited;
 end;

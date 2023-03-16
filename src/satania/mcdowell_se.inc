@@ -57,8 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEChatResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLPost(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -435,56 +434,72 @@ begin
   Result := Sprite.Visible;
 end;
 
-function TSatania.SEURLGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-var
-  Thread: TSataniaHttpGetThread;
-  I: Integer;
-  S: String;
-begin
-  I := RunList.IndexOf(Args[0]);
-  if I >= 0 then
-    RunList.Delete(I);
-  RunList.Add(Args[0]);
-  Thread := TSataniaHttpGetThread.Create(True);
-  Thread.FreeOnTerminate := True;
-  Thread.URL := Args[0];
-  if Args[1].Kind = sevkMap then
-    for S in TSEValueMap(Args[1].VarMap).Keys do
-    begin
-      Thread.HTTP.AddHeader(S, SEMapGet(Args[1], S));
+function TSatania.SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+  function URLGet: TSEValue;
+  var
+    Thread: TSataniaHttpGetThread;
+    I: Integer;
+    S: String;
+  begin
+    I := RunList.IndexOf(Args[1]);
+    if I >= 0 then
+      RunList.Delete(I);
+    RunList.Add(Args[1]);
+    Thread := TSataniaHttpGetThread.Create(True);
+    Thread.FreeOnTerminate := True;
+    Thread.URL := Args[1];
+    if Args[2].Kind = sevkMap then
+      for S in TSEValueMap(Args[2].VarMap).Keys do
+      begin
+        Thread.HTTP.AddHeader(S, SEMapGet(Args[2], S));
+      end;
+    case Args[3].Kind of
+      sevkMap:
+        Thread.FormData.Text := SEJSONStringify(VM, [Args[3]]);
+      sevkString:
+        Thread.FormData.Text := Args[3];
     end;
-  Thread.Start;
-  Result := Args[0].VarString^;
-end;
-
-function TSatania.SEURLPost(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-var
-  Thread: TSataniaHttpPostThread;
-  Key: String;
-  I: Integer;
-  V: TSEValue;
-  S: String;
-begin
-  I := RunList.IndexOf(Args[0]);
-  if I >= 0 then
-    RunList.Delete(I);
-  RunList.Add(Args[0]);
-  Thread := TSataniaHttpPostThread.Create(True);
-  Thread.FreeOnTerminate := True;
-  Thread.URL := Args[0];
-  if Args[1].Kind = sevkMap then
-    for S in TSEValueMap(Args[1].VarMap).Keys do
-    begin
-      Thread.HTTP.AddHeader(S, SEMapGet(Args[1], S));
-    end;
-  case Args[2].Kind of
-    sevkMap:
-      Thread.FormData.Text := SEJSONStringify(VM, [Args[2]]);
-    sevkString:
-      Thread.FormData.Text := Args[2];
+    Thread.Start;
+    Result := Args[1].VarString^;
   end;
-  Thread.Start;
-  Result := Args[0].VarString^;
+
+  function URLPost: TSEValue;
+  var
+    Thread: TSataniaHttpPostThread;
+    Key: String;
+    I: Integer;
+    V: TSEValue;
+    S: String;
+  begin
+    I := RunList.IndexOf(Args[1]);
+    if I >= 0 then
+      RunList.Delete(I);
+    RunList.Add(Args[1]);
+    Thread := TSataniaHttpPostThread.Create(True);
+    Thread.FreeOnTerminate := True;
+    Thread.URL := Args[1];
+    if Args[2].Kind = sevkMap then
+      for S in TSEValueMap(Args[2].VarMap).Keys do
+      begin
+        Thread.HTTP.AddHeader(S, SEMapGet(Args[2], S));
+      end;
+    case Args[3].Kind of
+      sevkMap:
+        Thread.FormData.Text := SEJSONStringify(VM, [Args[3]]);
+      sevkString:
+        Thread.FormData.Text := Args[3];
+    end;
+    Thread.Start;
+    Result := Args[1].VarString^;
+  end;
+
+begin
+  case UpperCase(Args[0].VarString^) of
+    'POST':
+      Result := URLPost;
+    else
+      Result := URLGet;
+  end;
 end;
 
 function TSatania.SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
