@@ -1073,6 +1073,7 @@ begin
   end;
   Item.Script := TEvilC.Create;
   Self.RegisterFuncs(Item.Script, True);
+  Self.UpdateMeta(Item.Script);
   Item.Script.Source := Args[1];
   if Length(Args) >= 3 then
     Item.Interval := Round(Args[2].VarNumber * 1000)
