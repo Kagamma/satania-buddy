@@ -478,8 +478,8 @@ string): string*
 - Upload a file to URL.
 *url_is_success(url: string): boolean*
 - Check if url query (get, post, etc) is finished.
-*url_result_get(url: string): string*
-- Get HTML result from url_get / url_post / url_upload.
+*url_result_get(url: string): map*
+- Get HTML result from url_get / url_post / url_upload. Result map contains status and data.
 *url_query(data, xpath: string): map*
 - Extract data from HTML string.
 

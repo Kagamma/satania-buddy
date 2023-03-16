@@ -5,7 +5,7 @@ unit mcdowell.net;
 interface
 
 uses
-  Classes, SysUtils, fphttpclient;
+  Classes, SysUtils, fphttpclient, globals;
 
 type
   TSataniaHttpGetThread = class(TThread)
@@ -15,7 +15,7 @@ type
     procedure ResetToDefault;
   public
     HTTP: TFPHTTPClient;
-    Data,
+    HttpResponse: THttpResponseRec;
     URL: String;
     constructor Create(CreateSuspend: Boolean);
     procedure Execute; override;
@@ -30,9 +30,9 @@ type
   public
     HTTP: TFPHTTPClient;
     FormData: TStrings;
+    HttpResponse: THttpResponseRec;
     FieldName,
     FileName,
-    Data,
     URL: String;
     constructor Create(CreateSuspend: Boolean);
     destructor Destroy; override;
@@ -42,12 +42,12 @@ type
 implementation
 
 uses
-  globals, mcdowell;
+  mcdowell;
 
 procedure TSataniaHttpGetThread.SendToHer;
 begin
   RunList.Delete(RunList.IndexOf(URL));
-  RunResultList.AddOrSetValue(URL, Data);
+  RunHttpResultList.AddOrSetValue(URL, HttpResponse);
 end;
 
 procedure TSataniaHttpGetThread.ResetToDefault;
@@ -65,11 +65,13 @@ procedure TSataniaHttpGetThread.Execute;
 begin
   try
     try
-      Data := HTTP.Get(URL);
+      HttpResponse.Data := HTTP.Get(URL);
+      HttpResponse.Status := HTTP.ResponseStatusCode;
       Synchronize(@SendToHer);
     except
       on E: Exception do
       begin
+        HttpResponse.Status:= HTTP.ResponseStatusCode;
         ErrorMessage := E.Message;
         Synchronize(@Self.ResetToDefault);
       end;
@@ -88,7 +90,7 @@ end;
 procedure TSataniaHttpPostThread.SendToHer;
 begin
   RunList.Delete(RunList.IndexOf(URL));
-  RunResultList.AddOrSetValue(URL, Data);
+  RunHttpResultList.AddOrSetValue(URL, HttpResponse);
 end;
 
 procedure TSataniaHttpPostThread.ResetToDefault;
@@ -107,19 +109,22 @@ begin
         Response := TStringStream.Create('');
         try
           HTTP.FileFormPost(URL, FormData, FieldName, FileName, Response);
-          Data := Response.DataString;
+          HttpResponse.Data := Response.DataString;
+          HttpResponse.Status := HTTP.ResponseStatusCode;
         finally
           Response.Free;
         end;
       end else
       begin
         HTTP.RequestBody := TRawByteStringStream.Create(FormData.Text);
-        Data := HTTP.Post(URL);
+        HttpResponse.Data := HTTP.Post(URL);
+        HttpResponse.Status := HTTP.ResponseStatusCode;
       end;
       Synchronize(@SendToHer);
     except
       on E: Exception do
       begin
+        HttpResponse.Status := HTTP.ResponseStatusCode;
         ErrorMessage := E.Message;
         Synchronize(@Self.ResetToDefault);
       end;

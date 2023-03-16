@@ -57,8 +57,14 @@ type
     Responses: TStringDynArray;
   end;
 
+  THttpResponseRec = record
+    Status: Integer;
+    Data: String;
+  end;
+
   TQWordList = specialize TList<QWord>;
   TStringDict = specialize TDictionary<String, String>;
+  THttpResponseDict = specialize TDictionary<String, THttpResponseRec>;
   TStringArrayDict = specialize TDictionary<String, TStringDynArray>;
   TTrackDict = specialize TDictionary<String, Integer>;
   TMailList = specialize TList<TMailRec>;

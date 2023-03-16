@@ -124,7 +124,8 @@ type
 var
   Satania: TSatania;
   RunList: TStringList;
-  RunResultList: TStringDict;
+  RunProcessResultList: TStringDict;
+  RunHttpResultList: THttpResponseDict;
   CSAction,
   CSTalk: TCriticalSection;
 
@@ -917,14 +918,16 @@ initialization
 
   Satania := TSatania.Create;
   RunList := TStringList.Create;
-  RunResultList := TStringDict.Create;
+  RunHttpResultList := THttpResponseDict.Create;
+  RunProcessResultList := TStringDict.Create;
 
 finalization
   Save.SaveToFile('configs.json');
   FreeAndNil(Save);
   FreeAndNil(Satania);
   FreeAndNil(RunList);
-  FreeAndNil(RunResultList);
+  FreeAndNil(RunProcessResultList);
+  FreeAndNil(RunProcessResultList);
   CSTalk.Free;
   CSAction.Free;
 

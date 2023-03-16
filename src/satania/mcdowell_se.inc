@@ -230,8 +230,8 @@ function TSatania.SEProcessResultGet(const VM: TSEVM; const Args: array of TSEVa
 begin
   Result := SENull;
   try
-    Result := RunResultList[Args[0].VarString^];
-    RunResultList.Remove(Args[0].VarString^);
+    Result := RunProcessResultList[Args[0].VarString^];
+    RunProcessResultList.Remove(Args[0].VarString^);
   except
   end;
 end;
@@ -522,11 +522,16 @@ begin
 end;
 
 function TSatania.SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  HttpResponse: THttpResponseRec;
 begin
   Result := SENull;
   try
-    Result := RunResultList[Args[0].VarString^];
-    RunResultList.Remove(Args[0].VarString^);
+    GC.AllocMap(@Result);
+    HttpResponse := RunHttpResultList[Args[0].VarString^];
+    SEMapSet(Result, 'status', HttpResponse.Status);
+    SEMapSet(Result, 'data', HttpResponse.Data);
+    RunHttpResultList.Remove(Args[0].VarString^);
   except
   end;
 end;
