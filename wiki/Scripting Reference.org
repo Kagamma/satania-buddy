@@ -470,11 +470,10 @@ number): map*
 *url_open(url: string)*
 - Open an URL using default web browser.
 *url_get(url: string; headers: map): string*
-- Retrieve HTML from URL.
+- Make a GET request to URL.
 *url_post(url: string; headers: map; data: string/map): string*
 - Make a POST request to URL.
-*url_upload(url: string; headers: map; data: string/map; field, file:
-string): string*
+*url_upload(url: string; headers: map; data: string/map; field, file: string): string*
 - Upload a file to URL.
 *url_is_success(url: string): boolean*
 - Check if url query (get, post, etc) is finished.
