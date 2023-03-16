@@ -98,7 +98,7 @@ begin
         Satania.Worker('___worker', SL.Text, 0, V);
       end else
       begin
-        Satania.Action('script', 'chat_message = "' + StringReplace(Self.ChatSend, '"', '\"', [rfReplaceAll]) + '" ' + SL.Text);
+        Satania.Action('script', 'chat_message = "' + StringToJSONString(Self.ChatSend) + '" ' + SL.Text);
       end;
     finally
       SL.Free;

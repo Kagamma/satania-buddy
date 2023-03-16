@@ -914,7 +914,7 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
       V := SEMapGet(Map, I);
       case V.Kind of
         sevkString:
-          JSONStr := JSONStr + '"' + StringReplace(V.VarString^, '"', '\"', [rfReplaceAll]) + '"';
+          JSONStr := JSONStr + '"' + StringToJSONString(V.VarString^) + '"';
         sevkNumber:
           JSONStr := JSONStr + PointFloatToStr(V.VarNumber);
         sevkMap:
@@ -943,7 +943,7 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
       V := SEMapGet(Map, Key);
       case V.Kind of
         sevkString:
-          JSONStr := JSONStr + '"' + StringReplace(V.VarString^, '"', '\"', [rfReplaceAll]) + '"';
+          JSONStr := JSONStr + '"' + StringToJSONString(V.VarString^) + '"';
         sevkNumber:
           JSONStr := JSONStr + PointFloatToStr(V.VarNumber);
         sevkMap:
