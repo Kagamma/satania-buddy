@@ -184,9 +184,10 @@ var
         try
           Client.AddHeader('Content-Type', 'application/json');
           Client.AddHeader('Authorization', 'Bearer ' + Key);
-          JsonString := Format('{"model":"%s","messages":[{"role":"user","content":"%s"}]}',
-            [Save.Settings.ChatGPTModel,
-            StringsReplace(Trim(Save.Settings.ChatGPTDescription + ' ') + S, ['''', '"'], ['\''', '\"'], [rfReplaceAll])]);
+          JsonString := Format('{"model":"%s","messages":[{"role":"user","content":"%s"}]}', [
+            Save.Settings.ChatGPTModel,
+            StringToJsonString(Trim(Save.Settings.ChatGPTDescription + ' ') + S)
+          ]);
           Client.RequestBody := TRawByteStringStream.Create(JSONString);
           JsonString := Client.Post('https://api.openai.com/v1/chat/completions');
           JsonObject := GetJSON(JsonString) as TJSONObject;
