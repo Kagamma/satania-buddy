@@ -349,13 +349,13 @@ object FormSettings: TFormSettings
           end
         end
         object GroupBoxCustomBotScript: TGroupBox
-          Left = 40
+          Left = 37
           Height = 112
           Top = 304
-          Width = 577
+          Width = 580
           Caption = 'Evil Scheme'
           ClientHeight = 92
-          ClientWidth = 573
+          ClientWidth = 576
           TabOrder = 1
           object LabelCustomBotScript: TLabel
             Left = 22
@@ -404,7 +404,7 @@ object FormSettings: TFormSettings
           end
         end
         object RadioButtonCustomScript: TRadioButton
-          Left = 16
+          Left = 15
           Height = 17
           Top = 319
           Width = 18
