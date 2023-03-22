@@ -113,7 +113,9 @@ begin
           Result := '"' + Value.VarString^ + '"';
       end;
     sevkNumber:
-      Result := PointFloatToStr(Value.VarNumber);
+      Result := PointFloatToStr(Value.VarNumber); 
+    sevkBoolean:
+      Result := BoolToStr(Boolean(Round(Value.VarNumber)), 'true', 'false');
     sevkMap:
       begin
         Result := '[';
@@ -937,6 +939,8 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
           JSONStr := JSONStr + '"' + StringToJSONString(V.VarString^) + '"';
         sevkNumber:
           JSONStr := JSONStr + PointFloatToStr(V.VarNumber);
+        sevkBoolean:
+          JSONStr := JSONStr + BoolToStr(Boolean(Round(V.VarNumber)), 'true', 'false');
         sevkMap:
           begin
             Decide(JSONStr, V);
@@ -966,6 +970,8 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
           JSONStr := JSONStr + '"' + StringToJSONString(V.VarString^) + '"';
         sevkNumber:
           JSONStr := JSONStr + PointFloatToStr(V.VarNumber);
+        sevkBoolean:
+          JSONStr := JSONStr + BoolToStr(Boolean(Round(V.VarNumber)), 'true', 'false');
         sevkMap:
           begin
             Decide(JSONStr, V);

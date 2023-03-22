@@ -90,7 +90,8 @@ type
     sevkString,
     sevkMap,
     sevkBuffer,
-    sevkPointer
+    sevkPointer,
+    sevkBoolean
   );
   PSECommonString = ^String;
   TSEBuffer = record
@@ -127,6 +128,10 @@ type
       sevkNull:
         (
           VarNull: Pointer;
+        );
+      sevkBoolean:
+        (
+          VarBoolean: Boolean;
         );
   end;
   {$mode objfpc}
@@ -655,7 +660,7 @@ begin
     case I.Kind of
       sevkString:
         S := I.VarString^;
-      sevkNumber:
+      sevkNumber, sevkBoolean:
         S := IntToStr(Round(I.VarNumber));
       else
         Exit(SENull);
@@ -683,7 +688,7 @@ begin
   case I.Kind of
     sevkString:
       S := I.VarString^;
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       S := IntToStr(Round(I.VarNumber));
     else
       Exit;
@@ -703,10 +708,10 @@ var
   S, Key: String;
 begin
   case V.Kind of
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       begin
         Result.VarNumber := V.VarNumber;
-        Result.Kind := sevkNumber;
+        Result.Kind := V.Kind;
       end;
     sevkPointer:
       begin
@@ -874,6 +879,8 @@ begin
         Result := 'map';
     sevkNumber:
       Result := 'number';
+    sevkBoolean:
+      Result := 'boolean';
     sevkString:
       Result := 'string';
     sevkNull:
@@ -892,7 +899,7 @@ begin
   for I := 0 to Length(Args) - 1 do
   begin
     case Args[I].Kind of
-      sevkNumber:
+      sevkNumber, sevkBoolean:
         Write(Args[I].VarNumber);
       sevkString:
         Write(Args[I].VarString^);
@@ -948,7 +955,7 @@ end;
 
 class function TBuiltInFunction.SEString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  if Args[0].Kind = sevkNumber then
+  if Args[0].Kind in [sevkNumber, sevkBoolean] then
     Exit(PointFloatToStr(Args[0].VarNumber));
   Exit(Args[0].VarString^);
 end;
@@ -1212,7 +1219,7 @@ begin
   begin
     V := '';
     Value := SEMapGet(Args[1], I);
-    if Value.Kind = sevkNumber then
+    if Value.Kind in [sevkNumber, sevkBoolean] then
       V := PointFloatToStr(Value.VarNumber)
     else
     if Value.Kind = sevkString then
@@ -1229,6 +1236,7 @@ begin
   Result := '';
   case Args[0].Kind of
     sevkString: Result := UpperCase(Args[0].VarString^);
+    sevkBoolean,
     sevkNumber: Result := UpperCase(Char(Round(Args[0].VarNumber)));
   end;
 end;
@@ -1240,6 +1248,7 @@ begin
   Result := '';
   case Args[0].Kind of
     sevkString: Result := LowerCase(Args[0].VarString^);
+    sevkBoolean,
     sevkNumber: Result := LowerCase(Char(Round(Args[0].VarNumber)));
   end;
 end;
@@ -1484,7 +1493,7 @@ var
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       begin
         R.Kind := sevkNumber;
         R.VarNumber := V1.VarNumber + V2.VarNumber;
@@ -1511,7 +1520,7 @@ begin
       end;
   end
   else
-    if (V1.Kind = sevkBuffer) and (V2.Kind = sevkNumber) then
+    if (V1.Kind = sevkBuffer) and (V2.Kind in [sevkNumber, sevkBoolean]) then
     begin
       GC.AllocBuffer(@Temp, 1);
       Temp.VarBuffer^.Ptr := V1.VarBuffer^.Ptr + Pointer(Round(V2.VarNumber));
@@ -1524,7 +1533,7 @@ var
   Temp: TSEValue;
 begin
   case V1.Kind of
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       begin
         R.Kind := sevkNumber;
         R.VarNumber := V1.VarNumber - V2.VarNumber;
@@ -1584,7 +1593,7 @@ procedure SEValueEqual(out R: TSEValue; constref V1, V2: TSEValue); inline; over
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       R := V1.VarNumber = V2.VarNumber;
     sevkString:
       R := V1.VarString^ = V2.VarString^;
@@ -1598,7 +1607,7 @@ procedure SEValueNotEqual(out R: TSEValue; constref V1, V2: TSEValue); inline; o
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       R := V1.VarNumber <> V2.VarNumber;
     sevkString:
       R := V1.VarString^ <> V2.VarString^;
@@ -1632,7 +1641,7 @@ function SEValueEqual(constref V1, V2: TSEValue): Boolean; inline; overload;
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       Result := V1.VarNumber = V2.VarNumber;
     sevkString:
       Result := V1.VarString^ = V2.VarString^;
@@ -1643,7 +1652,7 @@ function SEValueNotEqual(constref V1, V2: TSEValue): Boolean; inline; overload;
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       Result := V1.VarNumber <> V2.VarNumber;
     sevkString:
       Result := V1.VarString^ <> V2.VarString^;
@@ -1666,7 +1675,7 @@ end;
 
 operator := (V: Boolean) R: TSEValue; inline;
 begin
-  R.Kind := sevkNumber;
+  R.Kind := sevkBoolean;
   R.VarNumber := Integer(V);
 end;
 operator := (V: TSEValueArray) R: TSEValue; inline;
@@ -1775,7 +1784,7 @@ var
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       begin
         R.Kind := sevkNumber;
         R.VarNumber := V1.VarNumber + V2.VarNumber;
@@ -1805,7 +1814,7 @@ begin
         R.VarPointer := V1.VarPointer + V2.VarPointer;
       end;
   end else
-    if (V1.Kind = sevkBuffer) and (V2.Kind = sevkNumber) then
+    if (V1.Kind = sevkBuffer) and (V2.Kind in [sevkNumber, sevkBoolean]) then
     begin
       GC.AllocBuffer(@R, 1);
       R.VarBuffer^.Ptr := V1.VarBuffer^.Ptr + Pointer(Round(V2.VarNumber));
@@ -1819,7 +1828,7 @@ operator - (V1, V2: TSEValue) R: TSEValue; inline;
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       begin
         R.Kind := sevkNumber;
         R.VarNumber := V1.VarNumber - V2.VarNumber;
@@ -1858,7 +1867,7 @@ end;
 operator <= (V1: TSEValue; V2: TSENumber) R: Boolean; inline;
 begin
   case V1.Kind of
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       R := V1.VarNumber <= V2;
   end;
 end;
@@ -1906,7 +1915,7 @@ operator = (V1, V2: TSEValue) R: Boolean; inline;
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       R := V1.VarNumber = V2.VarNumber;
     sevkString:
       R := V1.VarString^ = V2.VarString^;
@@ -1919,7 +1928,7 @@ operator <> (V1, V2: TSEValue) R: Boolean; inline;
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       R := V1.VarNumber <> V2.VarNumber;
     sevkString:
       R := V1.VarString^ <> V2.VarString^;
@@ -3063,7 +3072,7 @@ begin
                     AssignGlobalInt(Integer(A^), V);
                   end;
                 end;
-              sevkNumber:
+              sevkNumber, sevkBoolean:
                 begin
                   if V^.Kind = sevkString then
                   begin
@@ -3119,7 +3128,7 @@ begin
                     AssignLocalInt(Integer(A^), V);
                   end;
                 end;
-              sevkNumber:
+              sevkNumber, sevkBoolean:
                 begin
                   if V^.Kind = sevkString then
                   begin
