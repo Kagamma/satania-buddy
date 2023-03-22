@@ -133,8 +133,7 @@ type
     FCustomBotScriptType: Integer;
     FExternalServiceSelect: Integer;
     FDefaultEvilScheme: String;
-    FBotVolframAlphaAppID,
-    FBotServer: String;
+    FBotVolframAlphaAppID: String;
     FChatBubbleDelay: Integer;
     FFPS: Integer;
     FSitOnWindowRightMargin: Integer;
@@ -181,7 +180,6 @@ type
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;
     property TextSpeed: Integer read FTextSpeed write FTextSpeed;
     property SitOnWindowRightMargin: Integer read FSitOnWindowRightMargin write FSitOnWindowRightMargin;
-    property BotServer: String read FBotServer write FBotServer;
     property BotVolframAlphaAppID: String read FBotVolframAlphaAppID write FBotVolframAlphaAppID;
     property FPS: Integer read FFPS write FFPS;
     property ChatBubbleDelay: Integer read FChatBubbleDelay write FChatBubbleDelay;

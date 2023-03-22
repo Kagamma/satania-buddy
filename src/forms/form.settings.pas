@@ -50,7 +50,6 @@ type
     ComboBoxSTTBackend: TComboBox;
     ComboBoxImageQuality: TComboBox;
     EditChatGPTModel: TEdit;
-    EditBotServer: TEdit;
     EditChatGPTDescription: TEdit;
     EditChatGPTSecretKey: TEdit;
     EditCustomBotScript: TEdit;
@@ -76,7 +75,6 @@ type
     EditBaseScaling: TFloatSpinEdit;
     GroupBoxChatGPT: TGroupBox;
     GroupBoxVolframAlpha: TGroupBox;
-    GroupBoxChatbotServer: TGroupBox;
     GroupBoxCustomBotScript: TGroupBox;
     GroupBoxEmailIMAP: TGroupBox;
     GroupBoxEmailSMTP: TGroupBox;
@@ -91,7 +89,6 @@ type
     LabelChatGPTToken: TLabel;
     LabelCustomBotScript: TLabel;
     LabelEmbeddedServiceNotice: TLabel;
-    LabelChatbotServer: TLabel;
     LabelChatbotServer1: TLabel;
     LabelDeveloperMode: TLabel;
     LabelEmailPassword: TLabel;
@@ -134,7 +131,6 @@ type
     ButtonCustomBotScriptOpen: TSpeedButton;
     RadioButtonChatGPT: TRadioButton;
     RadioButtonCustomScript: TRadioButton;
-    RadioButtonChatbotServer: TRadioButton;
     RadioButtonWolframAlpha: TRadioButton;
     EditChatGPTToken: TSpinEdit;
     Splitter1: TSplitter;
@@ -197,11 +193,9 @@ begin
   ComboBoxSTTBackendChange(Self);
 
   RadioButtonWolframAlpha.Checked := Save.Settings.ExternalServiceSelect = 0;
-  RadioButtonChatbotServer.Checked := Save.Settings.ExternalServiceSelect = 1;
   RadioButtonCustomScript.Checked := Save.Settings.ExternalServiceSelect = 2;
   RadioButtonChatGPT.Checked := Save.Settings.ExternalServiceSelect = 3;
-  GroupBoxVolframAlpha.Enabled := RadioButtonWolframAlpha.Checked; 
-  GroupBoxChatbotServer.Enabled := RadioButtonChatbotServer.Checked;
+  GroupBoxVolframAlpha.Enabled := RadioButtonWolframAlpha.Checked;
   GroupBoxCustomBotScript.Enabled := RadioButtonCustomScript.Checked; 
   GroupBoxChatGPT.Enabled := RadioButtonChatGPT.Checked;
 
@@ -209,7 +203,6 @@ begin
   CheckBoxDeveloperMode.Checked := Save.Settings.DeveloperMode;
   ComboBoxCustomBotScriptType.ItemIndex := Save.Settings.CustomBotScriptType;
   EditCustomBotScript.Text := Save.Settings.CustomBotScript;
-  EditBotServer.Text := Save.Settings.BotServer;
   EditBotVolframAlphaAppID.Text := Save.Settings.BotVolframAlphaAppID;
   EditChatGPTSecretKey.Text := Save.Settings.ChatGPTSecretKey;
   EditChatGPTModel.Text := Save.Settings.ChatGPTModel;
@@ -347,7 +340,6 @@ end;
 procedure TFormSettings.RadioButtonWolframAlphaChange(Sender: TObject);
 begin
   GroupBoxVolframAlpha.Enabled := RadioButtonWolframAlpha.Checked;
-  GroupBoxChatbotServer.Enabled := RadioButtonChatbotServer.Checked;
   GroupBoxCustomBotScript.Enabled := RadioButtonCustomScript.Checked; 
   GroupBoxChatGPT.Enabled := RadioButtonChatGPT.Checked;
 end;
@@ -359,8 +351,6 @@ begin
   try
     if RadioButtonWolframAlpha.Checked then
       Save.Settings.ExternalServiceSelect := 0
-    else if RadioButtonChatbotServer.Checked then
-      Save.Settings.ExternalServiceSelect := 1
     else if RadioButtonCustomScript.Checked then
       Save.Settings.ExternalServiceSelect := 2
     else if RadioButtonChatGPT.Checked then
@@ -375,7 +365,6 @@ begin
     Save.Settings.ChatGPTModel := EditChatGPTModel.Text;
     Save.Settings.ChatGPTToken := EditChatGPTToken.Value;
     Save.Settings.ChatGPTDescription := EditChatGPTDescription.Text;
-    Save.Settings.BotServer := EditBotServer.Text;
     Save.Settings.BotVolframAlphaAppID := EditBotVolframAlphaAppID.Text;
     Save.Settings.FPS := EditFPS.Value;
     Save.Settings.ChatBubbleDelay := EditChatBubbleDelay.Value;

@@ -9,7 +9,6 @@ object FormSettings: TFormSettings
   ClientWidth = 886
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.3.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -349,30 +348,6 @@ object FormSettings: TFormSettings
             Caption = 'AppID'
           end
         end
-        object GroupBoxChatbotServer: TGroupBox
-          Left = 40
-          Height = 80
-          Top = 424
-          Width = 576
-          Caption = 'Server'
-          ClientHeight = 60
-          ClientWidth = 572
-          TabOrder = 1
-          object LabelChatbotServer: TLabel
-            Left = 22
-            Height = 15
-            Top = 16
-            Width = 21
-            Caption = 'URL'
-          end
-          object EditBotServer: TEdit
-            Left = 167
-            Height = 23
-            Top = 16
-            Width = 378
-            TabOrder = 0
-          end
-        end
         object GroupBoxCustomBotScript: TGroupBox
           Left = 40
           Height = 112
@@ -381,7 +356,7 @@ object FormSettings: TFormSettings
           Caption = 'Evil Scheme'
           ClientHeight = 92
           ClientWidth = 573
-          TabOrder = 2
+          TabOrder = 1
           object LabelCustomBotScript: TLabel
             Left = 22
             Height = 15
@@ -434,15 +409,7 @@ object FormSettings: TFormSettings
           Top = 319
           Width = 18
           OnChange = RadioButtonWolframAlphaChange
-          TabOrder = 4
-        end
-        object RadioButtonChatbotServer: TRadioButton
-          Left = 16
-          Height = 17
-          Top = 440
-          Width = 18
-          OnChange = RadioButtonWolframAlphaChange
-          TabOrder = 5
+          TabOrder = 3
         end
         object RadioButtonWolframAlpha: TRadioButton
           Left = 15
@@ -451,7 +418,7 @@ object FormSettings: TFormSettings
           Width = 18
           Checked = True
           OnChange = RadioButtonWolframAlphaChange
-          TabOrder = 3
+          TabOrder = 2
           TabStop = True
         end
         object Label2: TLabel
@@ -469,7 +436,7 @@ object FormSettings: TFormSettings
           Caption = 'ChatGPT'
           ClientHeight = 148
           ClientWidth = 572
-          TabOrder = 6
+          TabOrder = 4
           OnClick = GroupBoxChatGPTClick
           object LabelChatGPTSecretKey: TLabel
             Left = 23
@@ -537,7 +504,7 @@ object FormSettings: TFormSettings
           Top = 144
           Width = 18
           OnChange = RadioButtonWolframAlphaChange
-          TabOrder = 7
+          TabOrder = 5
         end
       end
       object TabSheetEmbeddedServer: TTabSheet

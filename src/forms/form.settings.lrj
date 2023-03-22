@@ -24,8 +24,6 @@
 {"hash":93841043,"name":"tformsettings.tabsheetbot.caption","sourcebytes":[69,120,116,101,114,110,97,108,32,83,101,114,118,105,99,101,115],"value":"External Services"},
 {"hash":66198369,"name":"tformsettings.groupboxvolframalpha.caption","sourcebytes":[87,111,108,102,114,97,109,65,108,112,104,97],"value":"WolframAlpha"},
 {"hash":4748500,"name":"tformsettings.labelchatbotserver1.caption","sourcebytes":[65,112,112,73,68],"value":"AppID"},
-{"hash":94149826,"name":"tformsettings.groupboxchatbotserver.caption","sourcebytes":[83,101,114,118,101,114],"value":"Server"},
-{"hash":23148,"name":"tformsettings.labelchatbotserver.caption","sourcebytes":[85,82,76],"value":"URL"},
 {"hash":97854933,"name":"tformsettings.groupboxcustombotscript.caption","sourcebytes":[69,118,105,108,32,83,99,104,101,109,101],"value":"Evil Scheme"},
 {"hash":354472,"name":"tformsettings.labelcustombotscript.caption","sourcebytes":[80,97,116,104],"value":"Path"},
 {"hash":376933,"name":"tformsettings.label3.caption","sourcebytes":[84,121,112,101],"value":"Type"},

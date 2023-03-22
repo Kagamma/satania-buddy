@@ -135,38 +135,6 @@ var
       SpeakDontUnderstand;
   end;
 
-  procedure PerformCustomServerRequest;
-  begin
-    if Save.Settings.BotServer <> '' then
-    begin
-      Client := TFPHTTPClient.Create(nil);
-      try
-        try
-          JsonObject := TJSONObject.Create;
-          try
-            JsonObject.Add('message', S);
-            JsonString := Client.FormPost(Save.Settings.BotServer, JsonObject.AsString);
-          finally
-            FreeAndNil(JsonObject);
-          end;
-          JsonObject := GetJSON(JsonString) as TJSONObject;
-          ChatType := JsonObject['type'].AsString;
-          ChatResponse := JsonObject['message'].AsString;
-          FreeAndNil(JsonObject);
-        except
-          on E: Exception do
-          begin
-            ChatResponse := E.Message;
-            ChatType := 'chat';
-          end;
-        end;
-      finally
-        FreeAndNil(Client);
-      end;
-    end else
-      SpeakDontUnderstand;
-  end;
-
   procedure PerformCustomScriptRequest;
   begin
     Self.Synchronize(@Self.ExecuteCustomEvilWorkerScript);
@@ -232,7 +200,6 @@ begin
       begin
         case Save.Settings.ExternalServiceSelect of
           0: PerformVolframAlphaRequest;
-          1: PerformCustomServerRequest;
           2: PerformCustomScriptRequest;
           3: PerformChatGPTRequest;
         end;
@@ -240,7 +207,7 @@ begin
         ChatType := 'script';
     end;
   end else
-  if (Length(S) > 0) and ((Save.Settings.BotServer = '') or (S[1] = '>')) then
+  if (Length(S) > 0) or (S[1] = '>') then
   begin
     Delete(S, 1, 1);
     ChatType := 'chat';

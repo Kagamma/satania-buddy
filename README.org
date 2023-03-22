@@ -55,15 +55,6 @@ By default she has a simple rule-based chat system, you can configure patterns a
 
 If none of the above apply, then she will send your messages to https://www.wolframalpha.com/ for potential answers. Make sure to set your own AppID in =Chatbot > WolframAlpha=.
 
-***** Q: What is Chatbot > Custom Server in Settings?
-A: She can send messages that she doesn't understand to another 3rd
-chatbot service if you have one available. Basically she will:
-- Make a POST to chatbot's URL in JSON format: ~{ "message": "<satania's message>" }~
-- Wait for chatbot server to respond in JSON format: ~{ "type": <"chat"> or <"script">, "message": <"response data"> }~
-
-By setting a custom server, she will ignore WolframAlpha setting and
-send your messages to custom server instead.
-
 ***** Q: How can I change her size?
 A: ~Base Scaling~ in ~Settings~.
 
