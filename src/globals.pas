@@ -154,6 +154,7 @@ type
     FChatGPTToken: Cardinal;
     FChatGPTModel: String;
     FCustomBotScript: String;
+    FChatGPTSystem: String;
     FChatGPTDescription: String;
     FEmbeddedServerEnable: Boolean;
     FEmbeddedServerPort,
@@ -177,6 +178,7 @@ type
     property ChatGPTToken: Cardinal read FChatGPTToken write FChatGPTToken default 50;
     property ChatGPTModel: String read FChatGPTModel write FChatGPTModel; 
     property ChatGPTDescription: String read FChatGPTDescription write FChatGPTDescription;
+    property ChatGPTSystem: String read FChatGPTSystem write FChatGPTSystem;
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;
     property TextSpeed: Integer read FTextSpeed write FTextSpeed;
     property SitOnWindowRightMargin: Integer read FSitOnWindowRightMargin write FSitOnWindowRightMargin;

@@ -152,8 +152,9 @@ var
         try
           Client.AddHeader('Content-Type', 'application/json');
           Client.AddHeader('Authorization', 'Bearer ' + Key);
-          JsonString := Format('{"model":"%s","messages":[{"role":"user","content":"%s"}]}', [
+          JsonString := Format('{"model":"%s","messages":[{"role":"system","content":"%s"},{"role":"user","content":"%s"}]}', [
             Save.Settings.ChatGPTModel,
+            StringToJsonString(Trim(Save.Settings.ChatGPTSystem)),
             StringToJsonString(Trim(Save.Settings.ChatGPTDescription + ' ') + S)
           ]);
           Client.RequestBody := TRawByteStringStream.Create(JSONString);
