@@ -1555,22 +1555,17 @@ end;
 procedure SEValueNot(out R: TSEValue; constref V: TSEValue); inline;
 begin
   case V.Kind of
-    sevkNumber:
+    sevkNumber, sevkBoolean:
       begin
-        R.Kind := sevkNumber;
-        R.VarNumber := -V.VarNumber;
-      end;
-    sevkBoolean:
-      begin
-        R.Kind := sevkBoolean;
-        if V.VarNumber <> 0 then
-          R.VarNumber := 0
-        else
-          R.VarNumber := 1;
+        R := not (V.VarNumber <> 0);
       end;
     sevkNull:
       begin
         R := True;
+      end;
+    sevkString:
+      begin
+        R := False;
       end;
   end;
 end;
@@ -1623,7 +1618,13 @@ begin
     sevkNull:
       R := True;
   end else
-    R := False;
+  if V1.Kind = sevkNull then
+    R := False
+  else
+  if (V1.Kind = sevkNumber) and (V2.Kind = sevkBoolean) then
+    R := (V1.VarNumber <> 0) = V2
+  else
+    R := True;
 end;
 
 procedure SEValueNotEqual(out R: TSEValue; constref V1, V2: TSEValue); inline; overload;
@@ -1637,7 +1638,13 @@ begin
     sevkNull:
       R := False;
   end else
-    R := True;
+  if V1.Kind = sevkNull then
+    R := True
+  else
+  if (V1.Kind = sevkNumber) and (V2.Kind = sevkBoolean) then
+    R := (V1.VarNumber <> 0) <> V2
+  else
+    R := False;
 end;
 
 function SEValueLesser(constref V1, V2: TSEValue): Boolean; inline; overload;
@@ -1671,7 +1678,13 @@ begin
     sevkNull:
       Result := True;
   end else
-    Result := False;
+  if V1.Kind = sevkNull then
+    Result := False
+  else
+  if (V1.Kind = sevkNumber) and (V2.Kind = sevkBoolean) then
+    Result := (V1.VarNumber <> 0) = V2
+  else
+    Result := True;
 end;
 
 function SEValueNotEqual(constref V1, V2: TSEValue): Boolean; inline; overload;
@@ -1685,7 +1698,13 @@ begin
     sevkNull:
       Result := False;
   end else
-    Result := True;
+  if V1.Kind = sevkNull then
+    Result := True
+  else
+  if (V1.Kind = sevkNumber) and (V2.Kind = sevkBoolean) then
+    Result := (V1.VarNumber <> 0) <> V2
+  else
+    Result := False;
 end;
 
 // ----- TSEValue operator overloading
