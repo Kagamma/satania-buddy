@@ -5057,6 +5057,7 @@ end;
 initialization
   SENull.Kind := sevkNull;
   SENull.Ref := 0;
+  SENull.VarNumber := Floor(0);
   DynlibMap := TDynlibMap.Create;
   ScriptVarMap := TSEVarMap.Create;
   GC := TSEGarbageCollector.Create;
