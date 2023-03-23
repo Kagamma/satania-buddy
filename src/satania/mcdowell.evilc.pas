@@ -1552,6 +1552,29 @@ begin
   end;
 end;
 
+procedure SEValueNot(out R: TSEValue; constref V: TSEValue); inline;
+begin
+  case V.Kind of
+    sevkNumber:
+      begin
+        R.Kind := sevkNumber;
+        R.VarNumber := -V.VarNumber;
+      end;
+    sevkBoolean:
+      begin
+        R.Kind := sevkBoolean;
+        if V.VarNumber <> 0 then
+          R.VarNumber := 0
+        else
+          R.VarNumber := 1;
+      end;
+    sevkNull:
+      begin
+        R := True;
+      end;
+  end;
+end;
+
 procedure SEValueNeg(out R: TSEValue; constref V: TSEValue); inline;
 begin
   R.VarNumber := -V.VarNumber;
@@ -1644,8 +1667,11 @@ begin
     sevkNumber, sevkBoolean:
       Result := V1.VarNumber = V2.VarNumber;
     sevkString:
-      Result := V1.VarString^ = V2.VarString^;
-  end;
+      Result := V1.VarString^ <> V2.VarString^;
+    sevkNull:
+      Result := True;
+  end else
+    Result := False;
 end;
 
 function SEValueNotEqual(constref V1, V2: TSEValue): Boolean; inline; overload;
@@ -1656,7 +1682,10 @@ begin
       Result := V1.VarNumber <> V2.VarNumber;
     sevkString:
       Result := V1.VarString^ <> V2.VarString^;
-  end;
+    sevkNull:
+      Result := False;
+  end else
+    Result := True;
 end;
 
 // ----- TSEValue operator overloading
@@ -1866,10 +1895,7 @@ begin
 end;
 operator <= (V1: TSEValue; V2: TSENumber) R: Boolean; inline;
 begin
-  case V1.Kind of
-    sevkNumber, sevkBoolean:
-      R := V1.VarNumber <= V2;
-  end;
+  R := V1.VarNumber <= V2;
 end;
 operator >= (V1: TSEValue; V2: TSENumber) R: Boolean; inline;
 begin
@@ -1915,8 +1941,10 @@ operator = (V1, V2: TSEValue) R: Boolean; inline;
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
-    sevkNumber, sevkBoolean:
+    sevkNumber:
       R := V1.VarNumber = V2.VarNumber;
+    sevkBoolean:
+      R := Boolean(Round(V1.VarNumber)) = Boolean(Round(V2.VarNumber));
     sevkString:
       R := V1.VarString^ = V2.VarString^;
     sevkNull:
@@ -1928,8 +1956,10 @@ operator <> (V1, V2: TSEValue) R: Boolean; inline;
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
-    sevkNumber, sevkBoolean:
+    sevkNumber:
       R := V1.VarNumber <> V2.VarNumber;
+    sevkBoolean:
+      R := Boolean(Round(V1.VarNumber)) <> Boolean(Round(V2.VarNumber));
     sevkString:
       R := V1.VarString^ <> V2.VarString^;
     sevkNull:
@@ -2520,7 +2550,8 @@ begin
         opOperatorNot:
           begin
             A := Pop;
-            Push(not Integer(A^));
+            SEValueNot(StackPtrLocal^, A^);
+            Inc(StackPtrLocal);
             Inc(CodePtrLocal);
           end;
         opOperatorNegative:
