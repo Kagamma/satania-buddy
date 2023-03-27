@@ -43,6 +43,7 @@ type
     CheckBoxLewd: TCheckBox;
     CheckBoxDeveloperMode: TCheckBox;
     CheckBoxEmbeddedServerEnable: TCheckBox;
+    CheckBoxRules: TCheckBox;
     ComboBoxCustomBotScriptType: TComboBox;
     ComboBoxFont: TComboBox;
     ComboBoxSTTVoskModel: TComboBox;
@@ -106,6 +107,7 @@ type
     LabelFetchFrom: TLabel;
     LabelEmbeddedServerPort: TLabel;
     LabelEmbeddedServerEnable: TLabel;
+    LabelRules: TLabel;
     LabelSTTBackend: TLabel;
     LabelBaseScaling: TLabel;
     LabelFontSkin: TLabel;
@@ -220,6 +222,7 @@ begin
   EditDefaultEvilScheme.Text := Save.Settings.DefaultEvilScheme;
   EditBaseScaling.Value := Save.Settings.BaseScaling;
   EditFrameSkip.Value := Save.Settings.FrameSkip;
+  CheckBoxRules.Checked := Save.Settings.Rules;
 
   ComboBoxSkin.Items.Clear;
   SL := TStringList.Create;
@@ -378,6 +381,7 @@ begin
     Save.Settings.DefaultEvilScheme := EditDefaultEvilScheme.Text;
     Save.Settings.ImageQuality := ComboBoxImageQuality.Items[ComboBoxImageQuality.ItemIndex];
     Save.Settings.FrameSkip := EditFrameSkip.Value;
+    Save.Settings.Rules := CheckBoxRules.Checked;
     // Clear sketch and workers if skin is changed
     if Save.Settings.Skin <> ComboBoxSkin.Items[ComboBoxSkin.ItemIndex] then
     begin

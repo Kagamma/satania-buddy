@@ -327,7 +327,7 @@ object FormSettings: TFormSettings
         object GroupBoxVolframAlpha: TGroupBox
           Left = 39
           Height = 80
-          Top = 40
+          Top = 80
           Width = 577
           Caption = 'WolframAlpha'
           ClientHeight = 60
@@ -351,7 +351,7 @@ object FormSettings: TFormSettings
         object GroupBoxCustomBotScript: TGroupBox
           Left = 39
           Height = 112
-          Top = 344
+          Top = 384
           Width = 580
           Caption = 'Evil Scheme'
           ClientHeight = 92
@@ -406,7 +406,7 @@ object FormSettings: TFormSettings
         object RadioButtonCustomScript: TRadioButton
           Left = 15
           Height = 17
-          Top = 359
+          Top = 399
           Width = 18
           OnChange = RadioButtonWolframAlphaChange
           TabOrder = 3
@@ -414,7 +414,7 @@ object FormSettings: TFormSettings
         object RadioButtonWolframAlpha: TRadioButton
           Left = 15
           Height = 17
-          Top = 56
+          Top = 96
           Width = 18
           Checked = True
           OnChange = RadioButtonWolframAlphaChange
@@ -431,7 +431,7 @@ object FormSettings: TFormSettings
         object GroupBoxChatGPT: TGroupBox
           Left = 39
           Height = 208
-          Top = 128
+          Top = 168
           Width = 576
           Caption = 'ChatGPT'
           ClientHeight = 188
@@ -515,10 +515,24 @@ object FormSettings: TFormSettings
         object RadioButtonChatGPT: TRadioButton
           Left = 15
           Height = 17
-          Top = 144
+          Top = 184
           Width = 18
           OnChange = RadioButtonWolframAlphaChange
           TabOrder = 5
+        end
+        object LabelRules: TLabel
+          Left = 48
+          Height = 15
+          Top = 48
+          Width = 28
+          Caption = 'Rules'
+        end
+        object CheckBoxRules: TCheckBox
+          Left = 15
+          Height = 17
+          Top = 48
+          Width = 18
+          TabOrder = 6
         end
       end
       object TabSheetEmbeddedServer: TTabSheet
