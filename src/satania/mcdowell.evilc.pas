@@ -1093,6 +1093,10 @@ var
 begin
   GC.AllocMap(@Result);
   V := Args[0];
+  if Length(Args) = 3 then
+    TSEValueMap(Result.VarMap).List.Capacity := Round(Args[1].VarNumber * (1 / Args[2].VarNumber)) // Set capacity beforehand
+  else
+    TSEValueMap(Result.VarMap).List.Capacity := Round(Args[1].VarNumber); // Set capacity beforehand
   while EpsilonRound(V) <= Args[1].VarNumber do
   begin
     SEMapSet(Result, I, V);
