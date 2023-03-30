@@ -162,7 +162,7 @@ while i < a {
 }
 #+end_example
 
-*do..While block*
+*do..while block*
 
 #+begin_example
 i = 0
