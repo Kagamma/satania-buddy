@@ -162,6 +162,21 @@ while i < a {
 }
 #+end_example
 
+*do..While block*
+
+#+begin_example
+i = 0
+do {
+  if b = i {
+    break
+  }
+  if c = i {
+    continue
+  }
+  i = i + 1
+} while i < a
+#+end_example
+
 *For block*
 
 #+begin_example

@@ -352,7 +352,8 @@ type
     tkDownto,
     tkReturn,
     tkAtom,
-    tkImport
+    tkImport,
+    tkDo
   );
 TSETokenKinds = set of TSETokenKind;
 
@@ -362,7 +363,7 @@ const TokenNames: array[TSETokenKind] of String = (
   ',', 'if', 'identity', 'function', 'fn', 'variable', 'const',
   'unknown', 'else', 'while', 'break', 'continue', 'pause', 'yield',
   '[', ']', 'and', 'or', 'xor', 'not', 'for', 'in', 'to', 'downto', 'return',
-  'atom', 'import'
+  'atom', 'import', 'do'
 );
 
 type
@@ -3775,6 +3776,8 @@ begin
               Token.Kind := tkIn;
             'to':
               Token.Kind := tkTo;
+            'do':
+              Token.Kind := tkDo;
             'downto':
               Token.Kind := tkDownto;
             'while':
@@ -4298,7 +4301,7 @@ var
           tkAnd:
             BinaryOp(opOperatorAnd, @Expr, True);
           tkOr:
-            BinaryOp(opOperatorOr, @Expr, True);      
+            BinaryOp(opOperatorOr, @Expr, True);
           tkXor:
             BinaryOp(opOperatorXor, @Expr, True);
           else
@@ -4554,6 +4557,43 @@ var
       Emit([Pointer(opPushConst), False]);
       JumpEnd := Emit([Pointer(opJumpEqual), 0]);
       ParseBlock;
+      JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
+      EndBlock := Self.VM.Binary.Count;
+      ContinueList := ContinueStack.Pop;
+      BreakList := BreakStack.Pop;
+      for I := 0 to ContinueList.Count - 1 do
+        Patch(Integer(ContinueList[I]), StartBlock);
+      for I := 0 to BreakList.Count - 1 do
+        Patch(Integer(BreakList[I]), EndBlock);
+      Patch(JumpBlock - 1, StartBlock);
+      Patch(JumpEnd - 1, EndBlock);
+    finally
+      ContinueList.Free;
+      BreakList.Free;
+    end;
+  end;
+
+  procedure ParseDoWhile;
+  var
+    StartBlock,
+    EndBlock,
+    JumpBlock,
+    JumpEnd: Integer;
+    BreakList,
+    ContinueList: TList;
+    I: Integer;
+  begin
+    ContinueList := TList.Create;
+    BreakList := TList.Create;
+    try
+      ContinueStack.Push(ContinueList);
+      BreakStack.Push(BreakList);
+      StartBlock := Self.VM.Binary.Count;
+      ParseBlock;
+      NextTokenExpected([tkWhile]);
+      ParseExpr;
+      Emit([Pointer(opPushConst), False]);
+      JumpEnd := Emit([Pointer(opJumpEqual), 0]);
       JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
       EndBlock := Self.VM.Binary.Count;
       ContinueList := ContinueStack.Pop;
@@ -4828,6 +4868,11 @@ var
         begin
           NextToken;
           ParseFor;
+        end;
+      tkDo:
+        begin
+          NextToken;
+          ParseDoWhile;
         end;
       tkWhile:
         begin
