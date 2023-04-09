@@ -241,6 +241,7 @@ begin
   S.RegisterFunc('url_query', @SEURLProcess, 2);
   S.RegisterFunc('url_encode', @SEURLEncode, 1);
   S.RegisterFunc('url_decode', @SEURLDecode, 1);
+  S.RegisterFunc('chat_history_get', @SEChatHistoryGet, 0);
   S.RegisterFunc('chat_mode_set', @SEChatModeSet, 1);
   S.RegisterFunc('chat_result_get', @SEChatResultGet, 0);
   S.RegisterFunc('reminder_create', @SEReminderCreate, 3);

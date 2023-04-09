@@ -42,11 +42,13 @@ type
     PanelEdit: TPanel;
     PanelChatlog: TPanel;
     Splitter1: TSplitter;
+    ChatHistory: TStringList;
     procedure BttonClearClick(Sender: TObject);
     procedure EditChatKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
       );
     procedure EditChatKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
   public
     procedure InsertLog(const LogName, Msg: String);
@@ -76,6 +78,12 @@ end;
 procedure TFormChat.FormCreate(Sender: TObject);
 begin
   Self.CalcHeights;
+  ChatHistory := TStringList.Create;
+end;
+
+procedure TFormChat.FormDestroy(Sender: TObject);
+begin
+  ChatHistory.Free;
 end;
 
 procedure TFormChat.FormShow(Sender: TObject);
@@ -113,6 +121,7 @@ end;
 procedure TFormChat.BttonClearClick(Sender: TObject);
 begin
   MemoChatLog.Blocks.Clear;
+  ChatHistory.Clear;
 end;
 
 procedure TFormChat.InsertLog(const LogName, Msg: String);
@@ -148,8 +157,12 @@ begin
   TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
   TB.TextStyle.Font.Color := $808080;
 
+  ChatHistory.Add(LogName + ': ' + Msg);
+
   while FormChat.MemoChatLog.Blocks.LineCount > 2000 do
     FormChat.MemoChatLog.Blocks.DeleteLine(2000);
+  while ChatHistory.Count > 2000 do
+    ChatHistory.Delete(0);
 end;
 
 end.

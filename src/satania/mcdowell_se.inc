@@ -57,6 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEChatResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEChatHistoryGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -396,6 +397,15 @@ function TSatania.SEChatResultGet(const VM: TSEVM; const Args: array of TSEValue
 begin
   Result := ChatResult;
   ChatResult := '';
+end;
+
+function TSatania.SEChatHistoryGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  I: Integer;
+begin
+  GC.AllocMap(@Result);
+  for I := 0 to FormChat.ChatHistory.Count - 1 do
+    SEMapSet(Result, I, FormChat.ChatHistory[I]);
 end;
 
 function TSatania.SEIsSoW(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
