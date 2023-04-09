@@ -194,8 +194,8 @@ begin
       Satania.ActionFromFile(S);
     end else
     begin
-      // Disable inference from Rules if ChatGPT is used
-      if Save.Settings.ExternalServiceSelect <> 3 then
+      // Rules or not
+      if Save.Settings.Rules then
         ChatResponse := Inference(S);
       if ChatResponse = '' then
       begin
