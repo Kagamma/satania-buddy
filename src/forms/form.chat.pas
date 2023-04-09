@@ -35,6 +35,7 @@ type
 
   TFormChat = class(TForm)
     BttonClear: TBitBtn;
+    CheckBoxAlwaysOnTop: TCheckBox;
     EditChat: TMemo;
     MemoChatLog: TKMemo;
     Panel1: TPanel;
@@ -44,6 +45,7 @@ type
     Splitter1: TSplitter;
     ChatHistory: TStringList;
     procedure BttonClearClick(Sender: TObject);
+    procedure CheckBoxAlwaysOnTopChange(Sender: TObject);
     procedure EditChatKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
       );
     procedure EditChatKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -122,6 +124,14 @@ procedure TFormChat.BttonClearClick(Sender: TObject);
 begin
   MemoChatLog.Blocks.Clear;
   ChatHistory.Clear;
+end;
+
+procedure TFormChat.CheckBoxAlwaysOnTopChange(Sender: TObject);
+begin
+  if CheckBoxAlwaysOnTop.Checked then
+    Self.FormStyle := fsSystemStayOnTop
+  else
+    Self.FormStyle := fsStayOnTop;
 end;
 
 procedure TFormChat.InsertLog(const LogName, Msg: String);

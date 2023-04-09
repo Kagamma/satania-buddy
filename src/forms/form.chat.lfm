@@ -6,7 +6,6 @@ object FormChat: TFormChat
   Caption = 'Chat'
   ClientHeight = 275
   ClientWidth = 580
-  FormStyle = fsStayOnTop
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
@@ -66,6 +65,17 @@ object FormChat: TFormChat
         ImageIndex = 15
         OnClick = BttonClearClick
         TabOrder = 0
+      end
+      object CheckBoxAlwaysOnTop: TCheckBox
+        Left = 9
+        Height = 29
+        Top = 9
+        Width = 93
+        Align = alLeft
+        BorderSpacing.Around = 8
+        Caption = 'Always on top'
+        OnChange = CheckBoxAlwaysOnTopChange
+        TabOrder = 1
       end
     end
   end
