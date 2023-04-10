@@ -59,9 +59,9 @@ object FormSettings: TFormSettings
       Height = 546
       Top = 1
       Width = 707
-      ActivePage = TabSheetBot
+      ActivePage = TabSheet1
       Align = alClient
-      TabIndex = 2
+      TabIndex = 0
       TabOrder = 0
       object TabSheet1: TTabSheet
         Caption = 'General'
@@ -240,6 +240,27 @@ object FormSettings: TFormSettings
           ReadOnly = True
           TabOrder = 11
         end
+        object CheckBoxRules: TCheckBox
+          Left = 192
+          Height = 17
+          Top = 400
+          Width = 18
+          TabOrder = 12
+        end
+        object LabelRules: TLabel
+          Left = 24
+          Height = 15
+          Top = 400
+          Width = 28
+          Caption = 'Rules'
+        end
+        object Label4: TLabel
+          Left = 224
+          Height = 15
+          Top = 400
+          Width = 434
+          Caption = '*Consider disable this if you use external services like ChatGPT, KoboldAI or similar'
+        end
       end
       object TabSheetGraphics: TTabSheet
         Caption = 'Graphics'
@@ -327,7 +348,7 @@ object FormSettings: TFormSettings
         object GroupBoxVolframAlpha: TGroupBox
           Left = 39
           Height = 80
-          Top = 80
+          Top = 40
           Width = 577
           Caption = 'WolframAlpha'
           ClientHeight = 60
@@ -351,7 +372,7 @@ object FormSettings: TFormSettings
         object GroupBoxCustomBotScript: TGroupBox
           Left = 39
           Height = 112
-          Top = 384
+          Top = 344
           Width = 580
           Caption = 'Evil Scheme'
           ClientHeight = 92
@@ -406,7 +427,7 @@ object FormSettings: TFormSettings
         object RadioButtonCustomScript: TRadioButton
           Left = 15
           Height = 17
-          Top = 399
+          Top = 359
           Width = 18
           OnChange = RadioButtonWolframAlphaChange
           TabOrder = 3
@@ -414,7 +435,7 @@ object FormSettings: TFormSettings
         object RadioButtonWolframAlpha: TRadioButton
           Left = 15
           Height = 17
-          Top = 96
+          Top = 56
           Width = 18
           Checked = True
           OnChange = RadioButtonWolframAlphaChange
@@ -431,7 +452,7 @@ object FormSettings: TFormSettings
         object GroupBoxChatGPT: TGroupBox
           Left = 39
           Height = 208
-          Top = 168
+          Top = 128
           Width = 576
           Caption = 'ChatGPT'
           ClientHeight = 188
@@ -515,24 +536,10 @@ object FormSettings: TFormSettings
         object RadioButtonChatGPT: TRadioButton
           Left = 15
           Height = 17
-          Top = 184
+          Top = 144
           Width = 18
           OnChange = RadioButtonWolframAlphaChange
           TabOrder = 5
-        end
-        object LabelRules: TLabel
-          Left = 48
-          Height = 15
-          Top = 48
-          Width = 28
-          Caption = 'Rules'
-        end
-        object CheckBoxRules: TCheckBox
-          Left = 15
-          Height = 17
-          Top = 48
-          Width = 18
-          TabOrder = 6
         end
       end
       object TabSheetEmbeddedServer: TTabSheet

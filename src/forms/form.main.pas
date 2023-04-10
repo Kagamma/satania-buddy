@@ -75,6 +75,7 @@ type
   TFormMain = class(TForm)
     CastleControl: TCastleControl;
     MenuItem1: TMenuItem;
+    MenuItemHelpExternalServices: TMenuItem;
     MenuItemMemoryUsage: TMenuItem;
     MenuItemAbout: TMenuItem;
     MenuItemEmailCompose: TMenuItem;
@@ -116,6 +117,7 @@ type
     procedure MenuItemEditorClick(Sender: TObject);
     procedure MenuItemHelpAlarmsAndRemindersClick(Sender: TObject);
     procedure MenuItemHelpCreateNewCharacterClick(Sender: TObject);
+    procedure MenuItemHelpExternalServicesClick(Sender: TObject);
     procedure MenuItemHelpRulesClick(Sender: TObject);
     procedure MenuItemHelpVoiceCommandClick(Sender: TObject);
     procedure MenuItemHideShowClick(Sender: TObject);
@@ -272,6 +274,11 @@ end;
 procedure TFormMain.MenuItemHelpCreateNewCharacterClick(Sender: TObject);
 begin
   OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Create-new-character');
+end;
+
+procedure TFormMain.MenuItemHelpExternalServicesClick(Sender: TObject);
+begin
+  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/External-Services');
 end;
 
 procedure TFormMain.MenuItemHelpRulesClick(Sender: TObject);

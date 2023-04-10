@@ -1,27 +1,26 @@
 object FormMain: TFormMain
   Left = -8
-  Height = 911
+  Height = 950
   Top = -8
-  Width = 731
+  Width = 747
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 911
-  ClientWidth = 731
+  ClientHeight = 927
+  ClientWidth = 747
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   PopupMenu = TrayMenu
   ShowInTaskBar = stNever
-  LCLVersion = '2.3.0.0'
   Scaled = False
   Visible = True
   WindowState = wsMaximized
   object CastleControl: TCastleControl
     Left = 0
-    Height = 888
+    Height = 927
     Top = 0
-    Width = 731
+    Width = 747
     Align = alClient
     AlphaBits = 8
     Options = []
@@ -1438,6 +1437,10 @@ object FormMain: TFormMain
       object MenuItemHelpVoiceCommand: TMenuItem
         Caption = 'Default Voice Commands'
         OnClick = MenuItemHelpVoiceCommandClick
+      end
+      object MenuItemHelpExternalServices: TMenuItem
+        Caption = 'External Services'
+        OnClick = MenuItemHelpExternalServicesClick
       end
       object MenuItemHelpRules: TMenuItem
         Caption = 'Rules'
