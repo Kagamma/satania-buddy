@@ -4830,7 +4830,8 @@ var
     if Token.Kind = tkOpAssign then
     begin
       if IsArrayAssign then
-        EmitPushArray(Ident^)
+        // EmitPushArray(Ident^)
+        Error('Assignment operator does not support array/map at the moment', Token)
       else
         EmitPushVar(Ident^);
     end;
