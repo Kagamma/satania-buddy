@@ -25,6 +25,7 @@ object FormChat: TFormChat
       Top = 0
       Width = 580
       Align = alClient
+      BevelOuter = bvSpace
       ClientHeight = 156
       ClientWidth = 580
       TabOrder = 0
