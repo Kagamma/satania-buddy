@@ -39,7 +39,7 @@ type
     EditChat: TMemo;
     MemoChatLog: TKMemo;
     Panel1: TPanel;
-    Panel2: TPanel;
+    PanelToolbar: TPanel;
     PanelEdit: TPanel;
     PanelChatlog: TPanel;
     Splitter1: TSplitter;
@@ -135,6 +135,15 @@ begin
 end;
 
 procedure TFormChat.InsertLog(const LogName, Msg: String);
+  procedure ScrollToBottom;
+  begin
+    MemoChatLog.SelStart := MemoChatLog.GetTextLen;
+    MemoChatLog.SelLength := 0;
+    // 999999 should be more than enough to scroll it to the bottom
+    MemoChatLog.ScrollBy(0, 999999, False);
+    MemoChatLog.Refresh;
+  end;
+
 var
   H, M, SS, MS: Word;
   TB: TKMemoTextBlock;
@@ -163,16 +172,17 @@ begin
     else TB.TextStyle.Font.Color := $0000B0;
   end;
 
-  TB := MemoChatLog.Blocks.AddTextBlock(Time, 0);
+  TB := MemoChatLog.Blocks.AddTextBlock(Time);
   TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
   TB.TextStyle.Font.Color := $808080;
 
   ChatHistory.Add(LogName + ': ' + Msg);
 
   while FormChat.MemoChatLog.Blocks.LineCount > 2000 do
-    FormChat.MemoChatLog.Blocks.DeleteLine(2000);
+    FormChat.MemoChatLog.Blocks.DeleteLine(0);
   while ChatHistory.Count > 2000 do
     ChatHistory.Delete(0);
+  ScrollToBottom;
 end;
 
 end.

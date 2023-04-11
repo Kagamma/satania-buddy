@@ -9,30 +9,30 @@ object FormChat: TFormChat
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.3.0.0'
   object PanelChatlog: TPanel
     Left = 0
-    Height = 199
-    Top = 76
+    Height = 156
+    Top = 0
     Width = 580
     Align = alClient
-    ClientHeight = 199
+    BevelOuter = bvNone
+    ClientHeight = 156
     ClientWidth = 580
     TabOrder = 0
     object Panel1: TPanel
-      Left = 1
-      Height = 150
-      Top = 1
-      Width = 578
+      Left = 0
+      Height = 156
+      Top = 0
+      Width = 580
       Align = alClient
-      ClientHeight = 150
-      ClientWidth = 578
+      ClientHeight = 156
+      ClientWidth = 580
       TabOrder = 0
       object MemoChatLog: TKMemo
         Left = 1
-        Height = 148
+        Height = 154
         Top = 1
-        Width = 576
+        Width = 578
         Align = alClient
         ContentPadding.Left = 5
         ContentPadding.Top = 5
@@ -44,47 +44,13 @@ object FormChat: TFormChat
         Visible = True
       end
     end
-    object Panel2: TPanel
-      Left = 1
-      Height = 47
-      Top = 151
-      Width = 578
-      Align = alBottom
-      ClientHeight = 47
-      ClientWidth = 578
-      TabOrder = 1
-      object BttonClear: TBitBtn
-        Left = 454
-        Height = 29
-        Top = 9
-        Width = 115
-        Align = alRight
-        BorderSpacing.Around = 8
-        Caption = 'Clear'
-        Images = FormEvilCEditor.ImageList
-        ImageIndex = 15
-        OnClick = BttonClearClick
-        TabOrder = 0
-      end
-      object CheckBoxAlwaysOnTop: TCheckBox
-        Left = 9
-        Height = 29
-        Top = 9
-        Width = 93
-        Align = alLeft
-        BorderSpacing.Around = 8
-        Caption = 'Always on top'
-        OnChange = CheckBoxAlwaysOnTopChange
-        TabOrder = 1
-      end
-    end
   end
   object PanelEdit: TPanel
     Left = 0
     Height = 71
-    Top = 0
+    Top = 161
     Width = 580
-    Align = alTop
+    Align = alBottom
     ClientHeight = 71
     ClientWidth = 580
     TabOrder = 1
@@ -105,9 +71,43 @@ object FormChat: TFormChat
     Cursor = crVSplit
     Left = 0
     Height = 5
-    Top = 71
+    Top = 156
     Width = 580
-    Align = alTop
-    ResizeAnchor = akTop
+    Align = alBottom
+    ResizeAnchor = akBottom
+  end
+  object PanelToolbar: TPanel
+    Left = 0
+    Height = 43
+    Top = 232
+    Width = 580
+    Align = alBottom
+    ClientHeight = 43
+    ClientWidth = 580
+    TabOrder = 3
+    object BttonClear: TBitBtn
+      Left = 456
+      Height = 25
+      Top = 9
+      Width = 115
+      Align = alRight
+      BorderSpacing.Around = 8
+      Caption = 'Clear'
+      Images = FormEvilCEditor.ImageList
+      ImageIndex = 15
+      OnClick = BttonClearClick
+      TabOrder = 0
+    end
+    object CheckBoxAlwaysOnTop: TCheckBox
+      Left = 9
+      Height = 25
+      Top = 9
+      Width = 93
+      Align = alLeft
+      BorderSpacing.Around = 8
+      Caption = 'Always on top'
+      OnChange = CheckBoxAlwaysOnTopChange
+      TabOrder = 1
+    end
   end
 end
