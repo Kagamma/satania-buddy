@@ -50,6 +50,7 @@ type
     ComboBoxSkin: TComboBox;
     ComboBoxSTTBackend: TComboBox;
     ComboBoxImageQuality: TComboBox;
+    EditYourName: TEdit;
     EditChatGPTSystem: TEdit;
     EditChatGPTModel: TEdit;
     EditChatGPTDescription: TEdit;
@@ -109,6 +110,7 @@ type
     LabelEmbeddedServerPort: TLabel;
     LabelEmbeddedServerEnable: TLabel;
     LabelRules: TLabel;
+    LabelYourName: TLabel;
     LabelSTTBackend: TLabel;
     LabelBaseScaling: TLabel;
     LabelFontSkin: TLabel;
@@ -223,6 +225,7 @@ begin
   EditDefaultEvilScheme.Text := Save.Settings.DefaultEvilScheme;
   EditBaseScaling.Value := Save.Settings.BaseScaling;
   EditFrameSkip.Value := Save.Settings.FrameSkip;
+  EditYourName.Text := Save.Settings.UserName;
   CheckBoxRules.Checked := Save.Settings.Rules;
 
   ComboBoxSkin.Items.Clear;
@@ -383,6 +386,7 @@ begin
     Save.Settings.ImageQuality := ComboBoxImageQuality.Items[ComboBoxImageQuality.ItemIndex];
     Save.Settings.FrameSkip := EditFrameSkip.Value;
     Save.Settings.Rules := CheckBoxRules.Checked;
+    Save.Settings.UserName := EditYourName.Text;
     // Clear sketch and workers if skin is changed
     if Save.Settings.Skin <> ComboBoxSkin.Items[ComboBoxSkin.ItemIndex] then
     begin

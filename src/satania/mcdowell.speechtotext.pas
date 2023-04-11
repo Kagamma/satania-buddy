@@ -92,7 +92,7 @@ end;
 procedure TSataniaSpeechToText.OnVoskHypothesis(Sender: TObject;
   AScore: Integer; AHypothesis: String);
 begin
-  Satania.Log('(You)', AHypothesis);
+  Satania.Log(Save.Settings.UserName, AHypothesis);
   Satania.Chat(AHypothesis);
 end;
 

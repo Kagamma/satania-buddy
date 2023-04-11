@@ -9,6 +9,7 @@ object FormSettings: TFormSettings
   ClientWidth = 886
   OnShow = FormShow
   Position = poScreenCenter
+  LCLVersion = '2.3.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -260,6 +261,21 @@ object FormSettings: TFormSettings
           Top = 400
           Width = 434
           Caption = '*Consider disable this if you use external services like ChatGPT, KoboldAI or similar'
+        end
+        object LabelYourName: TLabel
+          Left = 25
+          Height = 15
+          Top = 432
+          Width = 59
+          Caption = 'Your Name'
+        end
+        object EditYourName: TEdit
+          Left = 192
+          Height = 23
+          Top = 432
+          Width = 400
+          TabOrder = 13
+          Text = 'EditYourName'
         end
       end
       object TabSheetGraphics: TTabSheet

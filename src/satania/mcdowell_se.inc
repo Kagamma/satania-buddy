@@ -402,10 +402,22 @@ end;
 function TSatania.SEChatHistoryGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   I: Integer;
+  CH: TChatHistory;
+  S: String;
 begin
   GC.AllocMap(@Result);
-  for I := 0 to FormChat.ChatHistory.Count - 1 do
-    SEMapSet(Result, I, FormChat.ChatHistory[I]);
+  for I := 0 to FormChat.ChatHistoryList.Count - 1 do
+  begin
+    CH := FormChat.ChatHistoryList[I];
+    if CH.SenderType = cseSystem then
+      continue;
+    if CH.SenderType = cseUser then
+      S := Save.Settings.UserName
+    else
+      S := Satania.Name;
+    S := S + ': ' + CH.Message;
+    SEMapSet(Result, I, S);
+  end;
 end;
 
 function TSatania.SEIsSoW(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

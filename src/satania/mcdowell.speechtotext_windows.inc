@@ -62,7 +62,7 @@ var
   S: String;
 begin
   S := R.PhraseInfo.GetText(0, -1, True);
-  Satania.Log('(You)', S);
+  Satania.Log(Save.Settings.UserName, S);
   Satania.Chat(S);
 end;
 

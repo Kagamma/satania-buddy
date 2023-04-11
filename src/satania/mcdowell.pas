@@ -268,7 +268,7 @@ begin
   S.RegisterFunc('worker_create', @SEWorkerCreate, -1);
   S.RegisterFunc('worker_exists', @SEWorkerExists, 1);
   S.RegisterFunc('worker_delete', @SEWorkerDelete, 1);
-  S.RegisterFunc('tool_evilc_editor', @SEToolEvilCEditor, 1);      
+  S.RegisterFunc('tool_evilc_editor', @SEToolEvilCEditor, 1);
   S.RegisterFunc('tool_hex_editor', @SEToolHexEditor, 1);
 end;
 
@@ -891,6 +891,7 @@ begin
   end;
   if not IsNamed then
     S.ConstMap.AddOrSetValue('name', Name);
+  S.ConstMap.AddOrSetValue('username', Save.Settings.UserName);
 end;
 
 procedure TSatania.CleanUpCache;

@@ -27,13 +27,27 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ExtCtrls, Process, CastleControls, CastleUIControls,
-  CastleURIUtils, LCLTranslator, kmemo, Types, StrUtils;
+  CastleURIUtils, LCLTranslator, kmemo, Types, StrUtils, Generics.Collections;
 
 type
+  TChatSenderEnum = (
+    cseSystem,
+    cseSatania,
+    cseUser
+  );
+
+  TChatHistory = record
+    SenderType: TChatSenderEnum;
+    Time,
+    Message: String;
+  end;
+
+  TChatHistoryList = specialize TList<TChatHistory>;
 
   { TFormChat }
 
   TFormChat = class(TForm)
+
     ButtonClear: TBitBtn;
     CheckBoxAlwaysOnTop: TCheckBox;
     EditChat: TMemo;
@@ -43,7 +57,7 @@ type
     PanelEdit: TPanel;
     PanelChatlog: TPanel;
     Splitter1: TSplitter;
-    ChatHistory: TStringList;
+
     procedure ButtonClearClick(Sender: TObject);
     procedure CheckBoxAlwaysOnTopChange(Sender: TObject);
     procedure EditChatKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
@@ -53,8 +67,12 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
   public
+    ChatHistoryList: TChatHistoryList;
+    Typing: TKMemoTextBlock;
     procedure InsertLog(const LogName, Msg: String);
     procedure CalcHeights;
+    procedure InsertTyping;
+    procedure RemoveTyping;
   end;
 
 var
@@ -80,13 +98,13 @@ end;
 procedure TFormChat.FormCreate(Sender: TObject);
 begin
   Self.CalcHeights;
-  ChatHistory := TStringList.Create;
+  ChatHistoryList := TChatHistoryList.Create;
   ButtonClearClick(Self);
 end;
 
 procedure TFormChat.FormDestroy(Sender: TObject);
 begin
-  ChatHistory.Free;
+  ChatHistoryList.Free;
 end;
 
 procedure TFormChat.FormShow(Sender: TObject);
@@ -103,7 +121,7 @@ begin
   if (Key = 13) and not (Shift = [ssShift]) and (FormChat.EditChat.Lines.Text<>'') then
   begin
     S := Trim(FormChat.EditChat.Lines.Text);
-    Satania.Log('(You)', S);
+    Satania.Log(Save.Settings.UserName, S);
     Satania.Chat(S);
     EditChat.Lines.Clear;
   end;
@@ -124,7 +142,7 @@ end;
 procedure TFormChat.ButtonClearClick(Sender: TObject);
 begin
   MemoChatLog.Blocks.Clear;
-  ChatHistory.Clear;
+  ChatHistoryList.Clear;
 end;
 
 procedure TFormChat.CheckBoxAlwaysOnTopChange(Sender: TObject);
@@ -151,20 +169,31 @@ var
   Time: String;
   MsgSplit: TStringDynArray;
   I: Integer;
+  CH: TChatHistory;
 begin
+  RemoveTyping;
   DecodeTime(Now, H, M, SS, MS);
   Time := '[' + Format('%.*d', [2, H]) + ':' + Format('%.*d', [2, M]) + ':' + Format('%.*d', [2, SS]) + '] ';
-  
+
   TB := MemoChatLog.Blocks.AddTextBlock(Time);
   TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
   TB.TextStyle.Font.Color := $808080;
-  
+
   TB := MemoChatLog.Blocks.AddTextBlock(LogName + ': ');
   TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsBold];
-  case LogName of
-    'System': TB.TextStyle.Font.Color := $800000;
-    '(You)': TB.TextStyle.Font.Color := $008000;
-    else TB.TextStyle.Font.Color := $0000B0;
+  if LogName = 'System' then
+  begin
+    TB.TextStyle.Font.Color := $800000;
+    CH.SenderType := cseSystem;
+  end else
+  if LogName = Save.Settings.UserName then
+  begin
+    TB.TextStyle.Font.Color := $008000;
+    CH.SenderType := cseSatania;
+  end else
+  begin
+    TB.TextStyle.Font.Color := $0000B0;
+    CH.SenderType := cseUser;
   end;
 
   MsgSplit := SplitString(Msg, #10);
@@ -174,13 +203,43 @@ begin
     MemoChatLog.Blocks.AddParagraph;
   end;
 
-  ChatHistory.Add(LogName + ': ' + Msg);
+  CH.Time := Time;
+  CH.Message := Msg;
+
+  ChatHistoryList.Add(CH);
+
+  if LogName = Save.Settings.UserName then
+    InsertTyping;
 
   while FormChat.MemoChatLog.Blocks.LineCount > 2000 do
     FormChat.MemoChatLog.Blocks.DeleteLine(0);
-  while ChatHistory.Count > 2000 do
-    ChatHistory.Delete(0);
+  while ChatHistoryList.Count > 2000 do
+    ChatHistoryList.Delete(0);
   ScrollToBottom;
+end;
+
+procedure TFormChat.InsertTyping;
+begin
+  RemoveTyping;
+  Typing := MemoChatLog.Blocks.AddTextBlock(Satania.Name + ' is typing...');
+  Typing.TextStyle.Font.Style := Typing.TextStyle.Font.Style + [fsItalic];
+  Typing.TextStyle.Font.Color := $808080;
+end;
+
+procedure TFormChat.RemoveTyping;
+var
+  I: Integer;
+begin
+  if Self.Typing = nil then
+    Exit;
+  for I := 0 to MemoChatLog.Blocks.Count - 1 do
+  begin
+    if Typing = MemoChatLog.Blocks[I] then
+    begin
+      MemoChatLog.Blocks.Delete(I);
+      Break;
+    end;
+  end;
 end;
 
 end.
