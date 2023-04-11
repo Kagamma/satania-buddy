@@ -86,7 +86,7 @@ object FormChat: TFormChat
     ClientHeight = 43
     ClientWidth = 580
     TabOrder = 3
-    object BttonClear: TBitBtn
+    object ButtonClear: TBitBtn
       Left = 456
       Height = 25
       Top = 9
@@ -96,7 +96,7 @@ object FormChat: TFormChat
       Caption = 'Clear'
       Images = FormEvilCEditor.ImageList
       ImageIndex = 15
-      OnClick = BttonClearClick
+      OnClick = ButtonClearClick
       TabOrder = 0
     end
     object CheckBoxAlwaysOnTop: TCheckBox

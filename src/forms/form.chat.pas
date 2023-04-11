@@ -34,7 +34,7 @@ type
   { TFormChat }
 
   TFormChat = class(TForm)
-    BttonClear: TBitBtn;
+    ButtonClear: TBitBtn;
     CheckBoxAlwaysOnTop: TCheckBox;
     EditChat: TMemo;
     MemoChatLog: TKMemo;
@@ -44,7 +44,7 @@ type
     PanelChatlog: TPanel;
     Splitter1: TSplitter;
     ChatHistory: TStringList;
-    procedure BttonClearClick(Sender: TObject);
+    procedure ButtonClearClick(Sender: TObject);
     procedure CheckBoxAlwaysOnTopChange(Sender: TObject);
     procedure EditChatKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
       );
@@ -81,6 +81,7 @@ procedure TFormChat.FormCreate(Sender: TObject);
 begin
   Self.CalcHeights;
   ChatHistory := TStringList.Create;
+  ButtonClearClick(Self);
 end;
 
 procedure TFormChat.FormDestroy(Sender: TObject);
@@ -120,7 +121,7 @@ begin
     FormChat.EditChat.Clear;
 end;
 
-procedure TFormChat.BttonClearClick(Sender: TObject);
+procedure TFormChat.ButtonClearClick(Sender: TObject);
 begin
   MemoChatLog.Blocks.Clear;
   ChatHistory.Clear;
@@ -153,18 +154,12 @@ var
 begin
   DecodeTime(Now, H, M, SS, MS);
   Time := '[' + Format('%.*d', [2, H]) + ':' + Format('%.*d', [2, M]) + ':' + Format('%.*d', [2, SS]) + '] ';
-
-  MemoChatLog.Blocks.AddParagraph(0);
-
-  MsgSplit := SplitString(Msg, #10);
-  for I := High(MsgSplit) downto 0 do
-  begin
-    MemoChatLog.Blocks.AddTextBlock(MsgSplit[I], 0);
-    if I > 0 then
-      MemoChatLog.Blocks.AddParagraph(0);
-  end;
-
-  TB := MemoChatLog.Blocks.AddTextBlock(LogName + ': ', 0);
+  
+  TB := MemoChatLog.Blocks.AddTextBlock(Time);
+  TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
+  TB.TextStyle.Font.Color := $808080;
+  
+  TB := MemoChatLog.Blocks.AddTextBlock(LogName + ': ');
   TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsBold];
   case LogName of
     'System': TB.TextStyle.Font.Color := $800000;
@@ -172,9 +167,12 @@ begin
     else TB.TextStyle.Font.Color := $0000B0;
   end;
 
-  TB := MemoChatLog.Blocks.AddTextBlock(Time);
-  TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
-  TB.TextStyle.Font.Color := $808080;
+  MsgSplit := SplitString(Msg, #10);
+  for I := 0 to High(MsgSplit) do
+  begin
+    MemoChatLog.Blocks.AddTextBlock(MsgSplit[I]);
+    MemoChatLog.Blocks.AddParagraph;
+  end;
 
   ChatHistory.Add(LogName + ': ' + Msg);
 
