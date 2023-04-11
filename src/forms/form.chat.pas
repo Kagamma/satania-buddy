@@ -189,11 +189,11 @@ begin
   if LogName = Save.Settings.UserName then
   begin
     TB.TextStyle.Font.Color := $008000;
-    CH.SenderType := cseSatania;
+    CH.SenderType := cseUser;
   end else
   begin
     TB.TextStyle.Font.Color := $0000B0;
-    CH.SenderType := cseUser;
+    CH.SenderType := cseSatania;
   end;
 
   MsgSplit := SplitString(Msg, #10);
@@ -223,23 +223,15 @@ begin
   RemoveTyping;
   Typing := MemoChatLog.Blocks.AddTextBlock(Satania.Name + ' is typing...');
   Typing.TextStyle.Font.Style := Typing.TextStyle.Font.Style + [fsItalic];
-  Typing.TextStyle.Font.Color := $808080;
+  Typing.TextStyle.Font.Color := $818181;
 end;
 
 procedure TFormChat.RemoveTyping;
-var
-  I: Integer;
 begin
   if Self.Typing = nil then
     Exit;
-  for I := 0 to MemoChatLog.Blocks.Count - 1 do
-  begin
-    if Typing = MemoChatLog.Blocks[I] then
-    begin
-      MemoChatLog.Blocks.Delete(I);
-      Break;
-    end;
-  end;
+  MemoChatLog.Blocks.Delete(MemoChatLog.Blocks.Count - 1);
+  Self.Typing := nil;
 end;
 
 end.
