@@ -87,6 +87,7 @@ begin
     if Position.X <> -999999 then
     begin
       Satania.Sprite.Translation := Vector3(ScreenCoordToUI(Vector2(Position.X, Position.Y)), 0);
+      FormTouch.UpdateMonitor;
     end;
   except
     on E: Exception do
