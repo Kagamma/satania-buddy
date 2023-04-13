@@ -404,19 +404,22 @@ var
   I: Integer;
   CH: TChatHistory;
   S: String;
+  Item: TSEValue;
 begin
   GC.AllocMap(@Result);
   for I := 0 to FormChat.ChatHistoryList.Count - 1 do
   begin
     CH := FormChat.ChatHistoryList[I];
-    if CH.SenderType = cseSystem then
-      continue;
+    GC.AllocMap(@Item);
     if CH.SenderType = cseUser then
-      S := Save.Settings.UserName
-    else
-      S := Satania.Name;
-    S := S + ': ' + CH.Message;
-    SEMapSet(Result, I, S);
+    begin
+      SEMapSet(Item, 'name', Save.Settings.UserName);
+    end else
+    begin
+      SEMapSet(Item, 'name', Satania.Name);
+    end;
+    SEMapSet(Item, 'message', CH.Message);
+    SEMapSet(Result, I, Item);
   end;
 end;
 

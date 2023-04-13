@@ -655,3 +655,6 @@ number)*
 - This function only useful when chat mode = CHATMODE_SCRIPT.
 - Get chat message input by users, either via Speech Recognition or via Chat dialog. Chat message will be cleared once this function is called, so make sure to save the results somewhere.
 - If no chat message is found, an empty string will be returned.
+
+*chat_history_get: array*
+- Returns array of chat message: { name: <name>, message: <message> }
