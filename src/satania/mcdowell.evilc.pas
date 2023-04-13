@@ -3820,6 +3820,7 @@ var
   Token: TSEToken;
   ContinueStack: TSEListStack;
   BreakStack: TSEListStack;
+  ReturnStack: TSEListStack;
 
   procedure Error(const S: String; const Token: TSEToken);
   begin
@@ -4391,12 +4392,12 @@ var
     I, Ind,
     JumpBlock,
     Addr: Integer;
-    BreakList: TList;
+    ReturnList: TList;
     Func: PSEFuncScriptInfo;
   begin
-    BreakList := TList.Create;
+    ReturnList := TList.Create;
     try
-      BreakStack.Push(BreakList);
+      ReturnStack.Push(ReturnList);
       Token := NextTokenExpected([tkIdent]);
       Name := Token.Value;
       if FindFunc(Name) <> nil then
@@ -4425,9 +4426,9 @@ var
       Func := RegisterScriptFunc(Name, Addr, ArgCount);
       ParseBlock;
 
-      BreakList := BreakStack.Pop;
-      for I := 0 to BreakList.Count - 1 do
-        Patch(Integer(BreakList[I]), Self.VM.Binary.Count);
+      ReturnList := ReturnStack.Pop;
+      for I := 0 to ReturnList.Count - 1 do
+        Patch(Integer(ReturnList[I]), Self.VM.Binary.Count);
 
       // EmitPushVar(ResultIdent);
       Emit([Pointer(opPopFrame)]);
@@ -4435,7 +4436,7 @@ var
 
       Func^.VarCount := Self.LocalVarCount - ArgCount;
     finally
-      BreakList.Free;
+      ReturnList.Free;
     end;
   end;
 
@@ -4910,7 +4911,7 @@ var
           NextToken;
           if FuncTraversal = 0 then
             Error('Not in a function', Token);
-          List := BreakStack.Peek;
+          List := ReturnStack.Peek;
           List.Add(Pointer(Emit([Pointer(opJumpUnconditional), 0]) - 1));
         end;
       tkFunctionDecl:
@@ -4986,6 +4987,7 @@ var
 begin
   ContinueStack := TSEListStack.Create;
   BreakStack := TSEListStack.Create;
+  ReturnStack := TSEListStack.Create;
   try
     repeat
       ParseBlock;
@@ -4994,6 +4996,7 @@ begin
   finally
     FreeAndNil(ContinueStack);
     FreeAndNil(BreakStack);
+    FreeAndNil(ReturnStack);
   end;
 end;
 
