@@ -27,7 +27,8 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ExtCtrls, Process, CastleControls, CastleUIControls,
-  CastleURIUtils, LCLTranslator, kmemo, Types, StrUtils, Generics.Collections;
+  CastleURIUtils, LCLTranslator, kmemo, Types, StrUtils, Generics.Collections,
+  kgraphics;
 
 type
   TChatSenderEnum = (
@@ -177,11 +178,16 @@ begin
   DecodeTime(Now, H, M, SS, MS);
   Time := '[' + Format('%.*d', [2, H]) + ':' + Format('%.*d', [2, M]) + ':' + Format('%.*d', [2, SS]) + '] ';
 
-  TB := MemoChatLog.Blocks.AddTextBlock(Time);
-  TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
-  TB.TextStyle.Font.Color := $808080;
+  MemoChatLog.Blocks.AddParagraph;
 
-  TB := MemoChatLog.Blocks.AddTextBlock(LogName + ': ');
+  if LogName = 'System' then
+  begin
+    TB := MemoChatLog.Blocks.AddTextBlock(Time);
+    TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
+    TB.TextStyle.Font.Color := $808080;
+  end;
+
+  TB := MemoChatLog.Blocks.AddTextBlock(LogName);
   TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsBold];
   if LogName = 'System' then
   begin
@@ -197,6 +203,7 @@ begin
     TB.TextStyle.Font.Color := $0000B0;
     CH.SenderType := cseSatania;
   end;
+  MemoChatLog.Blocks.AddParagraph;
 
   MsgSplit := SplitString(Msg, #10);
   for I := 0 to High(MsgSplit) do
