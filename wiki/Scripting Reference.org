@@ -657,4 +657,4 @@ number)*
 - If no chat message is found, an empty string will be returned.
 
 *chat_history_get: array*
-- Returns array of chat message: { name: <name>, message: <message> }
+- Returns array of chat message: { name: string, message: string, timestamp: string }
