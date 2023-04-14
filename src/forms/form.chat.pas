@@ -176,16 +176,9 @@ begin
   RemoveTyping;
 
   DecodeTime(Now, H, M, SS, MS);
-  Time := '[' + Format('%.*d', [2, H]) + ':' + Format('%.*d', [2, M]) + ':' + Format('%.*d', [2, SS]) + '] ';
+  Time := Format('%.*d', [2, H]) + ':' + Format('%.*d', [2, M]) + ':' + Format('%.*d', [2, SS]);
 
   MemoChatLog.Blocks.AddParagraph;
-
-  if LogName = 'System' then
-  begin
-    TB := MemoChatLog.Blocks.AddTextBlock(Time);
-    TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
-    TB.TextStyle.Font.Color := $808080;
-  end;
 
   TB := MemoChatLog.Blocks.AddTextBlock(LogName);
   TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsBold];
@@ -193,6 +186,9 @@ begin
   begin
     TB.TextStyle.Font.Color := $800000;
     CH.SenderType := cseSystem;
+    TB := MemoChatLog.Blocks.AddTextBlock(' [' + Time + ']');
+    TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
+    TB.TextStyle.Font.Color := $808080;
   end else
   if LogName = Save.Settings.UserName then
   begin
