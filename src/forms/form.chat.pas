@@ -168,10 +168,12 @@ var
   TB: TKMemoTextBlock;
   Time: String;
   MsgSplit: TStringDynArray;
+  CodeMode: Boolean = False;
   I: Integer;
   CH: TChatHistory;
 begin
   RemoveTyping;
+
   DecodeTime(Now, H, M, SS, MS);
   Time := '[' + Format('%.*d', [2, H]) + ':' + Format('%.*d', [2, M]) + ':' + Format('%.*d', [2, SS]) + '] ';
 
@@ -199,8 +201,21 @@ begin
   MsgSplit := SplitString(Msg, #10);
   for I := 0 to High(MsgSplit) do
   begin
-    MemoChatLog.Blocks.AddTextBlock(MsgSplit[I]);
-    MemoChatLog.Blocks.AddParagraph;
+    if MsgSplit[I].IndexOf('```') = 0 then
+    begin
+      CodeMode := not CodeMode;
+    end else
+    begin
+      TB := MemoChatLog.Blocks.AddTextBlock(MsgSplit[I]);
+      if CodeMode then
+      begin
+        TB.TextStyle.Font.Color := $303030;
+        {$ifdef WINDOWS}
+        TB.TextStyle.Font.Name := 'Consolas';
+        {$endif}
+      end;
+      MemoChatLog.Blocks.AddParagraph;
+    end;
   end;
 
   CH.Time := Time;
@@ -230,7 +245,8 @@ procedure TFormChat.RemoveTyping;
 begin
   if Self.Typing = nil then
     Exit;
-  MemoChatLog.Blocks.Delete(MemoChatLog.Blocks.Count - 1);
+  if MemoChatLog.Blocks.Count <> 0 then
+    MemoChatLog.Blocks.Delete(MemoChatLog.Blocks.Count - 1);
   Self.Typing := nil;
 end;
 
