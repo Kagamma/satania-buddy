@@ -419,6 +419,7 @@ begin
       SEMapSet(Item, 'name', Satania.Name);
     end;
     SEMapSet(Item, 'message', CH.Message);
+    SEMapSet(Item, 'timestamp', CH.Time);
     SEMapSet(Result, I, Item);
   end;
 end;
