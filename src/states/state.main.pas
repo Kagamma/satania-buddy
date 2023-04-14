@@ -8,7 +8,7 @@ uses Classes,
   Forms,
   CastleVectors, CastleUIState, CastleComponentSerialize,
   CastleUIControls, CastleControls, CastleKeysMouse, CastleScene, CastleTransform,
-  X3DNodes, CastleBoxes, CastleRectangles, CastleTypingLabel, CastleViewport,
+  X3DNodes, CastleBoxes, CastleRectangles, CastleViewport,
   CastleFonts, LCLTranslator, CastleSceneCore, CastleSpine, CastleSpineMixer,
   Globals;
 
@@ -19,9 +19,6 @@ type
     procedure UpdateChatBubblePosition;
     procedure UpdateSataniaPositionBasedOnMonitor;
   public
-    ChatText: TCastleTypingLabel;
-    ChatBubble: TCastleRectangleControl;
-    ChatBubbleArrow: TCastleImageControl;
     FontSystem: TCastleFont;
     SpriteTransform: TCastleTransform;
     Mixer: TCastleSpineMixerBehavior;
@@ -48,6 +45,7 @@ uses
   SysUtils,
   CastleWindow,
   form.ask,
+  Form.Bubble,
   form.main,
   form.touch,
   Utils.Strings,
@@ -67,12 +65,6 @@ begin
   inherited;
 
   { Find components, by name, that we need to access from code }
-  ChatText := DesignedComponent('ChatText') as TCastleTypingLabel;
-  ChatText.Text.Text := '';
-  ChatBubble := DesignedComponent('ChatBubble') as TCastleRectangleControl;
-  ChatBubble.Exists := False;
-  ChatBubbleArrow := DesignedComponent('ChatBubbleArrow') as TCastleImageControl;
-  ChatBubbleArrow.Exists := False;
   FontSystem := DesignedComponent('FontSystem') as TCastleFont;
 
   SpriteAsX3D := DesignedComponent('Sprite') as TCastleScene;
@@ -81,7 +73,6 @@ begin
   Sprite := SpriteAsX3D;
   SpriteTransform := DesignedComponent('SpriteTransform') as TCastleTransform;
   Viewport := DesignedComponent('Viewport') as TCastleViewport;
-  ChatText.TypingSpeed := Save.Settings.TextSpeed;
   SketchBefore := DesignedComponent('SketchBefore') as TCastleTransform;
   SketchAfter := DesignedComponent('SketchAfter') as TCastleTransform;
 
@@ -90,8 +81,6 @@ begin
   Satania.SpriteAsSpine := Self.SpriteAsSpine;
   Satania.SpriteAsX3D := Self.SpriteAsX3D;
   Satania.Viewport := Viewport;
-  Satania.ChatText := ChatText;
-  Satania.ChatBubble := ChatBubble;
   Satania.FontSystem := FontSystem;
   Satania.SketchBefore := Self.SketchBefore;
   Satania.SketchAfter := Self.SketchAfter;
@@ -101,10 +90,6 @@ begin
     Satania.DefaultPosition;
     Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
     Satania.SetImageQuality(Save.Settings.ImageQuality);
-    FontSystem.URL := PATH_FONT + Save.Settings.Font;
-    FontSystem.OptimalSize := Save.Settings.FontSize;
-    FontSystem.LoadCharacters := CharsetToCharacters(Save.Settings.Charset);
-    ChatText.FontSize := Save.Settings.FontSize;
     Sprite.AnimateSkipTicks := Save.Settings.FrameSkip;
   except
     on E: Exception do
@@ -143,59 +128,20 @@ var
   Box: TBox3D;
   R, RA: TFloatRectangle;
 begin
-  if ChatText.Text.Text <> '' then
+  if FormBubble.Text <> '' then
   begin
     FormAsk.Visible := Satania.IsAsking;
-    ChatBubble.Exists := True and Satania.Sprite.Visible and not Satania.IsAsking;
+    FormBubble.Visible := True and Satania.Sprite.Visible and not Satania.IsAsking;
   end else
   begin
     FormAsk.Visible := False;
-    ChatBubble.Exists := False;
+    FormBubble.Visible := False;
   end;
-  ChatBubbleArrow.Exists := ChatBubble.Exists and not Satania.IsAsking;
-  if (not ChatBubble.Exists) and (not FormAsk.Visible) then Exit;
+  if (not FormBubble.Visible) and (not FormAsk.Visible) then Exit;
 
   Box := Satania.LocalBoundingBoxSnapshot;
   Box.Data[0] := Box.Data[0] + Satania.Sprite.Translation + SpriteTransform.Translation;
   Box.Data[1] := Box.Data[1] + Satania.Sprite.Translation + SpriteTransform.Translation;
-  R := ChatBubble.EffectiveRect;
-  RA := ChatBubbleArrow.EffectiveRect;
-  case BubbleSideX of
-    0:
-      begin
-        ChatBubble.Left := Box.Min.X - R.Width;
-        ChatBubbleArrow.Left := ChatBubble.Left + R.Width - RA.Width - 4;
-        ChatBubbleArrow.FlipHorizontal := False;
-        if R.Left < 0 then
-          BubbleSideX := 1;
-      end;
-    1:
-      begin
-        ChatBubble.Left := Box.Max.X;
-        ChatBubbleArrow.Left := ChatBubble.Left + 4;
-        ChatBubbleArrow.FlipHorizontal := True;
-        if R.Left + R.Width > R.Width * 2 + (Box.Max.X - Box.Min.X) then
-          BubbleSideX := 0;
-      end;
-  end;
-  case BubbleSideY of
-    0:
-      begin
-        ChatBubble.Bottom := Box.Min.Y - R.Height;
-        ChatBubbleArrow.Bottom := ChatBubble.Bottom + R.Height - 4;
-        ChatBubbleArrow.FlipVertical := True;
-        if R.Bottom + R.Height * 2 + (Box.Max.Y - Box.Min.Y) < Application.ScreenHeight then
-          BubbleSideY := 1;
-      end;
-    1:
-      begin
-        ChatBubble.Bottom := Box.Max.Y;
-        ChatBubbleArrow.Bottom := ChatBubble.Bottom - RA.Height + 4;
-        ChatBubbleArrow.FlipVertical := False;
-        if R.Bottom + R.Height > Application.ScreenHeight then
-          BubbleSideY := 0;
-      end;
-  end;
   if FormAsk.IsPositionUpdated < 15 then
   begin
     case AskSideX of
@@ -228,11 +174,36 @@ begin
     end;
     Inc(FormAsk.IsPositionUpdated);
   end;
-  // Hide arrow if size is larger than bubble
-  if ChatBubble.EffectiveWidth < ChatBubbleArrow.EffectiveWidth then
-    ChatBubbleArrow.Exists := False
-  else
-    ChatBubbleArrow.Exists := ChatBubble.Exists and not Satania.IsAsking;
+
+  case BubbleSideX of
+    0:
+      begin
+        FormBubble.Left := Round(Box.Min.X - FormBubble.Width) + FormMain.Monitor.Left;
+        if FormBubble.Left < FormMain.Monitor.Left then
+          BubbleSideX := 1;
+      end;
+    1:
+      begin
+        FormBubble.Left := Round(Box.Max.X) + FormMain.Monitor.Left;
+        if FormBubble.Left + FormBubble.Width > FormBubble.Width * 2 + (Box.Max.X - Box.Min.X) + FormMain.Monitor.Left then
+          BubbleSideX := 0;
+      end;
+  end;
+  case BubbleSideY of
+    0:
+      begin
+        FormBubble.Top := UIToScreenCoord(Box.Max.Y) - FormBubble.Height;
+        if FormBubble.Top < 0 then
+          BubbleSideY := 1;
+      end;
+    1:
+      begin
+        FormBubble.Top := UIToScreenCoord(Box.Min.Y);
+        FormBubble.Top := UIToScreenCoord(Box.Min.Y);
+        if FormBubble.Top + FormBubble.Height > Application.ScreenHeight then
+          BubbleSideY := 0;
+      end;
+  end;
 end;
 
 procedure TStateMain.Update(const SecondsPassed: Single; var HandleInput: Boolean);

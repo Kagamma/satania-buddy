@@ -28,7 +28,8 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ExtCtrls, Process, CastleControls, CastleUIControls,
   CastleURIUtils, LCLTranslator, kmemo, Types, StrUtils, Generics.Collections,
-  kgraphics;
+  kgraphics,
+  Mcdowell.RichText;
 
 type
   TChatSenderEnum = (
@@ -67,6 +68,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+  private
+    FRichText: TRichText;
   public
     ChatHistoryList: TChatHistoryList;
     Typing: TKMemoTextBlock;
@@ -101,11 +104,13 @@ begin
   Self.CalcHeights;
   ChatHistoryList := TChatHistoryList.Create;
   ButtonClearClick(Self);
+  FRichText := TRichText.Create;
 end;
 
 procedure TFormChat.FormDestroy(Sender: TObject);
 begin
   ChatHistoryList.Free;
+  FRichText.Free;
 end;
 
 procedure TFormChat.FormShow(Sender: TObject);
@@ -201,25 +206,8 @@ begin
   end;
   MemoChatLog.Blocks.AddParagraph;
 
-  MsgSplit := SplitString(Msg, #10);
-  for I := 0 to High(MsgSplit) do
-  begin
-    if MsgSplit[I].IndexOf('```') = 0 then
-    begin
-      CodeMode := not CodeMode;
-    end else
-    begin
-      TB := MemoChatLog.Blocks.AddTextBlock(MsgSplit[I]);
-      if CodeMode then
-      begin
-        TB.TextStyle.Font.Color := $303030;
-        {$ifdef WINDOWS}
-        TB.TextStyle.Font.Name := 'Consolas';
-        {$endif}
-      end;
-      MemoChatLog.Blocks.AddParagraph;
-    end;
-  end;
+  FRichText.Source := Msg;
+  FRichText.Parse(MemoChatLog);
 
   CH.Time := Time;
   CH.Message := Msg;

@@ -35,7 +35,6 @@ type
   { TFormSettings }
 
   TFormSettings = class(TForm)
-    ButtonCharsetAdd: TBitBtn;
     ButtonCancel: TBitBtn;
     ButtonOk: TBitBtn;
     CheckBoxEmailUseSSL: TCheckBox;
@@ -45,7 +44,6 @@ type
     CheckBoxEmbeddedServerEnable: TCheckBox;
     CheckBoxRules: TCheckBox;
     ComboBoxCustomBotScriptType: TComboBox;
-    ComboBoxFont: TComboBox;
     ComboBoxSTTVoskModel: TComboBox;
     ComboBoxSkin: TComboBox;
     ComboBoxSTTBackend: TComboBox;
@@ -57,7 +55,6 @@ type
     EditChatGPTSecretKey: TEdit;
     EditCustomBotScript: TEdit;
     EditBotVolframAlphaAppID: TEdit;
-    EditCharsetTo: TLabeledEdit;
     EditDefaultEvilScheme: TEdit;
     EditChatBubbleDelay: TSpinEdit;
     EditEmailFetchFrom: TEdit;
@@ -115,8 +112,6 @@ type
     LabelBaseScaling: TLabel;
     LabelFontSkin: TLabel;
     LabelFontSize: TLabel;
-    LabelFontName: TLabel;
-    LabelFontCharset: TLabel;
     LabelFrameSkip: TLabel;
     LabelLewd: TLabel;
     LabelFPS: TLabel;
@@ -126,15 +121,11 @@ type
     LabelTextSpeed: TLabel;
     LabelDefaultEvilScheme: TLabel;
     LabelImageQuality: TLabel;
-    EditCharsetFrom: TLabeledEdit;
     ListBoxSettings: TListBox;
-    ListBoxCharset: TListBox;
-    MenuItemDeleteCharset: TMenuItem;
     OpenDialogEvilScript: TOpenDialog;
     PageControl: TPageControl;
     PanelButtons: TPanel;
     PanelSettings: TPanel;
-    PopupMenuCharset: TPopupMenu;
     ButtonCustomBotScriptOpen: TSpeedButton;
     RadioButtonChatGPT: TRadioButton;
     RadioButtonCustomScript: TRadioButton;
@@ -149,14 +140,12 @@ type
     TabSheetGraphics: TTabSheet;
     TabSheetBot: TTabSheet;
     procedure ButtonCancelClick(Sender: TObject);
-    procedure ButtonCharsetAddClick(Sender: TObject);
     procedure ButtonCustomBotScriptOpenClick(Sender: TObject);
     procedure ButtonOkClick(Sender: TObject);
     procedure ComboBoxSTTBackendChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure GroupBoxChatGPTClick(Sender: TObject);
     procedure ListBoxSettingsSelectionChange(Sender: TObject; User: boolean);
-    procedure MenuItemDeleteCharsetClick(Sender: TObject);
     procedure RadioButtonWolframAlphaChange(Sender: TObject);
   private
 
@@ -174,6 +163,7 @@ implementation
 uses
   Globals, Mcdowell, Mcdowell.imap, State.Main, Mcdowell.SpeechToText,
   Utils.Strings,
+  form.bubble,
   Mcdowell.smtp,
   Mcdowell.sketch,
   com.Brokers,
@@ -283,18 +273,12 @@ begin
   end;
   SL.Free;
 
-  ComboBoxFont.Clear;
   SL := TStringList.Create;
   FindAllFiles(SL, 'data/fonts', '', False);
   for I := 0 to SL.Count - 1 do
   begin
     S := ExtractFileName(SL[I]);
     PageControl.ActivePageIndex := ListboxSettings.ItemIndex;
-    ComboBoxFont.Items.Add(S);
-    if S = Save.Settings.Font then
-    begin
-      ComboBoxFont.ItemIndex := ComboBoxFont.Items.Count - 1;
-    end;
   end;
   SL.Free;
 
@@ -302,13 +286,6 @@ begin
   EditEmbeddedServerPort.Value := Save.Settings.EmbeddedServerPort;
 
   EditFontSize.Value := Save.Settings.FontSize;
-  ListBoxCharset.Clear;
-  EditCharsetFrom.Text := '';
-  EditCharsetTo.Text := '';
-  L := CharsetToSettings(Save.Settings.Charset);
-  for S in L do
-    if Trim(S) <> '' then
-      ListBoxCharset.AddItem(S, nil);
   EditFontSize.Value := Save.Settings.FontSize;
   if Save.Settings.EmailPassword <> '' then
     EditEmailPassword.Text := Decrypt(Save.Settings.EmailPassword)
@@ -339,12 +316,6 @@ procedure TFormSettings.ListBoxSettingsSelectionChange(Sender: TObject;
   User: boolean);
 begin
   PageControl.TabIndex := ListboxSettings.ItemIndex;
-end;
-
-procedure TFormSettings.MenuItemDeleteCharsetClick(Sender: TObject);
-begin
-  if ListBoxCharset.ItemIndex >= 0 then
-    ListBoxCharset.Items.Delete(ListBoxCharset.ItemIndex);
 end;
 
 procedure TFormSettings.RadioButtonWolframAlphaChange(Sender: TObject);
@@ -407,9 +378,7 @@ begin
     Save.Settings.EmbeddedServerPort := EditEmbeddedServerPort.Value;     
     Save.Settings.EmbeddedServerEnable := CheckBoxEmbeddedServerEnable.Checked;
 
-    Save.Settings.Font := ComboBoxFont.Items[ComboBoxFont.ItemIndex];
     Save.Settings.FontSize := EditFontSize.Value;
-    Save.Settings.Charset := SettingsToCharset(TStringList(ListBoxCharset.Items));
     Save.Settings.FontSize := EditFontSize.Value;
 
     if EditEmailPassword.Text <> '' then
@@ -427,14 +396,11 @@ begin
     SataniaIMAP.Disconnect;
     //
     ApplicationProperties.LimitFPS := Save.Settings.FPS;
-    Satania.ChatText.TypingSpeed := Save.Settings.TextSpeed;
+    FormBubble.TypingSpeed := Save.Settings.TextSpeed;
     Satania.SetImageQuality(Save.Settings.ImageQuality);
     Satania.UpdateMeta(Satania.Script);
     Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
-    Satania.FontSystem.URL := PATH_FONT + Save.Settings.Font;
-    Satania.FontSystem.OptimalSize := Save.Settings.FontSize;
-    Satania.FontSystem.LoadCharacters := CharsetToCharacters(Save.Settings.Charset);
-    Satania.ChatText.FontSize := Save.Settings.FontSize;
+    FormBubble.KMemo.TextStyle.Font.Size := Save.Settings.FontSize;
     Satania.SpriteAsSpine.AnimateSkipTicks := Save.Settings.FrameSkip;
     Satania.SpriteAsX3D.AnimateSkipTicks := Save.Settings.FrameSkip;
     Satania.UpdateMenuItems;
@@ -469,22 +435,6 @@ end;
 procedure TFormSettings.ButtonCancelClick(Sender: TObject);
 begin
   Hide;
-end;
-
-procedure TFormSettings.ButtonCharsetAddClick(Sender: TObject);
-var
-  X, Y: Cardinal;
-  S: String;
-begin
-  try
-    X := StrToInt(EditCharsetFrom.Text);
-    Y := StrToInt(EditCharsetTo.Text);
-    S := IntToStr(X) + '..' + IntToStr(Y);
-    ListBoxCharset.AddItem(S, nil);
-  except
-    on E: Exception do
-      Satania.Talk(E.Message);
-  end;
 end;
 
 procedure TFormSettings.ButtonCustomBotScriptOpenClick(Sender: TObject);

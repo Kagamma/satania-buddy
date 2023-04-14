@@ -66,8 +66,6 @@ type
     Viewport: TCastleViewport;
     LocalBoundingBoxSnapshot: TBox3D;
     ChatMode: Integer;
-    ChatText: TCastleTypingLabel;
-    ChatBubble: TCastleUserInterface;
     FontSystem: TCastleFont;
     ChatBubbleDelay: Integer;
     Form,
@@ -141,6 +139,7 @@ uses
   form.chat,
   form.touch,
   form.ask,
+  form.bubble,
   form.tool.evilceditor,
   form.tool.hexeditor,
   mcdowell.chatbot,
@@ -485,13 +484,7 @@ begin
     LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
     LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
     LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
-    ChatText.ResetText;
-    ChatText.MaxDisplayChars := 0;
-    ChatText.Text.Text := S;
-    if ChatText.Text.Count > 25 then
-    begin
-      ChatText.Text.Text := 'too much words... please check the history instead!';
-    end;
+    FormBubble.Text := S;
     ChatBubbleDelay := 1;
     IsTalking := True;
     IsAsking := False;
@@ -519,16 +512,11 @@ begin
     LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
     LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
     LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
-    ChatText.ResetText;
-    ChatText.MaxDisplayChars := 0;
-    ChatText.Text.Text := S;
+
     FormAsk.Answer.Clear;
     FormAsk.AskText.Clear;
     FormAsk.Ask := S;
-    if ChatText.Text.Count > 25 then
-    begin
-      ChatText.Text.Text := 'too much words... please check the history instead!';
-    end;
+    FormBubble.Text := S;
     ChatBubbleDelay := 1;
     IsTalking := True;
     IsAsking := True;
@@ -555,13 +543,7 @@ begin
     LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
     LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
     LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
-    ChatText.ResetText;
-    ChatText.MaxDisplayChars := 0;
-    ChatText.Text.Text := S;
-    if ChatText.Text.Count > 25 then
-    begin
-      ChatText.Text.Text := 'too much words... please check the history instead!';
-    end;
+    FormBubble.Text := S;
     ChatBubbleDelay := 1;
     if S <> '' then
     begin
@@ -604,7 +586,7 @@ var
 begin
   Delta := Dt;
   try
-    if IsTalking and ChatText.FinishedTyping then
+    if IsTalking and FormBubble.FinishedTyping then
     begin
       if AnimTalkLoop <> '' then
       begin

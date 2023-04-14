@@ -146,9 +146,7 @@ type
     FEmailFetchFrom,
     FEmailSmtpServer,
     FEmailSmtpUsername,
-    FEmailSmtpPassword,
-    FCharset,
-    FFont: String;
+    FEmailSmtpPassword: String;
     FFontSize: Integer;
     FChatGPTSecretKey: String;
     FChatGPTToken: Cardinal;
@@ -200,9 +198,7 @@ type
     property EmailSmtpUsername: String read FEmailSmtpUsername write FEmailSmtpUsername;
     property EmailSmtpPassword: String read FEmailSmtpPassword write FEmailSmtpPassword;
     property EmailSmtpUseSSL: Boolean read FEmailSmtpUseSSL write FEmailSmtpUseSSL;
-    property Charset: String read FCharset write FCharset;
-    property Font: String read FFont write FFont;
-    property FontSize: Integer read FFontSize write FFontSize;
+    property FontSize: Integer read FFontSize write FFontSize default 0;
     property FrameSkip: Integer read FFrameSkip write FFrameSkip;
     property Lewd: Boolean read FLewd write FLewd default False;
     property DeveloperMode: Boolean read FDeveloperMode write FDeveloperMode default False;
@@ -306,12 +302,11 @@ begin
   FSettings := TSaveSettings.Create;
   FSettings.ChatBubbleDelay := 5000;
   FSettings.FPS := 16;
-  FSettings.TextSpeed := 24;
+  FSettings.TextSpeed := 5;
   FSettings.BaseScaling := 1;
   FSettings.DefaultEvilScheme := 'main.evil';
   FSettings.ImageQuality := 'Linear';
-  FSettings.FontSize := 16;
-  FSettings.Font := 'lightnovelpop.otf';
+  FSettings.FontSize := 0;
   FSettings.FrameSkip := 0;
   FSettings.Lewd := False;
   FSettings.Skin := 'satania';

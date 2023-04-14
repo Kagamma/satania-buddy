@@ -164,6 +164,7 @@ uses
   Utils.Coords,
   form.touch,
   form.chat,
+  form.Bubble,
   form.reminders,
   form.settings,
   form.tool.evilceditor,
@@ -376,12 +377,12 @@ begin
   CastleWindow.Application.DoRun;
   {$endif}
   // Hide satania bubble
-  if (Satania.ChatText.FinishedTyping) and (Satania.ChatBubbleDelay > 0) then
+  if (FormBubble.FinishedTyping) and (Satania.ChatBubbleDelay > 0) then
   begin
     Dec(Satania.ChatBubbleDelay, GetTickCount64 - Ticks);
     if Satania.ChatBubbleDelay <= 0 then
     begin
-      Satania.ChatText.Text.Text := '';
+      FormBubble.Text := '';
     end;
   end;
   Ticks := GetTickCount64;

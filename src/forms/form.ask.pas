@@ -66,6 +66,7 @@ implementation
 {$R *.lfm}
 
 uses
+  form.bubble,
   mcdowell,
   fphttpclient,
   Utils.Threads,
@@ -112,7 +113,7 @@ procedure TFormAsk.AskTextHotSpotClick(Sender: TObject;
 begin
  // Satania.IsBlocked := False;
   Self.Visible := False;
-  Satania.ChatText.Text.Text := '';
+  FormBubble.Text := '';
   IsAnswerText := True;
   AnswerText := SRC;
 end;
@@ -150,7 +151,7 @@ procedure TFormAsk.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   if not IsAnswerText then
   begin
-    Satania.ChatText.Text.Text := '';
+    FormBubble.Text := '';
     IsAnswerText := True;
     AnswerText := '_close';
   end;
@@ -163,7 +164,7 @@ var
 begin
  // Satania.IsBlocked := False;
   Self.Visible := False;
-  Satania.ChatText.Text.Text := '';
+  FormBubble.Text := '';
   Answer.Clear;
   IsAnswerText := False;
   for I := 0 to Results.Count - 1 do

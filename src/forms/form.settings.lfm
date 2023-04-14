@@ -136,71 +136,18 @@ object FormSettings: TFormSettings
         object EditFontSize: TSpinEdit
           Left = 192
           Height = 23
-          Top = 240
+          Top = 208
           Width = 98
           MaxValue = 100
-          MinValue = 1
           TabOrder = 4
           Value = 1
         end
         object LabelFontSize: TLabel
           Left = 24
           Height = 15
-          Top = 240
+          Top = 208
           Width = 47
           Caption = 'Font Size'
-        end
-        object LabelFontName: TLabel
-          Left = 24
-          Height = 15
-          Top = 208
-          Width = 24
-          Caption = 'Font'
-        end
-        object LabelFontCharset: TLabel
-          Left = 24
-          Height = 15
-          Top = 272
-          Width = 72
-          Caption = 'Font Charsets'
-        end
-        object ListBoxCharset: TListBox
-          Left = 192
-          Height = 112
-          Top = 272
-          Width = 232
-          ItemHeight = 0
-          PopupMenu = PopupMenuCharset
-          TabOrder = 5
-        end
-        object EditCharsetFrom: TLabeledEdit
-          Left = 432
-          Height = 23
-          Top = 296
-          Width = 80
-          EditLabel.Height = 15
-          EditLabel.Width = 80
-          EditLabel.Caption = 'From'
-          TabOrder = 6
-        end
-        object EditCharsetTo: TLabeledEdit
-          Left = 528
-          Height = 23
-          Top = 296
-          Width = 80
-          EditLabel.Height = 15
-          EditLabel.Width = 80
-          EditLabel.Caption = 'To'
-          TabOrder = 7
-        end
-        object ButtonCharsetAdd: TBitBtn
-          Left = 432
-          Height = 30
-          Top = 336
-          Width = 75
-          Caption = 'Add'
-          OnClick = ButtonCharsetAddClick
-          TabOrder = 8
         end
         object LabelLewd: TLabel
           Left = 25
@@ -214,7 +161,7 @@ object FormSettings: TFormSettings
           Height = 17
           Top = 16
           Width = 18
-          TabOrder = 9
+          TabOrder = 5
         end
         object LabelFontSkin: TLabel
           Left = 24
@@ -230,51 +177,42 @@ object FormSettings: TFormSettings
           Width = 400
           ItemHeight = 15
           ReadOnly = True
-          TabOrder = 10
-        end
-        object ComboBoxFont: TComboBox
-          Left = 192
-          Height = 23
-          Top = 208
-          Width = 400
-          ItemHeight = 15
-          ReadOnly = True
-          TabOrder = 11
+          TabOrder = 6
         end
         object CheckBoxRules: TCheckBox
           Left = 192
           Height = 17
-          Top = 400
+          Top = 240
           Width = 18
-          TabOrder = 12
+          TabOrder = 7
         end
         object LabelRules: TLabel
           Left = 24
           Height = 15
-          Top = 400
+          Top = 240
           Width = 28
           Caption = 'Rules'
         end
         object Label4: TLabel
           Left = 224
           Height = 15
-          Top = 400
+          Top = 240
           Width = 434
           Caption = '*Consider disable this if you use external services like ChatGPT, KoboldAI or similar'
         end
         object LabelYourName: TLabel
           Left = 25
           Height = 15
-          Top = 432
+          Top = 272
           Width = 59
           Caption = 'Your Name'
         end
         object EditYourName: TEdit
           Left = 192
           Height = 23
-          Top = 432
+          Top = 272
           Width = 400
-          TabOrder = 13
+          TabOrder = 8
           Text = 'EditYourName'
         end
       end
@@ -894,14 +832,6 @@ object FormSettings: TFormSettings
     Top = 16
     Width = 54
     Caption = 'Secret Key'
-  end
-  object PopupMenuCharset: TPopupMenu
-    Left = 568
-    Top = 360
-    object MenuItemDeleteCharset: TMenuItem
-      Caption = 'Delete'
-      OnClick = MenuItemDeleteCharsetClick
-    end
   end
   object OpenDialogEvilScript: TOpenDialog
     Title = 'Open Evil Scheme'

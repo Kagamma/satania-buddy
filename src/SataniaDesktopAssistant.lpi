@@ -357,6 +357,18 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
+      <Unit>
+        <Filename Value="satania/mcdowell.richtext.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Mcdowell.RichText"/>
+      </Unit>
+      <Unit>
+        <Filename Value="forms/form.bubble.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormBubble"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Form.Bubble"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

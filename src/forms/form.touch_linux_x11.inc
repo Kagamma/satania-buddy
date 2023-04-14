@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {$if defined(LINUX_X11)}
 
 {$ifdef unit_declare_interface}
-  qt5, qtwidgets, xlib, xatom, x, form.ask,
+  qt5, qtwidgets, xlib, xatom, x, form.ask, form.bubble,
 {$endif unit_declare_interface}
 
 {$ifdef unit_implmentation}
@@ -46,6 +46,11 @@ begin
       begin
         FormAsk.Hide;
         FormAsk.Show;
+      end;
+      if FormBubble.Visible then
+      begin
+        FormBubble.Hide;
+        FormBubble.Show;
       end;
     end;
     XFree(Data);

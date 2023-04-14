@@ -37,15 +37,6 @@ A: Satania Buddy works completely offline without any connections to remote serv
 ***** Q: Scripting API?
 A: https://github.com/Kagamma/satania-buddy/wiki/Scripting-Reference
 
-***** Q: How to make her speaks in my language? She only shows ~_~ in her chat bubble.
-A: By default only ASCII is enabled. If you want to add supports for your language, make sure to add suitable fonts in ~data/fonts~, enable it in ~Settings~, and add unicode codepoints in Charsets. For example this is Japanese's codepoints:
-- Japanese-style punctuation (x3000 - x303f)
-- Hiragana (x3040 - x309f)
-- Katakana (x30a0 - x30ff)
-- Full-width roman characters and half-width katakana (xff00 - xffef)
-- CJK unifed ideographs
-- Common and uncommon kanji (x4e00 - x9faf)
-
 ***** Q: Chat features?
 A: Type ~>app_name~ to execute external applications, for example: ~>echo Hello~
 
