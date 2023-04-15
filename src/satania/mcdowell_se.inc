@@ -25,6 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SESpriteVisibleSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteVisibleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEStreamEnable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEStreamDisable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEStream(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEAsk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEAnswer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -152,6 +155,7 @@ function TSatania.SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEVal
 var
   Key: String;
 begin
+  FormChat.DisableStreaming;
   if Length(Args) = 1 then
   begin
     Talk(SEValueToText(Args[0]));
@@ -167,6 +171,24 @@ begin
       VM.IsPaused := True;
     end;
   end;
+end;
+
+function TSatania.SEStreamEnable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  FormChat.EnableStreaming;
+  FormBubble.EnableStreaming;
+end;
+
+function TSatania.SEStreamDisable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  FormChat.DisableStreaming;
+  FormBubble.DisableStreaming;
+end;
+
+function TSatania.SEStream(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  FormChat.Streaming(Args[0].VarString^);
+  FormBubble.Streaming(Args[0].VarString^);
 end;
 
 function TSatania.SEAsk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

@@ -14,7 +14,7 @@ type
   TRichTextToken = record
     Kind : TRichTextKind;
     State: TRichTextState;
-    Value: String;
+    Value: Char;
   end;
   TRichTextTokenList = specialize TList<TRichTextToken>;
 
@@ -28,11 +28,13 @@ type
     IsStreaming: Boolean;
     LastTokenPos,
     NextTokenPos: Integer;
+    LastKind: TRichTextKind;
     TokenList: TRichTextTokenList;
     constructor Create;
     destructor Destroy; override;
     procedure Lex;
     procedure Parse(const Memo: TKMemo);
+    procedure Reset;
 
     property Source: String read FSource write SetSource;
   end;
@@ -48,10 +50,15 @@ begin
   begin
     Self.FSource := S;
     Self.FIsLexed := False;
-    Self.LastTokenPos := 0;
-    Self.NextTokenPos := 0;
-    Self.FState := rtsNormal;
   end;
+end;
+
+procedure TRichText.Reset;
+begin
+  Self.LastTokenPos := 0;
+  Self.NextTokenPos := 0;
+  Self.FState := rtsNormal;
+  Self.LastKind := rtkEOS;
 end;
 
 constructor TRichText.Create;
@@ -100,7 +107,6 @@ var
 begin
   Self.TokenList.Clear;
   repeat
-    Token.Value := '';
     C := NextChar;
     case C of
       #0:
@@ -132,17 +138,6 @@ begin
         begin
           Token.Value := C;
           Token.Kind := rtkText;
-          C := PeekAtNextChar;
-          while (C <> '`') and (C <> #10) and (C <> #0) and (C <> ' ') do
-          begin
-            Token.Value := Token.Value + NextChar;
-            C := PeekAtNextChar;
-          end;
-          while C = ' ' do
-          begin
-            Token.Value := Token.Value + NextChar;
-            C := PeekAtNextChar;
-          end;
         end;
     end;
     Self.TokenList.Add(Token);
@@ -174,7 +169,12 @@ begin
     case Token.Kind of
       rtkText:
         begin
-          TB := Memo.Blocks.AddTextBlock(Token.Value);
+          if (Self.LastKind = Token.Kind) and (Memo.Blocks.Count > 0) then
+          begin
+            TB := TKMemoTextBlock(Memo.Blocks[Memo.Blocks.Count - 1]);
+            TB.Text := TB.Text + Token.Value;
+          end else
+            TB := Memo.Blocks.AddTextBlock(Token.Value);
           case State of
             rtsCode:
               begin
@@ -200,8 +200,7 @@ begin
       rtkEOS:
         Exit;
     end;
-    if I = Self.TokenList.Count - 1 then
-      Memo.Blocks.AddParagraph;
+    Self.LastKind := Token.Kind;
     Self.LastTokenPos := I + 1;
   end;
 end;

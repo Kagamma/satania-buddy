@@ -194,6 +194,9 @@ begin
     S.RegisterFunc('scheme_load', @SESchemeLoad, 1);
   end;
   S.RegisterFunc('talk', @SETalk, -1);
+  S.RegisterFunc('stream_enable', @SEStreamEnable, 0);
+  S.RegisterFunc('stream_disable', @SEStreamDisable, 0);
+  S.RegisterFunc('stream', @SEStream, 1);
   S.RegisterFunc('numbers', @SENumbers, 1);
   S.RegisterFunc('months_to_numbers', @SEMonthsToNumbers, 1);
   S.RegisterFunc('answer', @SEAnswer, 0);
@@ -480,6 +483,8 @@ end;
 procedure TSatania.Talk(S: String);
 begin
   CSTalk.Enter;
+  FormChat.DisableStreaming;
+  FormBubble.DisableStreaming;
   try
     LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
     LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;

@@ -366,6 +366,7 @@
         <Filename Value="forms/form.bubble.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FormBubble"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Form.Bubble"/>
       </Unit>

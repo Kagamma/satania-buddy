@@ -410,6 +410,10 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Returns lowercase string.
 *string_trim(s: string): string*
 - Trim string.
+*string_trim_left(s: string): string*
+- Trim left of string.
+*string_trim_right(s: string): string*
+- Trim right of string.
 *string_format(s: string; subs: map): string*
 - Replace a string with contents from map
   + Example: ~string_format('{0} is {1} gold', ['Key', 500])~ => Key is 500 gold
@@ -554,8 +558,15 @@ number; consts: map): string*
 
 ** Satania-specific function
 *talk(message: string)*
-- Tells Satania to talk. Supports a subset of HTML (bold, italic, colors, sizes).
+- Tells Satania to talk.
 - The script engine will be blocked until all the text is shown on screen.
+- Calling this function will automatically disable streaming mode
+*stream_enable*
+- Enable streaming mode. Useful for integrating with chatbot backends
+*stream_disable*
+- Disable steaming mode.
+*stream(message: string)*
+- Stream a text to chat window / speech bubble
 *notify(message: string)*
 - Shows a notification at top-left of the screen.
 *ask(caption, message: string; width, height: number)*

@@ -9,9 +9,12 @@ object FormBubble: TFormBubble
   ClientHeight = 200
   ClientWidth = 400
   FormStyle = fsSystemStayOnTop
+  OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   LCLVersion = '2.3.0.0'
+  Visible = True
   object KMemo: TKMemo
     Left = 0
     Top = 0

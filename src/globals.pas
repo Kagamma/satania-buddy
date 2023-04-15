@@ -302,7 +302,7 @@ begin
   FSettings := TSaveSettings.Create;
   FSettings.ChatBubbleDelay := 5000;
   FSettings.FPS := 16;
-  FSettings.TextSpeed := 5;
+  FSettings.TextSpeed := 24;
   FSettings.BaseScaling := 1;
   FSettings.DefaultEvilScheme := 'main.evil';
   FSettings.ImageQuality := 'Linear';

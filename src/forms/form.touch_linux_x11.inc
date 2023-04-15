@@ -47,7 +47,7 @@ begin
         FormAsk.Hide;
         FormAsk.Show;
       end;
-      if FormBubble.Visible then
+      if FormBubble.VisibleViaSize then
       begin
         FormBubble.Hide;
         FormBubble.Show;

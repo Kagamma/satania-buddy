@@ -568,6 +568,8 @@ type
     class function SEStringLowerCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFindRegex(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringTrim(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringTrimLeft(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringTrimRight(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseOutQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1283,6 +1285,16 @@ end;
 class function TBuiltInFunction.SEStringTrim(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Trim(Args[0]);
+end;
+
+class function TBuiltInFunction.SEStringTrimLeft(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := TrimLeft(Args[0]);
+end;
+
+class function TBuiltInFunction.SEStringTrimRight(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := TrimRight(Args[0]);
 end;
 
 class function TBuiltInFunction.SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -3326,6 +3338,8 @@ begin
   Self.RegisterFunc('string_find_regex', @TBuiltInFunction(nil).SEStringFindRegex, 2);
   Self.RegisterFunc('string_concat', @TBuiltInFunction(nil).SEStringConcat, 3);
   Self.RegisterFunc('string_trim', @TBuiltInFunction(nil).SEStringTrim, 1);
+  Self.RegisterFunc('string_trim_left', @TBuiltInFunction(nil).SEStringTrimLeft, 1);
+  Self.RegisterFunc('string_trim_right', @TBuiltInFunction(nil).SEStringTrimRight, 1);
   Self.RegisterFunc('lerp', @TBuiltInFunction(nil).SELerp, 3);
   Self.RegisterFunc('slerp', @TBuiltInFunction(nil).SESLerp, 3);
   Self.RegisterFunc('write', @TBuiltInFunction(nil).SEWrite, -1);

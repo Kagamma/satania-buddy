@@ -131,13 +131,13 @@ begin
   if FormBubble.Text <> '' then
   begin
     FormAsk.Visible := Satania.IsAsking;
-    FormBubble.Visible := True and Satania.Sprite.Visible and not Satania.IsAsking;
+    FormBubble.VisibleViaSize := True and Satania.Sprite.Visible and not Satania.IsAsking;
   end else
   begin
     FormAsk.Visible := False;
-    FormBubble.Visible := False;
+    FormBubble.VisibleViaSize := False;
   end;
-  if (not FormBubble.Visible) and (not FormAsk.Visible) then Exit;
+  if (not FormBubble.VisibleViaSize) and (not FormAsk.Visible) then Exit;
 
   Box := Satania.LocalBoundingBoxSnapshot;
   Box.Data[0] := Box.Data[0] + Satania.Sprite.Translation + SpriteTransform.Translation;

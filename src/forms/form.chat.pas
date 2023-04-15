@@ -70,9 +70,14 @@ type
     procedure FormShow(Sender: TObject);
   private
     FRichText: TRichText;
+    FStreamingPartCount: Integer;
+    procedure ScrollToBottom;
   public
     ChatHistoryList: TChatHistoryList;
     Typing: TKMemoTextBlock;
+    procedure EnableStreaming;
+    procedure DisableStreaming;
+    procedure Streaming(const S: String);
     procedure InsertLog(const LogName, Msg: String);
     procedure CalcHeights;
     procedure InsertTyping;
@@ -92,6 +97,23 @@ uses
   Mcdowell;
 
 { TFormChat }
+
+procedure TFormChat.EnableStreaming;
+begin
+  FRichText.IsStreaming := True;
+  FStreamingPartCount := 0;
+end;
+
+procedure TFormChat.DisableStreaming;
+begin
+  if FRichText.IsStreaming then
+  begin
+    FRichText.IsStreaming := False;
+    FStreamingPartCount := 1;
+    RemoveTyping;
+    MemoChatLog.Blocks.AddParagraph;
+  end;
+end;
 
 procedure TFormChat.CalcHeights;
 begin
@@ -159,16 +181,21 @@ begin
     Self.FormStyle := fsStayOnTop;
 end;
 
-procedure TFormChat.InsertLog(const LogName, Msg: String);
-  procedure ScrollToBottom;
-  begin
-    MemoChatLog.SelStart := MemoChatLog.GetTextLen;
-    MemoChatLog.SelLength := 0;
-    // 999999 should be more than enough to scroll it to the bottom
-    MemoChatLog.ScrollBy(0, 999999, False);
-    MemoChatLog.Refresh;
-  end;
+procedure TFormChat.ScrollToBottom;
+begin
+  MemoChatLog.SelStart := MemoChatLog.GetTextLen;
+  MemoChatLog.SelLength := 0;
+  // 999999 should be more than enough to scroll it to the bottom
+  MemoChatLog.ScrollBy(0, 999999, False);
+  MemoChatLog.Refresh;
+end;
 
+procedure TFormChat.Streaming(const S: String);
+begin
+  InsertLog(Satania.Name, S);
+end;
+
+procedure TFormChat.InsertLog(const LogName, Msg: String);
 var
   H, M, SS, MS: Word;
   TB: TKMemoTextBlock;
@@ -178,56 +205,74 @@ var
   I: Integer;
   CH: TChatHistory;
 begin
-  RemoveTyping;
-
   DecodeTime(Now, H, M, SS, MS);
   Time := Format('%.*d', [2, H]) + ':' + Format('%.*d', [2, M]) + ':' + Format('%.*d', [2, SS]);
 
-  MemoChatLog.Blocks.AddParagraph;
-
-  TB := MemoChatLog.Blocks.AddTextBlock(LogName);
-  TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsBold];
-  if LogName = 'System' then
+  RemoveTyping;
+  if (FRichText.IsStreaming and (FStreamingPartCount = 0)) or (not FRichText.IsStreaming) then
   begin
-    TB.TextStyle.Font.Color := $800000;
-    CH.SenderType := cseSystem;
-    TB := MemoChatLog.Blocks.AddTextBlock(' [' + Time + ']');
-    TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
-    TB.TextStyle.Font.Color := $808080;
-  end else
-  if LogName = Save.Settings.UserName then
-  begin
-    TB.TextStyle.Font.Color := $008000;
-    CH.SenderType := cseUser;
-  end else
-  begin
-    TB.TextStyle.Font.Color := $0000B0;
-    CH.SenderType := cseSatania;
+    MemoChatLog.Blocks.AddParagraph;
+    TB := MemoChatLog.Blocks.AddTextBlock(LogName);
+    TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsBold];
+    if LogName = 'System' then
+    begin
+      TB.TextStyle.Font.Color := $800000;
+      CH.SenderType := cseSystem;
+      TB := MemoChatLog.Blocks.AddTextBlock(' [' + Time + ']');
+      TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
+      TB.TextStyle.Font.Color := $808080;
+    end else
+    if LogName = Save.Settings.UserName then
+    begin
+      TB.TextStyle.Font.Color := $008000;
+      CH.SenderType := cseUser;
+    end else
+    begin
+      TB.TextStyle.Font.Color := $0000B0;
+      CH.SenderType := cseSatania;
+    end;
+    MemoChatLog.Blocks.AddParagraph;
+    FRichText.Reset;
   end;
-  MemoChatLog.Blocks.AddParagraph;
 
   FRichText.Source := Msg;
+  FRichText.Lex;
+  FRichText.NextTokenPos := FRichText.TokenList.Count - 1;
   FRichText.Parse(MemoChatLog);
 
-  CH.Time := Time;
-  CH.Message := Msg;
+  if (not FRichText.IsStreaming) or (FStreamingPartCount = 0) then
+  begin
+    CH.Time := Time;
+    CH.Message := Msg;
+    ChatHistoryList.Add(CH);
+  end;
+  if (FRichText.IsStreaming) and (FStreamingPartCount > 0) then
+  begin
+    CH := ChatHistoryList[ChatHistoryList.Count - 1];
+    CH.Message := Msg;
+    ChatHistoryList[ChatHistoryList.Count - 1] := CH;
+  end;
 
-  ChatHistoryList.Add(CH);
+  if not FRichText.IsStreaming then
+    MemoChatLog.Blocks.AddParagraph;
 
-  if LogName = Save.Settings.UserName then
+  if (LogName = Save.Settings.UserName) or (FRichText.IsStreaming) then
+  begin
     InsertTyping;
+  end;
 
   while FormChat.MemoChatLog.Blocks.LineCount > 2000 do
     FormChat.MemoChatLog.Blocks.DeleteLine(0);
   while ChatHistoryList.Count > 2000 do
     ChatHistoryList.Delete(0);
   ScrollToBottom;
+  Inc(FStreamingPartCount);
 end;
 
 procedure TFormChat.InsertTyping;
 begin
   RemoveTyping;
-  Typing := MemoChatLog.Blocks.AddTextBlock(Satania.Name + ' is typing...');
+  Typing := MemoChatLog.Blocks.AddTextBlock(' ' + Satania.Name + ' is typing...');
   Typing.TextStyle.Font.Style := Typing.TextStyle.Font.Style + [fsItalic];
   Typing.TextStyle.Font.Color := $818181;
 end;
