@@ -76,7 +76,6 @@ procedure TFormBubble.EnableStreaming;
 begin
   Self.IsPersistent := True;
   Self.FinishedTyping := False;
-  Self.FNumWordsDisplay := 0;
   Self.FText := '';
 end;
 
@@ -95,6 +94,7 @@ begin
     Self.KMemo.Blocks.Clear;
     Satania.ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
     Self.FRichText.Reset;
+    Self.FNumWordsDisplay := 0;
   end;
   Satania.IsTalking := True;
   Satania.IsAsking := False;
