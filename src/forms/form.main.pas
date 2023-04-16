@@ -363,7 +363,7 @@ begin
     else
     begin
       SataniaSpeechToText.Disable;
-      Satania.Talk('Speech recognition disabled.');
+      // Satania.Talk('Speech recognition disabled.');
     end;
   end else
     Satania.Talk('You haven''t installed necessary speech library.');
