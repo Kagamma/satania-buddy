@@ -28,6 +28,7 @@ type
     IsStreaming: Boolean;
     LastTokenPos,
     NextTokenPos: Integer;
+    LastState: TRichTextState;
     LastKind: TRichTextKind;
     TokenList: TRichTextTokenList;
     constructor Create;
@@ -59,6 +60,7 @@ begin
   Self.NextTokenPos := 0;
   Self.FState := rtsNormal;
   Self.LastKind := rtkEOS;
+  Self.LastState := rtsNormal;
 end;
 
 constructor TRichText.Create;
@@ -149,7 +151,6 @@ procedure TRichText.Parse(const Memo: TKMemo);
 var
   I, IMin, IMax: Integer;
   Token: TRichTextToken;
-  State: TRichTextState = rtsNormal;
   TB: TKMemoTextBlock;
 begin
   if (not Self.FIsLexed) or (Self.TokenList.Count = 0) then
@@ -175,7 +176,7 @@ begin
             TB.Text := TB.Text + Token.Value;
           end else
             TB := Memo.Blocks.AddTextBlock(Token.Value);
-          case State of
+          case Self.LastState of
             rtsCode:
               begin
                 TB.TextStyle.Font.Color := $303030;
@@ -195,7 +196,7 @@ begin
         end;
       rtkState:
         begin
-          State := Token.State;
+          Self.LastState := Token.State;
         end;
       rtkEOS:
         Exit;

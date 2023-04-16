@@ -83,8 +83,8 @@ begin
     rsListening: ;
     rsAnalyze:
       begin
-        if not Satania.IsTalking then
-          Satania.Talk('...');
+        //if not Satania.IsTalking then
+        //  Satania.Talk('...');
       end;
   end;
 end;
@@ -92,8 +92,11 @@ end;
 procedure TSataniaSpeechToText.OnVoskHypothesis(Sender: TObject;
   AScore: Integer; AHypothesis: String);
 begin
-  Satania.Log(Save.Settings.UserName, AHypothesis);
-  Satania.Chat(AHypothesis);
+  if AHypothesis <> 'huh' then
+  begin
+    Satania.Log(Save.Settings.UserName, AHypothesis);
+    Satania.Chat(AHypothesis);
+  end;
 end;
 
 procedure TSataniaSpeechToText.Disable;
