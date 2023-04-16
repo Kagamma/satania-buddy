@@ -182,6 +182,8 @@ begin
                 TB.TextStyle.Font.Color := $303030;
                 {$ifdef WINDOWS}
                 TB.TextStyle.Font.Name := 'Consolas';
+                {$else}
+                TB.TextStyle.Font.Name := 'Monospace';
                 {$endif}
               end;
             else
