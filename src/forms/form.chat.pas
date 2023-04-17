@@ -28,7 +28,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ExtCtrls, Process, CastleControls, CastleUIControls,
   CastleURIUtils, LCLTranslator, kmemo, Types, StrUtils, Generics.Collections,
-  kgraphics,
+  kgraphics, FileUtil,
   Mcdowell.RichText;
 
 type
@@ -52,6 +52,7 @@ type
 
     ButtonClear: TBitBtn;
     CheckBoxAlwaysOnTop: TCheckBox;
+    ComboBoxService: TComboBox;
     EditChat: TMemo;
     MemoChatLog: TKMemo;
     Panel1: TPanel;
@@ -82,6 +83,7 @@ type
     procedure CalcHeights;
     procedure InsertTyping;
     procedure RemoveTyping;
+    procedure LoadServiceList;
   end;
 
 var
@@ -135,9 +137,33 @@ begin
   FRichText.Free;
 end;
 
+procedure TFormChat.LoadServiceList;
+var
+  SL: TStringList;
+  I,
+  V : Integer;
+  S : String;
+begin
+  V := ComboBoxService.ItemIndex;
+  ComboBoxService.Clear;
+  ComboBoxService.Items.Add('None');
+
+  SL := TStringList.Create;
+  FindAllFiles(SL, 'data/scripts/' + Save.Settings.Skin + '/services', '*.evil', False);
+  for I := 0 to SL.Count - 1 do
+  begin
+    S := ExtractFileName(SL[I]);
+    ComboBoxService.Items.Add(S);
+  end;
+  SL.Free;
+  ComboBoxService.ItemIndex := V;
+end;
+
 procedure TFormChat.FormShow(Sender: TObject);
 begin
   EditChat.SetFocus;
+  // Load list of services
+  LoadServiceList;
 end;
 
 procedure TFormChat.EditChatKeyDown(Sender: TObject; var Key: Word;

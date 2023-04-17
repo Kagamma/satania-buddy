@@ -854,13 +854,15 @@ begin
     try
       SL.LoadFromFile(MetaPath);
       JSON := GetJSON(SL.Text) as TJSONObject;
+      // We search for name
       for I := 0 to JSON.Count - 1 do
       begin
-        S.ConstMap.AddOrSetValue(JSON.Names[I], JSON.Items[I].AsString);
+        // Stop once we found name
         if JSON.Names[I] = 'name' then
         begin
           IsNamed := True;
           Name := JSON.Items[I].AsString;
+          Break;
         end;
       end;
       JSON.Free;

@@ -43,18 +43,11 @@ type
     CheckBoxDeveloperMode: TCheckBox;
     CheckBoxEmbeddedServerEnable: TCheckBox;
     CheckBoxRules: TCheckBox;
-    ComboBoxCustomBotScriptType: TComboBox;
     ComboBoxSTTVoskModel: TComboBox;
     ComboBoxSkin: TComboBox;
     ComboBoxSTTBackend: TComboBox;
     ComboBoxImageQuality: TComboBox;
     EditYourName: TEdit;
-    EditChatGPTSystem: TEdit;
-    EditChatGPTModel: TEdit;
-    EditChatGPTDescription: TEdit;
-    EditChatGPTSecretKey: TEdit;
-    EditCustomBotScript: TEdit;
-    EditBotVolframAlphaAppID: TEdit;
     EditDefaultEvilScheme: TEdit;
     EditChatBubbleDelay: TSpinEdit;
     EditEmailFetchFrom: TEdit;
@@ -73,25 +66,13 @@ type
     EditFontSize: TSpinEdit;
     EditTextSpeed: TSpinEdit;
     EditBaseScaling: TFloatSpinEdit;
-    GroupBoxChatGPT: TGroupBox;
-    GroupBoxVolframAlpha: TGroupBox;
-    GroupBoxCustomBotScript: TGroupBox;
     GroupBoxEmailIMAP: TGroupBox;
     GroupBoxEmailSMTP: TGroupBox;
     GroupBoxSTTVosk: TGroupBox;
     Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
     Label4: TLabel;
-    LabelChatGPTDescription: TLabel;
-    LabelChatGPTSystem: TLabel;
-    LabelChatGPTSecretKey: TLabel;
-    LabelChatGPTModel: TLabel;
     LabelChatbotServer4: TLabel;
-    LabelChatGPTToken: TLabel;
-    LabelCustomBotScript: TLabel;
     LabelEmbeddedServiceNotice: TLabel;
-    LabelChatbotServer1: TLabel;
     LabelDeveloperMode: TLabel;
     LabelEmailPassword: TLabel;
     LabelEmailSmtpPassword: TLabel;
@@ -122,15 +103,9 @@ type
     LabelDefaultEvilScheme: TLabel;
     LabelImageQuality: TLabel;
     ListBoxSettings: TListBox;
-    OpenDialogEvilScript: TOpenDialog;
     PageControl: TPageControl;
     PanelButtons: TPanel;
     PanelSettings: TPanel;
-    ButtonCustomBotScriptOpen: TSpeedButton;
-    RadioButtonChatGPT: TRadioButton;
-    RadioButtonCustomScript: TRadioButton;
-    RadioButtonWolframAlpha: TRadioButton;
-    EditChatGPTToken: TSpinEdit;
     Splitter1: TSplitter;
     TabSheet1: TTabSheet;
     TabSheetEmbeddedServer: TTabSheet;
@@ -138,15 +113,12 @@ type
     TabSheetSpeechRecognition: TTabSheet;
     TabSheetIMAP: TTabSheet;
     TabSheetGraphics: TTabSheet;
-    TabSheetBot: TTabSheet;
     procedure ButtonCancelClick(Sender: TObject);
-    procedure ButtonCustomBotScriptOpenClick(Sender: TObject);
     procedure ButtonOkClick(Sender: TObject);
     procedure ComboBoxSTTBackendChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure GroupBoxChatGPTClick(Sender: TObject);
     procedure ListBoxSettingsSelectionChange(Sender: TObject; User: boolean);
-    procedure RadioButtonWolframAlphaChange(Sender: TObject);
   private
 
   public
@@ -166,6 +138,7 @@ uses
   form.bubble,
   Mcdowell.smtp,
   Mcdowell.sketch,
+  Form.chat,
   com.Brokers,
   Utils.Encdec;
 
@@ -189,24 +162,8 @@ begin
   ComboBoxSTTBackend.ItemIndex := Save.Settings.STTBackend;
   ComboBoxSTTBackendChange(Self);
 
-  RadioButtonWolframAlpha.Checked := Save.Settings.ExternalServiceSelect = 0;
-  RadioButtonCustomScript.Checked := Save.Settings.ExternalServiceSelect = 2;
-  RadioButtonChatGPT.Checked := Save.Settings.ExternalServiceSelect = 3;
-  GroupBoxVolframAlpha.Enabled := RadioButtonWolframAlpha.Checked;
-  GroupBoxCustomBotScript.Enabled := RadioButtonCustomScript.Checked; 
-  GroupBoxChatGPT.Enabled := RadioButtonChatGPT.Checked;
-
   CheckBoxLewd.Checked := Save.Settings.Lewd;
   CheckBoxDeveloperMode.Checked := Save.Settings.DeveloperMode;
-  ComboBoxCustomBotScriptType.ItemIndex := Save.Settings.CustomBotScriptType;
-  EditCustomBotScript.Text := Save.Settings.CustomBotScript;
-  EditBotVolframAlphaAppID.Text := Save.Settings.BotVolframAlphaAppID;
-  EditChatGPTSecretKey.Text := Save.Settings.ChatGPTSecretKey;
-  EditChatGPTModel.Text := Save.Settings.ChatGPTModel;
-  EditChatGPTToken.Value := Save.Settings.ChatGPTToken;
-  EditChatGPTSecretKey.Text := Save.Settings.ChatGPTSecretKey;  
-  EditChatGPTDescription.Text := Save.Settings.ChatGPTDescription;
-  EditChatGPTSystem.Text := Save.Settings.ChatGPTSystem;
 
   EditFPS.Value := Save.Settings.FPS;
   EditChatBubbleDelay.Value := Save.Settings.ChatBubbleDelay;
@@ -318,36 +275,13 @@ begin
   PageControl.TabIndex := ListboxSettings.ItemIndex;
 end;
 
-procedure TFormSettings.RadioButtonWolframAlphaChange(Sender: TObject);
-begin
-  GroupBoxVolframAlpha.Enabled := RadioButtonWolframAlpha.Checked;
-  GroupBoxCustomBotScript.Enabled := RadioButtonCustomScript.Checked; 
-  GroupBoxChatGPT.Enabled := RadioButtonChatGPT.Checked;
-end;
-
 procedure TFormSettings.ButtonOkClick(Sender: TObject);
 var
   IniFilePath: String;
 begin
   try
-    if RadioButtonWolframAlpha.Checked then
-      Save.Settings.ExternalServiceSelect := 0
-    else if RadioButtonCustomScript.Checked then
-      Save.Settings.ExternalServiceSelect := 2
-    else if RadioButtonChatGPT.Checked then
-      Save.Settings.ExternalServiceSelect := 3;
-
     Save.Settings.Lewd := CheckBoxLewd.Checked;
-    Save.Settings.DeveloperMode := CheckBoxDeveloperMode.Checked; 
-    Save.Settings.CustomBotScriptType := ComboBoxCustomBotScriptType.ItemIndex;
-    Save.Settings.CustomBotScript := EditCustomBotScript.Text;   
-    Save.Settings.ChatGPTSecretKey := EditChatGPTSecretKey.Text;
-    Save.Settings.ChatGPTSecretKey := Save.Settings.ChatGPTSecretKey;
-    Save.Settings.ChatGPTModel := EditChatGPTModel.Text;
-    Save.Settings.ChatGPTToken := EditChatGPTToken.Value;
-    Save.Settings.ChatGPTDescription := EditChatGPTDescription.Text;
-    Save.Settings.ChatGPTSystem := EditChatGPTSystem.Text;
-    Save.Settings.BotVolframAlphaAppID := EditBotVolframAlphaAppID.Text;
+    Save.Settings.DeveloperMode := CheckBoxDeveloperMode.Checked;
     Save.Settings.FPS := EditFPS.Value;
     Save.Settings.ChatBubbleDelay := EditChatBubbleDelay.Value;
     Save.Settings.SitOnWindowRightMargin := EditSoWRightMargin.Value;
@@ -363,9 +297,9 @@ begin
     begin
       SataniaSketch.DeleteAll;
       Satania.BackgroundScriptClearAll;
+      FormChat.ComboBoxService.ItemIndex := 0;
     end;
     Save.Settings.Skin := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
-    Save.Settings.CustomBotScriptType := ComboBoxCustomBotScriptType.ItemIndex;
     Save.Settings.EmailServer := EditEmailServer.Text;
     Save.Settings.EmailPort := EditEmailPort.Value;
     Save.Settings.EmailUsername := EditEmailUsername.Text;
@@ -435,14 +369,6 @@ end;
 procedure TFormSettings.ButtonCancelClick(Sender: TObject);
 begin
   Hide;
-end;
-
-procedure TFormSettings.ButtonCustomBotScriptOpenClick(Sender: TObject);
-begin
-  if OpenDialogEvilScript.Execute then
-  begin
-    Self.EditCustomBotScript.Text := OpenDialogEvilScript.FileName;
-  end;
 end;
 
 end.

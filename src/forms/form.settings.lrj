@@ -20,20 +20,6 @@
 {"hash":87051138,"name":"tformsettings.comboboximagequality.text","sourcebytes":[76,105,110,101,97,114],"value":"Linear"},
 {"hash":220248343,"name":"tformsettings.labelbasescaling.caption","sourcebytes":[66,97,115,101,32,83,99,97,108,105,110,103],"value":"Base Scaling"},
 {"hash":57760384,"name":"tformsettings.labelframeskip.caption","sourcebytes":[70,114,97,109,101,32,83,107,105,112],"value":"Frame Skip"},
-{"hash":93841043,"name":"tformsettings.tabsheetbot.caption","sourcebytes":[69,120,116,101,114,110,97,108,32,83,101,114,118,105,99,101,115],"value":"External Services"},
-{"hash":66198369,"name":"tformsettings.groupboxvolframalpha.caption","sourcebytes":[87,111,108,102,114,97,109,65,108,112,104,97],"value":"WolframAlpha"},
-{"hash":4748500,"name":"tformsettings.labelchatbotserver1.caption","sourcebytes":[65,112,112,73,68],"value":"AppID"},
-{"hash":97854933,"name":"tformsettings.groupboxcustombotscript.caption","sourcebytes":[69,118,105,108,32,83,99,104,101,109,101],"value":"Evil Scheme"},
-{"hash":354472,"name":"tformsettings.labelcustombotscript.caption","sourcebytes":[80,97,116,104],"value":"Path"},
-{"hash":376933,"name":"tformsettings.label3.caption","sourcebytes":[84,121,112,101],"value":"Type"},
-{"hash":200518756,"name":"tformsettings.comboboxcustombotscripttype.text","sourcebytes":[87,111,114,107,101,114,32,83,99,114,105,112,116],"value":"Worker Script"},
-{"hash":57538644,"name":"tformsettings.label2.caption","sourcebytes":[42,84,104,101,115,101,32,115,101,114,118,105,99,101,115,32,119,105,108,108,32,98,101,32,117,115,101,100,32,119,104,101,110,32,83,97,116,97,110,105,97,32,100,111,101,115,32,110,111,116,32,117,110,100,101,114,115,116,97,110,100,32,116,104,101,32,99,111,110,116,101,110,116,32,121,111,117,32,116,121,112,101,32,105,110,32,99,104,97,116],"value":"*These services will be used when Satania does not understand the content you type in chat"},
-{"hash":166235156,"name":"tformsettings.groupboxchatgpt.caption","sourcebytes":[67,104,97,116,71,80,84],"value":"ChatGPT"},
-{"hash":147057257,"name":"tformsettings.labelchatgptsecretkey.caption","sourcebytes":[83,101,99,114,101,116,32,75,101,121],"value":"Secret Key"},
-{"hash":5528252,"name":"tformsettings.labelchatgptmodel.caption","sourcebytes":[77,111,100,101,108],"value":"Model"},
-{"hash":95495411,"name":"tformsettings.labelchatgpttoken.caption","sourcebytes":[77,97,120,32,84,111,107,101,110,115],"value":"Max Tokens"},
-{"hash":46985651,"name":"tformsettings.labelchatgptdescription.caption","sourcebytes":[67,104,97,114,97,99,116,101,114,32,66,105,97,115],"value":"Character Bias"},
-{"hash":95464125,"name":"tformsettings.labelchatgptsystem.caption","sourcebytes":[83,121,115,116,101,109],"value":"System"},
 {"hash":220625810,"name":"tformsettings.tabsheetembeddedserver.caption","sourcebytes":[69,109,98,101,100,100,101,100,32,83,101,114,118,101,114],"value":"Embedded Server"},
 {"hash":358036,"name":"tformsettings.labelembeddedserverport.caption","sourcebytes":[80,111,114,116],"value":"Port"},
 {"hash":161481956,"name":"tformsettings.labelembeddedservicenotice.caption","sourcebytes":[42,82,101,115,116,97,114,116,32,115,97,116,97,110,105,97,45,98,117,100,100,121,32,105,115,32,114,101,113,117,105,114,101,100,32,102,111,114,32,99,104,97,110,103,101,115,32,116,111,32,116,97,107,101,32,101,102,102,101,99,116],"value":"*Restart satania-buddy is required for changes to take effect"},
@@ -59,6 +45,5 @@
 {"hash":214117378,"name":"tformsettings.tabsheetoptimization.caption","sourcebytes":[68,101,118,101,108,111,112,101,114],"value":"Developer"},
 {"hash":8984421,"name":"tformsettings.labeldevelopermode.caption","sourcebytes":[68,101,118,101,108,111,112,101,114,32,77,111,100,101],"value":"Developer Mode"},
 {"hash":254533758,"name":"tformsettings.label1.caption","sourcebytes":[69,110,97,98,108,101,32,68,101,118,101,108,111,112,101,114,32,77,111,100,101,32,100,105,115,97,98,108,101,32,116,104,101,32,102,111,108,108,111,119,105,110,103,32,111,112,116,105,109,105,122,97,116,105,111,110,115,58,13,10,45,32,83,112,114,105,116,101,32,99,97,99,104,105,110,103,46,32,83,112,114,105,116,101,115,32,119,105,108,108,32,98,101,32,114,101,108,111,97,100,101,100,32,101,118,101,114,121,116,105,109,101,32,115,112,114,105,116,101,95,108,111,97,100,40,41,32,105,115,32,99,97,108,108,101,100,46,13,10,45,32,66,121,101,99,111,100,101,32,99,97,99,104,105,110,103,46,32,83,99,114,105,112,116,115,32,119,105,108,108,32,98,101,32,114,101,99,111,109,112,105,108,101,100,32,101,118,101,114,121,116,105,109,101,32,116,104,101,32,97,112,112,32,99,104,97,110,103,101,115,32,115,99,114,105,112,116,115,46],"value":"Enable Developer Mode disable the following optimizations:\r\n- Sprite caching. Sprites will be reloaded everytime sprite_load() is called.\r\n- Byecode caching. Scripts will be recompiled everytime the app changes scripts."},
-{"hash":147057257,"name":"tformsettings.labelchatbotserver4.caption","sourcebytes":[83,101,99,114,101,116,32,75,101,121],"value":"Secret Key"},
-{"hash":97534741,"name":"tformsettings.opendialogevilscript.title","sourcebytes":[79,112,101,110,32,69,118,105,108,32,83,99,104,101,109,101],"value":"Open Evil Scheme"}
+{"hash":147057257,"name":"tformsettings.labelchatbotserver4.caption","sourcebytes":[83,101,99,114,101,116,32,75,101,121],"value":"Secret Key"}
 ]}

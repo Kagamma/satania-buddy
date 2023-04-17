@@ -58,6 +58,7 @@ uses
   mcdowell,
   globals,
   mcdowell.chatbot,
+  Form.chat,
   Mcdowell.EvilC;
 
 procedure TSataniaChatThread.SendToHer;
@@ -84,13 +85,14 @@ var
   SL: TStringList;
   S: String;
   V: TSEValue;
+  WorkerScriptType: Integer = 0; // Always 0 for now
 begin
-  if Save.Settings.CustomBotScript <> '' then
+  if FormChat.ComboBoxService.ItemIndex > 0 then
   begin
     SL := TStringList.Create;
     try
-      SL.LoadFromFile(Save.Settings.CustomBotScript);
-      if Save.Settings.CustomBotScriptType = 0 then
+      SL.LoadFromFile('data/scripts/' + Save.Settings.Skin + '/services/' + FormChat.ComboBoxService.Items[FormChat.ComboBoxService.ItemIndex]);
+      if WorkerScriptType = 0 then
       begin
         GC.AllocMap(@V);
         S := 'chat_message';
@@ -113,69 +115,9 @@ var
   JsonObject: TJSONObject;
   Client: TFPHTTPClient;
 
-  procedure PerformVolframAlphaRequest;
-  begin
-    if Save.Settings.BotVolframAlphaAppID <> '' then
-    begin
-      try
-        JsonString := TFPHTTPClient.SimpleGet('https://api.wolframalpha.com/v1/result?appid=' + Save.Settings.BotVolframAlphaAppID + '&i=' + EncodeURLElement(S));
-        ChatType := 'chat';
-        ChatResponse := JsonString;
-      except
-        on E: Exception do
-        begin
-          if E.Message.IndexOf('status code: 501') >= 0 then
-            SpeakDontUnderstand
-          else
-            ChatResponse := E.Message;
-          ChatType := 'chat';
-        end;
-      end;
-    end else
-      SpeakDontUnderstand;
-  end;
-
   procedure PerformCustomScriptRequest;
   begin
     Self.Synchronize(@Self.ExecuteCustomEvilWorkerScript);
-  end;
-
-  procedure PerformChatGPTRequest;
-  var
-    Key: String;
-  begin
-    Key := Save.Settings.ChatGPTSecretKey;
-    if Key <> '' then
-    begin
-      Client := TFPHTTPClient.Create(nil);
-      try
-        try
-          Client.AddHeader('Content-Type', 'application/json');
-          Client.AddHeader('Authorization', 'Bearer ' + Key);
-          JsonString := Format('{"model":"%s","messages":[{"role":"system","content":"%s"},{"role":"user","content":"%s"}]}', [
-            Save.Settings.ChatGPTModel,
-            StringToJsonString(Trim(Save.Settings.ChatGPTSystem)),
-            StringToJsonString(Trim(Save.Settings.ChatGPTDescription + ' ') + S)
-          ]);
-          Client.RequestBody := TRawByteStringStream.Create(JSONString);
-          JsonString := Client.Post('https://api.openai.com/v1/chat/completions');
-          JsonObject := GetJSON(JsonString) as TJSONObject;
-          ChatResponse := Trim(JsonObject.GetPath('choices[0].message.content').AsString);
-          ChatType := 'chat';
-          FreeAndNil(JsonObject);
-        except
-          on E: Exception do
-          begin
-            ChatResponse := E.Message;
-            ChatType := 'chat';
-          end;
-        end;
-      finally
-        Client.RequestBody.Free;
-        FreeAndNil(Client);
-      end;
-    end else
-      SpeakDontUnderstand;
   end;
 
 begin
@@ -199,11 +141,7 @@ begin
         ChatResponse := Inference(S);
       if ChatResponse = '' then
       begin
-        case Save.Settings.ExternalServiceSelect of
-          0: PerformVolframAlphaRequest;
-          2: PerformCustomScriptRequest;
-          3: PerformChatGPTRequest;
-        end;
+        PerformCustomScriptRequest;
       end else
         ChatType := 'script';
     end;

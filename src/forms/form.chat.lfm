@@ -110,5 +110,21 @@ object FormChat: TFormChat
       OnChange = CheckBoxAlwaysOnTopChange
       TabOrder = 1
     end
+    object ComboBoxService: TComboBox
+      Left = 158
+      Height = 23
+      Top = 9
+      Width = 164
+      Align = alRight
+      BorderSpacing.Around = 8
+      ItemHeight = 15
+      ItemIndex = 0
+      Items.Strings = (
+        'None'
+      )
+      ReadOnly = True
+      TabOrder = 2
+      Text = 'None'
+    end
   end
 end
