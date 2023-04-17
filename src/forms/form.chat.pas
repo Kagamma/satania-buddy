@@ -59,9 +59,11 @@ type
     PanelToolbar: TPanel;
     PanelEdit: TPanel;
     PanelChatlog: TPanel;
+    ButtonOpenService: TSpeedButton;
     Splitter1: TSplitter;
 
     procedure ButtonClearClick(Sender: TObject);
+    procedure ButtonOpenServiceClick(Sender: TObject);
     procedure CheckBoxAlwaysOnTopChange(Sender: TObject);
     procedure ComboBoxServiceChange(Sender: TObject);
     procedure EditChatKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
@@ -96,6 +98,7 @@ implementation
 
 uses
   Math,
+  form.tool.evilceditor,
   Globals,
   Mcdowell;
 
@@ -167,6 +170,7 @@ begin
   EditChat.SetFocus;
   // Load list of services
   LoadServiceList;
+  ButtonOpenService.Enabled := ComboBoxService.ItemIndex > 0;
 end;
 
 procedure TFormChat.EditChatKeyDown(Sender: TObject; var Key: Word;
@@ -202,6 +206,15 @@ begin
   ChatHistoryList.Clear;
 end;
 
+procedure TFormChat.ButtonOpenServiceClick(Sender: TObject);
+begin
+  if ComboBoxService.ItemIndex > 0 then
+  begin
+    FormEvilCEditor.Show;
+    FormEvilCEditor.LoadFromFile('data/scripts/' + Save.Settings.Skin + '/services/' + ComboBoxService.Items[ComboBoxService.ItemIndex]);
+  end;
+end;
+
 procedure TFormChat.CheckBoxAlwaysOnTopChange(Sender: TObject);
 begin
   if CheckBoxAlwaysOnTop.Checked then
@@ -213,6 +226,7 @@ end;
 procedure TFormChat.ComboBoxServiceChange(Sender: TObject);
 begin
   EditChat.SetFocus;
+  ButtonOpenService.Enabled := ComboBoxService.ItemIndex > 0;
 end;
 
 procedure TFormChat.ScrollToBottom;

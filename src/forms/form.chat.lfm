@@ -88,10 +88,10 @@ object FormChat: TFormChat
     ClientWidth = 508
     TabOrder = 3
     object ButtonClear: TBitBtn
-      Left = 384
+      Left = 408
       Height = 25
       Top = 9
-      Width = 115
+      Width = 91
       Align = alRight
       BorderSpacing.Around = 8
       Caption = 'Clear'
@@ -112,11 +112,12 @@ object FormChat: TFormChat
       TabOrder = 1
     end
     object ComboBoxService: TComboBox
-      Left = 212
+      Left = 236
       Height = 23
-      Top = 9
+      Top = 10
       Width = 164
       Align = alRight
+      BorderSpacing.Top = 1
       BorderSpacing.Around = 8
       ItemHeight = 15
       ItemIndex = 0
@@ -127,6 +128,17 @@ object FormChat: TFormChat
       ReadOnly = True
       TabOrder = 2
       Text = 'None'
+    end
+    object ButtonOpenService: TSpeedButton
+      Left = 205
+      Height = 25
+      Top = 9
+      Width = 23
+      Align = alRight
+      BorderSpacing.Around = 8
+      Images = FormEvilCEditor.ImageList
+      ImageIndex = 0
+      OnClick = ButtonOpenServiceClick
     end
   end
 end
