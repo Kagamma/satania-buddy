@@ -122,6 +122,7 @@ object FormChat: TFormChat
       Items.Strings = (
         'None'
       )
+      OnChange = ComboBoxServiceChange
       ReadOnly = True
       TabOrder = 2
       Text = 'None'

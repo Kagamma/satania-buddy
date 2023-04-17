@@ -63,6 +63,7 @@ type
 
     procedure ButtonClearClick(Sender: TObject);
     procedure CheckBoxAlwaysOnTopChange(Sender: TObject);
+    procedure ComboBoxServiceChange(Sender: TObject);
     procedure EditChatKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
       );
     procedure EditChatKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -153,6 +154,8 @@ begin
   for I := 0 to SL.Count - 1 do
   begin
     S := ExtractFileName(SL[I]);
+    if (S.IndexOf('WolframAlpha') >= 0) and (V = 0) then
+      V := I + 1;
     ComboBoxService.Items.Add(S);
   end;
   SL.Free;
@@ -205,6 +208,11 @@ begin
     Self.FormStyle := fsSystemStayOnTop
   else
     Self.FormStyle := fsStayOnTop;
+end;
+
+procedure TFormChat.ComboBoxServiceChange(Sender: TObject);
+begin
+  EditChat.SetFocus;
 end;
 
 procedure TFormChat.ScrollToBottom;
