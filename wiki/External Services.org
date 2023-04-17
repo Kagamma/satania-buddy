@@ -3,10 +3,7 @@ contains information that doesn't exist in released version/
 
 ** Introduction
 
-~External Services~ allows ~satania-buddy~ to send and receive messages to a 3rd party services. By default ~satania-buddy~ supports 2 built-in services:
-- VolframAlpha
-- ChatGPT
-
-Additional services can be added by creating new Evil Script. These scripts can access chat messages via either ~chat_history_get()~, or ~chat_message~. Some example scripts can be found in:
-- ~data/scripts/satania/services/chatgpt.evil~ (optional ChatGPT integration)
-- ~data/scripts/satania/services/koboldai.evil~ (KoboldAI integration, tested with ~koboldcpp~)
+~External Services~ allows ~satania-buddy~ to send and receive messages to a 3rd party services. External services can be added by creating new Evil Script in ~data/scripts/<character>/services~. These scripts can access chat messages via either ~chat_history_get()~, or ~chat_message~. Some example scripts can be found in:
+- ~data/scripts/satania/services/Satania (WolframAlpha).evil~ (WolframAlpha integration)
+- ~data/scripts/satania/services/Satania (ChatGPT).evil~ (ChatGPT integration)
+- ~data/scripts/satania/services/Satania (koboldcpp).evil~ (koboldcpp integration)
