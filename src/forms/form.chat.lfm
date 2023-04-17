@@ -112,13 +112,14 @@ object FormChat: TFormChat
       TabOrder = 1
     end
     object ComboBoxService: TComboBox
-      Left = 236
+      Left = 213
       Height = 23
       Top = 10
       Width = 164
       Align = alRight
-      BorderSpacing.Top = 1
-      BorderSpacing.Around = 8
+      BorderSpacing.Left = 8
+      BorderSpacing.Top = 9
+      BorderSpacing.Bottom = 8
       ItemHeight = 15
       ItemIndex = 0
       Items.Strings = (
@@ -130,12 +131,14 @@ object FormChat: TFormChat
       Text = 'None'
     end
     object ButtonOpenService: TSpeedButton
-      Left = 205
+      Left = 377
       Height = 25
       Top = 9
       Width = 23
       Align = alRight
-      BorderSpacing.Around = 8
+      BorderSpacing.Top = 8
+      BorderSpacing.Right = 8
+      BorderSpacing.Bottom = 8
       Images = FormEvilCEditor.ImageList
       ImageIndex = 0
       OnClick = ButtonOpenServiceClick
