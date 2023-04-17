@@ -7,3 +7,5 @@ External Services allows satania-buddy to send and receive messages to 3rd party
 - ~data/scripts/satania/services/Satania (WolframAlpha).evil~ (WolframAlpha integration)
 - ~data/scripts/satania/services/Satania (ChatGPT).evil~ (ChatGPT integration)
 - ~data/scripts/satania/services/Satania (koboldcpp).evil~ (koboldcpp integration)
+
+You can switch between these services in Chat window.
