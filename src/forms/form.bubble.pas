@@ -170,9 +170,12 @@ begin
     Self.FRichText.Parse(Self.KMemo);
     if (Self.FRichText.TokenList.Count <= Self.FNumWordsDisplay - 1) and not Self.IsPersistent then
     begin
+      Self.FinishedTyping := True;
+    end;
+    if Self.FRichText.TokenList.Count <= Self.FNumWordsDisplay - 1 then
+    begin
       Satania.StopAnimation(Satania.AnimTalkLoop);
       Satania.StartAnimation(Satania.AnimTalkFinish, False);
-      Self.FinishedTyping := True;
     end else
       Satania.StartAnimation(Satania.AnimTalkLoop);
     ScrollToBottom;
