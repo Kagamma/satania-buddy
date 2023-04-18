@@ -88,10 +88,10 @@ object FormChat: TFormChat
     ClientWidth = 537
     TabOrder = 3
     object ButtonClear: TBitBtn
-      Left = 413
+      Left = 432
       Height = 25
       Top = 9
-      Width = 115
+      Width = 96
       Align = alRight
       BorderSpacing.Around = 8
       Caption = 'Clear'
@@ -112,7 +112,7 @@ object FormChat: TFormChat
       TabOrder = 1
     end
     object ComboBoxService: TComboBox
-      Left = 218
+      Left = 237
       Height = 23
       Top = 10
       Width = 164
@@ -131,7 +131,7 @@ object FormChat: TFormChat
       Text = 'None'
     end
     object ButtonOpenService: TSpeedButton
-      Left = 382
+      Left = 401
       Height = 25
       Top = 9
       Width = 23

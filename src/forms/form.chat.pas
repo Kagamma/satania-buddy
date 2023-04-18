@@ -170,6 +170,7 @@ begin
   EditChat.SetFocus;
   // Load list of services
   LoadServiceList;
+  Self.ButtonOpenService.Enabled := Self.ComboBoxService.ItemIndex > 0;
 end;
 
 procedure TFormChat.EditChatKeyDown(Sender: TObject; var Key: Word;
@@ -228,6 +229,7 @@ end;
 procedure TFormChat.ComboBoxServiceChange(Sender: TObject);
 begin
   EditChat.SetFocus;
+  Self.ButtonOpenService.Enabled := Self.ComboBoxService.ItemIndex > 0;
 end;
 
 procedure TFormChat.ScrollToBottom;

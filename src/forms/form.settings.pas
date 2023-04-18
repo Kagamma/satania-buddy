@@ -43,6 +43,7 @@ type
     CheckBoxDeveloperMode: TCheckBox;
     CheckBoxEmbeddedServerEnable: TCheckBox;
     CheckBoxRules: TCheckBox;
+    CheckBoxChatSpeechBalloon: TCheckBox;
     ComboBoxSTTVoskModel: TComboBox;
     ComboBoxSkin: TComboBox;
     ComboBoxSTTBackend: TComboBox;
@@ -88,6 +89,7 @@ type
     LabelEmbeddedServerPort: TLabel;
     LabelEmbeddedServerEnable: TLabel;
     LabelRules: TLabel;
+    LabelChatSpeechBalloon: TLabel;
     LabelYourName: TLabel;
     LabelSTTBackend: TLabel;
     LabelBaseScaling: TLabel;
@@ -174,6 +176,7 @@ begin
   EditFrameSkip.Value := Save.Settings.FrameSkip;
   EditYourName.Text := Save.Settings.UserName;
   CheckBoxRules.Checked := Save.Settings.Rules;
+  CheckBoxChatSpeechBalloon.Checked := Save.Settings.ChatSpeechBalloon;
 
   ComboBoxSkin.Items.Clear;
   SL := TStringList.Create;
@@ -291,6 +294,7 @@ begin
     Save.Settings.ImageQuality := ComboBoxImageQuality.Items[ComboBoxImageQuality.ItemIndex];
     Save.Settings.FrameSkip := EditFrameSkip.Value;
     Save.Settings.Rules := CheckBoxRules.Checked;
+    Save.Settings.ChatSpeechBalloon := CheckBoxChatSpeechBalloon.Checked;
     Save.Settings.UserName := EditYourName.Text;
     // Clear sketch and workers if skin is changed
     if Save.Settings.Skin <> ComboBoxSkin.Items[ComboBoxSkin.ItemIndex] then

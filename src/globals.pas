@@ -155,6 +155,7 @@ type
     FRules: Boolean;
     FFrameSkip: Integer;
     FDeveloperMode,
+    FChatSpeechBalloon,
     FLewd: Boolean;
     FUserName,
     FSkin: String;
@@ -171,6 +172,7 @@ type
     property ImageQuality: String read FImageQuality write FImageQuality;
     property DefaultEvilScheme: String read FDefaultEvilScheme write FDefaultEvilScheme;
     property EmailServer: String read FEmailServer write FEmailServer;
+    property ChatSpeechBalloon: Boolean read FChatSpeechBalloon write FChatSpeechBalloon default False;
     property EmailPort: Word read FEmailPort write FEmailPort;
     property EmailUsername: String read FEmailUsername write FEmailUsername;
     property EmailPassword: String read FEmailPassword write FEmailPassword;

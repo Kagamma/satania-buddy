@@ -106,8 +106,11 @@ end;
 
 procedure TFormBubble.Streaming(S: String);
 begin
-  Self.Width := 300;
-  Self.Height := 200;
+  if Self.FVisibleViaSize then
+  begin
+    Self.Width := 300;
+    Self.Height := 200;
+  end;
   if (Self.FText = '') and (Satania.AnimTalkLoop <> '') then
   begin
     Self.KMemo.Blocks.Clear;
@@ -140,15 +143,16 @@ begin
     Self.KMemo.Blocks.Clear;
     Self.FRichText.Reset;
     Self.FRichText.Source := S;
-    if (Length(S) < 100) and not (Self.IsPersistent) then
-    begin
-      Self.Width := 200;
-      Self.Height := 100;
-    end else
-    begin
-      Self.Width := 300;
-      Self.Height := 200;
-    end;
+    if Self.FVisibleViaSize then
+      if (Length(S) < 100) and not (Self.IsPersistent) then
+      begin
+        Self.Width := 200;
+        Self.Height := 100;
+      end else
+      begin
+        Self.Width := 300;
+        Self.Height := 200;
+      end;
   end;
 end;
 

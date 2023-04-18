@@ -48,6 +48,7 @@ uses
   Form.Bubble,
   form.main,
   form.touch,
+  form.chat,
   Utils.Strings,
   Utils.Coords,
   Mcdowell;
@@ -131,7 +132,10 @@ begin
   if FormBubble.Text <> '' then
   begin
     FormAsk.Visible := Satania.IsAsking;
-    FormBubble.VisibleViaSize := True and Satania.Sprite.Visible and not Satania.IsAsking;
+    if Save.Settings.ChatSpeechBalloon and FormChat.Visible and (FormChat.WindowState <> wsMinimized) then
+      FormBubble.VisibleViaSize := False
+    else
+      FormBubble.VisibleViaSize := True and Satania.Sprite.Visible and not Satania.IsAsking;
   end else
   begin
     FormAsk.Visible := False;

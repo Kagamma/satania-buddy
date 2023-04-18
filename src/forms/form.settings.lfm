@@ -9,6 +9,7 @@ object FormSettings: TFormSettings
   ClientWidth = 886
   OnShow = FormShow
   Position = poScreenCenter
+  LCLVersion = '2.3.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -200,19 +201,33 @@ object FormSettings: TFormSettings
           Caption = '*Consider disable this if you use external services like ChatGPT, KoboldAI or similar'
         end
         object LabelYourName: TLabel
-          Left = 25
+          Left = 24
           Height = 15
-          Top = 272
+          Top = 296
           Width = 59
           Caption = 'Your Name'
         end
         object EditYourName: TEdit
           Left = 192
           Height = 23
-          Top = 272
+          Top = 296
           Width = 400
           TabOrder = 8
           Text = 'EditYourName'
+        end
+        object CheckBoxChatSpeechBalloon: TCheckBox
+          Left = 296
+          Height = 17
+          Top = 268
+          Width = 18
+          TabOrder = 9
+        end
+        object LabelChatSpeechBalloon: TLabel
+          Left = 25
+          Height = 15
+          Top = 268
+          Width = 256
+          Caption = 'Disable speech balloon if chat window is opened'
         end
       end
       object TabSheetGraphics: TTabSheet
