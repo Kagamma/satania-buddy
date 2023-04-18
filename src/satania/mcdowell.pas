@@ -377,13 +377,17 @@ end;
 
 procedure TSatania.StartAnimation(AnimName: String; IsRepeat: Boolean = True);
 begin
-  SpriteStartAnimation(Self.Sprite, Self.Mixer, AnimName, IsRepeat);
+  if AnimName <> '' then
+    SpriteStartAnimation(Self.Sprite, Self.Mixer, AnimName, IsRepeat);
 end;
 
 procedure TSatania.StartAnimation(URL, AnimName: String; IsRepeat: Boolean = True);
 begin
-  LoadModel(URL);
-  StartAnimation(AnimName, IsRepeat);
+  if AnimName <> '' then
+  begin
+    LoadModel(URL);
+    StartAnimation(AnimName, IsRepeat);
+  end;
 end;
 
 procedure TSatania.StopAnimation(AnimName: String);
@@ -496,8 +500,6 @@ begin
     if S <> '' then
     begin
       Log(Name, S);
-      if AnimTalkLoop <> '' then
-        Satania.StartAnimation(AnimTalkLoop);
       ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
       if Self.AnimTalkScriptList.Count > 0 then
       begin
@@ -593,11 +595,6 @@ begin
   try
     if IsTalking and FormBubble.FinishedTyping then
     begin
-      if AnimTalkLoop <> '' then
-      begin
-        Satania.StopAnimation(AnimTalkLoop);
-        Satania.StartAnimation(AnimTalkFinish, False);
-      end;
       IsTalking := False;
       Script.IsPaused := False;
     end;

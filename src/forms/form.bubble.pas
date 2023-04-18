@@ -110,7 +110,6 @@ begin
   Self.Height := 200;
   if (Self.FText = '') and (Satania.AnimTalkLoop <> '') then
   begin
-    Satania.StartAnimation(Satania.AnimTalkLoop);
     Self.KMemo.Blocks.Clear;
     Satania.ChatBubbleDelay := Save.Settings.ChatBubbleDelay;
     Self.FRichText.Reset;
@@ -170,7 +169,12 @@ begin
     Self.FRichText.NextTokenPos := Self.FNumWordsDisplay;
     Self.FRichText.Parse(Self.KMemo);
     if (Self.FRichText.TokenList.Count <= Self.FNumWordsDisplay - 1) and not Self.IsPersistent then
+    begin
+      Satania.StopAnimation(Satania.AnimTalkLoop);
+      Satania.StartAnimation(Satania.AnimTalkFinish, False);
       Self.FinishedTyping := True;
+    end else
+      Satania.StartAnimation(Satania.AnimTalkLoop);
     ScrollToBottom;
   end;
 end;
