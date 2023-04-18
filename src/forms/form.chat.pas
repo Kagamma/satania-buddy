@@ -120,8 +120,8 @@ end;
 
 procedure TFormChat.CalcHeights;
 begin
-  EditChat.Height := 46;
-  PanelEdit.Height := 71;
+  //EditChat.Height := 46;
+  //PanelEdit.Height := 71;
 end;
 
 procedure TFormChat.FormCreate(Sender: TObject);
