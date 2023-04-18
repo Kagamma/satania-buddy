@@ -59,9 +59,11 @@ type
     PanelToolbar: TPanel;
     PanelEdit: TPanel;
     PanelChatlog: TPanel;
+    ButtonOpenService: TSpeedButton;
     Splitter1: TSplitter;
 
     procedure ButtonClearClick(Sender: TObject);
+    procedure ButtonOpenServiceClick(Sender: TObject);
     procedure CheckBoxAlwaysOnTopChange(Sender: TObject);
     procedure ComboBoxServiceChange(Sender: TObject);
     procedure EditChatKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
@@ -97,6 +99,7 @@ implementation
 uses
   Math,
   Globals,
+  form.tool.evilceditor,
   Mcdowell;
 
 { TFormChat }
@@ -200,6 +203,18 @@ procedure TFormChat.ButtonClearClick(Sender: TObject);
 begin
   MemoChatLog.Blocks.Clear;
   ChatHistoryList.Clear;
+end;
+
+procedure TFormChat.ButtonOpenServiceClick(Sender: TObject);
+var
+  I: Integer;
+begin
+  I := Self.ComboBoxService.ItemIndex;
+  if I > 0 then
+  begin
+    FormEvilCEditor.Show;
+    FormEvilCEditor.LoadFromFile('data/scripts/' + Save.Settings.Skin + '/services/' + Self.ComboBoxService.Items[I]);
+  end;
 end;
 
 procedure TFormChat.CheckBoxAlwaysOnTopChange(Sender: TObject);
