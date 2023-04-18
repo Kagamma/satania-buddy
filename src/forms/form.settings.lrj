@@ -11,7 +11,7 @@
 {"hash":164431813,"name":"tformsettings.labellewd.caption","sourcebytes":[70,97,110,115,101,114,118,105,99,101],"value":"Fanservice"},
 {"hash":143123234,"name":"tformsettings.labelfontskin.caption","sourcebytes":[67,104,97,114,97,99,116,101,114],"value":"Character"},
 {"hash":5882563,"name":"tformsettings.labelrules.caption","sourcebytes":[82,117,108,101,115],"value":"Rules"},
-{"hash":213802514,"name":"tformsettings.label4.caption","sourcebytes":[42,67,111,110,115,105,100,101,114,32,117,110,99,104,101,99,107,32,116,104,105,115,32,105,102,32,121,111,117,32,117,115,101,32,101,120,116,101,114,110,97,108,32,115,101,114,118,105,99,101,115,32,108,105,107,101,32,67,104,97,116,71,80,84,44,32,75,111,98,111,108,100,65,73,32,111,114,32,115,105,109,105,108,97,114],"value":"*Consider uncheck this if you use external services like ChatGPT, KoboldAI or similar"},
+{"hash":233649122,"name":"tformsettings.label4.caption","sourcebytes":[42,67,111,110,115,105,100,101,114,32,100,105,115,97,98,108,101,32,116,104,105,115,32,105,102,32,121,111,117,32,117,115,101,32,101,120,116,101,114,110,97,108,32,115,101,114,118,105,99,101,115,32,108,105,107,101,32,67,104,97,116,71,80,84,44,32,75,111,98,111,108,100,65,73,32,111,114,32,115,105,109,105,108,97,114],"value":"*Consider disable this if you use external services like ChatGPT, KoboldAI or similar"},
 {"hash":205858901,"name":"tformsettings.labelyourname.caption","sourcebytes":[89,111,117,114,32,78,97,109,101],"value":"Your Name"},
 {"hash":41831989,"name":"tformsettings.edityourname.text","sourcebytes":[69,100,105,116,89,111,117,114,78,97,109,101],"value":"EditYourName"},
 {"hash":143059779,"name":"tformsettings.tabsheetgraphics.caption","sourcebytes":[71,114,97,112,104,105,99,115],"value":"Graphics"},

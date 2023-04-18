@@ -1,40 +1,39 @@
 object FormChat: TFormChat
-  Left = 636
-  Height = 524
-  Top = 221
-  Width = 508
+  Left = 635
+  Height = 461
+  Top = 318
+  Width = 454
   Caption = 'Chat'
-  ClientHeight = 524
-  ClientWidth = 508
+  ClientHeight = 461
+  ClientWidth = 454
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.3.0.0'
   object PanelChatlog: TPanel
     Left = 0
-    Height = 405
+    Height = 342
     Top = 0
-    Width = 508
+    Width = 454
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 405
-    ClientWidth = 508
+    ClientHeight = 342
+    ClientWidth = 454
     TabOrder = 0
     object Panel1: TPanel
       Left = 0
-      Height = 405
+      Height = 342
       Top = 0
-      Width = 508
+      Width = 454
       Align = alClient
       BevelOuter = bvSpace
-      ClientHeight = 405
-      ClientWidth = 508
+      ClientHeight = 342
+      ClientWidth = 454
       TabOrder = 0
       object MemoChatLog: TKMemo
         Left = 1
-        Height = 403
+        Height = 340
         Top = 1
-        Width = 506
+        Width = 452
         Align = alClient
         ContentPadding.Left = 5
         ContentPadding.Top = 5
@@ -50,18 +49,18 @@ object FormChat: TFormChat
   object PanelEdit: TPanel
     Left = 0
     Height = 71
-    Top = 410
-    Width = 508
+    Top = 347
+    Width = 454
     Align = alBottom
     ClientHeight = 71
-    ClientWidth = 508
+    ClientWidth = 454
     TabOrder = 1
     object EditChat: TMemo
       Left = 7
       Height = 57
       Hint = 'Say something!'
       Top = 7
-      Width = 494
+      Width = 440
       Align = alClient
       BorderSpacing.Around = 6
       OnKeyDown = EditChatKeyDown
@@ -73,25 +72,25 @@ object FormChat: TFormChat
     Cursor = crVSplit
     Left = 0
     Height = 5
-    Top = 405
-    Width = 508
+    Top = 342
+    Width = 454
     Align = alBottom
     ResizeAnchor = akBottom
   end
   object PanelToolbar: TPanel
     Left = 0
     Height = 43
-    Top = 481
-    Width = 508
+    Top = 418
+    Width = 454
     Align = alBottom
     ClientHeight = 43
-    ClientWidth = 508
+    ClientWidth = 454
     TabOrder = 3
     object ButtonClear: TBitBtn
-      Left = 408
+      Left = 330
       Height = 25
       Top = 9
-      Width = 91
+      Width = 115
       Align = alRight
       BorderSpacing.Around = 8
       Caption = 'Clear'
@@ -112,14 +111,12 @@ object FormChat: TFormChat
       TabOrder = 1
     end
     object ComboBoxService: TComboBox
-      Left = 213
+      Left = 158
       Height = 23
-      Top = 10
+      Top = 9
       Width = 164
       Align = alRight
-      BorderSpacing.Left = 8
-      BorderSpacing.Top = 9
-      BorderSpacing.Bottom = 8
+      BorderSpacing.Around = 8
       ItemHeight = 15
       ItemIndex = 0
       Items.Strings = (
@@ -129,19 +126,6 @@ object FormChat: TFormChat
       ReadOnly = True
       TabOrder = 2
       Text = 'None'
-    end
-    object ButtonOpenService: TSpeedButton
-      Left = 377
-      Height = 25
-      Top = 9
-      Width = 23
-      Align = alRight
-      BorderSpacing.Top = 8
-      BorderSpacing.Right = 8
-      BorderSpacing.Bottom = 8
-      Images = FormEvilCEditor.ImageList
-      ImageIndex = 0
-      OnClick = ButtonOpenServiceClick
     end
   end
 end

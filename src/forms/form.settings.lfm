@@ -9,7 +9,6 @@ object FormSettings: TFormSettings
   ClientWidth = 886
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.3.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -197,8 +196,8 @@ object FormSettings: TFormSettings
           Left = 224
           Height = 15
           Top = 240
-          Width = 442
-          Caption = '*Consider uncheck this if you use external services like ChatGPT, KoboldAI or similar'
+          Width = 434
+          Caption = '*Consider disable this if you use external services like ChatGPT, KoboldAI or similar'
         end
         object LabelYourName: TLabel
           Left = 25
@@ -608,6 +607,7 @@ object FormSettings: TFormSettings
       Items.Strings = (
         'General'
         'Graphics'
+        'External Services'
         'Embedded Server'
         'Email'
         'Speech Recognition'
