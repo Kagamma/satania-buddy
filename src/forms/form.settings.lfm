@@ -9,7 +9,6 @@ object FormSettings: TFormSettings
   ClientWidth = 886
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '2.3.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -622,7 +621,6 @@ object FormSettings: TFormSettings
       Items.Strings = (
         'General'
         'Graphics'
-        'External Services'
         'Embedded Server'
         'Email'
         'Speech Recognition'
