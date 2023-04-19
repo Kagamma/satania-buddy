@@ -81,7 +81,7 @@ var
   Json: TJsonNode;
   I: Integer;
   CH: TChatHistory;
-begin 
+begin
   Json := TJsonNode.Create;
   try
     Json.Value := '[]';
@@ -112,6 +112,7 @@ var
   I: Integer;
   HC: Integer;
   Json: TJsonNode;
+  Ticks: Integer = 0;
 begin
   Typ := 'chat';
   for I := 0 to Fields.Count - 1 do
@@ -127,7 +128,15 @@ begin
   if Message <> '' then
     Satania.Action(Typ, Message);
   while HC = FormChat.ChatHistoryList.Count do
+  begin
     Sleep(100);
+    Inc(Ticks, 100);
+    if Ticks > 60000 then
+    begin
+      HttpResponse.SetStatus(400);
+      Exit;
+    end;
+  end;
   Json := TJsonNode.Create;
   try
     Json.Add('message', FormChat.ChatHistoryList[FormChat.ChatHistoryList.Count - 1].Message);
