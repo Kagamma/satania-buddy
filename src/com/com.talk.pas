@@ -70,7 +70,7 @@ begin
 end;
 
 initialization
-  TTalkAction.Register('/talk');  
+  TTalkAction.Register('/api/talk');  
   TGreetAction.Register('*');
 
 end.
