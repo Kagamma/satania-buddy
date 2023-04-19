@@ -235,12 +235,12 @@ begin
   S.RegisterFunc('email_smtp_is_configured', @SEIsEmailSMTPConfigured, 0);
   S.RegisterFunc('email_smtp_send', @SEEmailSMTPSend, 6);
   S.RegisterFunc('sound_play', @SESoundPlay, 1);
-  S.RegisterFunc('url_open', @SEOpenURL, 1);
-  S.RegisterFunc('url_fetch', @SEURLFetch, 4);
-  S.RegisterFunc('url_upload', @SEURLUpload, 5);
-  S.RegisterFunc('url_is_success', @SEURLIsSuccess, 1);
-  S.RegisterFunc('url_result_get', @SEURLGetResult, 1);
-  S.RegisterFunc('url_query', @SEURLProcess, 2);
+  S.RegisterFunc('http_open', @SEOpenURL, 1);
+  S.RegisterFunc('http_fetch', @SEURLFetch, 4);
+  S.RegisterFunc('http_upload', @SEURLUpload, 5);
+  S.RegisterFunc('http_is_success', @SEURLIsSuccess, 1);
+  S.RegisterFunc('http_result_get', @SEURLGetResult, 1);
+  S.RegisterFunc('http_query', @SEURLProcess, 2);
   S.RegisterFunc('url_encode', @SEURLEncode, 1);
   S.RegisterFunc('url_decode', @SEURLDecode, 1);
   S.RegisterFunc('chat_history_get', @SEChatHistoryGet, 0);

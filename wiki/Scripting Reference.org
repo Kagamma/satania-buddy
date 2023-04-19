@@ -488,17 +488,17 @@ number): map*
 - Encode URL element.
 *url_decode(s: string): string*
 - Decode URL element.
-*url_open(url: string)*
+*http_open(url: string)*
 - Open an URL using default web browser.
-*url_fetch(method, url: string; headers: map; data: string/map): string*
+*http_fetch(method, url: string; headers: map; data: string/map): string*
 - Make a request to URL.
-*url_upload(url: string; headers: map; data: string/map; field, file: string): string*
+*http_upload(url: string; headers: map; data: string/map; field, file: string): string*
 - Upload a file to URL.
-*url_is_success(url: string): boolean*
+*http_is_success(url: string): boolean*
 - Check if url query (get, post, etc) is finished.
-*url_result_get(url: string): map*
+*http_result_get(url: string): map*
 - Get HTML result from url_fetch / url_upload. Result map contains status and data.
-*url_query(data, xpath: string): map*
+*http_query(data, xpath: string): map*
 - Extract data from HTML string.
 
 ** Email
