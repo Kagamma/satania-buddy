@@ -24,6 +24,7 @@ svn checkout https://svn.code.sf.net/p/synalist/code/trunk synalist
 git clone --depth 1 https://github.com/risoflora/brookfreepascal.git
 git clone --depth 1 https://github.com/Kagamma/internettools.git
 git clone --depth 1 https://github.com/kryslt/KControls.git
+git clone --depth 1 https://github.com/Kagamma/JsonTools.git
 git clone https://github.com/Kagamma/HtmlViewer.git
 cd HtmlViewer
 git checkout satania-buddy
