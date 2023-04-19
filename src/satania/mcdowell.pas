@@ -32,7 +32,7 @@ uses
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
   CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts,
   CastleSceneCore, CastleSpine, CastleSpineMixer, strutils,
-  CastleBehaviors, Clipbrd, fphttpclient, LazUTF8, IniFiles,
+  CastleBehaviors, Clipbrd, fphttpclient, LazUTF8, IniFiles, JsonTools,
   Mcdowell.EvilC, Mcdowell.Chat, Globals;
 
 type

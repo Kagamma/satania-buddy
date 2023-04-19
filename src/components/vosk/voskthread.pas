@@ -25,7 +25,7 @@ unit voskthread;
 interface
 
 uses
-  Classes, SysUtils, Vosk, fpjson, jsonparser;
+  Classes, SysUtils, Vosk, JsonTools;
 
 type
   TVoskState = (
@@ -138,7 +138,7 @@ var
   NFrames, Final: Integer;
   S: PChar;
   Text: String;
-  JSObject: TJSONObject;
+  Json, N: TJsonNode;
 begin
   while IsRunning do
   begin
@@ -162,10 +162,17 @@ begin
           S := vosk_recognizer_partial_result(FRec)
         else
           S := vosk_recognizer_result(FRec);
-        JSObject := GetJSON(S) as TJSONObject;
-        try Text := JSObject['partial'].AsString; except on E: Exception do; end;
+        Json := TJsonNode.Create;
+        Json.TryParse(S);
+        N := Json.Find('partial');
+        if N <> nil then
+          Text := N.AsString;
         if Text = '' then
-          try Text := JSObject['text'].AsString; except on E: Exception do; end;
+        begin
+          N := Json.Find('text');
+          if N <> nil then
+            Text := N.AsString;
+        end;
         if Text <> '' then
         begin
           FRecentHypothesis := Text;
@@ -181,7 +188,7 @@ begin
         begin
           State := rsListening;
         end;
-        JSObject.Free;
+        Json.Free;
       end else
       begin
         if (FRecentHypothesis <> '') then

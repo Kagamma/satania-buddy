@@ -84,7 +84,6 @@ var
 begin
   Json := TJsonNode.Create;
   try
-    Json.Value := '[]';
     for I := 0 to FormChat.ChatHistoryList.Count - 1 do
     begin
       CH := FormChat.ChatHistoryList[I];

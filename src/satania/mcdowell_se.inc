@@ -858,42 +858,42 @@ begin
 end;
 
 function TSatania.SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-  procedure QueryForObject(out R: TSEValue; Data: TJSONData); forward;
+  procedure QueryForObject(out R: TSEValue; Data: TJsonNode); forward;
 
-  procedure QueryForArray(out R: TSEValue; Data: TJSONData);
+  procedure QueryForArray(out R: TSEValue; Data: TJsonNode);
   var
     I: Integer;
-    D: TJSONData;
+    D: TJsonNode;
     Name: String;
     V: TSEValue;
   begin
     GC.AllocMap(@R);
     for I := 0 to Data.Count - 1 do
     begin
-      D := Data.Items[I];
-      case D.JSONType of
-        jtArray:
+      D := Data.Child(I);
+      case D.Kind of
+        nkArray:
           begin
             QueryForArray(V, D);
             SEMapSet(R, I, V);
           end;
-        jtString:
+        nkString:
           begin
             SEMapSet(R, I, D.AsString);
           end;
-        jtNumber:
+        nkNumber:
           begin
-            SEMapSet(R, I, D.AsFloat);
+            SEMapSet(R, I, D.AsNumber);
           end;
-        jtBoolean:
+        nkBool:
           begin
             SEMapSet(R, I, D.AsBoolean);
           end;
-        jtNull:
+        nkNull:
           begin
             SEMapSet(R, I, SENull);
           end;
-        jtObject:
+        nkObject:
           begin
             QueryForObject(V, D);
             SEMapSet(R, I, V);
@@ -902,58 +902,57 @@ function TSatania.SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): T
     end;
   end;
 
-  procedure QueryForObject(out R: TSEValue; Data: TJSONData);
+  procedure QueryForObject(out R: TSEValue; Data: TJsonNode);
   var
     I: Integer;
-    D: TJSONData;
-    Name: String;
+    D: TJsonNode;
     V: TSEValue;
   begin
     GC.AllocMap(@R);
     for I := 0 to Data.Count - 1 do
     begin
-      Name := TJSONObject(Data).Names[I];
-      D := Data.FindPath(Name);
-      case D.JSONType of
-        jtArray:
+      D := Data.Child(I);
+      case D.Kind of
+        nkArray:
           begin
             QueryForArray(V, D);
-            SEMapSet(R, Name, V);
+            SEMapSet(R, D.Name, V);
           end;
-        jtString:
+        nkString:
           begin
-            SEMapSet(R, Name, D.AsString);
+            SEMapSet(R, D.Name, D.AsString);
           end;
-        jtNumber:
+        nkNumber:
           begin
-            SEMapSet(R, Name, D.AsFloat);
+            SEMapSet(R, D.Name, D.AsNumber);
           end;
-        jtBoolean:
+        nkBool:
           begin
-            SEMapSet(R, Name, D.AsBoolean);
+            SEMapSet(R, D.Name, D.AsBoolean);
           end;
-        jtNull:
+        nkNull:
           begin
-            SEMapSet(R, Name, SENull);
+            SEMapSet(R, D.Name, SENull);
           end;
-        jtObject:
+        nkObject:
           begin
             QueryForObject(V, D);
-            SEMapSet(R, Name, V);
+            SEMapSet(R, D.Name, V);
           end;
       end;
     end;
   end;
 
 var
-  JSON: TJSONData;
+  Json: TJsonNode;
 begin
-  JSON := GetJSON(Args[0].VarString^);
+  Json := TJsonNode.Create;
+  Json.Parse(Args[0].VarString^);
   try
-    if JSON.JSONType = jtArray then
-      QueryForArray(Result, JSON)
+    if Json.Kind = nkArray then
+      QueryForArray(Result, Json)
     else
-      QueryForObject(Result, JSON);
+      QueryForObject(Result, Json);
   finally
     JSON.Free;
   end;
@@ -1011,7 +1010,7 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
     begin
       if (I > 0) then
         JSONStr := JSONStr + ',';
-      JSONStr := JSONStr + '"' + StringReplace(Key, '"', '\"', [rfReplaceAll]) + '":';
+      JSONStr := JSONStr + '"' + StringToJSONString(Key) + '":';
       V := SEMapGet(Map, Key);
       case V.Kind of
         sevkString:
