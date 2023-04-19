@@ -25,53 +25,122 @@ unit Com.Talk;
 interface
 
 uses
-  Classes, SysUtils,
+  Classes, SysUtils, Globals,
   BrookAction;
 
 type
-  TGreetAction = class(TBrookAction)
+  TWebUIAction = class(TBrookAction)
   public
     procedure Get; override;
   end;
 
-  TTalkAction = class(TBrookAction)
+  THistoryAction = class(TBrookAction)
   public
     procedure Get; override;
+  end;
+
+  TChatAction = class(TBrookAction)
+  public
+    procedure Post; override;
   end;
 
 implementation
 
 uses
+  jsontools,
+  form.chat,
   Mcdowell;
 
-procedure TGreetAction.Get;
+procedure TWebUIAction.Get;
+var
+  FS: TFileStream;
+  Path: String = 'data/webui';
 begin
-  Write('satania-buddy<br /><li><a href="/talk">/talk</a></li>');
+  if Self.HttpRequest.URI = '/' then
+    Path := Path + '/index.html'
+  else
+    Path := Path + Self.HttpRequest.URI;
+  if FileExists(Path) then
+  begin
+    FS := TFileStream.Create(Path, fmOpenRead);
+    try
+      Write(FS);
+    finally
+      FS.Free;
+    end;
+  end else
+  begin
+    HttpResponse.SetStatus(404);
+    Write('404 Not Found.');
+  end;
 end;
 
-procedure TTalkAction.Get;
+procedure THistoryAction.Get;
+var
+  N,
+  Json: TJsonNode;
+  I: Integer;
+  CH: TChatHistory;
+begin 
+  Json := TJsonNode.Create;
+  try
+    Json.Value := '[]';
+    for I := 0 to FormChat.ChatHistoryList.Count - 1 do
+    begin
+      CH := FormChat.ChatHistoryList[I];
+      N := Json.Add;
+      N.Add('message', CH.Message);
+      N.Add('time', CH.Time);
+      case CH.SenderType of
+        cseSatania:
+          N.Add('sender', Satania.Name);
+        cseUser:
+          N.Add('sender', Save.Settings.UserName);
+        else
+          N.Add('sender', 'System');
+      end;
+    end;
+    Write(Json.AsJson);
+  finally
+    Json.Free;
+  end;
+end;
+
+procedure TChatAction.Post;
 var
   Name, Value, Typ, Message: String;
   I: Integer;
+  HC: Integer;
+  Json: TJsonNode;
 begin
   Typ := 'chat';
-  for I := 0 to Params.Count - 1 do
+  for I := 0 to Fields.Count - 1 do
   begin
-    Params.GetNameValue(I, Name, Value);
+    Fields.GetNameValue(I, Name, Value);
     if Name = 'message' then
       Message := Value
     else
     if Name = 'type' then
       Typ := Value;
   end;
+  HC := FormChat.ChatHistoryList.Count;
   if Message <> '' then
     Satania.Action(Typ, Message);
-  Write('method=GET<br /><li>message=' + Message + '</li><li>type=' + Typ + '</li>');
+  while HC = FormChat.ChatHistoryList.Count do
+    Sleep(100);
+  Json := TJsonNode.Create;
+  try
+    Json.Add('message', FormChat.ChatHistoryList[FormChat.ChatHistoryList.Count - 1].Message);
+    Write(Json.AsJson);
+  finally
+    Json.Free;
+  end;
 end;
 
 initialization
-  TTalkAction.Register('/api/talk');  
-  TGreetAction.Register('*');
+  TChatAction.Register('/api/v1/chat');
+  THistoryAction.Register('/api/v1/chat_history');
+  TWebUIAction.Register('*');
 
 end.
 
