@@ -825,7 +825,7 @@ end;
 
 procedure TSatania.UpdateMeta(const S: TEvilC);
 var
-  JSON: TJSONObject;
+  Json, N: TJsonNode;
   SL: TStrings;
   MetaPath: String;
   IsNamed: Boolean = False;
@@ -850,19 +850,21 @@ begin
     SL := TStringList.Create;
     try
       SL.LoadFromFile(MetaPath);
-      JSON := GetJSON(SL.Text) as TJSONObject;
+      Json := TJsonNode.Create;
+      Json.TryParse(SL.Text);
       // We search for name
-      for I := 0 to JSON.Count - 1 do
+      for I := 0 to Json.Count - 1 do
       begin
         // Stop once we found name
-        if JSON.Names[I] = 'name' then
+        N := Json.Child(I);
+        if N.Name = 'name' then
         begin
           IsNamed := True;
-          Name := JSON.Items[I].AsString;
+          Name := N.AsString;
           Break;
         end;
       end;
-      JSON.Free;
+      Json.Free;
       // Create a new meta constant and map meta data there
       if SL.Text = '' then
         S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))
