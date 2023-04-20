@@ -129,6 +129,7 @@ var
 
 begin
   Self.TokenList.Clear;
+  Self.FState := rtsNormal;
   repeat
     C := NextChar;
     case C of
