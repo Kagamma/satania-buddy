@@ -140,6 +140,26 @@ begin
         begin
           Token.Kind := rtkNewLine;
         end;
+      '(':
+        begin
+          if (Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') then
+          begin
+            Self.FState := rtsThink;
+            Token.Kind := rtkState;
+            Token.State := Self.FState;
+          end else
+            goto LB_Other;
+        end;
+      ')':
+        begin
+          if Self.FState = rtsThink then
+          begin
+            Self.FState := rtsNormal;
+            Token.Kind := rtkState;
+            Token.State := Self.FState;
+          end else
+            goto LB_Other;
+        end;
       '*':
         begin
           if ((Self.FState = rtsNormal) and (PeekAtNextChar <> ' ')) or (Self.FState = rtsThink) then
