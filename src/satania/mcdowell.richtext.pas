@@ -235,7 +235,7 @@ begin
           case Self.LastState of
             rtsCode:
               begin
-                TB.TextStyle.Font.Color := $303030;
+                TB.TextStyle.Font.Color := $071330;
                 {$ifdef WINDOWS}
                 TB.TextStyle.Font.Name := 'Consolas';
                 {$else}
