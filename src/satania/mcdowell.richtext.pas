@@ -35,6 +35,7 @@ type
     Kind : TRichTextKind;
     State: TRichTextState;
     Value: Char;
+    Pos  : Integer;        // Position in original string
   end;
   TRichTextTokenList = specialize TList<TRichTextToken>;
 
@@ -162,6 +163,7 @@ begin
           Token.Kind := rtkText;
         end;
     end;
+    Token.Pos := Pos;
     Self.TokenList.Add(Token);
   until C = #0;
   Self.FIsLexed := True;
@@ -219,6 +221,7 @@ begin
       rtkState:
         begin
           Self.LastState := Token.State;
+          Memo.Blocks.AddParagraph;
         end;
       rtkEOS:
         Exit;

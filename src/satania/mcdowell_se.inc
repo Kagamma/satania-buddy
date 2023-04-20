@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEStreamEnable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStreamDisable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStream(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEStreamPositionGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEAsk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEAnswer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -189,6 +190,11 @@ function TSatania.SEStream(const VM: TSEVM; const Args: array of TSEValue): TSEV
 begin
   FormChat.Streaming(Args[0].VarString^);
   FormBubble.Streaming(Args[0].VarString^);
+end;
+
+function TSatania.SEStreamPositionGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := FormChat.RichText.TokenList[FormChat.RichText.LastTokenPos].Pos;
 end;
 
 function TSatania.SEAsk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

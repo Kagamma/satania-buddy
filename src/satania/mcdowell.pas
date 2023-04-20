@@ -196,7 +196,8 @@ begin
   S.RegisterFunc('talk', @SETalk, -1);
   S.RegisterFunc('stream_enable', @SEStreamEnable, 0);
   S.RegisterFunc('stream_disable', @SEStreamDisable, 0);
-  S.RegisterFunc('stream', @SEStream, 1);
+  S.RegisterFunc('stream', @SEStream, 1);       
+  S.RegisterFunc('stream_position_get', @SEStreamPositionGet, 0);
   S.RegisterFunc('numbers', @SENumbers, 1);
   S.RegisterFunc('months_to_numbers', @SEMonthsToNumbers, 1);
   S.RegisterFunc('answer', @SEAnswer, 0);

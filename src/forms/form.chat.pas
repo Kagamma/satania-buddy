@@ -87,6 +87,7 @@ type
     procedure InsertTyping;
     procedure RemoveTyping;
     procedure LoadServiceList;
+    property RichText: TRichText read FRichText;
   end;
 
 var
