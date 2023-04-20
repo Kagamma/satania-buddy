@@ -9,6 +9,7 @@ object FormSettings: TFormSettings
   ClientWidth = 886
   OnShow = FormShow
   Position = poScreenCenter
+  LCLVersion = '2.3.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42

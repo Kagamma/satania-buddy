@@ -331,6 +331,7 @@ begin
     Save.Settings.EmailUseSSL := CheckBoxEmailUseSSL.Checked;
     Save.Settings.EmailSMTPUseSSL := CheckBoxEmailSMTPUseSSL.Checked;
     Save.SaveToFile('configs.json');
+    FormChat.LoadServiceList;
     SataniaIMAP.Disconnect;
     //
     ApplicationProperties.LimitFPS := Save.Settings.FPS;

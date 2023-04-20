@@ -158,6 +158,7 @@ type
     FChatSpeechBalloon,
     FLewd: Boolean;
     FUserName,
+    FLastServiceUsed,
     FSkin: String;
     FSTTVoskModel: String;
     FSTTBackend: Integer;
@@ -192,6 +193,7 @@ type
     property STTBackend: Integer read FSTTBackend write FSTTBackend default 0;
     property UserName: String read FUserName write FUserName;
     property Rules: Boolean read FRules write FRules default True;
+    property LastServiceUsed: String read FLastServiceUsed write FLastServiceUsed;
   end;
 
   TSave = class(TPersistent)
@@ -302,6 +304,7 @@ begin
   FSettings.FEmbeddedServerEnable := False;
   FSettings.FRules := True;
   FSettings.FUserName := '(You)';
+  FSettings.FLastServiceUsed := 'WolframAlpha.evil';
 end;
 
 destructor TSave.Destroy;
@@ -382,6 +385,8 @@ initialization
   OwnedWindowHandleList := TQWordList.Create;
 
 finalization
+  if Save <> nil then
+    Save.SaveToFile('configs.json');
   FreeAndNil(OwnedWindowHandleList);
 
 end.

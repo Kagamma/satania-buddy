@@ -133,6 +133,7 @@ begin
   ChatHistoryList := TChatHistoryList.Create;
   ButtonClearClick(Self);
   FRichText := TRichText.Create;
+  LoadServiceList;
 end;
 
 procedure TFormChat.FormDestroy(Sender: TObject);
@@ -144,25 +145,23 @@ end;
 procedure TFormChat.LoadServiceList;
 var
   SL: TStringList;
-  I,
-  V : Integer;
+  I : Integer;
   S : String;
 begin
-  V := ComboBoxService.ItemIndex;
   ComboBoxService.Clear;
   ComboBoxService.Items.Add('None');
+  ComboBoxService.ItemIndex := 0;
 
   SL := TStringList.Create;
   FindAllFiles(SL, 'data/scripts/' + Save.Settings.Skin + '/services', '*.evil', False);
   for I := 0 to SL.Count - 1 do
   begin
     S := ExtractFileName(SL[I]);
-    if (S.IndexOf('WolframAlpha') >= 0) and (V = 0) then
-      V := I + 1;
     ComboBoxService.Items.Add(S);
+    if S.IndexOf(Save.Settings.LastServiceUsed) >= 0 then
+      ComboBoxService.ItemIndex := I + 1;
   end;
   SL.Free;
-  ComboBoxService.ItemIndex := V;
 end;
 
 procedure TFormChat.FormShow(Sender: TObject);
@@ -229,7 +228,16 @@ end;
 procedure TFormChat.ComboBoxServiceChange(Sender: TObject);
 begin
   EditChat.SetFocus;
-  Self.ButtonOpenService.Enabled := Self.ComboBoxService.ItemIndex > 0;
+  if Self.ComboBoxService.ItemIndex > 0 then
+  begin
+    Self.ButtonOpenService.Enabled := True;
+    Save.Settings.LastServiceUsed := Self.ComboBoxService.Items[Self.ComboBoxService.ItemIndex];
+  end else
+  begin
+    Self.ButtonOpenService.Enabled := False;
+    Save.Settings.LastServiceUsed := 'None';
+  end;
+  Save.SaveToFile('configs.json');
 end;
 
 procedure TFormChat.ScrollToBottom;
