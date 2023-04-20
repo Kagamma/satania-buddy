@@ -25,11 +25,11 @@ unit Mcdowell.RichText;
 interface
 
 uses
-  Classes, SysUtils, Generics.Collections, kmemo;
+  Classes, SysUtils, Generics.Collections, kmemo, Graphics;
 
 type
   TRichTextKind = (rtkText, rtkNewLine, rtkState, rtkEOS);
-  TRichTextState = (rtsNormal, rtsCode);
+  TRichTextState = (rtsNormal, rtsCode, rtsThink);
 
   TRichTextToken = record
     Kind : TRichTextKind;
@@ -140,6 +140,19 @@ begin
         begin
           Token.Kind := rtkNewLine;
         end;
+      '*':
+        begin
+          if ((Self.FState = rtsNormal) and (PeekAtNextChar <> ' ')) or (Self.FState = rtsThink) then
+          begin
+            if Self.FState = rtsNormal then
+              Self.FState := rtsThink
+            else
+              Self.FState := rtsNormal;
+            Token.Kind := rtkState;
+            Token.State := Self.FState;
+          end else
+            goto LB_Other;
+        end;
       '`':
         begin
           if (Col = 2) and (PeekAtNextChar = '`') and (PeekAtNextChar(2) = '`') then
@@ -208,6 +221,11 @@ begin
                 TB.TextStyle.Font.Name := 'Monospace';
                 {$endif}
               end;
+            rtsThink:
+              begin
+                TB.TextStyle.Font.Color := $808080;
+                TB.TextStyle.Font.Style := [fsItalic];
+              end
             else
               begin
                 // Do nothing
@@ -220,8 +238,9 @@ begin
         end;
       rtkState:
         begin
+          if (Token.State = rtsCode) or ((Token.State = rtsNormal) and (Self.LastState = rtsCode)) then
+            Memo.Blocks.AddParagraph;
           Self.LastState := Token.State;
-          Memo.Blocks.AddParagraph;
         end;
       rtkEOS:
         Exit;
