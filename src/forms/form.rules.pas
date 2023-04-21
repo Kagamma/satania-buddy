@@ -140,7 +140,7 @@ begin
       IsSaved := True;
     except
       on E: Exception do
-        Satania.Talk(E.Message);
+        Satania.Error(E.Message);
     end;
   finally
     FreeAndNil(JSONArray);

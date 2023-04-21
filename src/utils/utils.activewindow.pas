@@ -91,7 +91,7 @@ begin
     end;
   except
     on E: Exception do
-      Satania.Talk(E.Message);
+      Satania.Error(E.Message);
   end;
   //if IsWindowChanged then
   //  Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);

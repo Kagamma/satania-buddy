@@ -95,7 +95,9 @@ type
     procedure StartAnimation(URL, AnimName: String; IsRepeat: Boolean = True); overload;
     procedure StopAnimation(AnimName: String);
     procedure StopAllAnimations;
-    procedure Log(LogName, S: String);
+    procedure Log(LogName, S: String); overload;
+    procedure Log(S: String); overload;
+    procedure Error(S: String);
     procedure Talk(S: String);
     procedure Ask(S: String);
     procedure TalkReset(S: String);
@@ -324,7 +326,7 @@ begin
     on E: Exception do
     begin
       TCastleScene(Sprite).URL := PATH_SPRITES + 'template/sprites.plist';
-      Talk(E.Message);
+      Error(E.Message);
     end;
   end else
   begin
@@ -478,7 +480,7 @@ begin
       end;
     except
       on E: Exception do
-        Talk(E.Message);
+        Error(E.Message);
     end;
   finally
     FreeAndNil(SS);
@@ -570,6 +572,19 @@ begin
   FormChat.InsertLog(LogName, S);
 end;
 
+procedure TSatania.Log(S: String);
+begin
+  FormChat.InsertLog('System', S);
+end;
+
+procedure TSatania.Error(S: String);
+begin
+  if Save.Settings.SystemErrorMessage then
+    Self.Log(S)
+  else
+    Self.Talk(S);
+end;
+
 procedure TSatania.Chat(S: String);
 var
   ChatThread: TSataniaChatThread;
@@ -623,7 +638,7 @@ begin
             begin
               BackgroundScript.Script.Free;
               BackgroundScriptDict.Remove(Key);
-              Talk('Worker "' + Key + '": ' + E.Message);
+              Error('Worker "' + Key + '": ' + E.Message);
             end;
           end;
         end;
@@ -639,7 +654,7 @@ begin
     begin
       ResetScript;
       IsAction := False;
-      Talk(E.Message);
+      Error(E.Message);
     end;
   end;
 end;

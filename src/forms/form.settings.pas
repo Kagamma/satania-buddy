@@ -37,6 +37,7 @@ type
   TFormSettings = class(TForm)
     ButtonCancel: TBitBtn;
     ButtonOk: TBitBtn;
+    CheckBoxErrorMessage: TCheckBox;
     CheckBoxEmailUseSSL: TCheckBox;
     CheckBoxEmailSmtpUseSSL: TCheckBox;
     CheckBoxLewd: TCheckBox;
@@ -73,6 +74,7 @@ type
     Label1: TLabel;
     Label4: TLabel;
     LabelChatbotServer4: TLabel;
+    LabelErrorMessage: TLabel;
     LabelEmbeddedServiceNotice: TLabel;
     LabelDeveloperMode: TLabel;
     LabelEmailPassword: TLabel;
@@ -176,6 +178,7 @@ begin
   EditFrameSkip.Value := Save.Settings.FrameSkip;
   EditYourName.Text := Save.Settings.UserName;
   CheckBoxRules.Checked := Save.Settings.Rules;
+  CheckBoxErrorMessage.Checked := Save.Settings.SystemErrorMessage;
   CheckBoxChatSpeechBalloon.Checked := Save.Settings.ChatSpeechBalloon;
 
   ComboBoxSkin.Items.Clear;
@@ -279,8 +282,6 @@ begin
 end;
 
 procedure TFormSettings.ButtonOkClick(Sender: TObject);
-var
-  IniFilePath: String;
 begin
   try
     Save.Settings.Lewd := CheckBoxLewd.Checked;
@@ -296,6 +297,7 @@ begin
     Save.Settings.Rules := CheckBoxRules.Checked;
     Save.Settings.ChatSpeechBalloon := CheckBoxChatSpeechBalloon.Checked;
     Save.Settings.UserName := EditYourName.Text;
+    Save.Settings.SystemErrorMessage := CheckBoxErrorMessage.Checked;
     // Clear sketch and workers if skin is changed
     if Save.Settings.Skin <> ComboBoxSkin.Items[ComboBoxSkin.ItemIndex] then
     begin
@@ -359,7 +361,7 @@ begin
     Hide;
   except
     on E: Exception do
-      Satania.Talk(E.Message);
+      Satania.Error(E.Message);
   end;
 end;
 

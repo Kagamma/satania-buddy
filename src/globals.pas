@@ -154,6 +154,7 @@ type
     FEmailUseSSL: Boolean;
     FRules: Boolean;
     FFrameSkip: Integer;
+    FSystemErrorMessage: Boolean;
     FDeveloperMode,
     FChatSpeechBalloon,
     FLewd: Boolean;
@@ -193,6 +194,7 @@ type
     property STTBackend: Integer read FSTTBackend write FSTTBackend default 0;
     property UserName: String read FUserName write FUserName;
     property Rules: Boolean read FRules write FRules default True;
+    property SystemErrorMessage: Boolean read FSystemErrorMessage write FSystemErrorMessage default False;
     property LastServiceUsed: String read FLastServiceUsed write FLastServiceUsed;
   end;
 
@@ -305,6 +307,7 @@ begin
   FSettings.FRules := True;
   FSettings.FUserName := '(You)';
   FSettings.FLastServiceUsed := 'WolframAlpha.evil';
+  FSettings.FSystemErrorMessage := False;
 end;
 
 destructor TSave.Destroy;

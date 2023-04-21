@@ -66,7 +66,7 @@ begin
     BrookApp.Run;
   except
     on E: Exception do
-      Satania.Talk(E.Message);
+      Satania.Error(E.Message);
   end;
 end;
 
