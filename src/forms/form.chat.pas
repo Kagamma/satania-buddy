@@ -296,9 +296,9 @@ begin
   end;
 
   FRichText.Source := Msg;
-  FRichText.Lex;
+  FRichText.Lex(LogName <> Save.Settings.UserName);
   FRichText.NextTokenPos := FRichText.TokenList.Count - 1;
-  FRichText.Parse(MemoChatLog);
+  FRichText.Parse(MemoChatLog, LogName <> Save.Settings.UserName);
 
   if (not FRichText.IsStreaming) or (FStreamingPartCount = 0) then
   begin

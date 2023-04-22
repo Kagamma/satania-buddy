@@ -54,8 +54,8 @@ type
     TokenList: TRichTextTokenList;
     constructor Create;
     destructor Destroy; override;
-    procedure Lex;
-    procedure Parse(const Memo: TKMemo);
+    procedure Lex(const IsEmote: Boolean = True);
+    procedure Parse(const Memo: TKMemo; const IsEmote: Boolean = True);
     procedure Reset;
 
     property Source: String read FSource write SetSource;
@@ -90,7 +90,7 @@ begin
   Self.TokenList := TRichTextTokenList.Create;
 end;
 
-procedure TRichText.Lex;
+procedure TRichText.Lex(const IsEmote: Boolean = True);
 var
   Ln : Integer = 1;
   Col: Integer = 1;
@@ -143,7 +143,7 @@ begin
         end;
       '(':
         begin
-          if (Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') then
+          if IsEmote and (Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') then
           begin
             Self.FState := rtsThink;
             Token.Kind := rtkState;
@@ -153,7 +153,7 @@ begin
         end;
       ')':
         begin
-          if Self.FState = rtsThink then
+          if IsEmote and (Self.FState = rtsThink) then
           begin
             Self.FState := rtsNormal;
             Token.Kind := rtkState;
@@ -163,7 +163,7 @@ begin
         end;
       '*':
         begin
-          if ((Self.FState = rtsNormal) and (PeekAtNextChar <> ' ')) or (Self.FState = rtsThink) then
+          if IsEmote and (((Self.FState = rtsNormal) and (PeekAtNextChar <> ' ')) or (Self.FState = rtsThink)) then
           begin
             if Self.FState = rtsNormal then
               Self.FState := rtsThink
@@ -203,14 +203,14 @@ begin
   Self.FIsLexed := True;
 end;
 
-procedure TRichText.Parse(const Memo: TKMemo);
+procedure TRichText.Parse(const Memo: TKMemo; const IsEmote: Boolean = True);
 var
   I, IMin, IMax: Integer;
   Token: TRichTextToken;
   TB: TKMemoTextBlock;
 begin
   if (not Self.FIsLexed) or (Self.TokenList.Count = 0) then
-    Self.Lex;
+    Self.Lex(IsEmote);
   if not Self.IsStreaming then
   begin
     IMin := 0;
