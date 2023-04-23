@@ -618,10 +618,10 @@ begin
   Result := FloatToStr(X, FS);
 end;
 
-function StringIndexOf(S, P: String): Integer;
+function StringIndexOf(S, P: String): Integer; inline;
 begin
   {$ifdef SE_STRING_UTF8}
-  UTF8Pos(S, P, Result);
+  Result := UTF8Pos(P, S);
   Dec(Result);
   {$else}
   Result := S.IndexOf(P);
