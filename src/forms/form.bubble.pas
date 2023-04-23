@@ -166,7 +166,7 @@ procedure TFormBubble.TimerTimer(Sender: TObject);
     KMemo.Refresh;
   end;
 begin
-  if not Self.FinishedTyping then
+  if (not Self.FinishedTyping) and (not Satania.IsAsking) then
   begin
     if Self.FRichText.TokenList.Count > Self.FNumWordsDisplay - 1 then
       Inc(Self.FNumWordsDisplay);
@@ -176,7 +176,7 @@ begin
     begin
       Self.FinishedTyping := True;
     end;
-    if Self.FRichText.TokenList.Count <= Self.FNumWordsDisplay - 1 then
+    if (Self.FRichText.TokenList.Count <= Self.FNumWordsDisplay - 1)  then
     begin
       Satania.StopAnimation(Satania.AnimTalkLoop);
       Satania.StartAnimation(Satania.AnimTalkFinish, False);
