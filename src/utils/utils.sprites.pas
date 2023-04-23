@@ -49,7 +49,7 @@ begin
     case S of
       'Linear':
         begin
-          TCastleSpine(Sprite).SmoothTexture := False;
+          TCastleSpine(Sprite).SmoothTexture := True;
           TCastleSpine(Sprite).Mipmap := False;
         end;
       'Nicest':
@@ -59,7 +59,7 @@ begin
         end;
       else
         begin
-          TCastleSpine(Sprite).SmoothTexture := True;
+          TCastleSpine(Sprite).SmoothTexture := False;
         end;
     end;
   end;
