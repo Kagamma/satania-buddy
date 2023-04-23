@@ -299,11 +299,11 @@ begin
   FSettings.TextSpeed := 24;
   FSettings.BaseScaling := 1;
   FSettings.DefaultEvilScheme := 'main.evil';
-  FSettings.ImageQuality := 'Linear';
+  FSettings.ImageQuality := 'Nicest';
   FSettings.FontSize := 0;
   FSettings.FrameSkip := 0;
   FSettings.Lewd := False;
-  FSettings.Skin := 'satania';
+  FSettings.Skin := 'satania (bloomers)';
   FSettings.STTVoskModel := 'english';
   FSettings.STTBackend := SPEECH_RECOGNIZER_BACKEND_VOSK;
   FSettings.FSitOnWindowRightMargin := 86;

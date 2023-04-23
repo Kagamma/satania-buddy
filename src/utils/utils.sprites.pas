@@ -175,6 +175,7 @@ procedure SpriteStopAllAnimations(const Sprite: TCastleTransform; const Mixer: T
   end;
 var
   S: String;
+  Track: TTrackRec;
 begin     
   if Sprite is TCastleScene then
   begin
@@ -186,6 +187,12 @@ begin
   begin
     TCastleSpine(Sprite).StopAnimation;
     Mixer.StopAnimation;
+    for S in TrackDict.Keys do
+    begin
+      Track := TrackDict[S];
+      Track.IsLooped := False;
+      TrackDict[S] := Track;
+    end;
   end;
 end;
 
