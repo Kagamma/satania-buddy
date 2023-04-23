@@ -52,8 +52,8 @@ There're however a few limitations that you need to aware when choosing a format
 
 ** Prepare animations
 For each spritesheet/model, ~satania-buddy~ expects 2 default animations:
-- ~talking-loop~ is used when character is talking.
-- ~talking-finish~ is used when character is done talking. This is usually used to set the lips close in skeletal models.
+- ~talk_loop~ is used when character is talking.
+- ~talk_finish~ is used when character is done talking. This is usually used to set the lips close in skeletal models.
 
 You can of course change these default talking animations via script, see ~sprite_animation_talk_set~ in [[https://github.com/Kagamma/satania-buddy/wiki/Scripting-Reference][Scripting Reference]]
 

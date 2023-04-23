@@ -62,11 +62,16 @@ type
     Data: String;
   end;
 
+  TTrackRec = record
+    Indx: Integer;
+    IsLooped: Boolean;
+  end;
+
   TQWordList = specialize TList<QWord>;
   TStringDict = specialize TDictionary<String, String>;
   THttpResponseDict = specialize TDictionary<String, THttpResponseRec>;
   TStringArrayDict = specialize TDictionary<String, TStringDynArray>;
-  TTrackDict = specialize TDictionary<String, Integer>;
+  TTrackDict = specialize TDictionary<String, TTrackRec>;
   TMailList = specialize TList<TMailRec>;
   TRuleDict = specialize TDictionary<String, TRuleRec>;
 

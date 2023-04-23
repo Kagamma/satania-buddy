@@ -47,9 +47,15 @@ begin
   if Sprite is TCastleSpine then
   begin
     case S of
-      'Nearest':
+      'Linear':
         begin
           TCastleSpine(Sprite).SmoothTexture := False;
+          TCastleSpine(Sprite).Mipmap := False;
+        end;
+      'Nicest':
+        begin
+          TCastleSpine(Sprite).SmoothTexture := True;
+          TCastleSpine(Sprite).Mipmap := True;
         end;
       else
         begin
@@ -82,7 +88,7 @@ end;
 procedure SpriteStartAnimation(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior; const AnimName: String; const IsRepeat: Boolean);
 var
   TimeSensor: TTimeSensorNode;
-  Track: Integer;
+  Track: TTrackRec;
 begin
   if Sprite is TCastleScene then
   begin
@@ -97,19 +103,27 @@ begin
   end else
   if Sprite is TCastleSpine then
   begin
-    if Mixer.Data.FindAnimation(AnimName) <> nil then
+    if (Mixer.Data <> nil) and (Mixer.Data.FindAnimation(AnimName) <> nil) then
     begin
       Mixer.PlayAnimation(AnimName, IsRepeat);
     end else
     begin
       if TrackDict.ContainsKey(AnimName) then
-        Track := TrackDict[AnimName]
-      else
       begin
-        Track := TrackDict.Count;
+        Track := TrackDict[AnimName];
+        if not Track.IsLooped then
+        begin
+          TCastleSpine(Sprite).PlayAnimation(AnimName, IsRepeat, True, Track.Indx);
+          Track.IsLooped := IsRepeat;
+          TrackDict[AnimName] := Track;
+        end;
+      end else
+      begin
+        Track.Indx := TrackDict.Count;
+        Track.IsLooped := IsRepeat;
         TrackDict.Add(AnimName, Track);
+        TCastleSpine(Sprite).PlayAnimation(AnimName, IsRepeat, True, Track.Indx);
       end;
-      TCastleSpine(Sprite).PlayAnimation(AnimName, IsRepeat, True, Track);
     end;
   end;
 end;
@@ -117,6 +131,7 @@ end;
 procedure SpriteStopAnimation(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior; const AnimName: String);
 var
   TimeSensor: TTimeSensorNode;
+  Track: TTrackRec;
 begin
   if Sprite is TCastleScene then
   begin
@@ -131,13 +146,16 @@ begin
   end else
   if Sprite is TCastleSpine then
   begin
-    if Mixer.Data.FindAnimation(AnimName) <> nil then
+    if (Mixer.Data <> nil) and (Mixer.Data.FindAnimation(AnimName) <> nil) then
     begin
       Mixer.StopAnimation;
     end else
     if TrackDict.ContainsKey(AnimName) then
     begin
-      TCastleSpine(Sprite).StopAnimation(TrackDict[AnimName]);
+      Track := TrackDict[AnimName];
+      TCastleSpine(Sprite).StopAnimation(Track.Indx);
+      Track.IsLooped := False;
+      TrackDict[AnimName] := Track;
     end;
   end;
 end;
