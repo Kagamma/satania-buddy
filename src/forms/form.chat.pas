@@ -133,7 +133,8 @@ procedure TFormChat.FormCreate(Sender: TObject);
 begin
   Self.CalcHeights;
   ChatHistoryList := TChatHistoryList.Create;
-  ButtonClearClick(Self);
+  MemoChatLog.Blocks.Clear;
+  ChatHistoryList.Clear;
   FRichText := TRichText.Create;
   LoadServiceList;
 end;
