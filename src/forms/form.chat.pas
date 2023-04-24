@@ -101,6 +101,7 @@ uses
   Math,
   Globals,
   form.tool.evilceditor,
+  Form.Bubble,
   Mcdowell;
 
 { TFormChat }
@@ -179,7 +180,7 @@ var
   S: String;
 begin
   Self.CalcHeights;
-  if (Key = 13) and not (Shift = [ssShift]) and (FormChat.EditChat.Lines.Text<>'') then
+  if (Key = 13) and not (Shift = [ssShift]) and (FormChat.EditChat.Lines.Text<>'') and (FormBubble.FinishedTyping) then
   begin
     S := Trim(FormChat.EditChat.Lines.Text);
     Satania.Log(Save.Settings.UserName, S);
@@ -202,8 +203,11 @@ end;
 
 procedure TFormChat.ButtonClearClick(Sender: TObject);
 begin
-  MemoChatLog.Blocks.Clear;
-  ChatHistoryList.Clear;
+  if FormBubble.FinishedTyping then
+  begin
+    MemoChatLog.Blocks.Clear;
+    ChatHistoryList.Clear;
+  end;
 end;
 
 procedure TFormChat.ButtonOpenServiceClick(Sender: TObject);
