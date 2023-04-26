@@ -413,7 +413,7 @@ begin
       'script':
         begin
           ResetScript;
-          Script.Source := Message + ' scheme_load(scheme_default)';
+          Script.Source := Message + ' scheme_load(scheme_default())';
           IsAction := True;
         end;
       else

@@ -570,7 +570,6 @@ type
     class function SEStringTrim(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringTrimLeft(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringTrimRight(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseOutQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInOutQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1305,19 +1304,6 @@ end;
 class function TBuiltInFunction.SEStringTrimRight(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := TrimRight(Args[0]);
-end;
-
-class function TBuiltInFunction.SEOS(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-begin
-  {$if defined(WINDOWS)}
-  Exit('windows');
-  {$elseif defined(LINUX)}
-  Exit('linux');
-  {$elseif defined(DARWIN)}
-  Exit('darwin');
-  {$else}
-  Exit('unknown');
-  {$endif}
 end;
 
 class function TBuiltInFunction.SESin(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -3381,7 +3367,6 @@ begin
   Self.RegisterFunc('cos', @TBuiltInFunction(nil).SECos, 1);
   Self.RegisterFunc('tan', @TBuiltInFunction(nil).SETan, 1);
   Self.RegisterFunc('cot', @TBuiltInFunction(nil).SECot, 1);
-  Self.RegisterFunc('os', @TBuiltInFunction(nil).SEOS, 0);
   Self.RegisterFunc('mem_object_count', @TBuiltInFunction(nil).SEGCObjectCount, 0);
   Self.RegisterFunc('mem_used', @TBuiltInFunction(nil).SEGCUsed, 0);
   Self.RegisterFunc('mem_gc', @TBuiltInFunction(nil).SEGCCollect, 0);
@@ -3406,11 +3391,23 @@ begin
 end;
 
 procedure TEvilC.AddDefaultConsts;
+var
+  OS: String;
 begin
+  {$if defined(WINDOWS)}
+  OS := 'windows';
+  {$elseif defined(LINUX)}
+  OS := 'linux';
+  {$elseif defined(DARWIN)}
+  OS := 'darwin';
+  {$else}
+  OS := 'unknown';
+  {$endif}
   Self.ConstMap.AddOrSetValue('PI', PI);
   Self.ConstMap.AddOrSetValue('true', True);
   Self.ConstMap.AddOrSetValue('false', False);
   Self.ConstMap.AddOrSetValue('null', SENull);
+  Self.ConstMap.AddOrSetValue('os', OS);
 end;
 
 procedure TEvilC.SetSource(V: String);
@@ -4392,11 +4389,8 @@ var
       until Token.Kind = tkBracketClose;
     end else
     begin
-      if PeekAtNextToken.Kind = tkBracketOpen then
-      begin
-        NextTokenExpected([tkBracketOpen]);
-        NextTokenExpected([tkBracketClose]);
-      end;
+      NextTokenExpected([tkBracketOpen]);
+      NextTokenExpected([tkBracketClose]);
     end;
     if FuncNativeInfo <> nil then
       Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), ArgCount])
@@ -4431,19 +4425,16 @@ var
       Token.Kind := tkIdent;
       ResultIdent := CreateIdent(ikVariable, Token);
 
-      if PeekAtNextToken.Kind = tkBracketOpen then
-      begin
-        NextTokenExpected([tkBracketOpen]);
-        repeat
-          if PeekAtNextToken.Kind = tkIdent then
-          begin
-            Token := NextTokenExpected([tkIdent]);
-            CreateIdent(ikVariable, Token);
-            Inc(ArgCount);
-          end;
-          Token := NextTokenExpected([tkComma, tkBracketClose]);
-        until Token.Kind = tkBracketClose;
-      end;
+      NextTokenExpected([tkBracketOpen]);
+      repeat
+        if PeekAtNextToken.Kind = tkIdent then
+        begin
+          Token := NextTokenExpected([tkIdent]);
+          CreateIdent(ikVariable, Token);
+          Inc(ArgCount);
+        end;
+        Token := NextTokenExpected([tkComma, tkBracketClose]);
+      until Token.Kind = tkBracketClose;
 
       JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
       Addr := JumpBlock;
