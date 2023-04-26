@@ -1631,13 +1631,10 @@ begin
     sevkNull:
       R := True;
   end else
-  if V1.Kind = sevkNull then
-    R := False
-  else
   if (V1.Kind = sevkNumber) and (V2.Kind = sevkBoolean) then
     R := (V1.VarNumber <> 0) = V2
   else
-    R := True;
+    R := False;
 end;
 
 procedure SEValueNotEqual(out R: TSEValue; constref V1, V2: TSEValue); inline; overload;
@@ -1651,13 +1648,10 @@ begin
     sevkNull:
       R := False;
   end else
-  if V1.Kind = sevkNull then
-    R := True
-  else
   if (V1.Kind = sevkNumber) and (V2.Kind = sevkBoolean) then
     R := (V1.VarNumber <> 0) <> V2
   else
-    R := False;
+    R := True;
 end;
 
 function SEValueLesser(constref V1, V2: TSEValue): Boolean; inline; overload;
@@ -1691,13 +1685,10 @@ begin
     sevkNull:
       Result := True;
   end else
-  if V1.Kind = sevkNull then
-    Result := False
-  else
   if (V1.Kind = sevkNumber) and (V2.Kind = sevkBoolean) then
     Result := (V1.VarNumber <> 0) = V2
   else
-    Result := True;
+    Result := False;
 end;
 
 function SEValueNotEqual(constref V1, V2: TSEValue): Boolean; inline; overload;
@@ -1711,13 +1702,10 @@ begin
     sevkNull:
       Result := False;
   end else
-  if V1.Kind = sevkNull then
-    Result := True
-  else
   if (V1.Kind = sevkNumber) and (V2.Kind = sevkBoolean) then
     Result := (V1.VarNumber <> 0) <> V2
   else
-    Result := False;
+    Result := True;
 end;
 
 // ----- TSEValue operator overloading
