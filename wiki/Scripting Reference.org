@@ -213,7 +213,7 @@ for value, index in [1, 2, 5, 7, 9] {
 *Function declaration*
 
 #+begin_example
-fn foo {
+fn foo() {
   talk('Hello')
   return
   talk("This text won't show on screen")
@@ -223,7 +223,7 @@ fn add(a, b) {
   result = a + b
 }
 
-foo
+foo()
 c = add(5, 3)
 #+end_example
 
