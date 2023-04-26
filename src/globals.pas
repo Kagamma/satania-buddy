@@ -310,7 +310,7 @@ begin
   FSettings.FEmbeddedServerPort := 8666;
   FSettings.FEmbeddedServerEnable := False;
   FSettings.FRules := True;
-  FSettings.FUserName := '(You)';
+  FSettings.FUserName := 'Anon';
   FSettings.FLastServiceUsed := 'WolframAlpha.evil';
   FSettings.FSystemErrorMessage := False;
 end;
