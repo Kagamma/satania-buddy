@@ -280,6 +280,9 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 
 *meta: map*
 
+*os: string*
+- Get OS name
+
 ** Common functions
 *typeof(v: any): string*
 - Returns type of variable (number / boolean / string / map / array / buffer / null).
@@ -303,8 +306,6 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Returns a random number range from 0 - (n-1)
 *rnd: number*
 - Returns a random number range from 0 - 1
-*os: string*
-- Get OS name
 *sign(n: number): number*
 
 *round(n: number): number*
@@ -421,9 +422,9 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Returns map of matched string + matched location.
 
 ** Datetime
-*ticks: number*
+*ticks(): number*
 - Returns system's ticks, in miliseconds.
-*dt_now: number*
+*dt_now(): number*
 - Return current time in datetime format.
 *dt_year_get(dt: number): number*
 - Return year in number.
@@ -478,7 +479,7 @@ number): map*
 - Delete a file.
 
 ** Clipboard
-*clipboard_get: string*
+*clipboard_get(): string*
 - Get text from clipboard.
 *clipboard_to_file(filename: string)*
 - Save content (image, text) from clipboard to a file.
@@ -502,19 +503,19 @@ number): map*
 - Extract data from HTML string.
 
 ** Email
-*email_load: boolean*
+*email_load(): boolean*
 - Tells Satania to check for email's connection.
-*email_unseen_count: number*
+*email_unseen_count(): number*
 - Returns number of unread emails.
 *email_sender_get(email_index: number): string*
 - Get email's sender.
 *email_subject_get(email_index: number): string*
 - Get email's subject.
-*email_is_loading: boolean*
+*email_is_loading(): boolean*
 - Returns true if Satania is loading emails.
-*email_is_success: boolean*
+*email_is_success(): boolean*
 - Returns true if Satania is succeeded in loading emails.
-*email_is_configured: boolean*
+*email_is_configured(): boolean*
 - Returns true if IMAP is configured in Settings.
 
 ** JSON
@@ -561,9 +562,9 @@ number; consts: map): string*
 - Tells Satania to talk.
 - The script engine will be blocked until all the text is shown on screen.
 - Calling this function will automatically disable streaming mode
-*stream_enable*
+*stream_enable()*
 - Enable streaming mode. Useful for integrating with chatbot backends
-*stream_disable*
+*stream_disable()*
 - Disable steaming mode.
 *stream(message: string)*
 - Stream a text to chat window / speech bubble
@@ -596,7 +597,7 @@ What do you think about me?<br />
 
 [[https://user-images.githubusercontent.com/7451778/181904113-fc4b3e03-76d8-406b-8b03-1baffcaa55a0.png]]
 
-*answer: any*
+*answer(): any*
 - Returns result value from ask(). If no answer is found, then it returns null.
 - For example #1, the result is a string, either /Yes/ or /No/, taken from /href/ attribute.
 - For example #2, the result is a map, which is /[ "thought": "Your answer" ]/.
@@ -606,7 +607,7 @@ What do you think about me?<br />
 - Check if a process is running by process_run().
 *process_result_get(process: string): string*
 - Returns process's output pipeline. This function should be called after process_is_running() returns false.
-*sprite_animation_stop_all*
+*sprite_animation_stop_all()*
 - Stop all animations.
 *sprite_load(sprite: string)*
 - Load a model (supports X3D, Spine, images, glTF, Cocos2D, Starling) in /data/sprites/current_character/
@@ -627,15 +628,15 @@ number)*
 - Scale the sprite.
 *sprite_visible_set(visible: boolean)*
 - Set sprite visibility
-*sprite_visible_get: boolean*
+*sprite_visible_get(): boolean*
 - Get sprite visibility
-*is_sow: boolean*
+*is_sow(): boolean*
 - Returns true if Sit on Window is turned on.
-*is_lewd: boolean*
+*is_lewd(): boolean*
 - Returns true if Fanservice is turned on.
-*is_silent: boolean*
+*is_silent(): boolean*
 - Returns true if Silent is turned on.
-*is_speech_to_text: boolean*
+*is_speech_to_text(): boolean*
 - Returns true if Speech Recognition is turned on.
 *flag_global_get(flag: string): string*
 - Set a flag. Result stores in ~configs.json~.
@@ -651,9 +652,9 @@ number)*
 - Get a flag from memory.
 *scheme_load(scheme_name: string)*
 - Load an .evil scheme file in ~data/scripts/current_character~. This will also stop the current script.
-*scheme_default: string*
+*scheme_default(): string*
 - Returns Default Evil Script.
-*delta_time: number*
+*delta_time(): number*
 - Delta Time, in seconds.
 *sound_play(sound_name: string)*
 - Play a sound in /sounds/ directory.
@@ -662,10 +663,10 @@ number)*
   + CHATMODE_CHAT
   + CHATMODE_SCRIPT: Tell Satania we will process chat messages in script.
 
-*chat_result_get: string*
+*chat_result_get(): string*
 - This function only useful when chat mode = CHATMODE_SCRIPT.
 - Get chat message input by users, either via Speech Recognition or via Chat dialog. Chat message will be cleared once this function is called, so make sure to save the results somewhere.
 - If no chat message is found, an empty string will be returned.
 
-*chat_history_get: array*
+*chat_history_get(): array*
 - Returns array of chat message: { name: string, message: string, timestamp: string }
