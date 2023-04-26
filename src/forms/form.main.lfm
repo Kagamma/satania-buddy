@@ -19,7 +19,7 @@ object FormMain: TFormMain
   WindowState = wsMaximized
   object CastleControl: TCastleControl
     Left = 0
-    Height = 927
+    Height = 950
     Top = 0
     Width = 747
     Align = alClient
@@ -1361,6 +1361,7 @@ object FormMain: TFormMain
     Top = 152
   end
   object TrayMenu: TPopupMenu
+    OnPopup = TrayMenuPopup
     Left = 96
     Top = 152
     object MenuItemChatWithHer: TMenuItem

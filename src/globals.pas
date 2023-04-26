@@ -198,7 +198,7 @@ type
     property STTVoskModel: String read FSTTVoskModel write FSTTVoskModel;
     property STTBackend: Integer read FSTTBackend write FSTTBackend default 0;
     property UserName: String read FUserName write FUserName;
-    property Rules: Boolean read FRules write FRules default True;
+    property Rules: Boolean read FRules write FRules default False;
     property SystemErrorMessage: Boolean read FSystemErrorMessage write FSystemErrorMessage default False;
     property LastServiceUsed: String read FLastServiceUsed write FLastServiceUsed;
   end;
@@ -309,7 +309,7 @@ begin
   FSettings.FSitOnWindowRightMargin := 86;
   FSettings.FEmbeddedServerPort := 8666;
   FSettings.FEmbeddedServerEnable := False;
-  FSettings.FRules := True;
+  FSettings.FRules := False;
   FSettings.FUserName := 'Anon';
   FSettings.FLastServiceUsed := 'WolframAlpha.evil';
   FSettings.FSystemErrorMessage := False;

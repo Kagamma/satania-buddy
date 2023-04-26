@@ -133,6 +133,7 @@ type
     procedure TimerMainLoopTimer(Sender: TObject);
     procedure TimerRemindersTimer(Sender: TObject);
     procedure TrayIconDblClick(Sender: TObject);
+    procedure TrayMenuPopup(Sender: TObject);
   private
     { private declarations }
     procedure InitCommon;
@@ -401,6 +402,11 @@ begin
     Satania.Sprite.Visible := True;
     FormTouch.Show;
   end;
+end;
+
+procedure TFormMain.TrayMenuPopup(Sender: TObject);
+begin
+  MenuItemRules.Enabled := Save.Settings.Rules;
 end;
 
 initialization
