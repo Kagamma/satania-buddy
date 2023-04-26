@@ -278,6 +278,8 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 
 *name: string*
 
+*username: string*
+
 *meta: map*
 
 *os: string*
