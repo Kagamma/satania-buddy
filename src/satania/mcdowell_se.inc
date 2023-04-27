@@ -955,10 +955,18 @@ begin
   Json := TJsonNode.Create;
   Json.Parse(Args[0].VarString^);
   try
-    if Json.Kind = nkArray then
-      QueryForArray(Result, Json)
-    else
-      QueryForObject(Result, Json);
+    try
+      if Json.Kind = nkArray then
+        QueryForArray(Result, Json)
+      else
+        QueryForObject(Result, Json);
+    except
+      on E: Exception do
+      begin
+        Result := SENull;
+        Satania.Log(E.Message);
+      end;
+    end;
   finally
     JSON.Free;
   end;
