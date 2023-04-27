@@ -4496,19 +4496,16 @@ var
       if FindFunc(Name) <> nil then
         Error(Format('Duplicate function declaration "%s"', [Token.Value]), Token);
 
-      if PeekAtNextToken.Kind = tkBracketOpen then
-      begin
-        NextTokenExpected([tkBracketOpen]);
-        repeat
-          if PeekAtNextToken.Kind = tkAtom then
-          begin
-            Token := NextTokenExpected([tkAtom]);
-            SetLength(Args, Length(Args) + 1);
-            Args[Length(Args) - 1] := GetAtom(Token, True);
-          end;
-          Token := NextTokenExpected([tkComma, tkBracketClose]);
-        until Token.Kind = tkBracketClose;
-      end;
+      NextTokenExpected([tkBracketOpen]);
+      repeat
+        if PeekAtNextToken.Kind = tkAtom then
+        begin
+          Token := NextTokenExpected([tkAtom]);
+          SetLength(Args, Length(Args) + 1);
+          Args[Length(Args) - 1] := GetAtom(Token, True);
+        end;
+        Token := NextTokenExpected([tkComma, tkBracketClose]);
+      until Token.Kind = tkBracketClose;
       NextTokenExpected([tkColon]);
       Token := NextTokenExpected([tkAtom]);
       Return := GetAtom(Token);
