@@ -953,9 +953,9 @@ var
   Json: TJsonNode;
 begin
   Json := TJsonNode.Create;
-  Json.Parse(Args[0].VarString^);
   try
     try
+      Json.Parse(Args[0].VarString^);
       if Json.Kind = nkArray then
         QueryForArray(Result, Json)
       else
