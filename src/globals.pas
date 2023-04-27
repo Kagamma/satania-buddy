@@ -45,6 +45,7 @@ const
   SPEECH_RECOGNIZER_BACKEND_SAPI = 1;
   CHATMODE_SCRIPT = 1;
   CHATMODE_CHAT = 0;
+  SETTINGS_VERSION = 1;
 
 type
   TMailRec = record
@@ -297,7 +298,7 @@ begin
   FReminders := TSaveCollection.Create(TReminderCollectionItem);
   FSilent := False;
   FSettings := TSaveSettings.Create; 
-  FSettings.Version := 1;
+  FSettings.Version := SETTINGS_VERSION;
   FSettings.ChatBubbleDelay := 5000;
   FSettings.FPS := 16;
   FSettings.TextSpeed := 24;

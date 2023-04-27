@@ -31,6 +31,9 @@ uses
   kgraphics, FileUtil,
   Mcdowell.RichText;
 
+const
+  CHAT_HISTORY_VERSION = 1;
+
 type
   TChatSenderEnum = (
     cseSystem,
@@ -144,8 +147,10 @@ begin
   if ChatHistoryFile <> nil then
     ChatHistoryFile.Free;
   if not FileExists(Path) then
-    ChatHistoryFile := TFileStream.Create(Path, fmCreate or fmShareDenyWrite)
-  else
+  begin
+    ChatHistoryFile := TFileStream.Create(Path, fmCreate or fmShareDenyWrite);
+    ChatHistoryFile.WriteDWord(CHAT_HISTORY_VERSION);
+  end else
   begin
     ChatHistoryFile := TFileStream.Create(Path, fmOpenReadWrite or fmShareDenyWrite);
     ReadHistoryMessagesToChat;
@@ -404,6 +409,7 @@ var
   CH: TChatHistory;
 begin
   ChatHistoryFile.Position := 0;
+  ChatHistoryFile.ReadDWord; // Version
   try
     while ChatHistoryFile.Position < ChatHistoryFile.Size do
     begin
