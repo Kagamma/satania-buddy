@@ -237,6 +237,7 @@ begin
     MemoChatLog.Blocks.Clear;
     ChatHistoryList.Clear;
     ChatHistoryFile.Size := 0;
+    ChatHistoryFile.WriteDWord(CHAT_HISTORY_VERSION);
   end;
 end;
 
@@ -409,7 +410,8 @@ var
   CH: TChatHistory;
 begin
   ChatHistoryFile.Position := 0;
-  ChatHistoryFile.ReadDWord; // Version
+  if ChatHistoryFile.Position < ChatHistoryFile.Size then
+    ChatHistoryFile.ReadDWord; // Version
   try
     while ChatHistoryFile.Position < ChatHistoryFile.Size do
     begin
