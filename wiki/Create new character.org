@@ -38,10 +38,10 @@ Any ~.evil~ scripts in ~menu~ directory will appears on ~Scripts~ menu. For exam
 Any scripts in ~system~ is used by the app. Currently the app expects:
 - ~loading-start.evil~ for loading animation
 - ~loading-stop.evil~ to tell your character to stop loading animation when the app finish a task.
-- ~drop-files~ triggers when users drag files onto the character's touch panel. Files is stored in ~drop_files~ constant.
+- ~drop-files.evil~ triggers when users drag files onto the character's touch panel. Files is stored in ~drop_files~ constant.
 These scripts are optional and no need for the app to work.
 
-Any scripts in ~services~ will be shown on chat window's service dropdown. The purpose of service script is to handle chat messages, often by sending them to another 3rd party backends like ChatGPT or koboldcpp. These scripts are completely optional.
+Any scripts in ~services~ will be shown on chat window's service dropdown. The purpose of service script is to handle chat messages, often by sending them to another 3rd party backends like ~ChatGPT~ or ~koboldcpp~. These scripts are completely optional.
 
 ~sprites.plist~ and ~sprites.png~ are character's spritesheet in Cocos2D format.
 
@@ -63,4 +63,4 @@ For each spritesheet/model, ~satania-buddy~ expects 2 default animations:
 
 You can of course change these default talking animations via script, see ~sprite_animation_talk_set~ in [[https://github.com/Kagamma/satania-buddy/wiki/Scripting-Reference][Scripting Reference]]
 
-If you use 3D / 2D skeletal model formats, then you can create a ~touch~ bone. This bone is used by the app to create a small area which you can use your mouse cursor to right click, or to drag your character around. If no ~touch~ bone is found (2D spritesheets), then the area will be around your character's pivot.
+If you use 3D / 2D skeletal model formats, then you can create a ~touch~ bone. This bone is used by the app to create a small area which you can use your mouse cursor to right click, or to drag your character around, or to drop files onto character to be handled by ~drop-files.evil~ script. If no ~touch~ bone is found (2D spritesheets), then the area will be around your character's pivot.
