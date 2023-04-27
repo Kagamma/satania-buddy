@@ -38,6 +38,7 @@ const
   PATH_SPRITES = 'castle-data:/sprites/';
   PATH_FONT = 'castle-data:/fonts/';
   PATH_SOUND = 'castle-data:/sounds/';
+  PATH_CHAT_HISTORY = 'data/chat_history/';
   PATH_VOSK = 'data/nn/vosk/';
   SECRET_KEY = 'satania_mcdowell';
   SPEECH_RECOGNIZER_BACKEND_VOSK = 0;
@@ -135,6 +136,7 @@ type
 
   TSaveSettings = class(TPersistent)
   protected
+    FVersion: Cardinal;
     FExternalServiceSelect: Integer;
     FDefaultEvilScheme: String;
     FChatBubbleDelay: Integer;
@@ -169,6 +171,7 @@ type
     FSTTVoskModel: String;
     FSTTBackend: Integer;
   published
+    property Version: Cardinal read FVersion write FVersion;
     property EmbeddedServerPort: Word read FEmbeddedServerPort write FEmbeddedServerPort default 8666;  
     property EmbeddedServerEnable: Boolean read FEmbeddedServerEnable write FEmbeddedServerEnable default False;
     property TextSpeed: Integer read FTextSpeed write FTextSpeed;
@@ -293,7 +296,8 @@ begin
   FFlags := TSaveCollection.Create(TSaveFlagCollectionItem);
   FReminders := TSaveCollection.Create(TReminderCollectionItem);
   FSilent := False;
-  FSettings := TSaveSettings.Create;
+  FSettings := TSaveSettings.Create; 
+  FSettings.Version := 1;
   FSettings.ChatBubbleDelay := 5000;
   FSettings.FPS := 16;
   FSettings.TextSpeed := 24;

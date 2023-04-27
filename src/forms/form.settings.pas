@@ -121,7 +121,6 @@ type
     procedure ButtonOkClick(Sender: TObject);
     procedure ComboBoxSTTBackendChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure GroupBoxChatGPTClick(Sender: TObject);
     procedure ListBoxSettingsSelectionChange(Sender: TObject; User: boolean);
   private
 
@@ -270,11 +269,6 @@ begin
     end;
 end;
 
-procedure TFormSettings.GroupBoxChatGPTClick(Sender: TObject);
-begin
-
-end;
-
 procedure TFormSettings.ListBoxSettingsSelectionChange(Sender: TObject;
   User: boolean);
 begin
@@ -282,6 +276,8 @@ begin
 end;
 
 procedure TFormSettings.ButtonOkClick(Sender: TObject);
+var
+  IsSkinChanged: Boolean = False;
 begin
   try
     Save.Settings.Lewd := CheckBoxLewd.Checked;
@@ -304,8 +300,9 @@ begin
       SataniaSketch.DeleteAll;
       Satania.BackgroundScriptClearAll;
       FormChat.ComboBoxService.ItemIndex := 0;
+      Save.Settings.Skin := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
+      IsSkinChanged := True;
     end;
-    Save.Settings.Skin := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
     Save.Settings.EmailServer := EditEmailServer.Text;
     Save.Settings.EmailPort := EditEmailPort.Value;
     Save.Settings.EmailUsername := EditEmailUsername.Text;
@@ -357,7 +354,10 @@ begin
       if Save.SpeechToText then
         SataniaSpeechToText.Enable;
     end;
-
+    if IsSkinChanged then
+    begin
+      FormChat.LoadChatHistoryFromFile;
+    end;
     Hide;
   except
     on E: Exception do

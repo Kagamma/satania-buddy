@@ -78,15 +78,19 @@ type
     procedure ScrollToBottom;
   public
     ChatHistoryList: TChatHistoryList;
+    ChatHistoryFile: TFileStream;
     Typing: TKMemoTextBlock;
     procedure EnableStreaming;
     procedure DisableStreaming;
     procedure Streaming(const S: String);
-    procedure InsertLog(const LogName, Msg: String);
+    procedure InsertLog(const LogName, Msg: String; Time: String = '');
     procedure CalcHeights;
     procedure InsertTyping;
     procedure RemoveTyping;
     procedure LoadServiceList;
+    procedure LoadChatHistoryFromFile;
+    procedure WriteLatestMessageToHistory;
+    procedure ReadHistoryMessagesToChat;
     property RichText: TRichText read FRichText;
   end;
 
@@ -120,6 +124,7 @@ begin
     FStreamingPartCount := 1;
     RemoveTyping;
     MemoChatLog.Blocks.AddParagraph;
+    WriteLatestMessageToHistory;
   end;
 end;
 
@@ -129,20 +134,38 @@ begin
   //PanelEdit.Height := 71;
 end;
 
+procedure TFormChat.LoadChatHistoryFromFile;
+var
+  Path: String;
+begin
+  Path := PATH_CHAT_HISTORY + Save.Settings.Skin + '.txt';
+  MemoChatLog.Blocks.Clear;
+  ChatHistoryList.Clear;
+  if ChatHistoryFile <> nil then
+    ChatHistoryFile.Free;
+  if not FileExists(Path) then
+    ChatHistoryFile := TFileStream.Create(Path, fmCreate or fmShareDenyWrite)
+  else
+  begin
+    ChatHistoryFile := TFileStream.Create(Path, fmOpenReadWrite or fmShareDenyWrite);
+    ReadHistoryMessagesToChat;
+  end;
+end;
+
 procedure TFormChat.FormCreate(Sender: TObject);
 begin
   Self.CalcHeights;
   ChatHistoryList := TChatHistoryList.Create;
-  MemoChatLog.Blocks.Clear;
-  ChatHistoryList.Clear;
   FRichText := TRichText.Create;
   LoadServiceList;
+  LoadChatHistoryFromFile;
 end;
 
 procedure TFormChat.FormDestroy(Sender: TObject);
 begin
   ChatHistoryList.Free;
   FRichText.Free;
+  ChatHistoryFile.Free;
 end;
 
 procedure TFormChat.LoadServiceList;
@@ -208,6 +231,7 @@ begin
   begin
     MemoChatLog.Blocks.Clear;
     ChatHistoryList.Clear;
+    ChatHistoryFile.Size := 0;
   end;
 end;
 
@@ -260,18 +284,22 @@ begin
   InsertLog(Satania.Name, S);
 end;
 
-procedure TFormChat.InsertLog(const LogName, Msg: String);
+procedure TFormChat.InsertLog(const LogName, Msg: String; Time: String = '');
 var
   H, M, SS, MS: Word;
   TB: TKMemoTextBlock;
-  Time: String;
   MsgSplit: TStringDynArray;
   CodeMode: Boolean = False;
   I: Integer;
   CH: TChatHistory;
+  IsLog: Boolean = False;
 begin
   DecodeTime(Now, H, M, SS, MS);
-  Time := Format('%.*d', [2, H]) + ':' + Format('%.*d', [2, M]) + ':' + Format('%.*d', [2, SS]);
+  if Time = '' then
+  begin
+    Time := Format('%.*d', [2, H]) + ':' + Format('%.*d', [2, M]) + ':' + Format('%.*d', [2, SS]);
+    IsLog := True;
+  end;
 
   RemoveTyping;
   if (FRichText.IsStreaming and (FStreamingPartCount = 0)) or (not FRichText.IsStreaming) then
@@ -319,7 +347,11 @@ begin
   end;
 
   if not FRichText.IsStreaming then
+  begin
     MemoChatLog.Blocks.AddParagraph;
+    if IsLog then
+      WriteLatestMessageToHistory;
+  end;
 
   if (LogName = Save.Settings.UserName) or (FRichText.IsStreaming) then
   begin
@@ -349,6 +381,42 @@ begin
   if MemoChatLog.Blocks.Count <> 0 then
     MemoChatLog.Blocks.Delete(MemoChatLog.Blocks.Count - 1);
   Self.Typing := nil;
+end;
+
+procedure TFormChat.WriteLatestMessageToHistory;
+var
+  CH: TChatHistory;
+begin
+  if ChatHistoryList.Count > 0 then
+  begin
+    CH := ChatHistoryList[ChatHistoryList.Count - 1];
+    if CH.SenderType <> cseSystem then
+    begin
+      ChatHistoryFile.WriteAnsiString(CH.Time);
+      ChatHistoryFile.WriteDWord(DWord(CH.SenderType));
+      ChatHistoryFile.WriteAnsiString(CH.Message);
+    end;
+  end;
+end;
+
+procedure TFormChat.ReadHistoryMessagesToChat;
+var
+  CH: TChatHistory;
+begin
+  ChatHistoryFile.Position := 0;
+  try
+    while ChatHistoryFile.Position < ChatHistoryFile.Size do
+    begin
+      CH.Time := ChatHistoryFile.ReadAnsiString;
+      CH.SenderType := TChatSenderEnum(ChatHistoryFile.ReadDWord);
+      CH.Message := ChatHistoryFile.ReadAnsiString;
+      if CH.SenderType = cseSatania then
+        InsertLog(Satania.Name, CH.Message, CH.Time)
+      else
+        InsertLog(Save.Settings.UserName, CH.Message, CH.Time);
+    end;
+  except
+  end;
 end;
 
 end.
