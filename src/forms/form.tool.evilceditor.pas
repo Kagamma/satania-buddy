@@ -291,7 +291,7 @@ begin
       Editor.Invalidate;
       Satania.ResetScript;
       Satania.IsAction := False;
-      Satania.Talk(E.Message);
+      Satania.Log(E.Message);
       StatusBar.Panels[1].Text := E.Message;
     end;
   end;

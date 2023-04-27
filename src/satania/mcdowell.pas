@@ -896,6 +896,7 @@ begin
   if not IsNamed then
     S.ConstMap.AddOrSetValue('name', Name);
   S.ConstMap.AddOrSetValue('username', Save.Settings.UserName);
+  S.ConstMap.AddOrSetValue('character', Save.Settings.Skin);
 end;
 
 procedure TSatania.CleanUpCache;
