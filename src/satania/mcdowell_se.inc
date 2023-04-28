@@ -517,7 +517,7 @@ function TSatania.SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TS
         Thread.FormData.Text := Args[3];
     end;
     Thread.Start;
-    Result := IntToStr(GetTickCount) + Args[1].VarString^;
+    Result := Args[1].VarString^;
   end;
 
   function URLPost: TSEValue;
@@ -547,7 +547,7 @@ function TSatania.SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TS
         Thread.FormData.Text := Args[3];
     end;
     Thread.Start;
-    Result := IntToStr(GetTickCount) + Args[1].VarString^;
+    Result := Args[1].VarString^;
   end;
 
 begin
