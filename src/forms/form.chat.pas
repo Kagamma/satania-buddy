@@ -422,6 +422,7 @@ begin
         InsertLog(Satania.Name, CH.Message, CH.Time)
       else
         InsertLog(Save.Settings.UserName, CH.Message, CH.Time);
+      RemoveTyping;
     end;
   except
   end;
