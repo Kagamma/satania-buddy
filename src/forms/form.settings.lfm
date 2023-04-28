@@ -203,14 +203,14 @@ object FormSettings: TFormSettings
         object LabelYourName: TLabel
           Left = 24
           Height = 15
-          Top = 272
+          Top = 264
           Width = 59
           Caption = 'Your Name'
         end
         object EditYourName: TEdit
           Left = 192
           Height = 23
-          Top = 272
+          Top = 264
           Width = 400
           TabOrder = 8
           Text = 'EditYourName'
@@ -242,6 +242,20 @@ object FormSettings: TFormSettings
           Top = 340
           Width = 18
           TabOrder = 10
+        end
+        object LabelEnableItalicForUserText: TLabel
+          Left = 24
+          Height = 15
+          Top = 368
+          Width = 160
+          Caption = 'Enable italic for user messages'
+        end
+        object CheckBoxEnableItalicForUserText: TCheckBox
+          Left = 295
+          Height = 17
+          Top = 368
+          Width = 18
+          TabOrder = 11
         end
       end
       object TabSheetGraphics: TTabSheet

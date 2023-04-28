@@ -337,7 +337,7 @@ begin
   FRichText.Source := Msg;
   FRichText.Lex(LogName <> Save.Settings.UserName);
   FRichText.NextTokenPos := FRichText.TokenList.Count - 1;
-  FRichText.Parse(MemoChatLog, LogName <> Save.Settings.UserName);
+  FRichText.Parse(MemoChatLog, (LogName <> Save.Settings.UserName) or Save.Settings.EnableItalicForUserText);
 
   if (not FRichText.IsStreaming) or (FStreamingPartCount = 0) then
   begin

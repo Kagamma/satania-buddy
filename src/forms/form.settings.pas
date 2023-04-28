@@ -40,6 +40,7 @@ type
     CheckBoxErrorMessage: TCheckBox;
     CheckBoxEmailUseSSL: TCheckBox;
     CheckBoxEmailSmtpUseSSL: TCheckBox;
+    CheckBoxEnableItalicForUserText: TCheckBox;
     CheckBoxLewd: TCheckBox;
     CheckBoxDeveloperMode: TCheckBox;
     CheckBoxEmbeddedServerEnable: TCheckBox;
@@ -87,6 +88,7 @@ type
     LabelEmailSmtpUsername: TLabel;
     LabelEmailUseSSL: TLabel;
     LabelEmailSmtpUseSSL: TLabel;
+    LabelEnableItalicForUserText: TLabel;
     LabelFetchFrom: TLabel;
     LabelEmbeddedServerPort: TLabel;
     LabelEmbeddedServerEnable: TLabel;
@@ -179,6 +181,7 @@ begin
   CheckBoxRules.Checked := Save.Settings.Rules;
   CheckBoxErrorMessage.Checked := Save.Settings.SystemErrorMessage;
   CheckBoxChatSpeechBalloon.Checked := Save.Settings.ChatSpeechBalloon;
+  CheckBoxEnableItalicForUserText.Checked := Save.Settings.EnableItalicForUserText;
 
   ComboBoxSkin.Items.Clear;
   SL := TStringList.Create;
@@ -294,6 +297,7 @@ begin
     Save.Settings.ChatSpeechBalloon := CheckBoxChatSpeechBalloon.Checked;
     Save.Settings.UserName := EditYourName.Text;
     Save.Settings.SystemErrorMessage := CheckBoxErrorMessage.Checked;
+    Save.Settings.EnableItalicForUserText := CheckBoxEnableItalicForUserText.Checked;
     // Clear sketch and workers if skin is changed
     if Save.Settings.Skin <> ComboBoxSkin.Items[ComboBoxSkin.ItemIndex] then
     begin

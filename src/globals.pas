@@ -165,6 +165,7 @@ type
     FSystemErrorMessage: Boolean;
     FDeveloperMode,
     FChatSpeechBalloon,
+    FEnableItalicForUserText,
     FLewd: Boolean;
     FUserName,
     FLastServiceUsed,
@@ -205,6 +206,7 @@ type
     property Rules: Boolean read FRules write FRules default False;
     property SystemErrorMessage: Boolean read FSystemErrorMessage write FSystemErrorMessage default False;
     property LastServiceUsed: String read FLastServiceUsed write FLastServiceUsed;
+    property EnableItalicForUserText: Boolean read FEnableItalicForUserText write FEnableItalicForUserText default False;
   end;
 
   TSave = class(TPersistent)
