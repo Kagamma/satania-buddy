@@ -335,7 +335,7 @@ begin
   end;
 
   FRichText.Source := Msg;
-  FRichText.Lex(LogName <> Save.Settings.UserName);
+  FRichText.Lex((LogName <> Save.Settings.UserName) or Save.Settings.EnableItalicForUserText);
   FRichText.NextTokenPos := FRichText.TokenList.Count - 1;
   FRichText.Parse(MemoChatLog, (LogName <> Save.Settings.UserName) or Save.Settings.EnableItalicForUserText);
 
