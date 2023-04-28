@@ -77,6 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEClipboardToFile(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileRead(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileWrite(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEFileCopy(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -803,6 +804,15 @@ begin
     SL.SaveToFile(Args[0]);
   finally
     SL.Free;
+  end;
+end;
+
+function TSatania.SEFileCopy(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := False;
+  if FileExists(Args[0].VarString^) then
+  begin
+    Result := CopyFile(Args[0].VarString^, Args[1], [cffOverwriteFile], False);
   end;
 end;
 

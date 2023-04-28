@@ -46,7 +46,6 @@ object FormAsk: TFormAsk
         Top = 0
         Width = 312
         BorderStyle = htNone
-        DefBackground = clInfoBk
         HistoryMaxCount = 0
         NoSelect = True
         PrintMarginBottom = 2

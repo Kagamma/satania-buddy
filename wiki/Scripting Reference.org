@@ -289,7 +289,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 
 ** Common functions
 *typeof(v: any): string*
-- Returns type of variable (number / boolean / string / map / array / buffer / null).
+- Return type of variable (number / boolean / string / map / array / buffer / null).
 *string(n: number): string*
 - Convert n to string.
 *number(s: string): number*
@@ -303,13 +303,13 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 *map_delete(a: map; key: number/string): map*
 - Delete map elements.
 *map_keys_get(a: map): map*
-- Returns map contains all keys from map a.
+- Return map contains all keys from map a.
 *length(a: map/string)*
-- Returns length of string or map.
+- Return length of string or map.
 *random(n: number): number*
-- Returns a random number range from 0 - (n-1)
+- Return a random number range from 0 - (n-1)
 *rnd: number*
-- Returns a random number range from 0 - 1
+- Return a random number range from 0 - 1
 *sign(n: number): number*
 
 *round(n: number): number*
@@ -338,7 +338,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 *buffer_create(size: number): buffer*
 - Create a new buffer. The result is a pointer point to the start of allocated memory.
 *buffer_length(buffer: buffer): number*
-- Returns length of a buffer.
+- Return length of a buffer.
 *buffer_u8_get(buffer: buffer): number*
 - Get 1-byte unsigned data from buffer.
 *buffer_i8_get(buffer: buffer): number*
@@ -376,7 +376,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 *buffer_f64_set(buffer: buffer; data: number): number*
 - Write double-type data to buffer.
 *string_to_buffer(s: string): buffer*
-- Returns pointer point to the first element of the string.
+- Return pointer point to the first element of the string.
 *buffer_to_string(b: buffer): string*
 - Copy buffer content to string.
 *wbuffer_to_string(b: buffer): string*
@@ -404,15 +404,15 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 *string_split(s, delimiter: string): map*
 - Split a string into multiple parts.
 *string_find(s, sub: string): number*
-- Find location of substring in a string. Returns -1 if no substring is found.
+- Find location of substring in a string. Return -1 if no substring is found.
 *string_delete(s: string; index, count: number): string*
 - Delete part of a string at index.
 *string_replace(s, old, new: string): string*
 - Replace all old with new.
 *string_uppercase(s: string): string*
-- Returns uppercase string.
+- Return uppercase string.
 *string_lowercase(s: string): string*
-- Returns lowercase string.
+- Return lowercase string.
 *string_trim(s: string): string*
 - Trim string.
 *string_trim_left(s: string): string*
@@ -423,11 +423,11 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Replace a string with contents from map
   + Example: ~string_format('{0} is {1} gold', ['Key', 500])~ => Key is 500 gold
 *string_find_regex(s, regex: string): map*
-- Returns map of matched string + matched location.
+- Return map of matched string + matched location.
 
 ** Datetime
 *ticks(): number*
-- Returns system's ticks, in miliseconds.
+- Return system's ticks, in miliseconds.
 *dt_now(): number*
 - Return current time in datetime format.
 *dt_year_get(dt: number): number*
@@ -457,7 +457,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 *fs_directory_delete(path: string)*
 - Delete directory.
 *fs_directory_find_all(path: string; is_subdir: boolean)*
-- Perform search for directories in certain paths. Returns map of paths.
+- Perform search for directories in certain paths. Return map of paths.
 *fs_directory_exists(path: string): boolean*.
 - Check if a directory is exists.
 *fs_file_read(filename: string): string*
@@ -466,7 +466,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Write text to file. If the file is not exist then create a new file.
 *fs_file_find_all(path, mask: string; is_subdir: boolean; attribute:
 number): map*
-- Perform search for files in certain paths. Returns map of paths.
+- Perform search for files in certain paths. Return map of paths.
 - List of attributes:
   + FA_DIRECTORY
   + FA_READONLY
@@ -476,6 +476,8 @@ number): map*
   + FA_SYMLINK
   + FA_SYSFILE
   + FA_ANYFILE
+*fs_file_copy(src, dst: string): boolean*
+- Copy src to dst, override if dst exists. Return true if success.
 
 *fs_file_exists(filename: string): boolean*
 - Check if a file is exists.
@@ -510,17 +512,17 @@ number): map*
 *email_load(): boolean*
 - Tells Satania to check for email's connection.
 *email_unseen_count(): number*
-- Returns number of unread emails.
+- Return number of unread emails.
 *email_sender_get(email_index: number): string*
 - Get email's sender.
 *email_subject_get(email_index: number): string*
 - Get email's subject.
 *email_is_loading(): boolean*
-- Returns true if Satania is loading emails.
+- Return true if Satania is loading emails.
 *email_is_success(): boolean*
-- Returns true if Satania is succeeded in loading emails.
+- Return true if Satania is succeeded in loading emails.
 *email_is_configured(): boolean*
-- Returns true if IMAP is configured in Settings.
+- Return true if IMAP is configured in Settings.
 
 ** JSON
 *json_parse(json: string): map*
@@ -555,9 +557,9 @@ number; consts: map): string*
 
 ** Memory management
 *mem_used: number*
-- Returns memory usage by script engine in bytes.
+- Return memory usage by script engine in bytes.
 *mem_object_count: number*
-- Returns number of objects allocated by script engine.
+- Return number of objects allocated by script engine.
 *mem_gc*
 - Trigger garbage collection.
 
@@ -602,15 +604,15 @@ What do you think about me?<br />
 [[https://user-images.githubusercontent.com/7451778/181904113-fc4b3e03-76d8-406b-8b03-1baffcaa55a0.png]]
 
 *answer(): any*
-- Returns result value from ask(). If no answer is found, then it returns null.
+- Return result value from ask(). If no answer is found, then it returns null.
 - For example #1, the result is a string, either /Yes/ or /No/, taken from /href/ attribute.
 - For example #2, the result is a map, which is /[ "thought": "Your answer" ]/.
 *process_run(process: string): string*
-- Run a process by name. Returns the same parameter passed to the function.
+- Run a process by name. Return the same parameter passed to the function.
 *process_is_running(process: string): boolean*
 - Check if a process is running by process_run().
 *process_result_get(process: string): string*
-- Returns process's output pipeline. This function should be called after process_is_running() returns false.
+- Return process's output pipeline. This function should be called after process_is_running() returns false.
 *sprite_animation_stop_all()*
 - Stop all animations.
 *sprite_load(sprite: string)*
@@ -622,7 +624,7 @@ number)*
 - Play an animation by name
 - For skeletal animations, the animations are not override each other so you can play multiple animations at once.
 *sprite_animation_is_playing(animation_name: string): boolean*
-- Returns true if animation is playing.
+- Return true if animation is playing.
 *sprite_animation_stop(animation_name: string)*
 - Stop an animation.
 *sprite_animation_talk_set(loop, finish: string; random_script_files: map of strings)*
@@ -635,13 +637,13 @@ number)*
 *sprite_visible_get(): boolean*
 - Get sprite visibility
 *is_sow(): boolean*
-- Returns true if Sit on Window is turned on.
+- Return true if Sit on Window is turned on.
 *is_lewd(): boolean*
-- Returns true if Fanservice is turned on.
+- Return true if Fanservice is turned on.
 *is_silent(): boolean*
-- Returns true if Silent is turned on.
+- Return true if Silent is turned on.
 *is_speech_to_text(): boolean*
-- Returns true if Speech Recognition is turned on.
+- Return true if Speech Recognition is turned on.
 *flag_global_get(flag: string): string*
 - Set a flag. Result stores in ~configs.json~.
 *flag_global_set(flag: string; value: string)*
@@ -657,7 +659,7 @@ number)*
 *scheme_load(scheme_name: string)*
 - Load an .evil scheme file in ~data/scripts/current_character~. This will also stop the current script.
 *scheme_default(): string*
-- Returns Default Evil Script.
+- Return Default Evil Script.
 *delta_time(): number*
 - Delta Time, in seconds.
 *sound_play(sound_name: string)*
@@ -673,4 +675,4 @@ number)*
 - If no chat message is found, an empty string will be returned.
 
 *chat_history_get(): array*
-- Returns array of chat message: { name: string, message: string, timestamp: string }
+- Return array of chat message: { name: string, message: string, timestamp: string }
