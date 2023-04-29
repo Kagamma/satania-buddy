@@ -29,26 +29,9 @@ uses
   ExtCtrls, Process, CastleControls, CastleUIControls,
   CastleURIUtils, LCLTranslator, kmemo, Types, StrUtils, Generics.Collections,
   kgraphics, FileUtil,
-  Mcdowell.RichText;
-
-const
-  CHAT_HISTORY_VERSION = 1;
+  Mcdowell.RichText, Mcdowell.Chat.History;
 
 type
-  TChatSenderEnum = (
-    cseSystem,
-    cseSatania,
-    cseUser
-  );
-
-  TChatHistory = record
-    SenderType: TChatSenderEnum;
-    Time,
-    Message: String;
-  end;
-
-  TChatHistoryList = specialize TList<TChatHistory>;
-
   { TFormChat }
 
   TFormChat = class(TForm)
@@ -76,13 +59,12 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
-    FRichText: TRichText;
+    FRichText: TSataniaRichText;
     FStreamingPartCount: Integer;
     procedure ScrollToBottom;
   public
-    ChatHistoryList: TChatHistoryList;
-    ChatHistoryFile: TFileStream;
     Typing: TKMemoTextBlock;
+    ChatHistory: TSataniaChatHistory;
     procedure EnableStreaming;
     procedure DisableStreaming;
     procedure Streaming(const S: String);
@@ -92,9 +74,7 @@ type
     procedure RemoveTyping;
     procedure LoadServiceList;
     procedure LoadChatHistoryFromFile;
-    procedure WriteLatestMessageToHistory;
-    procedure ReadHistoryMessagesToChat;
-    property RichText: TRichText read FRichText;
+    property RichText: TSataniaRichText read FRichText;
   end;
 
 var
@@ -127,7 +107,7 @@ begin
     FStreamingPartCount := 1;
     RemoveTyping;
     MemoChatLog.Blocks.AddParagraph;
-    WriteLatestMessageToHistory;
+    ChatHistory.SaveLastestMessage;
   end;
 end;
 
@@ -139,38 +119,35 @@ end;
 
 procedure TFormChat.LoadChatHistoryFromFile;
 var
-  Path: String;
+  I: Integer;
+  CH: TChatHistoryRec;
 begin
-  Path := PATH_CHAT_HISTORY + Save.Settings.Skin + '.txt';
   MemoChatLog.Blocks.Clear;
-  ChatHistoryList.Clear;
-  if ChatHistoryFile <> nil then
-    ChatHistoryFile.Free;
-  if not FileExists(Path) then
+  ChatHistory.LoadFromFile(PATH_CHAT_HISTORY + Save.Settings.Skin + '.txt');
+  for I := 0 to Self.ChatHistory.List.Count - 1 do
   begin
-    ChatHistoryFile := TFileStream.Create(Path, fmCreate or fmShareDenyWrite);
-    ChatHistoryFile.WriteDWord(CHAT_HISTORY_VERSION);
-  end else
-  begin
-    ChatHistoryFile := TFileStream.Create(Path, fmOpenReadWrite or fmShareDenyWrite);
-    ReadHistoryMessagesToChat;
+    CH := Self.ChatHistory.List[I];
+    if CH.SenderType = cseSatania then
+      InsertLog(Satania.Name, CH.Message, CH.Time)
+    else
+      InsertLog(Save.Settings.UserName, CH.Message, CH.Time);
+    RemoveTyping;
   end;
 end;
 
 procedure TFormChat.FormCreate(Sender: TObject);
 begin
   Self.CalcHeights;
-  ChatHistoryList := TChatHistoryList.Create;
-  FRichText := TRichText.Create;
+  ChatHistory := TSataniaChatHistory.Create;
+  FRichText := TSataniaRichText.Create;
   LoadServiceList;
   LoadChatHistoryFromFile;
 end;
 
 procedure TFormChat.FormDestroy(Sender: TObject);
 begin
-  ChatHistoryList.Free;
   FRichText.Free;
-  ChatHistoryFile.Free;
+  ChatHistory.Free;
 end;
 
 procedure TFormChat.LoadServiceList;
@@ -235,9 +212,7 @@ begin
   if FormBubble.FinishedTyping then
   begin
     MemoChatLog.Blocks.Clear;
-    ChatHistoryList.Clear;
-    ChatHistoryFile.Size := 0;
-    ChatHistoryFile.WriteDWord(CHAT_HISTORY_VERSION);
+    ChatHistory.Clear;
   end;
 end;
 
@@ -297,7 +272,7 @@ var
   MsgSplit: TStringDynArray;
   CodeMode: Boolean = False;
   I: Integer;
-  CH: TChatHistory;
+  CH: TChatHistoryRec;
   IsLog: Boolean = False;
 begin
   DecodeTime(Now, H, M, SS, MS);
@@ -343,31 +318,26 @@ begin
   begin
     CH.Time := Time;
     CH.Message := Msg;
-    ChatHistoryList.Add(CH);
+    ChatHistory.List.Add(CH);
   end;
   if (FRichText.IsStreaming) and (FStreamingPartCount > 0) then
   begin
-    CH := ChatHistoryList[ChatHistoryList.Count - 1];
+    CH := ChatHistory.List[ChatHistory.List.Count - 1];
     CH.Message := Msg;
-    ChatHistoryList[ChatHistoryList.Count - 1] := CH;
+    ChatHistory.List[ChatHistory.List.Count - 1] := CH;
   end;
 
   if not FRichText.IsStreaming then
   begin
     MemoChatLog.Blocks.AddParagraph;
     if IsLog then
-      WriteLatestMessageToHistory;
+      ChatHistory.SaveLastestMessage;
   end;
 
   if (LogName = Save.Settings.UserName) or (FRichText.IsStreaming) then
   begin
     InsertTyping;
   end;
-
-  while FormChat.MemoChatLog.Blocks.LineCount > 2000 do
-    FormChat.MemoChatLog.Blocks.DeleteLine(0);
-  while ChatHistoryList.Count > 2000 do
-    ChatHistoryList.Delete(0);
   ScrollToBottom;
   Inc(FStreamingPartCount);
 end;
@@ -387,45 +357,6 @@ begin
   if MemoChatLog.Blocks.Count <> 0 then
     MemoChatLog.Blocks.Delete(MemoChatLog.Blocks.Count - 1);
   Self.Typing := nil;
-end;
-
-procedure TFormChat.WriteLatestMessageToHistory;
-var
-  CH: TChatHistory;
-begin
-  if ChatHistoryList.Count > 0 then
-  begin
-    CH := ChatHistoryList[ChatHistoryList.Count - 1];
-    if CH.SenderType <> cseSystem then
-    begin
-      ChatHistoryFile.WriteAnsiString(CH.Time);
-      ChatHistoryFile.WriteDWord(DWord(CH.SenderType));
-      ChatHistoryFile.WriteAnsiString(CH.Message);
-    end;
-  end;
-end;
-
-procedure TFormChat.ReadHistoryMessagesToChat;
-var
-  CH: TChatHistory;
-begin
-  ChatHistoryFile.Position := 0;
-  if ChatHistoryFile.Position < ChatHistoryFile.Size then
-    ChatHistoryFile.ReadDWord; // Version
-  try
-    while ChatHistoryFile.Position < ChatHistoryFile.Size do
-    begin
-      CH.Time := ChatHistoryFile.ReadAnsiString;
-      CH.SenderType := TChatSenderEnum(ChatHistoryFile.ReadDWord);
-      CH.Message := ChatHistoryFile.ReadAnsiString;
-      if CH.SenderType = cseSatania then
-        InsertLog(Satania.Name, CH.Message, CH.Time)
-      else
-        InsertLog(Save.Settings.UserName, CH.Message, CH.Time);
-      RemoveTyping;
-    end;
-  except
-  end;
 end;
 
 end.

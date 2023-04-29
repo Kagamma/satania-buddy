@@ -439,14 +439,14 @@ end;
 function TSatania.SEChatHistoryGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   I: Integer;
-  CH: TChatHistory;
+  CH: TChatHistoryRec;
   S: String;
   Item: TSEValue;
 begin
   GC.AllocMap(@Result);
-  for I := 0 to FormChat.ChatHistoryList.Count - 1 do
+  for I := 0 to FormChat.ChatHistory.List.Count - 1 do
   begin
-    CH := FormChat.ChatHistoryList[I];
+    CH := FormChat.ChatHistory.List[I];
     GC.AllocMap(@Item);
     if CH.SenderType = cseUser then
     begin

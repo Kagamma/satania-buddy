@@ -39,7 +39,7 @@ type
   end;
   TRichTextTokenList = specialize TList<TRichTextToken>;
 
-  TRichText = class
+  TSataniaRichText = class
   private
     FSource: String;
     FIsLexed: Boolean;
@@ -66,7 +66,7 @@ implementation
 uses
   Math;
 
-procedure TRichText.SetSource(S: String);
+procedure TSataniaRichText.SetSource(S: String);
 begin
   if S <> Self.FSource then
   begin
@@ -75,7 +75,7 @@ begin
   end;
 end;
 
-procedure TRichText.Reset;
+procedure TSataniaRichText.Reset;
 begin
   Self.LastTokenPos := 0;
   Self.NextTokenPos := 0;
@@ -84,13 +84,13 @@ begin
   Self.LastState := rtsNormal;
 end;
 
-constructor TRichText.Create;
+constructor TSataniaRichText.Create;
 begin
   inherited;
   Self.TokenList := TRichTextTokenList.Create;
 end;
 
-procedure TRichText.Lex(const IsEmote: Boolean = True);
+procedure TSataniaRichText.Lex(const IsEmote: Boolean = True);
 var
   Ln : Integer = 1;
   Col: Integer = 1;
@@ -203,7 +203,7 @@ begin
   Self.FIsLexed := True;
 end;
 
-procedure TRichText.Parse(const Memo: TKMemo; const IsEmote: Boolean = True);
+procedure TSataniaRichText.Parse(const Memo: TKMemo; const IsEmote: Boolean = True);
 var
   I, IMin, IMax: Integer;
   Token: TRichTextToken;
@@ -271,7 +271,7 @@ begin
   end;
 end;
 
-destructor TRichText.Destroy;
+destructor TSataniaRichText.Destroy;
 begin
   Self.TokenList.Free;
   inherited;

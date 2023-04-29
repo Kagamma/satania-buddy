@@ -49,6 +49,7 @@ implementation
 uses
   jsontools,
   form.chat,
+  mcdowell.chat.history,
   Mcdowell;
 
 procedure TWebUIAction.Get;
@@ -80,13 +81,13 @@ var
   N,
   Json: TJsonNode;
   I: Integer;
-  CH: TChatHistory;
+  CH: TChatHistoryRec;
 begin
   Json := TJsonNode.Create;
   try
-    for I := 0 to FormChat.ChatHistoryList.Count - 1 do
+    for I := 0 to FormChat.ChatHistory.List.Count - 1 do
     begin
-      CH := FormChat.ChatHistoryList[I];
+      CH := FormChat.ChatHistory.List[I];
       N := Json.Add;
       N.Add('message', CH.Message);
       N.Add('time', CH.Time);
@@ -123,10 +124,10 @@ begin
     if Name = 'type' then
       Typ := Value;
   end;
-  HC := FormChat.ChatHistoryList.Count;
+  HC := FormChat.ChatHistory.List.Count;
   if Message <> '' then
     Satania.Action(Typ, Message);
-  while HC = FormChat.ChatHistoryList.Count do
+  while HC = FormChat.ChatHistory.List.Count do
   begin
     Sleep(100);
     Inc(Ticks, 100);
@@ -138,7 +139,7 @@ begin
   end;
   Json := TJsonNode.Create;
   try
-    Json.Add('message', FormChat.ChatHistoryList[FormChat.ChatHistoryList.Count - 1].Message);
+    Json.Add('message', FormChat.ChatHistory.List[FormChat.ChatHistory.List.Count - 1].Message);
     Write(Json.AsJson);
   finally
     Json.Free;

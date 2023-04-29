@@ -153,6 +153,7 @@ uses
   mcdowell.imap,
   mcdowell.smtp,
   mcdowell.sketch,
+  mcdowell.chat.history,
   com.Brokers;
 
 {$define unit_implementation}

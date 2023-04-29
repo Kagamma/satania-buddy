@@ -41,7 +41,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
   private
-    FRichText: TRichText;
+    FRichText: TSataniaRichText;
     FText: String;
     FNumWordsDisplay: Integer;
     FTypingSpeed: Integer;
@@ -188,7 +188,7 @@ end;
 
 procedure TFormBubble.FormCreate(Sender: TObject);
 begin
-  Self.FRichText := TRichText.Create;
+  Self.FRichText := TSataniaRichText.Create;
   Self.FRichText.IsStreaming := True;
   AddFormToIgnoreHandleList(Self);
   Self.KMemo.TextStyle.Font.Size := Save.Settings.FontSize;
