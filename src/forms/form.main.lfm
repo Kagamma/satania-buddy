@@ -1422,6 +1422,10 @@ object FormMain: TFormMain
     object Separator4: TMenuItem
       Caption = '-'
     end
+    object MenuItemConsole: TMenuItem
+      Caption = 'Console'
+      OnClick = MenuItemConsoleClick
+    end
     object MenuItemSettings: TMenuItem
       Caption = 'Settings'
       OnClick = MenuItemSettingsClick

@@ -24,6 +24,9 @@ program SataniaBuddy;
 
 uses
   //mormot.core.fpcx64mm,
+  {$ifdef windows}
+  Windows, ShellApi,
+  {$endif}
   {$IFDEF UNIX}
   cthreads,
   {$ENDIF}
@@ -46,6 +49,9 @@ uses
 {$R *.res}
 
 begin
+  {$ifdef windows}
+  ShowWindow(GetConsoleWindow, SW_HIDE);
+  {$endif}
   Randomize;
   RequireDerivedFormResource:=True;
   Application.Scaled:=True;

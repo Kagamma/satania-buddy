@@ -197,7 +197,7 @@ begin
     S.RegisterFunc('ask', @SEAsk, -1);
     S.RegisterFunc('scheme_load', @SESchemeLoad, 1);
   end;
-  S.RegisterFunc('talk', @SETalk, -1);
+  S.RegisterFunc('talk', @SETalk, 1);
   S.RegisterFunc('stream_enable', @SEStreamEnable, 0);
   S.RegisterFunc('stream_disable', @SEStreamDisable, 0);
   S.RegisterFunc('stream', @SEStream, 1);       

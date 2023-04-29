@@ -75,6 +75,7 @@ type
   TFormMain = class(TForm)
     CastleControl: TCastleControl;
     MenuItem1: TMenuItem;
+    MenuItemConsole: TMenuItem;
     MenuItemHelpExternalServices: TMenuItem;
     MenuItemMemoryUsage: TMenuItem;
     MenuItemAbout: TMenuItem;
@@ -114,6 +115,7 @@ type
     procedure MenuItemAboutClick(Sender: TObject);
     procedure MenuItemAlarmsAndRemindersClick(Sender: TObject);
     procedure MenuItemChatWithHerClick(Sender: TObject);
+    procedure MenuItemConsoleClick(Sender: TObject);
     procedure MenuItemEditorClick(Sender: TObject);
     procedure MenuItemHelpAlarmsAndRemindersClick(Sender: TObject);
     procedure MenuItemHelpCreateNewCharacterClick(Sender: TObject);
@@ -221,6 +223,7 @@ begin
     CastleWindow.Application.MainWindow.Open;
     ScreenWidth := CastleWindow.Application.ScreenWidth;
     ScreenHeight := CastleWindow.Application.ScreenHeight;
+    MenuItemConsole.Visible := False;
     {$endif}
 
     ApplicationProperties.LimitFPS := Save.Settings.FPS;
@@ -261,6 +264,17 @@ end;
 procedure TFormMain.MenuItemChatWithHerClick(Sender: TObject);
 begin
   FormChat.Show;
+end;
+
+procedure TFormMain.MenuItemConsoleClick(Sender: TObject);
+begin
+  {$ifdef windows}
+  MenuItemConsole.Checked := not MenuItemConsole.Checked;
+  if MenuItemConsole.Checked then
+    ShowWindow(GetConsoleWindow, SW_SHOW)
+  else
+    ShowWindow(GetConsoleWindow, SW_HIDE);
+  {$endif}
 end;
 
 procedure TFormMain.MenuItemEditorClick(Sender: TObject);

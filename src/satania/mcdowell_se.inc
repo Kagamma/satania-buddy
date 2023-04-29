@@ -158,21 +158,8 @@ var
   Key: String;
 begin
   FormChat.DisableStreaming;
-  if Length(Args) = 1 then
-  begin
-    Talk(SEValueToText(Args[0]));
-    VM.IsPaused := True;
-  end else
-  begin
-    if Args[1] = 0 then
-    begin
-      TalkWithoutBlock(SEValueToText(Args[0]));
-    end else
-    begin
-      Talk(SEValueToText(Args[0]));
-      VM.IsPaused := True;
-    end;
-  end;
+  Talk(SEValueToText(Args[0]));
+  VM.IsPaused := True;
 end;
 
 function TSatania.SEStreamEnable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
