@@ -504,7 +504,7 @@ number): map*
 *http_open(url: string)*
 - Open an URL using default web browser.
 *http_fetch(method, url: string; headers: map; data: string/map): string*
-- Make a request to URL.
+- Make a request to URL. Return guid.
 *http_upload(url: string; headers: map; data: string/map; field, file: string): string*
 - Upload a file to URL. Return guid.
 *http_is_success(guid: string): boolean*
