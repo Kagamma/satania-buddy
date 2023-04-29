@@ -370,6 +370,11 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Form.Bubble"/>
       </Unit>
+      <Unit>
+        <Filename Value="satania/mcdowell.chat.history.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Mcdowell.Chat.History"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
