@@ -918,6 +918,26 @@ begin
   BackgroundScriptDict.Clear;
 end;
 
+procedure FreeLeftoverProcesses;
+var
+  Info  : TNonBlockProcessRec;
+  Key   : String;
+begin
+  if RunProcessNonBlockResultList.Keys.Count > 0 then
+  begin
+    for Key in RunProcessNonBlockResultList.Keys do
+    begin
+      Info := RunProcessNonBlockResultList[Key];
+      if Info.Process <> nil then
+      begin
+        Info.Process.Terminate(0);
+        Info.Process.Free;
+      end;
+    end;
+  end;
+  FreeAndNil(RunProcessNonBlockResultList);
+end;
+
 initialization
   CSAction := TCriticalSection.Create;
   CSTalk := TCriticalSection.Create;
@@ -937,7 +957,7 @@ finalization
   FreeAndNil(Satania);
   FreeAndNil(RunList);
   FreeAndNil(RunProcessResultList);
-  FreeAndNil(RunProcessNonBlockResultList);
+  FreeLeftoverProcesses;
   CSTalk.Free;
   CSAction.Free;
 

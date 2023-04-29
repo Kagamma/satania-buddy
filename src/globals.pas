@@ -30,7 +30,7 @@ uses
   {$endif}
   Classes, SysUtils, Types, Generics.Collections, fpjsonrtti,
   CastleFonts, CastleStringUtils, CastleUnicode,
-  CastleVectors, Mcdowell.EvilC;
+  CastleVectors, Mcdowell.EvilC, Process;
 
 const
   PATH_SCRIPTS_RAW = 'data/scripts/';
@@ -73,6 +73,7 @@ type
     IsActive: Boolean;
     StdOut  : RawByteString;
     Thread  : TThread;
+    Process : TProcess;
   end;
 
   TQWordList = specialize TList<QWord>;

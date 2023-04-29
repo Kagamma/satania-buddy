@@ -243,6 +243,7 @@ begin
   S := RunName;
   Process := TProcess.Create(nil);
   Commands := TStringList.Create;
+  Info.Process := Process;
   try
     if (Length(S) > 0) then
     begin
@@ -267,6 +268,7 @@ begin
       end;
       ReadFromPipes;
       Info.IsActive := False;
+      Info.Process := nil;
       Synchronize(@SendToHer);
     end;
   finally
