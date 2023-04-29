@@ -490,6 +490,12 @@ number): map*
 *clipboard_to_file(filename: string)*
 - Save content (image, text) from clipboard to a file.
 
+** Processes **
+*process_run(process: string, show_window: boolean): string*
+- Run a process by name. Return process guid.
+*process_result_get(guid: string): map*
+- Return process's status and output pipeline: /[ "running": boolean, "output": string ]/
+
 ** HTTP requests
 *url_encode(s: string): string*
 - Encode URL element.
@@ -500,10 +506,10 @@ number): map*
 *http_fetch(method, url: string; headers: map; data: string/map): string*
 - Make a request to URL.
 *http_upload(url: string; headers: map; data: string/map; field, file: string): string*
-- Upload a file to URL.
-*http_is_success(url: string): boolean*
+- Upload a file to URL. Return guid.
+*http_is_success(guid: string): boolean*
 - Check if url query (get, post, etc) is finished.
-*http_result_get(url: string): map*
+*http_result_get(guid: string): map*
 - Get HTML result from url_fetch / url_upload. Result map contains status and data.
 *http_query(data, xpath: string): map*
 - Extract data from HTML string.
@@ -607,12 +613,6 @@ What do you think about me?<br />
 - Return result value from ask(). If no answer is found, then it returns null.
 - For example #1, the result is a string, either /Yes/ or /No/, taken from /href/ attribute.
 - For example #2, the result is a map, which is /[ "thought": "Your answer" ]/.
-*process_run(process: string): string*
-- Run a process by name. Return the same parameter passed to the function.
-*process_is_running(process: string): boolean*
-- Check if a process is running by process_run().
-*process_result_get(process: string): string*
-- Return process's output pipeline. This function should be called after process_is_running() returns false.
 *sprite_animation_stop_all()*
 - Stop all animations.
 *sprite_load(sprite: string)*

@@ -17,6 +17,7 @@ type
     HTTP: TFPHTTPClient;
     FormData: TStrings;
     HttpResponse: THttpResponseRec;
+    Key,
     URL: String;
     constructor Create(CreateSuspend: Boolean);
     procedure Execute; override;
@@ -32,6 +33,7 @@ type
     HTTP: TFPHTTPClient;
     FormData: TStrings;
     HttpResponse: THttpResponseRec;
+    Key,
     FieldName,
     FileName,
     URL: String;
@@ -47,8 +49,8 @@ uses
 
 procedure TSataniaHttpGetThread.SendToHer;
 begin
-  RunList.Delete(RunList.IndexOf(URL));
-  RunHttpResultList.AddOrSetValue(URL, HttpResponse);
+  RunList.Delete(RunList.IndexOf(Key));
+  RunHttpResultList.AddOrSetValue(Key, HttpResponse);
 end;
 
 procedure TSataniaHttpGetThread.ResetToDefault;
@@ -95,8 +97,8 @@ end;
 
 procedure TSataniaHttpPostThread.SendToHer;
 begin
-  RunList.Delete(RunList.IndexOf(URL));
-  RunHttpResultList.AddOrSetValue(URL, HttpResponse);
+  RunList.Delete(RunList.IndexOf(Key));
+  RunHttpResultList.AddOrSetValue(Key, HttpResponse);
 end;
 
 procedure TSataniaHttpPostThread.ResetToDefault;

@@ -33,7 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEAnswer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEProcessRun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEProcessIsRunning(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEProcessResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsAnimationPlaying(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStopAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -245,24 +244,33 @@ begin
 end;
 
 function TSatania.SEProcessRun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  T: TSataniaExecNonBlockThread;
 begin
-  Result := Exec(Args[0]);
-end;
-
-function TSatania.SEProcessIsRunning(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-begin
-  if RunList.IndexOf(Args[0]) >= 0 then
-    Result := True
-  else
-    Result := False;
+  T := TSataniaExecNonBlockThread.Create(True, GUID);
+  T.Info.IsActive := True;
+  T.RunName := Args[0];
+  T.IsShowProcess := Args[1];
+  Result := T.KeyName;
 end;
 
 function TSatania.SEProcessResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Info: TNonBlockProcessRec;
 begin
   Result := SENull;
   try
-    Result := RunProcessResultList[Args[0].VarString^];
-    RunProcessResultList.Remove(Args[0].VarString^);
+    if RunProcessNonBlockResultList.ContainsKey(Args[0].VarString^) then
+    begin
+      Info := RunProcessNonBlockResultList[Args[0].VarString^];
+      if not Info.IsActive then
+      begin
+        RunProcessNonBlockResultList.Remove(Args[0].VarString^);
+      end;
+      GC.AllocMap(@Result);
+      SEMapSet(Result, 'running', Info.IsActive);
+      SEMapSet(Result, 'output', Info.StdOut);
+    end;
   except
   end;
 end;
@@ -498,13 +506,10 @@ function TSatania.SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TS
     I: Integer;
     S: String;
   begin
-    I := RunList.IndexOf(Args[1]);
-    if I >= 0 then
-      RunList.Delete(I);
-    RunList.Add(Args[1]);
     Thread := TSataniaHttpGetThread.Create(True);
     Thread.FreeOnTerminate := True;
     Thread.URL := Args[1];
+    Thread.Key := GUID;
     if Args[2].Kind = sevkMap then
       for S in TSEValueMap(Args[2].VarMap).Keys do
       begin
@@ -517,7 +522,8 @@ function TSatania.SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TS
         Thread.FormData.Text := Args[3];
     end;
     Thread.Start;
-    Result := Args[1].VarString^;
+    RunList.Add(Thread.Key);
+    Result := Thread.Key;
   end;
 
   function URLPost: TSEValue;
@@ -528,13 +534,10 @@ function TSatania.SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TS
     V: TSEValue;
     S: String;
   begin
-    I := RunList.IndexOf(Args[1]);
-    if I >= 0 then
-      RunList.Delete(I);
-    RunList.Add(Args[1]);
     Thread := TSataniaHttpPostThread.Create(True);
     Thread.FreeOnTerminate := True;
     Thread.URL := Args[1];
+    Thread.Key := GUID;
     if Args[2].Kind = sevkMap then
       for S in TSEValueMap(Args[2].VarMap).Keys do
       begin
@@ -547,7 +550,8 @@ function TSatania.SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TS
         Thread.FormData.Text := Args[3];
     end;
     Thread.Start;
-    Result := Args[1].VarString^;
+    RunList.Add(Thread.Key);
+    Result := Thread.Key;
   end;
 
 begin
@@ -566,13 +570,10 @@ var
   Key: String;
   V: TSEValue;
 begin
-  I := RunList.IndexOf(Args[0]);
-  if I >= 0 then
-    RunList.Delete(I);
-  RunList.Add(Args[0]);
   Thread := TSataniaHttpPostThread.Create(True);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
+  Thread.Key := GUID;
   case Args[2].Kind of
     sevkMap:
       Thread.FormData.Text := SEJSONStringify(VM, [Args[2]]);
@@ -582,7 +583,8 @@ begin
   Thread.FieldName := Args[3];
   Thread.FileName := Args[4];
   Thread.Start;
-  Result := Args[0].VarString^;
+  RunList.Add(Thread.Key);
+  Result := Thread.Key;
 end;
 
 function TSatania.SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

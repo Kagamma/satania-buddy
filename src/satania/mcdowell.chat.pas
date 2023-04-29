@@ -26,7 +26,7 @@ interface
 
 uses
   Classes, SysUtils, fpjson, jsonparser, fphttpclient, CastleURIUtils,
-  Process, LCLIntf, StrUtils;
+  Process, LCLIntf, StrUtils, FIleUtil, globals;
 
 type
   TSataniaChatThread = class(TThread)
@@ -35,6 +35,7 @@ type
     procedure SpeakDontUnderstand;
     procedure ExecuteCustomEvilWorkerScript;
   public
+    IsShowProcess: Boolean;
     ChatSend,
     ChatResponse,
     ChatType: String;
@@ -46,8 +47,20 @@ type
     procedure SendToHer;
   public
     ChatSend,
-    ChatResponse: String;
-    RunName: String;
+    ChatResponse : String;
+    RunName : String;
+    procedure Execute; override;
+  end;
+
+  TSataniaExecNonBlockThread = class(TThread)
+  protected
+    procedure SendToHer;
+  public
+    IsShowProcess: Boolean;
+    KeyName : String;
+    RunName : String;
+    Info    : TNonBlockProcessRec;
+    constructor Create(CreateSuspended: Boolean; const Key: String);
     procedure Execute; override;
   end;
 
@@ -56,7 +69,6 @@ implementation
 uses
   utils.Encdec,
   mcdowell,
-  globals,
   mcdowell.chatbot,
   Form.chat,
   Mcdowell.EvilC;
@@ -174,6 +186,78 @@ begin
     RunCommand(S, ChatResponse);
   end;
   Synchronize(@SendToHer);
+  Terminate;
+end;
+
+constructor TSataniaExecNonBlockThread.Create(CreateSuspended: Boolean; const Key: String);
+begin
+  inherited Create(FreeOnTerminate);
+  Info.IsActive := True;
+  KeyName := Key;
+  RunProcessNonBlockResultList.AddOrSetValue(KeyName, Info);
+end;
+
+procedure TSataniaExecNonBlockThread.SendToHer;
+begin
+  RunProcessNonBlockResultList.AddOrSetValue(KeyName, Info);
+end;
+
+procedure TSataniaExecNonBlockThread.Execute;
+const
+  READ_BYTES = 16384;
+var
+  S: String;
+  Commands: TStrings;
+  P: TProcess;
+  I: Integer;
+
+  procedure ReadFromPipes;
+  var
+    Buffer: array[0..READ_BYTES - 1] of Byte;
+    S: RawByteString;
+    BytesRead: Cardinal;
+  begin
+    BytesRead := P.Output.Read(Buffer[0], READ_BYTES);
+    if BytesRead > 0 then
+    begin
+      SetString(S, @Buffer[0], BytesRead);
+      Info.StdOut := Info.StdOut + S;
+    end;
+  end;
+
+begin
+  S := RunName;
+  P := TProcess.Create(nil);
+  Commands := TStringList.Create;
+  try
+    if (Length(S) > 0) then
+    begin
+      CommandToList(S, Commands);
+      if IsShowProcess then
+        P.ShowWindow := swoShowDefault
+      else
+        P.ShowWindow := swoHIDE;
+      P.Options := P.Options + [poUsePipes, poStderrToOutPut];
+      P.Executable := FindDefaultExecutablePath(Commands[0]);
+      for I := 1 to Commands.Count - 1 do
+      begin
+        P.Parameters.Add(Commands[I]);
+      end;
+      P.Execute;
+      while P.Running do
+      begin
+        ReadFromPipes;
+        Synchronize(@SendToHer);
+        Yield;
+      end;
+      ReadFromPipes;
+      Info.IsActive := False;
+      Synchronize(@SendToHer);
+    end;
+  finally
+    P.Free;
+    Commands.Free;
+  end;
   Terminate;
 end;
 

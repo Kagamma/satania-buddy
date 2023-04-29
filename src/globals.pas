@@ -69,8 +69,15 @@ type
     IsLooped: Boolean;
   end;
 
+  TNonBlockProcessRec = record
+    IsActive: Boolean;
+    StdOut,
+    StdErr  : RawByteString;
+  end;
+
   TQWordList = specialize TList<QWord>;
   TStringDict = specialize TDictionary<String, String>;
+  TNonBlockProcessDict = specialize TDictionary<String, TNonBlockProcessRec>;
   THttpResponseDict = specialize TDictionary<String, THttpResponseRec>;
   TStringArrayDict = specialize TDictionary<String, TStringDynArray>;
   TTrackDict = specialize TDictionary<String, TTrackRec>;
