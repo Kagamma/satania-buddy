@@ -257,7 +257,8 @@ begin
       end;
       GC.AllocMap(@Result);
       SEMapSet(Result, 'running', Info.IsActive);
-      SEMapSet(Result, 'output', Info.StdOut);
+      if Info.StdOut <> '' then
+        SEMapSet(Result, 'output', Info.StdOut);
       if Info.IsActive then
       begin
         // Flush cache
