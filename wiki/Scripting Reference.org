@@ -493,8 +493,10 @@ number): map*
 ** Process
 *process_run(process: string, show_window: boolean): string*
 - Run a process by name. Return process guid.
-*process_result_get(guid: string): map*
-- Return process's status and output pipeline: /[ "running": boolean, "output": string ]/
+*process_pipe_get(guid: string): map*
+- Return process's status and stdout / stderr pipes: /[ "running": boolean, "output": string ]/
+*process_pipe_set(guid, s: string)*
+- Write s to process's stdin pipe
 
 ** HTTP requests
 *url_encode(s: string): string*

@@ -33,7 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEAnswer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEProcessRun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEProcessResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEProcessPipeGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEProcessPipeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsAnimationPlaying(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStopAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStopAllAnimations(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -254,7 +255,7 @@ begin
   Result := T.KeyName;
 end;
 
-function TSatania.SEProcessResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEProcessPipeGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   Info: TNonBlockProcessRec;
 begin
@@ -270,6 +271,27 @@ begin
       GC.AllocMap(@Result);
       SEMapSet(Result, 'running', Info.IsActive);
       SEMapSet(Result, 'output', Info.StdOut);
+      if Info.IsActive then
+      begin
+        // Flush cache
+        TSataniaExecNonBlockThread(Info.Thread).Info.StdOut := '';
+        RunProcessNonBlockResultList[Args[0].VarString^] := TSataniaExecNonBlockThread(Info.Thread).Info;
+      end;
+    end;
+  except
+  end;
+end;
+
+function TSatania.SEProcessPipeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Info: TNonBlockProcessRec;
+begin
+  Result := SENull;
+  try
+    if RunProcessNonBlockResultList.ContainsKey(Args[0].VarString^) then
+    begin
+      Info := RunProcessNonBlockResultList[Args[0].VarString^];
+      TSataniaExecNonBlockThread(Info.Thread).StdIn := TSataniaExecNonBlockThread(Info.Thread).StdIn + Args[1].VarString^;
     end;
   except
   end;

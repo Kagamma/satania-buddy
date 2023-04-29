@@ -59,7 +59,9 @@ type
     IsShowProcess: Boolean;
     KeyName : String;
     RunName : String;
+    StdIn   : RawByteString;
     Info    : TNonBlockProcessRec;
+    Process : TProcess;
     constructor Create(CreateSuspended: Boolean; const Key: String);
     procedure Execute; override;
   end;
@@ -193,6 +195,7 @@ constructor TSataniaExecNonBlockThread.Create(CreateSuspended: Boolean; const Ke
 begin
   inherited Create(FreeOnTerminate);
   Info.IsActive := True;
+  Info.Thread := Self;
   KeyName := Key;
   RunProcessNonBlockResultList.AddOrSetValue(KeyName, Info);
 end;
@@ -208,7 +211,6 @@ const
 var
   S: String;
   Commands: TStrings;
-  P: TProcess;
   I: Integer;
 
   procedure ReadFromPipes;
@@ -217,7 +219,7 @@ var
     S: RawByteString;
     BytesRead: Cardinal;
   begin
-    BytesRead := P.Output.Read(Buffer[0], READ_BYTES);
+    BytesRead := Process.Output.Read(Buffer[0], READ_BYTES);
     if BytesRead > 0 then
     begin
       SetString(S, @Buffer[0], BytesRead);
@@ -225,28 +227,41 @@ var
     end;
   end;
 
+  procedure WriteToPipes;
+  var
+    Buffer: RawByteString;
+  begin
+    if StdIn <> '' then
+    begin
+      Buffer := StdIn;
+      StdIn := '';
+      Process.Input.Write(Buffer[1], Length(Buffer));
+    end;
+  end;
+
 begin
   S := RunName;
-  P := TProcess.Create(nil);
+  Process := TProcess.Create(nil);
   Commands := TStringList.Create;
   try
     if (Length(S) > 0) then
     begin
       CommandToList(S, Commands);
       if IsShowProcess then
-        P.ShowWindow := swoShowDefault
+        Process.ShowWindow := swoShowDefault
       else
-        P.ShowWindow := swoHIDE;
-      P.Options := P.Options + [poUsePipes, poStderrToOutPut];
-      P.Executable := FindDefaultExecutablePath(Commands[0]);
+        Process.ShowWindow := swoHIDE;
+      Process.Options := Process.Options + [poUsePipes, poStderrToOutPut];
+      Process.Executable := FindDefaultExecutablePath(Commands[0]);
       for I := 1 to Commands.Count - 1 do
       begin
-        P.Parameters.Add(Commands[I]);
+        Process.Parameters.Add(Commands[I]);
       end;
-      P.Execute;
-      while P.Running do
+      Process.Execute;
+      while Process.Running do
       begin
         ReadFromPipes;
+        WriteToPipes;
         Synchronize(@SendToHer);
         Yield;
       end;
@@ -255,7 +270,7 @@ begin
       Synchronize(@SendToHer);
     end;
   finally
-    P.Free;
+    Process.Free;
     Commands.Free;
   end;
   Terminate;

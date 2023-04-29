@@ -71,8 +71,8 @@ type
 
   TNonBlockProcessRec = record
     IsActive: Boolean;
-    StdOut,
-    StdErr  : RawByteString;
+    StdOut  : RawByteString;
+    Thread  : TThread;
   end;
 
   TQWordList = specialize TList<QWord>;

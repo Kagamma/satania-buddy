@@ -207,7 +207,8 @@ begin
   S.RegisterFunc('answer', @SEAnswer, 0);
   S.RegisterFunc('notify', @SENotify, 1);
   S.RegisterFunc('process_run', @SEProcessRun, 2);
-  S.RegisterFunc('process_result_get', @SEProcessResultGet, 1);
+  S.RegisterFunc('process_pipe_get', @SEProcessPipeGet, 1);
+  S.RegisterFunc('process_pipe_set', @SEProcessPipeSet, 2);
   S.RegisterFunc('sprite_visible_set', @SESpriteVisibleSet, 1);
   S.RegisterFunc('sprite_visible_get', @SESpriteVisibleGet, 0);
   S.RegisterFunc('sprite_animation_stop_all', @SEStopAllAnimations, 0);
