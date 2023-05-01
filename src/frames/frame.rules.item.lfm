@@ -48,7 +48,7 @@ object FrameRulesItem: TFrameRulesItem
       Width = 23
       Align = alRight
       BorderSpacing.Around = 4
-      Images = FormEvilCEditor.ImageList
+      Images = FormMain.ImageList
       ImageIndex = 10
     end
   end
@@ -69,7 +69,7 @@ object FrameRulesItem: TFrameRulesItem
       Top = 0
       Width = 331
       Align = alTop
-      Images = FormEvilCEditor.ImageList
+      Images = FormMain.ImageList
       ImageIndex = 8
       OnClick = ButtonAddPatternClick
     end
@@ -109,7 +109,7 @@ object FrameRulesItem: TFrameRulesItem
       Top = 0
       Width = 200
       Align = alTop
-      Images = FormEvilCEditor.ImageList
+      Images = FormMain.ImageList
       ImageIndex = 8
       OnClick = ButtonAddResponseClick
     end

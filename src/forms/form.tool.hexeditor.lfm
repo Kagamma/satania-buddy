@@ -8,6 +8,7 @@ object FormHexEditor: TFormHexEditor
   ClientWidth = 814
   OnShow = FormShow
   Position = poScreenCenter
+  ShowInTaskBar = stAlways
   LCLVersion = '2.3.0.0'
   object HexEditor: TKHexEditor
     Left = 0
@@ -28,7 +29,7 @@ object FormHexEditor: TFormHexEditor
     Top = 0
     Width = 814
     Caption = 'ToolBar1'
-    Images = FormEvilCEditor.ImageList
+    Images = FormMain.ImageList
     TabOrder = 1
     object ToolButtonSave: TToolButton
       Left = 24

@@ -26,7 +26,7 @@ object FormRules: TFormRules
       Align = alRight
       BorderSpacing.Around = 8
       Caption = 'Cancel'
-      Images = FormEvilCEditor.ImageList
+      Images = FormMain.ImageList
       ImageIndex = 10
       OnClick = ButtonCancelClick
       TabOrder = 0
@@ -39,7 +39,7 @@ object FormRules: TFormRules
       Align = alRight
       BorderSpacing.Around = 8
       Caption = 'Save'
-      Images = FormEvilCEditor.ImageList
+      Images = FormMain.ImageList
       ImageIndex = 1
       OnClick = ButtonSaveClick
       TabOrder = 1
@@ -52,7 +52,7 @@ object FormRules: TFormRules
       Align = alRight
       BorderSpacing.Around = 8
       Caption = 'Add Rule'
-      Images = FormEvilCEditor.ImageList
+      Images = FormMain.ImageList
       ImageIndex = 8
       OnClick = ButtonAddRuleClick
       TabOrder = 2
@@ -65,7 +65,7 @@ object FormRules: TFormRules
       Align = alRight
       BorderSpacing.Around = 8
       Caption = 'Learn'
-      Images = FormEvilCEditor.ImageList
+      Images = FormMain.ImageList
       ImageIndex = 6
       OnClick = ButtonLearnRulesClick
       TabOrder = 3
@@ -78,7 +78,7 @@ object FormRules: TFormRules
       Align = alRight
       BorderSpacing.Around = 8
       Caption = 'Help'
-      Images = FormEvilCEditor.ImageList
+      Images = FormMain.ImageList
       ImageIndex = 5
       OnClick = ButtonHelpClick
       TabOrder = 4

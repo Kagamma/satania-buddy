@@ -35,7 +35,6 @@ type
   { TFormEvilCEditor }
 
   TFormEvilCEditor = class(TForm)
-    ImageList: TImageList;
     MenuItemEditorCut: TMenuItem;
     MenuItemEditorCopy: TMenuItem;
     MenuItemEditorPaste: TMenuItem;

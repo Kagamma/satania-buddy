@@ -74,6 +74,7 @@ type
 
   TFormMain = class(TForm)
     CastleControl: TCastleControl;
+    ImageList: TImageList;
     MenuItem1: TMenuItem;
     MenuItemConsole: TMenuItem;
     MenuItemHelpExternalServices: TMenuItem;

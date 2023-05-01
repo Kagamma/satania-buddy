@@ -84,7 +84,7 @@ object FrameRemindersItem: TFrameRemindersItem
       Top = 1
       Width = 23
       Align = alRight
-      Images = FormEvilCEditor.ImageList
+      Images = FormMain.ImageList
       ImageIndex = 10
     end
   end
@@ -112,7 +112,7 @@ object FrameRemindersItem: TFrameRemindersItem
       Top = 1
       Width = 23
       Align = alRight
-      Images = FormEvilCEditor.ImageList
+      Images = FormMain.ImageList
       ImageIndex = 2
       OnClick = ButtonRunClick
     end

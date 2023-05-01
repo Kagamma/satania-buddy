@@ -37,6 +37,7 @@ type
   TFormChat = class(TForm)
 
     ButtonClear: TBitBtn;
+    ButtonRefreshService: TSpeedButton;
     CheckBoxAlwaysOnTop: TCheckBox;
     ComboBoxService: TComboBox;
     EditChat: TMemo;
@@ -50,6 +51,7 @@ type
 
     procedure ButtonClearClick(Sender: TObject);
     procedure ButtonOpenServiceClick(Sender: TObject);
+    procedure ButtonRefreshServiceClick(Sender: TObject);
     procedure CheckBoxAlwaysOnTopChange(Sender: TObject);
     procedure ComboBoxServiceChange(Sender: TObject);
     procedure EditChatKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState
@@ -228,6 +230,11 @@ begin
     Frm.Show;
     Frm.LoadFromFile('data/scripts/' + Save.Settings.Skin + '/services/' + Self.ComboBoxService.Items[I]);
   end;
+end;
+
+procedure TFormChat.ButtonRefreshServiceClick(Sender: TObject);
+begin
+  LoadServiceList;
 end;
 
 procedure TFormChat.CheckBoxAlwaysOnTopChange(Sender: TObject);
