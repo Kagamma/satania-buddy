@@ -12,6 +12,7 @@ object FormMain: TFormMain
   OnDestroy = FormDestroy
   OnShow = FormShow
   PopupMenu = TrayMenu
+  Position = poDefault
   ShowInTaskBar = stNever
   LCLVersion = '2.3.0.0'
   Scaled = False

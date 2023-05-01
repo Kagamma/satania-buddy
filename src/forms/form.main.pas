@@ -278,8 +278,11 @@ begin
 end;
 
 procedure TFormMain.MenuItemEditorClick(Sender: TObject);
+var
+  Frm: TFormEvilCEditor;
 begin
-  FormEvilCEditor.Show;
+  Frm := TFormEvilCEditor.Create(nil);
+  Frm.Show;
 end;
 
 procedure TFormMain.MenuItemHelpAlarmsAndRemindersClick(Sender: TObject);

@@ -60,7 +60,6 @@ begin
   Application.CreateForm(TFormTouch, FormTouch);
   Application.CreateForm(TFormSettings, FormSettings);
   Application.CreateForm(TFormChat, FormChat);
-  Application.CreateForm(TFormEvilCEditor, FormEvilCEditor);
   Application.CreateForm(TFormReminders, FormReminders);
   Application.CreateForm(TFormRules, FormRules);
   Application.CreateForm(TFormAsk, FormAsk);

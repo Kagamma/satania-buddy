@@ -63,6 +63,7 @@ type
     procedure EditorKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure EditorSpecialLineColors(Sender: TObject; Line: integer;
       var Special: boolean; var FG, BG: TColor);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -90,9 +91,6 @@ type
     WorkingFile: String;
     procedure LoadFromFile(const AFileName: String);
   end;
-
-var
-  FormEvilCEditor: TFormEvilCEditor;
 
 implementation
 
@@ -237,6 +235,12 @@ begin
     BG := $00A5FF;
     Fg := clBlack;
   end;
+end;
+
+procedure TFormEvilCEditor.FormClose(Sender: TObject;
+  var CloseAction: TCloseAction);
+begin
+  CloseAction := caFree;
 end;
 
 procedure TFormEvilCEditor.EditorChange(Sender: TObject);

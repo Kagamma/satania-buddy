@@ -8,7 +8,7 @@ object FormChat: TFormChat
   ClientWidth = 537
   OnCreate = FormCreate
   OnShow = FormShow
-  Position = poScreenCenter
+  Position = poDefault
   LCLVersion = '2.3.0.0'
   object PanelChatlog: TPanel
     Left = 0

@@ -219,12 +219,14 @@ end;
 procedure TFormChat.ButtonOpenServiceClick(Sender: TObject);
 var
   I: Integer;
+  Frm: TFormEvilCEditor;
 begin
   I := Self.ComboBoxService.ItemIndex;
   if I > 0 then
   begin
-    FormEvilCEditor.Show;
-    FormEvilCEditor.LoadFromFile('data/scripts/' + Save.Settings.Skin + '/services/' + Self.ComboBoxService.Items[I]);
+    Frm := TFormEvilCEditor.Create(nil);
+    Frm.Show;
+    Frm.LoadFromFile('data/scripts/' + Save.Settings.Skin + '/services/' + Self.ComboBoxService.Items[I]);
   end;
 end;
 

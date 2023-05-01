@@ -1208,9 +1208,12 @@ begin
 end;
 
 function TSatania.SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Frm: TFormEvilCEditor;
 begin
-  FormEvilCEditor.Show;
-  FormEvilCEditor.LoadFromFile(Args[0]);
+  Frm := TFormEvilCEditor.Create(nil);
+  Frm.Show;
+  Frm.LoadFromFile(Args[0]);
 end;
 
 function TSatania.SEToolHexEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
