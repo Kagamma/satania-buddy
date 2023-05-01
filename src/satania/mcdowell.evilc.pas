@@ -910,12 +910,7 @@ var
 begin
   for I := 0 to Length(Args) - 1 do
   begin
-    case Args[I].Kind of
-      sevkNumber, sevkBoolean:
-        Write(Args[I].VarNumber);
-      sevkString:
-        Write(Args[I].VarString^);
-    end;
+    Write(SEValueToText(Args[I]));
   end;
 end;
 
