@@ -40,6 +40,9 @@ procedure TFormMain.FormCreate(Sender: TObject);
 var
   Attrib: LongInt;
   B: TDWMBlurBehind;
+  S: String;
+  Console: HWND;
+  OldStyle, NewStyle: LONG_PTR;
 begin
   Color := clFuchsia;
   Attrib := GetWindowLongA(Handle, GWL_EXSTYLE);
@@ -52,6 +55,12 @@ begin
   B.hRgnBlur := CreateRectRgn(0, 0, -1, -1);
   B.fTransitionOnMaximized := true;
   DwmEnableBlurBehindWindow(Handle, @B);
+  // Hide console
+  Console := GetConsoleWindow;
+  OldStyle := GetWindowLongPtr(Console, GWL_STYLE);
+  NewStyle := OldStyle and not WS_SYSMENU;
+  SetWindowLongPtr(Console, GWL_STYLE, NewStyle);
+  ShowWindow(Console, SW_HIDE);
 end;
 
 procedure TFormMain.FormDestroy(Sender: TObject);
