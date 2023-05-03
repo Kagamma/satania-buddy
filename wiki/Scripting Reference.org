@@ -21,7 +21,7 @@ talk('Hello, World!')
 *Types*
 
 #+begin_example
-string, number/boolean, map, buffer, null
+string, number/boolean, map, buffer, function, null
 #+end_example
 
 Evil script is a dynamic language. This means that a variable can point
@@ -230,6 +230,20 @@ c = add(5, 3)
 - /Unlike C, you need to assign return values to/ =result=
 - /You cannot declare a function inside another function/
 
+*Function reference*
+
+#+begin_example
+fn add(a, b) {
+  result = a + b
+}
+add_ref = add
+
+talk(add_ref(5, 3))
+talk(add = add_ref) // Print "true"
+#+end_example
+
+- /Currently, only named variables can be assigned & called. Map items are not supported yet./
+
 *Comment*
 
 #+begin_example
@@ -289,11 +303,15 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 
 ** Common functions
 *typeof(v: any): string*
-- Return type of variable (number / boolean / string / map / array / buffer / null).
+- Return type of variable (number / boolean / string / map / array / buffer / function / null).
 *string(n: number): string*
 - Convert n to string.
 *number(s: string): number*
 - Convert s to number.
+*write(s: any)*
+- Write to console.
+*writeln(s: any)*
+- Write to console. End with newline.
 *wait(seconds: number)*
 - Wait in seconds. This won't block the main process.
 *yield*
