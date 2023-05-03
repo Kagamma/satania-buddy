@@ -4788,9 +4788,9 @@ var
       ContinueStack.Push(ContinueList);
       BreakStack.Push(BreakList);
 
-      Token := NextTokenExpected([tkIdent]);
-
-      if IdentifyIdent(Token.Value) = tkUnknown then
+      Token := NextTokenExpected([tkVariable, tkIdent]);
+      // FIXME: tkVariable?
+      if Token.Kind = tkIdent then
       begin
         VarIdent := CreateIdent(ikVariable, Token);
       end else
