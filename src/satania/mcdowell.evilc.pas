@@ -4957,9 +4957,6 @@ var
     Ident: PSEIdent;
     Token, Token2, FuncToken: TSEToken;
     IsArrayAssign: Boolean = False;
-    FuncValue: TSEValue;
-    P: Pointer;
-    Ind: Integer;
   begin
     Ident := FindVar(Name);
     case PeekAtNextToken.Kind of
@@ -4988,37 +4985,18 @@ var
       else
         EmitPushVar(Ident^);
     end;
-    // Check to see if this is func ref
-    if (Token.Kind <> tkOpAssign) and (IdentifyIdent(PeekAtNextToken.Value) = tkFunction) and (PeekAtNextNextToken.Kind <> tkBracketOpen) then
+    ParseExpr;
+    if Token.Kind = tkOpAssign then
     begin
-      FuncToken := NextToken;
-      P := FindFunc(FuncToken.Value, FuncValue.VarFuncKind, Ind);
-      if P = nil then
-        Error(Format('Function "%s" not found', [FuncToken.Value]), FuncToken);
-      case FuncValue.VarFuncKind of
-        sefkScript, sefkImport:
-          FuncValue.VarFuncIndx := Ind;
-        sefkNative:
-          FuncValue.VarFuncIndx := QWord(P);
-      end;
-      FuncValue.Kind := sevkFunction;
-
-      Emit([Pointer(opPushConst), FuncValue]);
-    end else
-    begin
-      ParseExpr;
-      if Token.Kind = tkOpAssign then
-      begin
-        case Token.Value of
-          '+':
-            Emit([Pointer(opOperatorAdd)]);
-          '-':
-            Emit([Pointer(opOperatorSub)]);
-          '*':
-            Emit([Pointer(opOperatorMul)]);
-          '/':
-            Emit([Pointer(opOperatorDiv)]);
-        end;
+      case Token.Value of
+        '+':
+          Emit([Pointer(opOperatorAdd)]);
+        '-':
+          Emit([Pointer(opOperatorSub)]);
+        '*':
+          Emit([Pointer(opOperatorMul)]);
+        '/':
+          Emit([Pointer(opOperatorDiv)]);
       end;
     end;
     if IsArrayAssign then
