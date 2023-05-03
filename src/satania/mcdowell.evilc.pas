@@ -2762,6 +2762,8 @@ begin
         opCallRef:
           begin
             A := Pop; // Ref
+            if A^.Kind <> sevkFunction then
+              raise Exception.Create('Not a function reference');
             BinaryLocal.Ptr(CodePtrLocal + 1)^ := Pointer(A^.VarFuncIndx);
             case A^.VarFuncKind of
               sefkScript:
