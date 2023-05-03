@@ -4955,7 +4955,7 @@ var
   procedure ParseVarAssign(const Name: String);
   var
     Ident: PSEIdent;
-    Token, Token2, FuncToken: TSEToken;
+    Token, Token2: TSEToken;
     IsArrayAssign: Boolean = False;
   begin
     Ident := FindVar(Name);
