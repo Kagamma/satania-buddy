@@ -1101,7 +1101,7 @@ var
   I: Integer = 0;
 begin
   GC.AllocMap(@Result);
-  if SEMapIsValidArray(Args[0]) then
+  if not SEMapIsValidArray(Args[0]) then
   begin
     for Key in TSEValueMap(Args[0].VarMap).Keys do
     begin

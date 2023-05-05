@@ -244,14 +244,14 @@ object FormSettings: TFormSettings
         object LabelYourName: TLabel
           Left = 24
           Height = 15
-          Top = 264
+          Top = 272
           Width = 59
           Caption = 'Your Name'
         end
         object EditYourName: TEdit
           Left = 192
           Height = 23
-          Top = 264
+          Top = 272
           Width = 400
           TabOrder = 8
           Text = 'EditYourName'
