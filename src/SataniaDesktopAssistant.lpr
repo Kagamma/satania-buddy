@@ -53,12 +53,12 @@ begin
   Application.CreateForm(TFormMain, FormMain);
   Application.CreateForm(TFormTouch, FormTouch);
   Application.CreateForm(TFormSettings, FormSettings);
+  Application.CreateForm(TFormBubble, FormBubble);
   Application.CreateForm(TFormChat, FormChat);
   Application.CreateForm(TFormReminders, FormReminders);
   Application.CreateForm(TFormRules, FormRules);
   Application.CreateForm(TFormAsk, FormAsk);
   Application.CreateForm(TFormHexEditor, FormHexEditor);
-  Application.CreateForm(TFormBubble, FormBubble);
   Application.Run;
 end.
 

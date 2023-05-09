@@ -195,6 +195,7 @@ begin
   Self.TypingSpeed := Save.Settings.TextSpeed;
   Self.Width := 0;
   Self.Height := 0;
+  Self.Hide;
 end;
 
 procedure TFormBubble.FormActivate(Sender: TObject);

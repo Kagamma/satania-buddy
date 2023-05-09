@@ -40,9 +40,13 @@ type
 
 implementation
 
+uses
+  Globals;
+
 constructor TSataniaChatHistory.Create;
 begin
   inherited;
+  CreateDir(PATH_CHAT_HISTORY);
   Self.ChatHistoryList := TChatHistoryList.Create;
 end;
 
