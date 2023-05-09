@@ -195,7 +195,6 @@ begin
   Self.TypingSpeed := Save.Settings.TextSpeed;
   Self.Width := 0;
   Self.Height := 0;
-  Self.Hide;
 end;
 
 procedure TFormBubble.FormActivate(Sender: TObject);
@@ -210,7 +209,7 @@ end;
 
 procedure TFormBubble.FormShow(Sender: TObject);
 begin
-  if FormChat.Visible then
+  if (FormChat <> nil) and FormChat.Visible then
     FormChat.MemoChatLog.SetFocus;
 end;
 
