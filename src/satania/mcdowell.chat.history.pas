@@ -5,10 +5,7 @@ unit Mcdowell.Chat.History;
 interface
 
 uses
-  Classes, SysUtils, Generics.Collections;
-
-const
-  CHAT_HISTORY_VERSION = 1;
+  Classes, SysUtils, Generics.Collections, StrUtils;
 
 type
   TChatSenderEnum = (
@@ -27,7 +24,7 @@ type
   TSataniaChatHistory = class
   private
     ChatHistoryList: TChatHistoryList;
-    ChatHistoryFile: TFileStream;
+    Path: String;
   public
     constructor Create;
     destructor Destroy; override;
@@ -53,64 +50,64 @@ end;
 destructor TSataniaChatHistory.Destroy;
 begin
   FreeAndNil(Self.ChatHistoryList);
-  FreeAndNil(Self.ChatHistoryFile);
   inherited;
 end;
 
 procedure TSataniaChatHistory.LoadFromFile(const HistoryName: String);
 var
-  Path: String;
   CH: TChatHistoryRec;
+  F: TextFile;
 begin
   ChatHistoryList.Clear;
-  if ChatHistoryFile <> nil then
-    ChatHistoryFile.Free;
   Path := HistoryName;
   if not FileExists(Path) then
   begin
-    ChatHistoryFile := TFileStream.Create(Path, fmCreate or fmShareDenyWrite);
-    ChatHistoryFile.WriteDWord(CHAT_HISTORY_VERSION);
+    AssignFile(F, Path);
+    Rewrite(F);
   end else
   begin
-    ChatHistoryFile := TFileStream.Create(Path, fmOpenReadWrite or fmShareDenyWrite);
+    AssignFile(F, Path);
+    Reset(F);
   end;
 
-  ChatHistoryFile.Position := 0;
-  if ChatHistoryFile.Position < ChatHistoryFile.Size then
-    ChatHistoryFile.ReadDWord; // Version
   try
-    while ChatHistoryFile.Position < ChatHistoryFile.Size do
+    while not EOF(F) do
     begin
-      CH.Time := ChatHistoryFile.ReadAnsiString;
-      CH.SenderType := TChatSenderEnum(ChatHistoryFile.ReadDWord);
-      CH.Message := ChatHistoryFile.ReadAnsiString;
+      Readln(F, CH.Time);
+      Readln(F, Integer(CH.SenderType));
+      Readln(F, CH.Message);
+      CH.Message := StringReplace(CH.Message, '\n', #10, [rfReplaceAll]);
       Self.ChatHistoryList.Add(CH);
     end;
   except
   end;
+  CloseFile(F);
 end;
 
 procedure TSataniaChatHistory.SaveLastestMessage;
 var
   CH: TChatHistoryRec;
+  F: TextFile;
 begin
   if ChatHistoryList.Count > 0 then
   begin
     CH := ChatHistoryList[ChatHistoryList.Count - 1];
     if CH.SenderType <> cseSystem then
     begin
-      ChatHistoryFile.WriteAnsiString(CH.Time);
-      ChatHistoryFile.WriteDWord(DWord(CH.SenderType));
-      ChatHistoryFile.WriteAnsiString(CH.Message);
+      AssignFile(F, Path);
+      Append(F);
+      Writeln(F, CH.Time);
+      Writeln(F, Integer(CH.SenderType));
+      Writeln(F, StringsReplace(CH.Message, [#10#13, #10], ['\n', '\n'], [rfReplaceAll]));
+      CloseFile(F);
     end;
   end;
 end;
 
 procedure TSataniaChatHistory.Clear;
 begin
-  ChatHistoryList.Clear;
-  ChatHistoryFile.Size := 0;
-  ChatHistoryFile.WriteDWord(CHAT_HISTORY_VERSION);
+  if FileExists(Path) then
+    DeleteFile(Path);
 end;
 
 end.
