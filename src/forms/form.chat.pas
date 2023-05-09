@@ -99,6 +99,7 @@ procedure TFormChat.EnableStreaming;
 begin
   FRichText.IsStreaming := True;
   FStreamingPartCount := 0;
+  Satania.TakeLocalBoundingBoxSnapshot;
 end;
 
 procedure TFormChat.DisableStreaming;

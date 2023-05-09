@@ -90,6 +90,7 @@ type
     procedure DefaultPosition;
     procedure LoadModel(S: String);
     procedure LoadLocalFlags;
+    procedure TakeLocalBoundingBoxSnapshot;
     procedure SetAnimationSpeed(AnimName: String; Speed: Single);
     procedure StartAnimation(AnimName: String; IsRepeat: Boolean = True); overload;
     procedure StartAnimation(URL, AnimName: String; IsRepeat: Boolean = True); overload;
@@ -340,9 +341,7 @@ begin
     AnimTalkFinish := 'talk_finish';
     Self.AnimTalkScriptList.Clear;
 
-    LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
-    LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
-    LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
+    TakeLocalBoundingBoxSnapshot;
 
     TouchBone := nil;
     ExposeTransforms := TStringList.Create;
@@ -374,6 +373,13 @@ begin
     FreeAndNil(IniFilePath);
   IniFilePath := PATH_SCRIPTS_RAW + Save.Settings.Skin +  '/flags.ini';
   LocalFlagIni := TIniFile.Create(IniFilePath);
+end;
+
+procedure TSatania.TakeLocalBoundingBoxSnapshot;
+begin
+  LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
+  LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
+  LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
 end;
 
 procedure TSatania.SetAnimationSpeed(AnimName: String; Speed: Single);
@@ -496,9 +502,7 @@ begin
   FormChat.DisableStreaming;
   FormBubble.DisableStreaming;
   try
-    LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
-    LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
-    LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
+    TakeLocalBoundingBoxSnapshot;
     FormBubble.Text := S;
     ChatBubbleDelay := 1;
     IsTalking := True;
@@ -522,9 +526,7 @@ procedure TSatania.Ask(S: String);
 begin
   CSTalk.Enter;
   try
-    LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
-    LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
-    LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
+    TakeLocalBoundingBoxSnapshot;
 
     FormAsk.Answer.Clear;
     FormAsk.AskText.Clear;
@@ -553,9 +555,7 @@ procedure TSatania.TalkWithoutBlock(S: String);
 begin
   CSTalk.Enter;
   try
-    LocalBoundingBoxSnapshot := Sprite.LocalBoundingBox;
-    LocalBoundingBoxSnapshot.Data[0] := LocalBoundingBoxSnapshot.Data[0] * Sprite.Scale;
-    LocalBoundingBoxSnapshot.Data[1] := LocalBoundingBoxSnapshot.Data[1] * Sprite.Scale;
+    TakeLocalBoundingBoxSnapshot;
     FormBubble.Text := S;
     ChatBubbleDelay := 1;
     if S <> '' then
