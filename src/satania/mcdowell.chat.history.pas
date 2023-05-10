@@ -108,6 +108,7 @@ procedure TSataniaChatHistory.Clear;
 var
   F: TextFile;
 begin
+  ChatHistoryList.Clear;
   AssignFile(F, Path);
   Rewrite(F);
   CloseFile(F);
