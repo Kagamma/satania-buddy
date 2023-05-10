@@ -4,8 +4,8 @@ object FormChat: TFormChat
   Top = 239
   Width = 537
   Caption = 'Chat'
-  ClientHeight = 509
-  ClientWidth = 537
+  ClientHeight = 470
+  ClientWidth = 521
   Icon.Data = {
     7E04000000000100010010100000010020006804000016000000280000001000
     0000200000000100200000000000000400006400000064000000000000000000
@@ -51,42 +51,42 @@ object FormChat: TFormChat
   ShowInTaskBar = stAlways
   object PageControl: TPageControl
     Left = 0
-    Height = 509
+    Height = 470
     Top = 0
-    Width = 537
+    Width = 521
     ActivePage = TabSheetChat
     Align = alClient
     TabIndex = 0
     TabOrder = 0
     object TabSheetChat: TTabSheet
       Caption = 'Chat'
-      ClientHeight = 481
-      ClientWidth = 529
+      ClientHeight = 442
+      ClientWidth = 513
       object PanelChatlog: TPanel
         Left = 0
-        Height = 362
+        Height = 323
         Top = 0
-        Width = 529
+        Width = 513
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 362
-        ClientWidth = 529
+        ClientHeight = 323
+        ClientWidth = 513
         TabOrder = 0
         object Panel1: TPanel
           Left = 0
-          Height = 362
+          Height = 323
           Top = 0
-          Width = 529
+          Width = 513
           Align = alClient
           BevelOuter = bvSpace
-          ClientHeight = 362
-          ClientWidth = 529
+          ClientHeight = 323
+          ClientWidth = 513
           TabOrder = 0
           object MemoChatLog: TKMemo
             Left = 1
-            Height = 360
+            Height = 321
             Top = 1
-            Width = 527
+            Width = 511
             Align = alClient
             ContentPadding.Left = 5
             ContentPadding.Top = 5
@@ -102,18 +102,18 @@ object FormChat: TFormChat
       object PanelEdit: TPanel
         Left = 0
         Height = 71
-        Top = 362
-        Width = 529
+        Top = 323
+        Width = 513
         Align = alBottom
         ClientHeight = 71
-        ClientWidth = 529
+        ClientWidth = 513
         TabOrder = 1
         object EditChat: TMemo
           Left = 7
           Height = 57
           Hint = 'Say something!'
           Top = 7
-          Width = 515
+          Width = 499
           Align = alClient
           BorderSpacing.Around = 6
           OnKeyDown = EditChatKeyDown
@@ -125,22 +125,22 @@ object FormChat: TFormChat
         Cursor = crVSplit
         Left = 0
         Height = 5
-        Top = 433
-        Width = 529
+        Top = 394
+        Width = 513
         Align = alBottom
         ResizeAnchor = akBottom
       end
       object PanelToolbar: TPanel
         Left = 0
         Height = 43
-        Top = 438
-        Width = 529
+        Top = 399
+        Width = 513
         Align = alBottom
         ClientHeight = 43
-        ClientWidth = 529
+        ClientWidth = 513
         TabOrder = 3
         object ButtonEdit: TSpeedButton
-          Left = 497
+          Left = 481
           Height = 25
           Top = 9
           Width = 23
@@ -166,7 +166,7 @@ object FormChat: TFormChat
           TabOrder = 1
         end
         object ComboBoxService: TComboBox
-          Left = 248
+          Left = 232
           Height = 23
           Top = 10
           Width = 164
@@ -185,7 +185,7 @@ object FormChat: TFormChat
           Text = 'None'
         end
         object ButtonOpenService: TSpeedButton
-          Left = 412
+          Left = 396
           Height = 25
           Hint = 'Oepn service in Script Editor'
           Top = 9
@@ -198,7 +198,7 @@ object FormChat: TFormChat
           OnClick = ButtonOpenServiceClick
         end
         object ButtonRefreshService: TSpeedButton
-          Left = 435
+          Left = 419
           Height = 25
           Hint = 'Refresh service list'
           Top = 9
@@ -212,7 +212,7 @@ object FormChat: TFormChat
           OnClick = ButtonRefreshServiceClick
         end
         object ButtonClear: TSpeedButton
-          Left = 470
+          Left = 454
           Height = 25
           Top = 9
           Width = 23
@@ -228,13 +228,13 @@ object FormChat: TFormChat
     end
     object TabSheetChatEdit: TTabSheet
       Caption = 'Chat Edit'
-      ClientHeight = 481
-      ClientWidth = 529
+      ClientHeight = 442
+      ClientWidth = 513
       object MemoEdit: TMemo
         Left = 0
-        Height = 438
+        Height = 399
         Top = 0
-        Width = 529
+        Width = 513
         Align = alClient
         ScrollBars = ssVertical
         TabOrder = 0
@@ -242,14 +242,14 @@ object FormChat: TFormChat
       object Panel2: TPanel
         Left = 0
         Height = 43
-        Top = 438
-        Width = 529
+        Top = 399
+        Width = 513
         Align = alBottom
         ClientHeight = 43
-        ClientWidth = 529
+        ClientWidth = 513
         TabOrder = 1
         object ButtonEditCancel: TSpeedButton
-          Left = 470
+          Left = 454
           Height = 25
           Top = 9
           Width = 23
@@ -262,7 +262,7 @@ object FormChat: TFormChat
           OnClick = ButtonEditCancelClick
         end
         object ButtonEditSave: TSpeedButton
-          Left = 497
+          Left = 481
           Height = 25
           Top = 9
           Width = 23

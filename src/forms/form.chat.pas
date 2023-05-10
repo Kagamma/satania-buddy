@@ -73,6 +73,7 @@ type
   private
     FRichText: TSataniaRichText;
     FStreamingPartCount: Integer;
+    FIsWriteToHistoryLog: Boolean;
     procedure ScrollToBottom;
   public
     Typing: TKMemoTextBlock;
@@ -137,6 +138,7 @@ var
 begin
   MemoChatLog.Blocks.Clear;
   ChatHistory.LoadFromFile(PATH_CHAT_HISTORY + Save.Settings.Skin + '.txt');
+  FIsWriteToHistoryLog := False;
   for I := 0 to Self.ChatHistory.List.Count - 1 do
   begin
     CH := Self.ChatHistory.List[I];
@@ -146,6 +148,7 @@ begin
       InsertLog(Save.Settings.UserName, CH.Message, CH.Time);
     RemoveTyping;
   end;
+  FIsWriteToHistoryLog := True;
 end;
 
 procedure TFormChat.FormCreate(Sender: TObject);
@@ -155,6 +158,7 @@ begin
   FRichText := TSataniaRichText.Create;
   LoadServiceList;
   LoadChatHistoryFromFile;
+  FIsWriteToHistoryLog := True;
 end;
 
 procedure TFormChat.FormDestroy(Sender: TObject);
@@ -246,6 +250,7 @@ end;
 
 procedure TFormChat.ButtonEditClick(Sender: TObject);
 begin
+  if not FormBubble.FinishedTyping then Exit;
   PageControl.PageIndex := 1;
   MemoEdit.Lines.Text := ChatHistory.ToEdit;
 end;
@@ -355,17 +360,20 @@ begin
   FRichText.NextTokenPos := FRichText.TokenList.Count - 1;
   FRichText.Parse(MemoChatLog, (LogName <> Save.Settings.UserName) or Save.Settings.EnableItalicForUserText);
 
-  if (not FRichText.IsStreaming) or (FStreamingPartCount = 0) then
+  if FIsWriteToHistoryLog then
   begin
-    CH.Time := Time;
-    CH.Message := Msg;
-    ChatHistory.List.Add(CH);
-  end;
-  if (FRichText.IsStreaming) and (FStreamingPartCount > 0) then
-  begin
-    CH := ChatHistory.List[ChatHistory.List.Count - 1];
-    CH.Message := Msg;
-    ChatHistory.List[ChatHistory.List.Count - 1] := CH;
+    if (not FRichText.IsStreaming) or (FStreamingPartCount = 0) then
+    begin
+      CH.Time := Time;
+      CH.Message := Msg;
+      ChatHistory.List.Add(CH);
+    end;
+    if (FRichText.IsStreaming) and (FStreamingPartCount > 0) then
+    begin
+      CH := ChatHistory.List[ChatHistory.List.Count - 1];
+      CH.Message := Msg;
+      ChatHistory.List[ChatHistory.List.Count - 1] := CH;
+    end;
   end;
 
   if not FRichText.IsStreaming then
