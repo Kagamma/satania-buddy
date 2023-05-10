@@ -105,9 +105,12 @@ begin
 end;
 
 procedure TSataniaChatHistory.Clear;
+var
+  F: TextFile;
 begin
-  if FileExists(Path) then
-    DeleteFile(Path);
+  AssignFile(F, Path);
+  Rewrite(F);
+  CloseFile(F);
 end;
 
 end.
