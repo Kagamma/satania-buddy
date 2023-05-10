@@ -49,153 +49,233 @@ object FormChat: TFormChat
   OnShow = FormShow
   Position = poDefault
   ShowInTaskBar = stAlways
-  LCLVersion = '2.3.0.0'
-  object PanelChatlog: TPanel
+  object PageControl: TPageControl
     Left = 0
-    Height = 390
+    Height = 509
     Top = 0
     Width = 537
+    ActivePage = TabSheetChat
     Align = alClient
-    BevelOuter = bvNone
-    ClientHeight = 390
-    ClientWidth = 537
+    TabIndex = 0
     TabOrder = 0
-    object Panel1: TPanel
-      Left = 0
-      Height = 390
-      Top = 0
-      Width = 537
-      Align = alClient
-      BevelOuter = bvSpace
-      ClientHeight = 390
-      ClientWidth = 537
-      TabOrder = 0
-      object MemoChatLog: TKMemo
-        Left = 1
-        Height = 388
-        Top = 1
-        Width = 535
+    object TabSheetChat: TTabSheet
+      Caption = 'Chat'
+      ClientHeight = 481
+      ClientWidth = 529
+      object PanelChatlog: TPanel
+        Left = 0
+        Height = 362
+        Top = 0
+        Width = 529
         Align = alClient
-        ContentPadding.Left = 5
-        ContentPadding.Top = 5
-        ContentPadding.Right = 5
-        ContentPadding.Bottom = 5
-        ParentFont = False
-        ReadOnly = True
+        BevelOuter = bvNone
+        ClientHeight = 362
+        ClientWidth = 529
         TabOrder = 0
-        Visible = True
+        object Panel1: TPanel
+          Left = 0
+          Height = 362
+          Top = 0
+          Width = 529
+          Align = alClient
+          BevelOuter = bvSpace
+          ClientHeight = 362
+          ClientWidth = 529
+          TabOrder = 0
+          object MemoChatLog: TKMemo
+            Left = 1
+            Height = 360
+            Top = 1
+            Width = 527
+            Align = alClient
+            ContentPadding.Left = 5
+            ContentPadding.Top = 5
+            ContentPadding.Right = 5
+            ContentPadding.Bottom = 5
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 0
+            Visible = True
+          end
+        end
+      end
+      object PanelEdit: TPanel
+        Left = 0
+        Height = 71
+        Top = 362
+        Width = 529
+        Align = alBottom
+        ClientHeight = 71
+        ClientWidth = 529
+        TabOrder = 1
+        object EditChat: TMemo
+          Left = 7
+          Height = 57
+          Hint = 'Say something!'
+          Top = 7
+          Width = 515
+          Align = alClient
+          BorderSpacing.Around = 6
+          OnKeyDown = EditChatKeyDown
+          OnKeyUp = EditChatKeyUp
+          TabOrder = 0
+        end
+      end
+      object Splitter1: TSplitter
+        Cursor = crVSplit
+        Left = 0
+        Height = 5
+        Top = 433
+        Width = 529
+        Align = alBottom
+        ResizeAnchor = akBottom
+      end
+      object PanelToolbar: TPanel
+        Left = 0
+        Height = 43
+        Top = 438
+        Width = 529
+        Align = alBottom
+        ClientHeight = 43
+        ClientWidth = 529
+        TabOrder = 3
+        object ButtonEdit: TSpeedButton
+          Left = 497
+          Height = 25
+          Top = 9
+          Width = 23
+          Align = alRight
+          BorderSpacing.Left = 4
+          BorderSpacing.Top = 8
+          BorderSpacing.Right = 8
+          BorderSpacing.Bottom = 8
+          BorderSpacing.InnerBorder = 8
+          Images = FormMain.ImageList
+          ImageIndex = 22
+          OnClick = ButtonEditClick
+        end
+        object CheckBoxAlwaysOnTop: TCheckBox
+          Left = 9
+          Height = 25
+          Top = 9
+          Width = 93
+          Align = alLeft
+          BorderSpacing.Around = 8
+          Caption = 'Always on top'
+          OnChange = CheckBoxAlwaysOnTopChange
+          TabOrder = 1
+        end
+        object ComboBoxService: TComboBox
+          Left = 248
+          Height = 23
+          Top = 10
+          Width = 164
+          Align = alRight
+          BorderSpacing.Left = 8
+          BorderSpacing.Top = 9
+          BorderSpacing.Bottom = 8
+          ItemHeight = 15
+          ItemIndex = 0
+          Items.Strings = (
+            'None'
+          )
+          OnChange = ComboBoxServiceChange
+          ReadOnly = True
+          TabOrder = 0
+          Text = 'None'
+        end
+        object ButtonOpenService: TSpeedButton
+          Left = 412
+          Height = 25
+          Hint = 'Oepn service in Script Editor'
+          Top = 9
+          Width = 23
+          Align = alRight
+          BorderSpacing.Top = 8
+          BorderSpacing.Bottom = 8
+          Images = FormMain.ImageList
+          ImageIndex = 0
+          OnClick = ButtonOpenServiceClick
+        end
+        object ButtonRefreshService: TSpeedButton
+          Left = 435
+          Height = 25
+          Hint = 'Refresh service list'
+          Top = 9
+          Width = 23
+          Align = alRight
+          BorderSpacing.Top = 8
+          BorderSpacing.Right = 12
+          BorderSpacing.Bottom = 8
+          Images = FormMain.ImageList
+          ImageIndex = 23
+          OnClick = ButtonRefreshServiceClick
+        end
+        object ButtonClear: TSpeedButton
+          Left = 470
+          Height = 25
+          Top = 9
+          Width = 23
+          Align = alRight
+          BorderSpacing.Left = 8
+          BorderSpacing.Top = 8
+          BorderSpacing.Bottom = 8
+          Images = FormMain.ImageList
+          ImageIndex = 15
+          OnClick = ButtonClearClick
+        end
       end
     end
-  end
-  object PanelEdit: TPanel
-    Left = 0
-    Height = 71
-    Top = 395
-    Width = 537
-    Align = alBottom
-    ClientHeight = 71
-    ClientWidth = 537
-    TabOrder = 1
-    object EditChat: TMemo
-      Left = 7
-      Height = 57
-      Hint = 'Say something!'
-      Top = 7
-      Width = 523
-      Align = alClient
-      BorderSpacing.Around = 6
-      OnKeyDown = EditChatKeyDown
-      OnKeyUp = EditChatKeyUp
-      TabOrder = 0
-    end
-  end
-  object Splitter1: TSplitter
-    Cursor = crVSplit
-    Left = 0
-    Height = 5
-    Top = 390
-    Width = 537
-    Align = alBottom
-    ResizeAnchor = akBottom
-  end
-  object PanelToolbar: TPanel
-    Left = 0
-    Height = 43
-    Top = 466
-    Width = 537
-    Align = alBottom
-    ClientHeight = 43
-    ClientWidth = 537
-    TabOrder = 3
-    object ButtonClear: TBitBtn
-      Left = 432
-      Height = 25
-      Top = 9
-      Width = 96
-      Align = alRight
-      BorderSpacing.Around = 8
-      Caption = 'Clear'
-      Images = FormMain.ImageList
-      ImageIndex = 15
-      OnClick = ButtonClearClick
-      TabOrder = 0
-    end
-    object CheckBoxAlwaysOnTop: TCheckBox
-      Left = 9
-      Height = 25
-      Top = 9
-      Width = 93
-      Align = alLeft
-      BorderSpacing.Around = 8
-      Caption = 'Always on top'
-      OnChange = CheckBoxAlwaysOnTopChange
-      TabOrder = 1
-    end
-    object ComboBoxService: TComboBox
-      Left = 214
-      Height = 23
-      Top = 10
-      Width = 164
-      Align = alRight
-      BorderSpacing.Left = 8
-      BorderSpacing.Top = 9
-      BorderSpacing.Bottom = 8
-      ItemHeight = 15
-      ItemIndex = 0
-      Items.Strings = (
-        'None'
-      )
-      OnChange = ComboBoxServiceChange
-      ReadOnly = True
-      TabOrder = 2
-      Text = 'None'
-    end
-    object ButtonOpenService: TSpeedButton
-      Left = 378
-      Height = 25
-      Hint = 'Oepn service in Script Editor'
-      Top = 9
-      Width = 23
-      Align = alRight
-      BorderSpacing.Top = 8
-      BorderSpacing.Bottom = 8
-      Images = FormMain.ImageList
-      ImageIndex = 0
-      OnClick = ButtonOpenServiceClick
-    end
-    object ButtonRefreshService: TSpeedButton
-      Left = 401
-      Height = 25
-      Hint = 'Refresh service list'
-      Top = 9
-      Width = 23
-      Align = alRight
-      BorderSpacing.Top = 8
-      BorderSpacing.Right = 8
-      BorderSpacing.Bottom = 8
-      Images = FormMain.ImageList
-      ImageIndex = 23
-      OnClick = ButtonRefreshServiceClick
+    object TabSheetChatEdit: TTabSheet
+      Caption = 'Chat Edit'
+      ClientHeight = 481
+      ClientWidth = 529
+      object MemoEdit: TMemo
+        Left = 0
+        Height = 438
+        Top = 0
+        Width = 529
+        Align = alClient
+        ScrollBars = ssVertical
+        TabOrder = 0
+      end
+      object Panel2: TPanel
+        Left = 0
+        Height = 43
+        Top = 438
+        Width = 529
+        Align = alBottom
+        ClientHeight = 43
+        ClientWidth = 529
+        TabOrder = 1
+        object ButtonEditCancel: TSpeedButton
+          Left = 470
+          Height = 25
+          Top = 9
+          Width = 23
+          Align = alRight
+          BorderSpacing.Left = 8
+          BorderSpacing.Top = 8
+          BorderSpacing.Bottom = 8
+          Images = FormMain.ImageList
+          ImageIndex = 10
+          OnClick = ButtonEditCancelClick
+        end
+        object ButtonEditSave: TSpeedButton
+          Left = 497
+          Height = 25
+          Top = 9
+          Width = 23
+          Align = alRight
+          BorderSpacing.Left = 4
+          BorderSpacing.Top = 8
+          BorderSpacing.Right = 8
+          BorderSpacing.Bottom = 8
+          Images = FormMain.ImageList
+          ImageIndex = 1
+          OnClick = ButtonEditSaveClick
+        end
+      end
     end
   end
 end

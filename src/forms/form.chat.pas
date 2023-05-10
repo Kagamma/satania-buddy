@@ -26,30 +26,40 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
-  ExtCtrls, Process, CastleControls, CastleUIControls,
-  CastleURIUtils, LCLTranslator, kmemo, Types, StrUtils, Generics.Collections,
-  kgraphics, FileUtil,
-  Mcdowell.RichText, Mcdowell.Chat.History;
+  ExtCtrls, Process, CastleControls, CastleUIControls, CastleURIUtils,
+  LCLTranslator, ComCtrls, kmemo, Types, StrUtils, Generics.Collections,
+  kgraphics, FileUtil, Mcdowell.RichText, Mcdowell.Chat.History;
 
 type
   { TFormChat }
 
   TFormChat = class(TForm)
+    ButtonEditCancel: TBitBtn;
 
+    ButtonEdit: TBitBtn;
     ButtonClear: TBitBtn;
+    ButtonEditSave: TBitBtn;
     ButtonRefreshService: TSpeedButton;
     CheckBoxAlwaysOnTop: TCheckBox;
     ComboBoxService: TComboBox;
     EditChat: TMemo;
+    MemoEdit: TMemo;
     MemoChatLog: TKMemo;
+    PageControl: TPageControl;
     Panel1: TPanel;
+    Panel2: TPanel;
     PanelToolbar: TPanel;
     PanelEdit: TPanel;
     PanelChatlog: TPanel;
     ButtonOpenService: TSpeedButton;
     Splitter1: TSplitter;
+    TabSheetChatEdit: TTabSheet;
+    TabSheetChat: TTabSheet;
 
+    procedure ButtonEditCancelClick(Sender: TObject);
+    procedure ButtonEditSaveClick(Sender: TObject);
     procedure ButtonClearClick(Sender: TObject);
+    procedure ButtonEditClick(Sender: TObject);
     procedure ButtonOpenServiceClick(Sender: TObject);
     procedure ButtonRefreshServiceClick(Sender: TObject);
     procedure CheckBoxAlwaysOnTopChange(Sender: TObject);
@@ -159,6 +169,7 @@ var
   I : Integer;
   S : String;
 begin
+  PageControl.PageIndex := 0;
   ComboBoxService.Clear;
   ComboBoxService.Items.Add('None');
   ComboBoxService.ItemIndex := 0;
@@ -177,6 +188,8 @@ end;
 
 procedure TFormChat.FormShow(Sender: TObject);
 begin
+  PageControl.ShowTabs := False;
+  PageControl.PageIndex := 0;
   EditChat.SetFocus;
   // Load list of services
   LoadServiceList;
@@ -217,6 +230,24 @@ begin
     MemoChatLog.Blocks.Clear;
     ChatHistory.Clear;
   end;
+end;
+
+procedure TFormChat.ButtonEditSaveClick(Sender: TObject);
+begin
+  PageControl.PageIndex := 0;
+  ChatHistory.FromEdit(StringReplace(MemoEdit.Lines.Text, #13, '', [rfReplaceAll]));
+  LoadChatHistoryFromFile;
+end;
+
+procedure TFormChat.ButtonEditCancelClick(Sender: TObject);
+begin
+  PageControl.PageIndex := 0;
+end;
+
+procedure TFormChat.ButtonEditClick(Sender: TObject);
+begin
+  PageControl.PageIndex := 1;
+  MemoEdit.Lines.Text := ChatHistory.ToEdit;
 end;
 
 procedure TFormChat.ButtonOpenServiceClick(Sender: TObject);

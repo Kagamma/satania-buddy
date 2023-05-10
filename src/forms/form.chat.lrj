@@ -1,9 +1,10 @@
 {"version":1,"strings":[
 {"hash":302724,"name":"tformchat.caption","sourcebytes":[67,104,97,116],"value":"Chat"},
+{"hash":302724,"name":"tformchat.tabsheetchat.caption","sourcebytes":[67,104,97,116],"value":"Chat"},
 {"hash":68773169,"name":"tformchat.editchat.hint","sourcebytes":[83,97,121,32,115,111,109,101,116,104,105,110,103,33],"value":"Say something!"},
-{"hash":4860802,"name":"tformchat.buttonclear.caption","sourcebytes":[67,108,101,97,114],"value":"Clear"},
 {"hash":259910512,"name":"tformchat.checkboxalwaysontop.caption","sourcebytes":[65,108,119,97,121,115,32,111,110,32,116,111,112],"value":"Always on top"},
 {"hash":349765,"name":"tformchat.comboboxservice.text","sourcebytes":[78,111,110,101],"value":"None"},
 {"hash":61061026,"name":"tformchat.buttonopenservice.hint","sourcebytes":[79,101,112,110,32,115,101,114,118,105,99,101,32,105,110,32,83,99,114,105,112,116,32,69,100,105,116,111,114],"value":"Oepn service in Script Editor"},
-{"hash":87261300,"name":"tformchat.buttonrefreshservice.hint","sourcebytes":[82,101,102,114,101,115,104,32,115,101,114,118,105,99,101,32,108,105,115,116],"value":"Refresh service list"}
+{"hash":87261300,"name":"tformchat.buttonrefreshservice.hint","sourcebytes":[82,101,102,114,101,115,104,32,115,101,114,118,105,99,101,32,108,105,115,116],"value":"Refresh service list"},
+{"hash":140834020,"name":"tformchat.tabsheetchatedit.caption","sourcebytes":[67,104,97,116,32,69,100,105,116],"value":"Chat Edit"}
 ]}

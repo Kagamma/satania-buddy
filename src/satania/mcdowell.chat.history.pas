@@ -5,7 +5,7 @@ unit Mcdowell.Chat.History;
 interface
 
 uses
-  Classes, SysUtils, Generics.Collections, StrUtils;
+  Classes, SysUtils, Generics.Collections, StrUtils, LazUTF8;
 
 type
   TChatSenderEnum = (
@@ -31,6 +31,8 @@ type
     procedure LoadFromFile(const HistoryName: String);
     procedure SaveLastestMessage;
     procedure Clear;
+    function ToEdit: String;
+    procedure FromEdit(Source: String);
 
     property List: TChatHistoryList read ChatHistoryList;
   end;
@@ -38,7 +40,7 @@ type
 implementation
 
 uses
-  Globals;
+  Globals, Mcdowell;
 
 constructor TSataniaChatHistory.Create;
 begin
@@ -112,6 +114,79 @@ begin
   AssignFile(F, Path);
   Rewrite(F);
   CloseFile(F);
+end;
+
+function TSataniaChatHistory.ToEdit: String;
+var
+  CH: TChatHistoryRec;
+begin
+  Result := '';
+  for CH in ChatHistoryList do
+  begin
+    case CH.SenderType of
+      cseSatania:
+        Result := Result + #10 + Satania.Name + ': ';
+      cseUser:
+        Result := Result + #10 + Save.Settings.UserName + ': ';
+      else
+        Continue;
+    end;
+    Result := Result + CH.Message;
+  end;
+  Result := Trim(Result);
+end;
+
+procedure TSataniaChatHistory.FromEdit(Source: String);
+var
+  CH    : TChatHistoryRec;
+  C     : String;
+  Buffer: String;
+  SataniaToken,
+  UserToken: String;
+  I     : Integer;
+begin
+  Buffer := '';
+  Source := Trim(Source);
+  SataniaToken := Satania.Name + ': ';
+  UserToken    := Save.Settings.UserName + ': ';
+  Clear;
+  CH.Message := '';
+  CH.Time := '00:00:00';
+  for I := 1 to UTF8Length(Source) do
+  begin
+    C := UTF8Copy(Source, I, 1);
+    if C = #10 then
+    begin
+      CH.Message := CH.Message + Buffer + #10;
+      Buffer := '';
+    end else
+      Buffer := Buffer + C;
+    if (Buffer = SataniaToken) or (Buffer = UserToken) then
+    begin
+      CH.Message := Trim(CH.Message);
+      if CH.Message <> '' then
+      begin
+        ChatHistoryList.Add(CH);
+        SaveLastestMessage;
+        CH.Message := '';
+      end;
+      if Buffer = UserToken then
+        CH.SenderType := cseUser
+      else
+        CH.SenderType := cseSatania; 
+      Buffer := '';
+    end;
+  end;
+  if (Buffer <> '') or (CH.Message <> '') then
+  begin
+    CH.Message := CH.Message + Buffer;
+    CH.Message := Trim(CH.Message);
+    if CH.Message <> '' then
+    begin
+      ChatHistoryList.Add(CH);
+      SaveLastestMessage;
+    end;
+  end;
 end;
 
 end.
