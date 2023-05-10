@@ -55,7 +55,8 @@ implementation
 
 uses
   Mcdowell,
-  Globals;
+  Globals,
+  Form.bubble;
 
 {$define unit_implmentation}
 {$I mcdowell.speechtotext_windows.inc}
@@ -92,7 +93,7 @@ end;
 procedure TSataniaSpeechToText.OnVoskHypothesis(Sender: TObject;
   AScore: Integer; AHypothesis: String);
 begin
-  if AHypothesis <> 'huh' then
+  if (AHypothesis <> 'huh') and FormBubble.FinishedTyping then
   begin
     Satania.Log(Save.Settings.UserName, AHypothesis);
     Satania.Chat(AHypothesis);
