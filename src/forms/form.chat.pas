@@ -43,6 +43,7 @@ type
     CheckBoxAlwaysOnTop: TCheckBox;
     ComboBoxService: TComboBox;
     EditChat: TMemo;
+    LabelEditMode: TLabel;
     MemoEdit: TMemo;
     MemoChatLog: TKMemo;
     PageControl: TPageControl;

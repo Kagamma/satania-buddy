@@ -637,7 +637,7 @@ end;
 
 function SEValueToText(const Value: TSEValue; const IsRoot: Boolean = True): String;
 var
-  Key: String;
+  Key, S: String;
   IsValidArray: Boolean;
   I: Integer = 0;
 begin
@@ -676,6 +676,11 @@ begin
           end;
         end;
         Result := Result + ']'
+      end;
+    sevkFunction:
+      begin
+        WriteStr(S, Value.VarFuncKind);
+        Result := 'fn@' + S + ':' + IntToStr(Value.VarFuncIndx);
       end;
     sevkNull:
       Result := 'null';

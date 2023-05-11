@@ -6,5 +6,6 @@
 {"hash":349765,"name":"tformchat.comboboxservice.text","sourcebytes":[78,111,110,101],"value":"None"},
 {"hash":61061026,"name":"tformchat.buttonopenservice.hint","sourcebytes":[79,101,112,110,32,115,101,114,118,105,99,101,32,105,110,32,83,99,114,105,112,116,32,69,100,105,116,111,114],"value":"Oepn service in Script Editor"},
 {"hash":87261300,"name":"tformchat.buttonrefreshservice.hint","sourcebytes":[82,101,102,114,101,115,104,32,115,101,114,118,105,99,101,32,108,105,115,116],"value":"Refresh service list"},
-{"hash":140834020,"name":"tformchat.tabsheetchatedit.caption","sourcebytes":[67,104,97,116,32,69,100,105,116],"value":"Chat Edit"}
+{"hash":140834020,"name":"tformchat.tabsheetchatedit.caption","sourcebytes":[67,104,97,116,32,69,100,105,116],"value":"Chat Edit"},
+{"hash":6655509,"name":"tformchat.labeleditmode.caption","sourcebytes":[69,100,105,116,32,77,111,100,101],"value":"Edit Mode"}
 ]}
