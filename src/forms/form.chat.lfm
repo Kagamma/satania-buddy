@@ -54,9 +54,9 @@ object FormChat: TFormChat
     Height = 509
     Top = 0
     Width = 537
-    ActivePage = TabSheetChatEdit
+    ActivePage = TabSheetChat
     Align = alClient
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     object TabSheetChat: TTabSheet
       Caption = 'Chat'

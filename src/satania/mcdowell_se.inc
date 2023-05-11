@@ -937,7 +937,7 @@ begin
       on E: Exception do
       begin
         Result := SENull;
-        Satania.Log('System', E.Message);
+        Writeln(E.Message);
       end;
     end;
   finally
