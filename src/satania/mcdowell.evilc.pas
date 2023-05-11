@@ -2431,6 +2431,7 @@ end;
 procedure TSEVM.Exec;
 var
   A, B, C: PSEValue;
+  AA: array[0..15] of PSEValue;
   V: PSEValue;
   TV: TSEValue;
   S, S1, S2: String;
@@ -3189,9 +3190,23 @@ begin
         opAssignGlobalArray:
           begin
             A := BinaryLocal.Ptr(CodePtrLocal + 1);
-            B := Pop;
-            C := Pop;
             V := GetGlobalInt(Integer(A^));
+            B := Pop;
+            ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
+            if ArgCount = 1 then
+              C := Pop
+            else
+            begin
+              for I := ArgCount - 1 downto 0 do
+                AA[I] := Pop;
+              C := AA[0];
+              for I := 1 to ArgCount - 1 do
+              begin
+                TV := SEMapGet(V^, C^);
+                V := @TV;
+                C := AA[I];
+              end;
+            end;
             case B^.Kind of
               sevkString:
                 begin
@@ -3211,7 +3226,8 @@ begin
                   end else
                   begin
                     SEMapSet(V^, C^, B^);
-                    AssignGlobalInt(Integer(A^), V);
+                    if ArgCount = 1 then
+                      AssignGlobalInt(Integer(A^), V);
                   end;
                 end;
               sevkNumber, sevkBoolean:
@@ -3231,23 +3247,39 @@ begin
                   end else
                   begin
                     SEMapSet(V^, C^, B^);
-                    AssignGlobalInt(Integer(A^), V);
+                    if ArgCount = 1 then
+                      AssignGlobalInt(Integer(A^), V);
                   end;
                 end;
               else
                 begin
                   SEMapSet(V^, C^, B^);
-                  AssignGlobalInt(Integer(A^), V);
+                  if ArgCount = 1 then
+                    AssignGlobalInt(Integer(A^), V);
                 end;
             end;
-            Inc(CodePtrLocal, 2);
+            Inc(CodePtrLocal, 3);
           end;
         opAssignLocalArray:
           begin
             A := BinaryLocal.Ptr(CodePtrLocal + 1);
-            B := Pop;
-            C := Pop;
             V := GetLocalInt(Integer(A^));
+            B := Pop;
+            ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
+            if ArgCount = 1 then
+              C := Pop
+            else
+            begin
+              for I := ArgCount - 1 downto 0 do
+                AA[I] := Pop;
+              C := AA[0];
+              for I := 1 to ArgCount - 1 do
+              begin
+                TV := SEMapGet(V^, C^);
+                V := @TV;
+                C := AA[I];
+              end;
+            end;
             case B^.Kind of
               sevkString:
                 begin
@@ -3267,7 +3299,8 @@ begin
                   end else
                   begin
                     SEMapSet(V^, C^, B^);
-                    AssignLocalInt(Integer(A^), V);
+                    if ArgCount = 1 then
+                      AssignLocalInt(Integer(A^), V);
                   end;
                 end;
               sevkNumber, sevkBoolean:
@@ -3287,16 +3320,18 @@ begin
                   end else
                   begin
                     SEMapSet(V^, C^, B^);
-                    AssignLocalInt(Integer(A^), V);
+                    if ArgCount = 1 then
+                      AssignLocalInt(Integer(A^), V);
                   end;
                 end;
               else
                 begin
                   SEMapSet(V^, C^, B^);
+                  if ArgCount = 1 then
                     AssignLocalInt(Integer(A^), V);
                 end;
             end;
-            Inc(CodePtrLocal, 2);
+            Inc(CodePtrLocal, 3);
           end;
         opPause:
           begin
@@ -4150,12 +4185,12 @@ var
       Emit([Pointer(opAssignGlobalVar), Pointer(Ident.Addr)]);
   end;
 
-  function EmitAssignArray(const Ident: TSEIdent): Integer; inline;
+  function EmitAssignArray(const Ident: TSEIdent; const ArgCount: Integer): Integer; inline;
   begin
     if Ident.IsLocal then
-      Emit([Pointer(opAssignLocalArray), Ident.Addr])
+      Emit([Pointer(opAssignLocalArray), Ident.Addr, ArgCount])
     else
-      Emit([Pointer(opAssignGlobalArray), Ident.Addr]);
+      Emit([Pointer(opAssignGlobalArray), Ident.Addr, ArgCount]);
   end;
 
   procedure Patch(const Addr: Integer; const Data: TSEValue); inline;
@@ -4958,30 +4993,32 @@ var
   var
     Ident: PSEIdent;
     Token, Token2: TSEToken;
-    IsArrayAssign: Boolean = False;
+    ArgCount: Integer = 0;
   begin
     Ident := FindVar(Name);
-    case PeekAtNextToken.Kind of
-      tkSquareBracketOpen:
-        begin
-          IsArrayAssign := True;
-          NextToken;
-          ParseExpr;
-          NextTokenExpected([tkSquareBracketClose]);
-        end;
-      tkDot:
-        begin
-          IsArrayAssign := True;
-          NextToken;
-          Token2 := NextTokenExpected([tkIdent]);
-          Emit([Pointer(opPushConst), Token2.Value]);
-        end;
+    while PeekAtNextToken.Kind in [tkSquareBracketOpen, tkDot] do
+    begin
+      case PeekAtNextToken.Kind of
+        tkSquareBracketOpen:
+          begin
+            NextToken;
+            ParseExpr;
+            NextTokenExpected([tkSquareBracketClose]);
+          end;
+        tkDot:
+          begin
+            NextToken;
+            Token2 := NextTokenExpected([tkIdent]);
+            Emit([Pointer(opPushConst), Token2.Value]);
+          end;
+      end;
+      Inc(ArgCount);
     end;
 
     Token := NextTokenExpected([tkEqual, tkOpAssign]);
     if Token.Kind = tkOpAssign then
     begin
-      if IsArrayAssign then
+      if ArgCount > 0 then
         // EmitPushArray(Ident^)
         Error('Assignment operator does not support array/map at the moment', Token)
       else
@@ -5001,8 +5038,8 @@ var
           Emit([Pointer(opOperatorDiv)]);
       end;
     end;
-    if IsArrayAssign then
-      EmitAssignArray(Ident^)
+    if ArgCount > 0 then
+      EmitAssignArray(Ident^, ArgCount)
     else
       EmitAssignVar(Ident^);
   end;
