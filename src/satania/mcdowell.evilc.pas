@@ -2430,9 +2430,9 @@ end;
 
 procedure TSEVM.Exec;
 var
-  A, B, C: PSEValue;
+  A, B, C, V,
+  OA, OB, OC, OV: PSEValue;
   AA: array[0..15] of PSEValue;
-  V: PSEValue;
   TV: TSEValue;
   S, S1, S2: String;
   WS, WS1, WS2: WideString;
@@ -3202,6 +3202,8 @@ begin
               C := AA[0];
               for I := 1 to ArgCount - 1 do
               begin
+                OC := C;
+                OV := V;
                 TV := SEMapGet(V^, C^);
                 V := @TV;
                 C := AA[I];
@@ -3223,6 +3225,8 @@ begin
                       V^.VarString^[Integer(C^) + 1] := B^.VarString^[1];
                     {$endif}
                     // Self.Stack[A] := S;
+                    if ArgCount >= 2 then
+                      SEMapSet(OV^, OC^, V^);
                   end else
                   begin
                     SEMapSet(V^, C^, B^);
@@ -3244,6 +3248,8 @@ begin
                       V^.VarString^[Integer(C^) + 1] := Char(Round(B^.VarNumber));
                     {$endif}
                     // Self.Stack[A] := S;
+                    if ArgCount >= 2 then
+                      SEMapSet(OV^, OC^, V^);
                   end else
                   begin
                     SEMapSet(V^, C^, B^);
@@ -3275,6 +3281,8 @@ begin
               C := AA[0];
               for I := 1 to ArgCount - 1 do
               begin
+                OC := C;
+                OV := V;
                 TV := SEMapGet(V^, C^);
                 V := @TV;
                 C := AA[I];
@@ -3296,6 +3304,8 @@ begin
                       V^.VarString^[Integer(C^) + 1] := B^.VarString^[1];
                     {$endif}
                     // Self.Stack[A] := S;
+                    if ArgCount >= 2 then
+                      SEMapSet(OV^, OC^, V^);
                   end else
                   begin
                     SEMapSet(V^, C^, B^);
@@ -3317,6 +3327,8 @@ begin
                       V^.VarString^[Integer(C^) + 1] := Char(Round(B^.VarNumber));
                     {$endif}
                     // Self.Stack[A] := S;
+                    if ArgCount >= 2 then
+                      SEMapSet(OV^, OC^, V^);
                   end else
                   begin
                     SEMapSet(V^, C^, B^);
