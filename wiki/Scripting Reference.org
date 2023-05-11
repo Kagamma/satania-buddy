@@ -21,13 +21,13 @@ talk('Hello, World!')
 *Types*
 
 #+begin_example
-string, number/boolean, map, buffer, function, null
+string, number, boolean, map, buffer, function, null
 #+end_example
 
 Evil script is a dynamic language. This means that a variable can point
 to any type at runtime.
 
-Numbers/Booleans are stored as 64-bit floating point number.
+Numbers and Booleans are stored as 64-bit floating point number.
 
 Strings are by default in UTF-8 format.
 
@@ -112,9 +112,7 @@ d['a'] = 5
 // 'd' is no longer a valid array
 #+end_example
 
-#+begin_example
 Strings are copy-of-write, while maps are passed by reference.
-#+end_example
 
 *Statements*
 
@@ -195,9 +193,7 @@ for i = 4 downto 0 {
 
 *For-in block*
 
-#+begin_example
 For-in block only work correctly with valid array.
-#+end_example
 
 #+begin_example
 for value in [1, 2, 5, 7, 9] {
@@ -242,7 +238,7 @@ talk(add_ref(5, 3))
 talk(add = add_ref) // Print "true"
 #+end_example
 
-- /Currently, only named variables can be assigned & called. Map items are not supported yet./
+- /Currently, only named variables / parameters can be called. Map items are not supported yet./
 
 *Comment*
 
