@@ -65,8 +65,8 @@ type
     opOperatorMod,
     opOperatorPow,
     opOperatorNegative,
-    opOperatorSmaller,
-    opOperatorSmallerOrEqual,
+    opOperatorLesser,
+    opOperatorLesserOrEqual,
     opOperatorGreater,
     opOperatorGreaterOrEqual,
     opOperatorEqual,
@@ -2587,7 +2587,7 @@ begin
             Inc(StackPtrLocal);
             Inc(CodePtrLocal);
           end;
-        opOperatorSmaller:
+        opOperatorLesser:
           begin
             B := Pop;
             A := Pop;
@@ -2595,7 +2595,7 @@ begin
             Inc(StackPtrLocal);
             Inc(CodePtrLocal);
           end;
-        opOperatorSmallerOrEqual:
+        opOperatorLesserOrEqual:
           begin
             B := Pop;
             A := Pop;
@@ -4235,21 +4235,126 @@ var
   type
     TProc = TSENestedProc;
   var
-    ExprStack: TList;
-    IsFuncCalled: Boolean = False;
+    PushConstCount: Integer = 0;
 
     procedure Logic; forward;
 
     procedure EmitExpr(const Data: array of TSEValue); inline;
-    begin
-      // ExprStack.Add(Pointer(0));
-      Emit(Data);
-    end;
+    var
+      Op: TSEOpcode;
+      V1, V2, V: TSEValue;
 
-    procedure ValidateExpr;
+      procedure Pop2; inline;
+      begin
+        V2 := Self.VM.Binary[Self.VM.Binary.Count - 1];
+        V1 := Self.VM.Binary[Self.VM.Binary.Count - 3];
+        Self.VM.Binary.DeleteRange(Self.VM.Binary.Count - 4, 4);
+        Dec(PushConstCount);
+      end;
+
     begin
-      //if (ExprStack.Count = 0) and not IsFuncCalled then
-      //  Error('Illegal expression', Self.TokenList[Pos]);
+      Op := TSEOpcode(Integer(Data[0].VarPointer));
+      if Op = opPushConst then
+      begin
+        Emit(Data);
+        Inc(PushConstCount)
+      end
+      // Constant folding optimization
+      else
+      if PushConstCount >= 2 then
+      begin
+        case Op of
+          opOperatorAdd:
+            begin
+              Pop2;
+              SEValueAdd(V, V1, V2);
+              Emit([Pointer(opPushConst), V]);
+            end;
+          opOperatorSub:
+            begin
+              Pop2;
+              SEValueSub(V, V1, V2);
+              Emit([Pointer(opPushConst), V]);
+            end;
+          opOperatorMul:
+            begin
+              Pop2;
+              SEValueMul(V, V1, V2);
+              Emit([Pointer(opPushConst), V]);
+            end;
+          opOperatorDiv:
+            begin
+              Pop2;
+              SEValueDiv(V, V1, V2);
+              Emit([Pointer(opPushConst), V]);
+            end;
+          opOperatorMod:
+            begin
+              Pop2;
+              Emit([Pointer(opPushConst), V1 - V2 * Int(TSENumber(V1 / V2))]);
+            end;
+          opOperatorAnd:
+            begin
+              Pop2;
+              Emit([Pointer(opPushConst), Integer(V1) and Integer(V2)]);
+            end;
+          opOperatorOr:
+            begin
+              Pop2;
+              Emit([Pointer(opPushConst), Integer(V1) or Integer(V2)]);
+            end;
+          opOperatorXor:
+            begin
+              Pop2;
+              Emit([Pointer(opPushConst), Integer(V1) xor Integer(V2)]);
+            end;
+          opOperatorGreater:
+            begin
+              Pop2;
+              SEValueGreater(V, V1, V2);
+              Emit([Pointer(opPushConst), V]);
+            end;
+          opOperatorGreaterOrEqual:
+            begin
+              Pop2;
+              SEValueGreaterOrEqual(V, V1, V2);
+              Emit([Pointer(opPushConst), V]);
+            end;
+          opOperatorLesser:
+            begin
+              Pop2;
+              SEValueLesser(V, V1, V2);
+              Emit([Pointer(opPushConst), V]);
+            end;
+          opOperatorLesserOrEqual:
+            begin
+              Pop2;
+              SEValueLesserOrEqual(V, V1, V2);
+              Emit([Pointer(opPushConst), V]);
+            end;
+          opOperatorEqual:
+            begin
+              Pop2;
+              SEValueEqual(V, V1, V2);
+              Emit([Pointer(opPushConst), V]);
+            end;
+          opOperatorNotEqual:
+            begin
+              Pop2;
+              SEValueNotEqual(V, V1, V2);
+              Emit([Pointer(opPushConst), V]);
+            end;
+          else
+            begin
+              Emit(Data);
+              PushConstCount := 0;
+            end;
+        end;
+      end else
+      begin
+        Emit(Data);
+        PushConstCount := 0;
+      end;
     end;
 
     procedure BinaryOp(const Op: TSEOpcode; const Func: TProc; const IsString: Boolean = False); inline;
@@ -4379,7 +4484,6 @@ var
                     EmitExpr([Pointer(opPushConst), FuncValue]);
                   end else
                   begin
-                    IsFuncCalled := True;
                     ParseFuncCall(Token.Value);
                   end;
                   Tail;
@@ -4495,9 +4599,9 @@ var
           tkGreaterOrEqual:
             BinaryOp(opOperatorGreaterOrEqual, @Expr, True);
           tkSmaller:
-            BinaryOp(opOperatorSmaller, @Expr, True);
+            BinaryOp(opOperatorLesser, @Expr, True);
           tkSmallerOrEqual:
-            BinaryOp(opOperatorSmallerOrEqual, @Expr, True);
+            BinaryOp(opOperatorLesserOrEqual, @Expr, True);
           tkAnd:
             BinaryOp(opOperatorAnd, @Expr, True);
           tkOr:
@@ -4511,7 +4615,6 @@ var
     end;
   begin
     Logic;
-    // ValidateExpr;
   end;
 
   procedure ParseFuncRefCall(const Name: String);

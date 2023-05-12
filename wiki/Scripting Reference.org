@@ -112,7 +112,7 @@ d['a'] = 5
 // 'd' is no longer a valid array
 #+end_example
 
-Strings are copy-of-write, while maps are passed by reference.
+- /Strings are copy-of-write, while maps are passed by reference./
 
 *Statements*
 
@@ -692,3 +692,8 @@ number)*
 
 *chat_history_get(): array*
 - Return array of chat message: { name: string, message: string, timestamp: string }
+
+** About Evil script compiler
+- The compiler itself is a one-pass compiler. It follows Niklaus Wirth's design, completely skips AST generation and generates binary directly.
+- Due to the lack of AST, only ~constant folding~ and ~unused variable~ optimizations are implemented.
+- The performance of its virtual machine should be on par with CPython.
