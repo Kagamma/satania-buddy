@@ -240,7 +240,7 @@ talk(add = add_ref) // Print "true"
 
 - /Currently, only named variables / parameters can be called. Map items are not supported yet./
 
-*yield*
+*Yield*
 
 - Quit the script and returns to main process. When the process execute the script in next frame, it will continue at where yield's called.
 
@@ -283,8 +283,8 @@ List of supported data types:
 - i64: long long
 - u64: unsigned long long
 - f64: double
-- buffer: char
-- wbuffer: wchar
+- buffer: char*
+- wbuffer: wchar*
 - void: This simply tell the app the function does not return any value.
 
 By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and ~System V AMD64 ABI~ on Linux. There's no way to change calling convention at the moment.
