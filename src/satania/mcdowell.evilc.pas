@@ -80,6 +80,8 @@ type
     opCallScript,
     opCallImport,
     opPause,
+    opNop,
+    opNopRange,
     opYield
   );
 
@@ -3372,6 +3374,15 @@ begin
             A := Pop;
             Push(Power(A^.VarNumber, B^.VarNumber));
             Inc(CodePtrLocal);
+          end;
+        opNop:
+          begin
+            Inc(CodePtrLocal);
+          end;
+        opNopRange:
+          begin
+            I := BinaryLocal.Ptr(CodePtrLocal + 1)^;
+            Inc(CodePtrLocal, I);
           end;
       end;
       if Self.IsPaused or Self.IsWaited then
