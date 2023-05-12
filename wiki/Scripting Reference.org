@@ -240,6 +240,16 @@ talk(add = add_ref) // Print "true"
 
 - /Currently, only named variables / parameters can be called. Map items are not supported yet./
 
+*yield*
+
+- Quit the script and returns to main process. When the process execute the script in next frame, it will continue at where yield's called.
+
+#+begin_example
+while true {
+  yield
+}
+#+end_example
+
 *Comment*
 
 #+begin_example
@@ -310,8 +320,6 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Write to console. End with newline.
 *wait(seconds: number)*
 - Wait in seconds. This won't block the main process.
-*yield*
-- Quit the script and returns to main process. When the process execute the script in next frame, it will continue at where yield's called.
 *map_create(): map*
 - Create a new map. This function is comparable to [] syntax.
 *map_delete(a: map; key: number/string): map*
