@@ -52,6 +52,7 @@ type
     LastState: TRichTextState;
     LastKind: TRichTextKind;
     TokenList: TRichTextTokenList;
+    IsPerformance: Boolean;
     constructor Create;
     destructor Destroy; override;
     procedure Lex(const IsEmote: Boolean = True);
@@ -88,6 +89,7 @@ constructor TSataniaRichText.Create;
 begin
   inherited;
   Self.TokenList := TRichTextTokenList.Create;
+  Self.IsPerformance := True;
 end;
 
 procedure TSataniaRichText.Lex(const IsEmote: Boolean = True);
@@ -212,7 +214,7 @@ var
 
   procedure AddText;
   begin
-    if S = '' then Exit;
+    if (not IsPerformance) or (S = '') then Exit;
     TB := TKMemoTextBlock(Memo.Blocks[Memo.Blocks.Count - 1]);
     if not (TB is TKMemoTextBlock) then Exit;
     TB.Text := TB.Text + S;
@@ -239,7 +241,11 @@ begin
         begin
           if (Self.LastKind = Token.Kind) and (Memo.Blocks.Count > 0) then
           begin
-            S := S + Token.Value;
+            TB := TKMemoTextBlock(Memo.Blocks[Memo.Blocks.Count - 1]);
+            if IsPerformance then
+              S := S + Token.Value
+            else
+              TB.Text := TB.Text + Token.Value;
           end else
           begin
             AddText;

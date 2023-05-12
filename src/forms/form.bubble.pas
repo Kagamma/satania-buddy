@@ -190,6 +190,7 @@ procedure TFormBubble.FormCreate(Sender: TObject);
 begin
   Self.FRichText := TSataniaRichText.Create;
   Self.FRichText.IsStreaming := True;
+  Self.FRichText.IsPerformance := False;
   AddFormToIgnoreHandleList(Self);
   Self.KMemo.TextStyle.Font.Size := Save.Settings.FontSize;
   Self.TypingSpeed := Save.Settings.TextSpeed;
