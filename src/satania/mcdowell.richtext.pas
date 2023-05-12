@@ -208,6 +208,17 @@ var
   I, IMin, IMax: Integer;
   Token: TRichTextToken;
   TB: TKMemoTextBlock;
+  S: String;
+
+  procedure AddText;
+  begin
+    if S = '' then Exit;
+    TB := TKMemoTextBlock(Memo.Blocks[Memo.Blocks.Count - 1]);
+    if not (TB is TKMemoTextBlock) then Exit;
+    TB.Text := TB.Text + S;
+    S := '';
+  end;
+
 begin
   if (not Self.FIsLexed) or (Self.TokenList.Count = 0) then
     Self.Lex(IsEmote);
@@ -228,10 +239,12 @@ begin
         begin
           if (Self.LastKind = Token.Kind) and (Memo.Blocks.Count > 0) then
           begin
-            TB := TKMemoTextBlock(Memo.Blocks[Memo.Blocks.Count - 1]);
-            TB.Text := TB.Text + Token.Value;
+            S := S + Token.Value;
           end else
+          begin
+            AddText;
             TB := Memo.Blocks.AddTextBlock(Token.Value);
+          end;
           case Self.LastState of
             rtsCode:
               begin
@@ -255,16 +268,23 @@ begin
         end;
       rtkNewLine:
         begin
+          AddText;
           Memo.Blocks.AddParagraph;
         end;
       rtkState:
         begin
           if (Token.State = rtsCode) or ((Token.State = rtsNormal) and (Self.LastState = rtsCode)) then
+          begin
+            AddText;
             Memo.Blocks.AddParagraph;
+          end;
           Self.LastState := Token.State;
         end;
       rtkEOS:
-        Exit;
+        begin
+          AddText;
+          Exit;
+        end;
     end;
     Self.LastKind := Token.Kind;
     Self.LastTokenPos := I + 1;
