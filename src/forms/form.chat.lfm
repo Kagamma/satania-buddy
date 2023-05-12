@@ -139,21 +139,6 @@ object FormChat: TFormChat
         ClientHeight = 43
         ClientWidth = 529
         TabOrder = 3
-        object ButtonEdit: TSpeedButton
-          Left = 497
-          Height = 25
-          Top = 9
-          Width = 23
-          Align = alRight
-          BorderSpacing.Left = 4
-          BorderSpacing.Top = 8
-          BorderSpacing.Right = 8
-          BorderSpacing.Bottom = 8
-          BorderSpacing.InnerBorder = 8
-          Images = FormMain.ImageList
-          ImageIndex = 22
-          OnClick = ButtonEditClick
-        end
         object CheckBoxAlwaysOnTop: TCheckBox
           Left = 9
           Height = 25
@@ -166,7 +151,7 @@ object FormChat: TFormChat
           TabOrder = 1
         end
         object ComboBoxService: TComboBox
-          Left = 248
+          Left = 274
           Height = 23
           Top = 10
           Width = 164
@@ -185,7 +170,7 @@ object FormChat: TFormChat
           Text = 'None'
         end
         object ButtonOpenService: TSpeedButton
-          Left = 412
+          Left = 438
           Height = 25
           Hint = 'Oepn service in Script Editor'
           Top = 9
@@ -198,7 +183,7 @@ object FormChat: TFormChat
           OnClick = ButtonOpenServiceClick
         end
         object ButtonRefreshService: TSpeedButton
-          Left = 435
+          Left = 461
           Height = 25
           Hint = 'Refresh service list'
           Top = 9
@@ -211,18 +196,27 @@ object FormChat: TFormChat
           ImageIndex = 23
           OnClick = ButtonRefreshServiceClick
         end
-        object ButtonClear: TSpeedButton
-          Left = 470
+        object ToolBarChat: TToolBar
+          Left = 496
           Height = 25
           Top = 9
-          Width = 23
+          Width = 24
           Align = alRight
-          BorderSpacing.Left = 8
-          BorderSpacing.Top = 8
-          BorderSpacing.Bottom = 8
+          AutoSize = True
+          BorderSpacing.Around = 8
+          Caption = 'ToolBarChat'
+          EdgeInner = esNone
+          EdgeOuter = esNone
           Images = FormMain.ImageList
-          ImageIndex = 15
-          OnClick = ButtonClearClick
+          TabOrder = 2
+          object ButtonMenuChat: TToolButton
+            Left = 1
+            Top = 0
+            Caption = 'ButtonMenuChat'
+            DropdownMenu = PopupMenuChat
+            ImageIndex = 24
+            PopupMenu = PopupMenuChat
+          end
         end
       end
     end
@@ -281,8 +275,24 @@ object FormChat: TFormChat
           Top = 14
           Width = 54
           Caption = 'Edit Mode'
+          ParentColor = False
         end
       end
+    end
+  end
+  object PopupMenuChat: TPopupMenu
+    Images = FormMain.ImageList
+    Left = 144
+    Top = 304
+    object MenuItemEditMode: TMenuItem
+      Caption = 'Edit chat history'
+      ImageIndex = 22
+      OnClick = ButtonEditClick
+    end
+    object MenuItemClearHistory: TMenuItem
+      Caption = 'Clear chat history'
+      ImageIndex = 15
+      OnClick = ButtonClearClick
     end
   end
 end

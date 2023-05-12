@@ -6,6 +6,10 @@
 {"hash":349765,"name":"tformchat.comboboxservice.text","sourcebytes":[78,111,110,101],"value":"None"},
 {"hash":61061026,"name":"tformchat.buttonopenservice.hint","sourcebytes":[79,101,112,110,32,115,101,114,118,105,99,101,32,105,110,32,83,99,114,105,112,116,32,69,100,105,116,111,114],"value":"Oepn service in Script Editor"},
 {"hash":87261300,"name":"tformchat.buttonrefreshservice.hint","sourcebytes":[82,101,102,114,101,115,104,32,115,101,114,118,105,99,101,32,108,105,115,116],"value":"Refresh service list"},
+{"hash":148764804,"name":"tformchat.toolbarchat.caption","sourcebytes":[84,111,111,108,66,97,114,67,104,97,116],"value":"ToolBarChat"},
+{"hash":149092644,"name":"tformchat.buttonmenuchat.caption","sourcebytes":[66,117,116,116,111,110,77,101,110,117,67,104,97,116],"value":"ButtonMenuChat"},
 {"hash":140834020,"name":"tformchat.tabsheetchatedit.caption","sourcebytes":[67,104,97,116,32,69,100,105,116],"value":"Chat Edit"},
-{"hash":6655509,"name":"tformchat.labeleditmode.caption","sourcebytes":[69,100,105,116,32,77,111,100,101],"value":"Edit Mode"}
+{"hash":6655509,"name":"tformchat.labeleditmode.caption","sourcebytes":[69,100,105,116,32,77,111,100,101],"value":"Edit Mode"},
+{"hash":165650585,"name":"tformchat.menuitemeditmode.caption","sourcebytes":[69,100,105,116,32,99,104,97,116,32,104,105,115,116,111,114,121],"value":"Edit chat history"},
+{"hash":221685945,"name":"tformchat.menuitemclearhistory.caption","sourcebytes":[67,108,101,97,114,32,99,104,97,116,32,104,105,115,116,111,114,121],"value":"Clear chat history"}
 ]}

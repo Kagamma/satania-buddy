@@ -27,7 +27,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ExtCtrls, Process, CastleControls, CastleUIControls, CastleURIUtils,
-  LCLTranslator, ComCtrls, kmemo, Types, StrUtils, Generics.Collections,
+  LCLTranslator, ComCtrls, Menus, kmemo, Types, StrUtils, Generics.Collections,
   kgraphics, FileUtil, Mcdowell.RichText, Mcdowell.Chat.History;
 
 type
@@ -36,8 +36,6 @@ type
   TFormChat = class(TForm)
     ButtonEditCancel: TBitBtn;
 
-    ButtonEdit: TBitBtn;
-    ButtonClear: TBitBtn;
     ButtonEditSave: TBitBtn;
     ButtonRefreshService: TSpeedButton;
     CheckBoxAlwaysOnTop: TCheckBox;
@@ -46,6 +44,8 @@ type
     LabelEditMode: TLabel;
     MemoEdit: TMemo;
     MemoChatLog: TKMemo;
+    MenuItemClearHistory: TMenuItem;
+    MenuItemEditMode: TMenuItem;
     PageControl: TPageControl;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -53,9 +53,12 @@ type
     PanelEdit: TPanel;
     PanelChatlog: TPanel;
     ButtonOpenService: TSpeedButton;
+    PopupMenuChat: TPopupMenu;
     Splitter1: TSplitter;
     TabSheetChatEdit: TTabSheet;
     TabSheetChat: TTabSheet;
+    ToolBarChat: TToolBar;
+    ButtonMenuChat: TToolButton;
 
     procedure ButtonEditCancelClick(Sender: TObject);
     procedure ButtonEditSaveClick(Sender: TObject);
@@ -232,8 +235,11 @@ procedure TFormChat.ButtonClearClick(Sender: TObject);
 begin
   if FormBubble.FinishedTyping then
   begin
-    MemoChatLog.Blocks.Clear;
-    ChatHistory.Clear;
+    if MessageDlg('', 'Clear chat history?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+    begin
+      MemoChatLog.Blocks.Clear;
+      ChatHistory.Clear;
+    end;
   end;
 end;
 

@@ -51,7 +51,6 @@ object FormEvilCEditor: TFormEvilCEditor
   OnShow = FormShow
   Position = poDefault
   ShowInTaskBar = stAlways
-  LCLVersion = '2.3.0.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
