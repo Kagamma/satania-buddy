@@ -4425,12 +4425,14 @@ var
       function ConstantFoldingOptimization: Boolean; inline;
         function SameKind: Boolean; inline;
         begin
-          if Self.VM.Binary.Count >= 4 then
-          begin
+          try
             V2 := Self.VM.Binary[Self.VM.Binary.Count - 1];
             V1 := Self.VM.Binary[Self.VM.Binary.Count - 3];
-          end else
             Result := V1.Kind = V2.Kind;
+          except
+            on E: Exception do
+              Result := False;
+          end;
         end;
 
         procedure Pop2; inline;
