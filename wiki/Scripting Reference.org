@@ -586,11 +586,11 @@ number; consts: map): string*
 - Open a file with built-in EvilC editor.
 
 ** Memory management
-*mem_used: number*
+*mem_used(): number*
 - Return memory usage by script engine in bytes.
-*mem_object_count: number*
+*mem_object_count(): number*
 - Return number of objects allocated by script engine.
-*mem_gc*
+*mem_gc()*
 - Trigger garbage collection.
 
 ** Satania-specific function
