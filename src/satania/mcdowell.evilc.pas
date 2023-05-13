@@ -2682,60 +2682,36 @@ begin
         opOperatorAdd2:
           begin
             if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
-            begin
-              A := GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^);
-              B := GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^);
-            end else
-            begin
-              A := GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^);
-              B := GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^);
-            end;
-            SEValueAdd(StackPtrLocal^, A^, B^);
+              SEValueAdd(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
+            else
+              SEValueAdd(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
             Inc(StackPtrLocal);
             Inc(CodePtrLocal, 4);
           end;
         opOperatorSub2:
           begin
             if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
-            begin
-              A := GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^);
-              B := GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^);
-            end else
-            begin
-              A := GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^);
-              B := GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^);
-            end;
-            SEValueSub(StackPtrLocal^, A^, B^);
+              SEValueSub(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
+            else
+              SEValueSub(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
             Inc(StackPtrLocal);
             Inc(CodePtrLocal, 4);
           end;
         opOperatorMul2:
           begin
             if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
-            begin
-              A := GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^);
-              B := GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^);
-            end else
-            begin
-              A := GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^);
-              B := GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^);
-            end;
-            SEValueMul(StackPtrLocal^, A^, B^);
+              SEValueMul(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
+            else
+              SEValueMul(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
             Inc(StackPtrLocal);
             Inc(CodePtrLocal, 4);
           end;
         opOperatorDiv2:
           begin
             if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
-            begin
-              A := GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^);
-              B := GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^);
-            end else
-            begin
-              A := GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^);
-              B := GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^);
-            end;
-            SEValueDiv(StackPtrLocal^, A^, B^);
+              SEValueDiv(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
+            else
+              SEValueDiv(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
             Inc(StackPtrLocal);
             Inc(CodePtrLocal, 4);
           end;
