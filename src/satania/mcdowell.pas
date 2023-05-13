@@ -586,6 +586,7 @@ begin
     Self.Log(S)
   else
     Self.Talk(S);
+  Writeln(S);
 end;
 
 procedure TSatania.Chat(S: String);
