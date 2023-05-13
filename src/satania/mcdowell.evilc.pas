@@ -4437,7 +4437,6 @@ var
               OpInfoPrev2 := PeekAtPrevOpExpected2([opPushGlobalVar]);
               if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
               begin
-                Writeln('Optimized 1');
                 B := Self.VM.Binary[OpInfoPrev1^.Pos + 1];
                 A := Self.VM.Binary[OpInfoPrev2^.Pos + 1];
                 Op := OpToOp2(Op);
@@ -4451,7 +4450,6 @@ var
                 OpInfoPrev2 := PeekAtPrevOpExpected2([opPushLocalVar]);
                 if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
                 begin
-                  Writeln('Optimized 2');
                   B := Self.VM.Binary[OpInfoPrev1^.Pos + 1];
                   A := Self.VM.Binary[OpInfoPrev2^.Pos + 1];
                   Op := OpToOp2(Op);
