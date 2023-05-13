@@ -459,7 +459,6 @@ type
     function IsYielded: Boolean;
     procedure Lex(const IsIncluded: Boolean = False);
     procedure Parse;
-    procedure Optimize;
     procedure Reset;
     function Exec: TSEValue;
     procedure RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);
@@ -2696,7 +2695,7 @@ begin
             end;
             SEValueAdd(StackPtrLocal^, A^, B^);
             Inc(StackPtrLocal);
-            Inc(CodePtrLocal, 5);
+            Inc(CodePtrLocal, 4);
           end;
         opOperatorSub2:
           begin
@@ -2711,7 +2710,7 @@ begin
             end;
             SEValueSub(StackPtrLocal^, A^, B^);
             Inc(StackPtrLocal);
-            Inc(CodePtrLocal, 5);
+            Inc(CodePtrLocal, 4);
           end;
         opOperatorMul2:
           begin
@@ -2726,7 +2725,7 @@ begin
             end;
             SEValueMul(StackPtrLocal^, A^, B^);
             Inc(StackPtrLocal);
-            Inc(CodePtrLocal, 5);
+            Inc(CodePtrLocal, 4);
           end;
         opOperatorDiv2:
           begin
@@ -2741,7 +2740,7 @@ begin
             end;
             SEValueDiv(StackPtrLocal^, A^, B^);
             Inc(StackPtrLocal);
-            Inc(CodePtrLocal, 5);
+            Inc(CodePtrLocal, 4);
           end;
 
         opPushConst:
@@ -4321,6 +4320,17 @@ var
     Self.VM.Binary[Addr] := Data;
   end;
 
+  function PatchMulti(const Pos: Integer; const Data: array of TSEValue): Integer; inline;
+  var
+    I: Integer;
+  begin
+    for I := Low(Data) to High(Data) do
+    begin
+      Self.VM.Binary[Pos + I] := Data[I];
+    end;
+    Exit(Pos + I + 1);
+  end;
+
   function IdentifyIdent(const Ident: String): TSETokenKind; inline;
   begin
     if FindVar(Ident) <> nil then
@@ -4340,8 +4350,6 @@ var
   procedure ParseExpr;
   type
     TProc = TSENestedProc;
-  var
-    PushConstCount: Integer = 0;
 
     procedure Logic; forward;
 
@@ -4349,124 +4357,230 @@ var
     var
       Op: TSEOpcode;
       V1, V2, V: TSEValue;
+      OpInfo,
+      OpInfoPrev1,
+      OpInfoPrev2: PSEOpcodeInfo;
 
-      function SameKind: Boolean; inline;
+      function PeekAtPrevOp: PSEOpcodeInfo; inline;
+      var
+        I: Integer;
       begin
-        V2 := Self.VM.Binary[Self.VM.Binary.Count - 1];
-        V1 := Self.VM.Binary[Self.VM.Binary.Count - 3];
-        Result := V1.Kind = V2.Kind;
+        I := Self.OpcodeInfoList.Count - 1;
+        if I >= 0 then
+          Result := Self.OpcodeInfoList.Ptr(I)
+        else
+          Result := nil;
       end;
 
-      procedure Pop2; inline;
+      function PeekAtPrevOp2: PSEOpcodeInfo; inline;
+      var
+        I: Integer;
       begin
-        Self.VM.Binary.DeleteRange(Self.VM.Binary.Count - 4, 4);
-        Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
-        Dec(PushConstCount);
+        I := Self.OpcodeInfoList.Count - 2;
+        if I >= 0 then
+          Result := Self.OpcodeInfoList.Ptr(I)
+        else
+          Result := nil;
+      end;
+
+      function PeekAtPrevOpExpected(const Expected: TSEOpcodes): PSEOpcodeInfo; inline;
+      var
+        Op: TSEOpcode;
+      begin
+        Result := PeekAtPrevOp;
+        if Result <> nil then
+          for Op in Expected do
+            if Op = Result^.Op then
+              Exit;
+        Result := nil;
+      end;
+
+      function PeekAtPrevOpExpected2(const Expected: TSEOpcodes): PSEOpcodeInfo; inline;
+      var
+        Op: TSEOpcode;
+      begin
+        Result := PeekAtPrevOp2;
+        if Result <> nil then
+          for Op in Expected do
+            if Op = Result^.Op then
+              Exit;
+        Result := nil;
+      end;
+
+      function OpToOp2(const Op: TSEOpcode): TSEOpcode; inline;
+      begin
+        case Op of
+          opOperatorAdd:
+            Result := opOperatorAdd2;
+          opOperatorSub:
+            Result := opOperatorSub2;
+          opOperatorMul:
+            Result := opOperatorMul2;
+          opOperatorDiv:
+            Result := opOperatorDiv2;
+        end;
+      end;
+
+      function PeepholeOptimization: Boolean; inline;
+      var
+        A, B: TSEValue;
+        I: Integer;
+      begin
+        Result := False;
+        case Op of
+          opOperatorAdd,
+          opOperatorSub,
+          opOperatorMul,
+          opOperatorDiv:
+            begin
+              OpInfoPrev1 := PeekAtPrevOpExpected([opPushGlobalVar]);
+              OpInfoPrev2 := PeekAtPrevOpExpected2([opPushGlobalVar]);
+              if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
+              begin
+                Writeln('Optimized 1');
+                B := Self.VM.Binary[OpInfoPrev1^.Pos + 1];
+                A := Self.VM.Binary[OpInfoPrev2^.Pos + 1];
+                Op := OpToOp2(Op);
+                Self.VM.Binary.DeleteRange(Self.VM.Binary.Count - 4, 4);
+                Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
+                Emit([Pointer(Integer(Op)), A.VarPointer, B.VarPointer, Pointer(0)]);
+                Result := True;
+              end else
+              begin
+                OpInfoPrev1 := PeekAtPrevOpExpected([opPushLocalVar]);
+                OpInfoPrev2 := PeekAtPrevOpExpected2([opPushLocalVar]);
+                if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
+                begin
+                  Writeln('Optimized 2');
+                  B := Self.VM.Binary[OpInfoPrev1^.Pos + 1];
+                  A := Self.VM.Binary[OpInfoPrev2^.Pos + 1];
+                  Op := OpToOp2(Op);
+                  Self.VM.Binary.DeleteRange(Self.VM.Binary.Count - 4, 4);
+                  Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
+                  Emit([Pointer(Integer(Op)), A.VarPointer, B.VarPointer, Pointer(1)]);
+                  Result := True;
+                end;
+              end;
+            end;
+        end;
+      end;
+
+      function ConstantFoldingOptimization: Boolean; inline;
+        function SameKind: Boolean; inline;
+        begin
+          V2 := Self.VM.Binary[Self.VM.Binary.Count - 1];
+          V1 := Self.VM.Binary[Self.VM.Binary.Count - 3];
+          Result := V1.Kind = V2.Kind;
+        end;
+
+        procedure Pop2; inline;
+        begin
+          Self.VM.Binary.DeleteRange(Self.VM.Binary.Count - 4, 4);
+          Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
+        end;
+      begin
+        OpInfoPrev1 := PeekAtPrevOpExpected([opPushConst]);
+        OpInfoPrev2 := PeekAtPrevOpExpected2([opPushConst]);
+        Result := False;
+        if (OpInfoPrev1 <> nil) and (OpInfoPrev1 <> nil) and SameKind then
+        begin
+          Result := True;
+          case Op of
+            opOperatorAdd:
+              begin
+                Pop2;
+                SEValueAdd(V, V1, V2);
+                Emit([Pointer(opPushConst), V]);
+              end;
+            opOperatorSub:
+              begin
+                Pop2;
+                SEValueSub(V, V1, V2);
+                Emit([Pointer(opPushConst), V]);
+              end;
+            opOperatorMul:
+              begin
+                Pop2;
+                SEValueMul(V, V1, V2);
+                Emit([Pointer(opPushConst), V]);
+              end;
+            opOperatorDiv:
+              begin
+                Pop2;
+                SEValueDiv(V, V1, V2);
+                Emit([Pointer(opPushConst), V]);
+              end;
+            opOperatorMod:
+              begin
+                Pop2;
+                Emit([Pointer(opPushConst), V1 - V2 * Int(TSENumber(V1 / V2))]);
+              end;
+            opOperatorAnd:
+              begin
+                Pop2;
+                Emit([Pointer(opPushConst), Integer(V1) and Integer(V2)]);
+              end;
+            opOperatorOr:
+              begin
+                Pop2;
+                Emit([Pointer(opPushConst), Integer(V1) or Integer(V2)]);
+              end;
+            opOperatorXor:
+              begin
+                Pop2;
+                Emit([Pointer(opPushConst), Integer(V1) xor Integer(V2)]);
+              end;
+            opOperatorGreater:
+              begin
+                Pop2;
+                SEValueGreater(V, V1, V2);
+                Emit([Pointer(opPushConst), V]);
+              end;
+            opOperatorGreaterOrEqual:
+              begin
+                Pop2;
+                SEValueGreaterOrEqual(V, V1, V2);
+                Emit([Pointer(opPushConst), V]);
+              end;
+            opOperatorLesser:
+              begin
+                Pop2;
+                SEValueLesser(V, V1, V2);
+                Emit([Pointer(opPushConst), V]);
+              end;
+            opOperatorLesserOrEqual:
+              begin
+                Pop2;
+                SEValueLesserOrEqual(V, V1, V2);
+                Emit([Pointer(opPushConst), V]);
+              end;
+            opOperatorEqual:
+              begin
+                Pop2;
+                SEValueEqual(V, V1, V2);
+                Emit([Pointer(opPushConst), V]);
+              end;
+            opOperatorNotEqual:
+              begin
+                Pop2;
+                SEValueNotEqual(V, V1, V2);
+                Emit([Pointer(opPushConst), V]);
+              end;
+            else
+              begin
+               Result := False;
+              end;
+          end;
+        end;
       end;
 
     begin
       Op := TSEOpcode(Integer(Data[0].VarPointer));
-      if Op = opPushConst then
-      begin
-        Emit(Data);
-        Inc(PushConstCount)
-      end
-      // Constant folding optimization
+      if PeepholeOptimization then
       else
-      if (PushConstCount >= 2) and SameKind then
-      begin
-        case Op of
-          opOperatorAdd:
-            begin
-              Pop2;
-              SEValueAdd(V, V1, V2);
-              Emit([Pointer(opPushConst), V]);
-            end;
-          opOperatorSub:
-            begin
-              Pop2;
-              SEValueSub(V, V1, V2);
-              Emit([Pointer(opPushConst), V]);
-            end;
-          opOperatorMul:
-            begin
-              Pop2;
-              SEValueMul(V, V1, V2);
-              Emit([Pointer(opPushConst), V]);
-            end;
-          opOperatorDiv:
-            begin
-              Pop2;
-              SEValueDiv(V, V1, V2);
-              Emit([Pointer(opPushConst), V]);
-            end;
-          opOperatorMod:
-            begin
-              Pop2;
-              Emit([Pointer(opPushConst), V1 - V2 * Int(TSENumber(V1 / V2))]);
-            end;
-          opOperatorAnd:
-            begin
-              Pop2;
-              Emit([Pointer(opPushConst), Integer(V1) and Integer(V2)]);
-            end;
-          opOperatorOr:
-            begin
-              Pop2;
-              Emit([Pointer(opPushConst), Integer(V1) or Integer(V2)]);
-            end;
-          opOperatorXor:
-            begin
-              Pop2;
-              Emit([Pointer(opPushConst), Integer(V1) xor Integer(V2)]);
-            end;
-          opOperatorGreater:
-            begin
-              Pop2;
-              SEValueGreater(V, V1, V2);
-              Emit([Pointer(opPushConst), V]);
-            end;
-          opOperatorGreaterOrEqual:
-            begin
-              Pop2;
-              SEValueGreaterOrEqual(V, V1, V2);
-              Emit([Pointer(opPushConst), V]);
-            end;
-          opOperatorLesser:
-            begin
-              Pop2;
-              SEValueLesser(V, V1, V2);
-              Emit([Pointer(opPushConst), V]);
-            end;
-          opOperatorLesserOrEqual:
-            begin
-              Pop2;
-              SEValueLesserOrEqual(V, V1, V2);
-              Emit([Pointer(opPushConst), V]);
-            end;
-          opOperatorEqual:
-            begin
-              Pop2;
-              SEValueEqual(V, V1, V2);
-              Emit([Pointer(opPushConst), V]);
-            end;
-          opOperatorNotEqual:
-            begin
-              Pop2;
-              SEValueNotEqual(V, V1, V2);
-              Emit([Pointer(opPushConst), V]);
-            end;
-          else
-            begin
-              Emit(Data);
-              PushConstCount := 0;
-            end;
-        end;
-      end else
-      begin
+      if ConstantFoldingOptimization then
+      else
         Emit(Data);
-        PushConstCount := 0;
-      end;
     end;
 
     procedure BinaryOp(const Op: TSEOpcode; const Func: TProc; const IsString: Boolean = False); inline;
@@ -4487,7 +4601,6 @@ var
       case PeekAtNextToken.Kind of
         tkSquareBracketOpen:
           begin
-            PushConstCount := 0;
             NextToken;
             ParseExpr;
             NextTokenExpected([tkSquareBracketClose]);
@@ -4496,7 +4609,6 @@ var
           end;
         tkDot:
           begin
-            PushConstCount := 0;
             NextToken;
             Token := NextTokenExpected([tkIdent]);
             EmitExpr([Pointer(opPushConst), Token.Value]);
@@ -4556,7 +4668,6 @@ var
                     case PeekAtNextToken.Kind of
                       tkSquareBracketOpen:
                         begin
-                          PushConstCount := 0;
                           NextToken;
                           ParseExpr;
                           NextTokenExpected([tkSquareBracketClose]);
@@ -4565,7 +4676,6 @@ var
                         end;
                       tkDot:
                         begin
-                          PushConstCount := 0;
                           NextToken;
                           Token2 := NextTokenExpected([tkIdent]);
                           EmitExpr([Pointer(opPushConst), Token2.Value]);
@@ -4597,7 +4707,6 @@ var
                         FuncValue.VarFuncIndx := QWord(P);
                     end;
                     FuncValue.Kind := sevkFunction;
-                    PushConstCount := 0;
                     EmitExpr([Pointer(opPushConst), FuncValue]);
                   end else
                   begin
@@ -5429,156 +5538,6 @@ begin
   end;
 end;
 
-procedure TEvilC.Optimize;
-var
-  OpInfo,
-  OpInfoPrev1,
-  OpInfoPrev2: PSEOpcodeInfo;
-  Pos: Integer = -1;
-
-  function NextOp: PSEOpcodeInfo; inline;
-  begin
-    Inc(Pos);
-    if Pos < Self.OpcodeInfoList.Count then
-      Result := Self.OpcodeInfoList.Ptr(Pos)
-    else
-      Result := nil;
-  end;
-
-  function PeekAtPrevOp: PSEOpcodeInfo; inline;
-  var
-    I: Integer;
-  begin
-    I := Pos - 1;
-    if I >= 0 then
-      Result := Self.OpcodeInfoList.Ptr(I)
-    else
-      Result := nil;
-  end;
-
-  function PeekAtPrevOp2: PSEOpcodeInfo; inline;
-  var
-    I: Integer;
-  begin
-    I := Pos - 2;
-    if I >= 0 then
-      Result := Self.OpcodeInfoList.Ptr(I)
-    else
-      Result := nil;
-  end;
-
-  function PeekAtPrevOpExpected(const Expected: TSEOpcodes): PSEOpcodeInfo; inline;
-  var
-    Op: TSEOpcode;
-  begin
-    Result := PeekAtPrevOp;
-    if Result <> nil then
-      for Op in Expected do
-        if Op = Result^.Op then
-          Exit;
-    Result := nil;
-  end;
-
-  function PeekAtPrevOpExpected2(const Expected: TSEOpcodes): PSEOpcodeInfo; inline;
-  var
-    Op: TSEOpcode;
-  begin
-    Result := PeekAtPrevOp2;
-    if Result <> nil then
-      for Op in Expected do
-        if Op = Result^.Op then
-          Exit;
-    Result := nil;
-  end;
-
-  procedure PatchNop(const POpInfo: PSEOpcodeInfo); inline;
-  var
-    I: Integer;
-  begin
-    for I := POpInfo^.Pos to POpInfo^.Pos + POpInfo^.Size - 1 do
-    begin
-      Self.VM.Binary[I] := Pointer(opNop);
-    end;
-  end;
-
-  procedure PatchNopRange(const Pos, Size: Integer); inline;
-  var
-    I: Integer;
-  begin
-    Self.VM.Binary[Pos] := Pointer(opNopRange);
-    Self.VM.Binary[Pos + 1] := Pointer(Size);
-  end;
-
-  function Patch(const Pos: Integer; const Data: array of TSEValue): Integer; inline;
-  var
-    I: Integer;
-  begin
-    for I := Low(Data) to High(Data) do
-    begin
-      Self.VM.Binary[Pos + I] := Data[I];
-    end;
-    Exit(Pos + I + 1);
-  end;
-
-  function OpToOp2(const Op: TSEOpcode): TSEOpcode; inline;
-  begin
-    case Op of
-      opOperatorAdd:
-        Result := opOperatorAdd2;
-      opOperatorSub:
-        Result := opOperatorSub2;
-      opOperatorMul:
-        Result := opOperatorMul2;
-      opOperatorDiv:
-        Result := opOperatorDiv2;
-    end;
-  end;
-
-  procedure PeepholeOptimize; inline;
-  var
-    A, B: TSEValue;
-    I: Integer;
-    Op: TSEOpcode;
-  begin
-    case OpInfo^.Op of
-      opOperatorAdd,
-      opOperatorSub,
-      opOperatorMul,
-      opOperatorDiv:
-        begin
-          OpInfoPrev1 := PeekAtPrevOpExpected([opPushGlobalVar]);
-          OpInfoPrev2 := PeekAtPrevOpExpected2([opPushGlobalVar]);
-          if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
-          begin
-            B := Self.VM.Binary[OpInfoPrev1^.Pos + 1];
-            A := Self.VM.Binary[OpInfoPrev2^.Pos + 1];
-            Op := OpToOp2(OpInfo^.Op);
-            Patch(OpInfoPrev2^.Pos, [Pointer(Integer(Op)), A.VarPointer, B.VarPointer, Pointer(0), Pointer(0)]);
-          end else
-          begin
-            OpInfoPrev1 := PeekAtPrevOpExpected([opPushLocalVar]);
-            OpInfoPrev2 := PeekAtPrevOpExpected2([opPushLocalVar]);
-            if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
-            begin
-              B := Self.VM.Binary[OpInfoPrev1^.Pos + 1];
-              A := Self.VM.Binary[OpInfoPrev2^.Pos + 1];
-              Op := OpToOp2(OpInfo^.Op);
-              Patch(OpInfoPrev2^.Pos, [Pointer(Integer(Op)), A.VarPointer, B.VarPointer, Pointer(1), Pointer(0)]);
-            end;
-          end;
-        end;
-    end;
-  end;
-
-begin
-  OpInfo := NextOp;
-  while OpInfo <> nil do
-  begin
-    PeepholeOptimize;
-    OpInfo := NextOp;
-  end;
-end;
-
 procedure TEvilC.Reset;
 var
   Ident: TSEIdent;
@@ -5615,7 +5574,6 @@ begin
   if not Self.IsParsed then
   begin
     Self.Parse;
-    Self.Optimize;
   end;
   Self.VM.Exec;
   Exit(Self.VM.Stack[0])
