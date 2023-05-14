@@ -85,6 +85,7 @@ type
     Script: TEvilC;
     Highlighter: TSynFacilSyn;
     procedure GenerateAutoComplete(const ASource: String = '');
+    procedure LoadHighligher(const Ext: String);
   public
     ErrorPos: TPoint;
     WorkingFile: String;
@@ -178,6 +179,7 @@ begin
   Caption := 'New Evil Scheme';
   Editor.Lines.Clear;
   StatusBar.Panels[1].Text := '';
+  LoadHighligher('evil');
 end;
 
 procedure TFormEvilCEditor.FormShow(Sender: TObject);
@@ -192,6 +194,8 @@ begin
   //Editor.Font.Name := 'Consolas';
   {$else}
   Editor.Font.Name := 'Liberation Mono';
+  Editor.Font.Quality := fqAntialiased;
+  Editor.Font.Height := 16;
   {$endif}
   Self.ToolButtonSave.Enabled := Self.WorkingFile <> '';
 end;
@@ -224,34 +228,30 @@ begin
   OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Scripting-Reference');
 end;
 
-procedure TFormEvilCEditor.FormCreate(Sender: TObject);
+procedure TFormEvilCEditor.LoadHighligher(const Ext: String);
 var
-  Blk: TFaSynBlock;
+  Path: String;
+begin
+  if Highlighter <> nil then
+  begin
+    Editor.Highlighter := nil;
+    FreeAndNil(Highlighter);
+  end;
+  Path := 'data/highlighters/' + StringReplace(Ext, '.', '', [rfReplaceAll]) + '.xml';
+  if not FileExists(Path) then
+    Exit;
+  Highlighter := TSynFacilSyn.Create(Self);
+  Highlighter.LoadFromFile(Path);
+  Editor.Highlighter := Highlighter;
+end;
+
+procedure TFormEvilCEditor.FormCreate(Sender: TObject);
 begin
   ErrorPos.Y := -1;
   Self.Script := TEvilC.Create;
   Satania.RegisterFuncs(Self.Script);
   Satania.UpdateMeta(Self.Script);
-
-  Highlighter := TSynFacilSyn.Create(Self);
-  Highlighter.ClearMethodTables;
-  Highlighter.ClearSpecials;
-  Highlighter.tkKeyword.Style := [fsBold];
-  Highlighter.DefTokIdentif('[$A-Za-z_]', '[A-Za-z0-9_]*');
-  Highlighter.DefTokContent('[0-9]', '[0-9.]*', Highlighter.tnNumber);
-  Highlighter.DefTokContent('0x', '[0-9a-fA-F]*', Highlighter.tnNumber);
-  Highlighter.AddIdentSpecList('using if for while do yield break continue return in to fn import', Highlighter.tnKeyword);
-  Highlighter.AddIdentSpecList('i8 i16 i32 i64 u8 u16 u32 u64 f64 buffer wbuffer null true false result', Highlighter.tnSymbol);
-  //create delimited tokens
-  Highlighter.DefTokDelim('''','''', Highlighter.tnString, tdMulLin);
-  Highlighter.DefTokDelim('"','"', Highlighter.tnString, tdMulLin);
-  Highlighter.DefTokDelim('//','', Highlighter.tnComment);
-  Highlighter.DefTokDelim('/\*','*/', Highlighter.tnComment, tdMulLin);
-  //define syntax block
-  Blk := Highlighter.AddBlock('{','}');
-  Blk.name :='blk';
-  Highlighter.Rebuild;
-  Editor.Highlighter := Highlighter;
+  LoadHighligher('evil');
 end;
 
 procedure TFormEvilCEditor.FormDestroy(Sender: TObject);
@@ -381,6 +381,7 @@ begin
   StatusBar.Panels[1].Text := '';
   ErrorPos.Y := -1;
   Self.ToolButtonSave.Enabled := True;
+  LoadHighligher(ExtractFileExt(AFileName));
 end;
 
 end.

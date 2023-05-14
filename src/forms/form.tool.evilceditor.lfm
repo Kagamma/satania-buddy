@@ -58,6 +58,7 @@ object FormEvilCEditor: TFormEvilCEditor
     Width = 927
     Caption = 'ToolBar1'
     Images = FormMain.ImageList
+    ParentColor = False
     TabOrder = 0
     object ToolButtonOpen: TToolButton
       Left = 32
@@ -155,14 +156,16 @@ object FormEvilCEditor: TFormEvilCEditor
     Top = 26
     Width = 927
     Align = alClient
-    Font.Height = 16
+    Color = 1644825
+    Font.Color = 15461355
+    Font.Height = 17
     Font.Name = 'Consolas'
-    Font.Quality = fqAntialiased
     ParentColor = False
     ParentFont = False
     PopupMenu = PopupMenuEditor
     TabOrder = 1
     OnKeyDown = EditorKeyDown
+    Gutter.Color = 1644825
     Gutter.Width = 57
     Gutter.MouseActions = <>
     RightGutter.Width = 0
@@ -624,8 +627,9 @@ object FormEvilCEditor: TFormEvilCEditor
       object SynGutterLineNumber1: TSynGutterLineNumber
         Width = 17
         MouseActions = <>
-        MarkupInfo.Background = clBtnFace
-        MarkupInfo.Foreground = clNone
+        MarkupInfo.Background = 1644825
+        MarkupInfo.Foreground = clGray
+        MarkupInfo.FrameColor = 1644825
         DigitCount = 2
         ShowOnlyLineNumbersMultiplesOf = 1
         ZeroStart = False
