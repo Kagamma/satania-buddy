@@ -189,7 +189,9 @@ var
 begin
   ToolButtonNewClick(Sender);
   {$ifdef WINDOWS}
-  Editor.Font.Name := 'Consolas';
+  //Editor.Font.Name := 'Consolas';
+  {$else}
+  Editor.Font.Name := 'Liberation Mono';
   {$endif}
   Self.ToolButtonSave.Enabled := Self.WorkingFile <> '';
 end;
@@ -234,11 +236,12 @@ begin
   Highlighter := TSynFacilSyn.Create(Self);
   Highlighter.ClearMethodTables;
   Highlighter.ClearSpecials;
+  Highlighter.tkKeyword.Style := [fsBold];
   Highlighter.DefTokIdentif('[$A-Za-z_]', '[A-Za-z0-9_]*');
   Highlighter.DefTokContent('[0-9]', '[0-9.]*', Highlighter.tnNumber);
   Highlighter.DefTokContent('0x', '[0-9a-fA-F]*', Highlighter.tnNumber);
   Highlighter.AddIdentSpecList('using if for while do yield break continue return in to fn import', Highlighter.tnKeyword);
-  Highlighter.AddIdentSpecList('i8 i16 i32 i64 u8 u16 u32 u64 f64 buffer wbuffer null result true false', Highlighter.tnSymbol);
+  Highlighter.AddIdentSpecList('i8 i16 i32 i64 u8 u16 u32 u64 f64 buffer wbuffer null true false result', Highlighter.tnSymbol);
   //create delimited tokens
   Highlighter.DefTokDelim('''','''', Highlighter.tnString, tdMulLin);
   Highlighter.DefTokDelim('"','"', Highlighter.tnString, tdMulLin);

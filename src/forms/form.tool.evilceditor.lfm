@@ -156,8 +156,7 @@ object FormEvilCEditor: TFormEvilCEditor
     Width = 927
     Align = alClient
     Font.Height = 16
-    Font.Name = 'Liberation Mono'
-    Font.Pitch = fpFixed
+    Font.Name = 'Consolas'
     Font.Quality = fqAntialiased
     ParentColor = False
     ParentFont = False
