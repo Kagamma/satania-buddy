@@ -49,6 +49,7 @@ object FormChat: TFormChat
   OnShow = FormShow
   Position = poDefault
   ShowInTaskBar = stAlways
+  LCLVersion = '2.3.0.0'
   object PageControl: TPageControl
     Left = 0
     Height = 509

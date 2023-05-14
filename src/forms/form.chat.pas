@@ -28,7 +28,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ExtCtrls, Process, CastleControls, CastleUIControls, CastleURIUtils,
   LCLTranslator, ComCtrls, Menus, kmemo, Types, StrUtils, Generics.Collections,
-  kgraphics, FileUtil, Mcdowell.RichText, Mcdowell.Chat.History;
+  kgraphics, FileUtil, Mcdowell.RichText, Mcdowell.Chat.History, AnchorDocking;
 
 type
   { TFormChat }
@@ -271,7 +271,7 @@ begin
   if I > 0 then
   begin
     Frm := TFormEvilCEditor.Create(nil);
-    Frm.Show;
+    DockMaster.MakeDockable(Frm);
     Frm.LoadFromFile('data/scripts/' + Save.Settings.Skin + '/services/' + Self.ComboBoxService.Items[I]);
   end;
 end;

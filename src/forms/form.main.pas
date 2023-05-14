@@ -34,7 +34,7 @@ uses
   CastleVectors, {$ifdef WINDOWS}CastleControl,{$else}OpenGLContext,{$endif} CastleWindow,
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, Menus,
   LCLType, StdCtrls, PopupNotifier, Globals, HtmlView, LCLintf,
-  Mcdowell, LCLTranslator;
+  Mcdowell, LCLTranslator, AnchorDocking;
 
 type
 
@@ -283,7 +283,7 @@ var
   Frm: TFormEvilCEditor;
 begin
   Frm := TFormEvilCEditor.Create(nil);
-  Frm.Show;
+  DockMaster.MakeDockable(Frm);
 end;
 
 procedure TFormMain.MenuItemHelpAlarmsAndRemindersClick(Sender: TObject);

@@ -32,7 +32,7 @@ uses
   {$ENDIF}
   LCLPlatformDef,
   Interfaces, // this includes the LCL widgetset
-  FrameViewer09, opensslsockets, globals, Forms, datetimectrls,
+  FrameViewer09, opensslsockets, globals, Forms, datetimectrls, anchordockpkg,
   utils.activewindow, mcdowell, State.Main, form.settings, form.chat,
   mcdowell.chatbot, mcdowell.chatbot.train, form.tool.evilceditor,
   mcdowell.imap, Mcdowell.SpeechToText, frame.reminders.item, form.reminders,

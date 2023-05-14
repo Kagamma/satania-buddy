@@ -1163,7 +1163,7 @@ var
   Frm: TFormEvilCEditor;
 begin
   Frm := TFormEvilCEditor.Create(nil);
-  Frm.Show;
+  DockMaster.MakeDockable(Frm);
   Frm.LoadFromFile(Args[0]);
 end;
 
