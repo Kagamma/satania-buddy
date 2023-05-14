@@ -96,6 +96,7 @@ implementation
 {$R *.lfm}
 
 uses
+  Globals,
   Math,
   Mcdowell;
 
@@ -104,7 +105,7 @@ uses
 procedure TFormEvilCEditor.GenerateAutoComplete(const ASource: String = '');
 var
   SL: TStringList;
-  I: Integer;
+  I, P: Integer;
   S: String;
   Token: TSEToken;
 begin
@@ -114,17 +115,13 @@ begin
     SL.Sorted := True;
     SL.Duplicates := dupIgnore;
     try
+      Self.Script.IncludePathList.Clear;
+      Self.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
       Self.Script.Source := ASource;
       Self.Script.Lex;
+      Self.Script.Parse;
     except
       // There will be errors, obviously. We just need to ignore it
-    end;
-    // Add identity
-    for I := 0 to Self.Script.TokenList.Count - 1 do
-    begin
-      Token := Self.Script.TokenList[I];
-      if Token.Kind = tkIdent then
-        SL.Add(Token.Value);
     end;
     // Add keywords
     SL.AddStrings([
@@ -132,12 +129,12 @@ begin
       'if',
       'for',
       'while',
+      'do',
       'true',
       'false',
       'yield',
       'break',
       'continue',
-      'pause',
       'in',
       'to',
       'fn',
@@ -147,7 +144,19 @@ begin
     // Transfer function names and constant names to completion
     for I := 0 to Self.Script.FuncNativeList.Count - 1 do
     begin
-      SL.Add(Self.Script.FuncNativeList[I].Name);
+      SL.Add(Self.Script.FuncNativeList[I].Name + '()');
+    end;
+    for I := 0 to Self.Script.FuncScriptList.Count - 1 do
+    begin
+      SL.Add(Self.Script.FuncScriptList[I].Name + '()');
+    end;
+    for I := 0 to Self.Script.FuncImportList.Count - 1 do
+    begin
+      SL.Add(Self.Script.FuncImportList[I].Name + '()');
+    end;
+    for I := 0 to Self.Script.VarList.Count - 1 do
+    begin
+      SL.Add(Self.Script.VarList[I].Name);
     end;
     for S in Self.Script.ConstMap.Keys do
     begin

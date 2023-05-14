@@ -14,8 +14,10 @@ talk('Hello, World!')
 ** Language
 *Include other scripts*
 
+- /The script engine will first look for scripts at the absolute path, and if no script is found there, it will search for scripts in the character's scripts directory./
+
 #+begin_example
-using 'absolute/path/to/script.evil'
+using 'path/to/script.evil'
 #+end_example
 
 *Types*
@@ -563,9 +565,7 @@ number): map*
 - Convert a map to JSON string.
 
 ** Workers
-#+begin_example
-Please note workers run on the same thread as main script. Make sure to use yield to avoid infinite loop.
-#+end_example
+- /Please note workers run on the same thread as main script. Make sure to use yield to avoid infinite loop./
 
 *worker_create(worker_name: string; evil_script: string; interval:
 number; consts: map): string*

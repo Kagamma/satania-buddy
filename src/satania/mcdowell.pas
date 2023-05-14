@@ -668,6 +668,8 @@ begin
   ChatMode := CHATMODE_CHAT;
   ChatResult := '';
   Script.Source := '';
+  Script.IncludePathList.Clear;
+  Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
 end;
 
 function TSatania.Exec(S: String): String;

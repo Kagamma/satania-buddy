@@ -430,6 +430,7 @@ type
   public
     ErrorLn, ErrorCol: Integer;
     VM: TSEVM;
+    IncludePathList,
     IncludeList: TStrings;
     TokenList: TSETokenList;
     OpcodeInfoList: TSEOpcodeInfoList;
@@ -3472,6 +3473,7 @@ begin
   Self.ScopeStack := TSEScopeStack.Create;
   Self.LineOfCodeList := TIntegerList.Create;
   Self.IncludeList := TStringList.Create;
+  Self.IncludePathList := TStringList.Create;
   Self.CurrentFileList := TStringList.Create;
   Self.VM.Parent := Self;
   Self.RegisterFunc('buffer_create', @TBuiltInFunction(nil).SEBufferCreate, 1);
@@ -3578,6 +3580,7 @@ begin
   FreeAndNil(Self.ScopeStack);
   FreeAndNil(Self.LineOfCodeList);
   FreeAndNil(Self.IncludeList);
+  FreeAndNil(Self.IncludePathList);
   FreeAndNil(Self.CurrentFileList);
   inherited;
 end;
@@ -3674,6 +3677,9 @@ var
   PrevQuote: Char;
   SL: TStrings;
   BackupSource: String;
+  IsPathFound: Boolean;
+  S,
+  Path: String;
 
 begin
   Ln := 1;
@@ -3945,17 +3951,29 @@ begin
                   Error('Expected "''"');
 
                 Token.Value := Trim(Token.Value);
-                if not FileExists(Token.Value) then
+                Path := Token.Value;
+                if not FileExists(Path) then
                 begin
-                  Error(Format('"%s" not found', [Token.Value]));
+                  IsPathFound := False;
+                  for S in Self.IncludePathList do
+                  begin
+                    Path := S + Token.Value;
+                    if FileExists(Path) then
+                    begin
+                      IsPathFound := True;
+                      break;
+                    end;
+                  end;
+                  if not IsPathFound then
+                    Error(Format('"%s" not found', [Path]));
                 end;
-                if Self.IncludeList.IndexOf(Token.Value) < 0 then
+                if Self.IncludeList.IndexOf(Path) < 0 then
                 begin
                   BackupSource := Source;
                   SL := TStringList.Create;
                   try
-                    Self.CurrentFileList.Add(Token.Value);
-                    SL.LoadFromFile(Token.Value);
+                    Self.CurrentFileList.Add(Path);
+                    SL.LoadFromFile(Path);
                     FSource := SL.Text;
                     Self.Lex(True);
                     Self.CurrentFileList.Pop;
@@ -3963,7 +3981,7 @@ begin
                     SL.Free;
                   end;
                   FSource := BackupSource;
-                  Self.IncludeList.Add(Token.Value);
+                  Self.IncludeList.Add(Path);
                 end;
                 continue;
               end;
