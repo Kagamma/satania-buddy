@@ -79,7 +79,7 @@ procedure TSataniaSpeechToText.OnVoskStateChange(Sender: TObject;
 begin
   case AState of
     rsNotInitialized: ;
-    rsInitialized: Satania.Talk('I''m listening.');
+    rsInitialized: Satania.Log('I''m listening.');
     rsReady: ;
     rsListening: ;
     rsAnalyze:
