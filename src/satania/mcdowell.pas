@@ -578,6 +578,7 @@ end;
 procedure TSatania.Log(S: String);
 begin
   FormChat.InsertLog('System', S);
+  Writeln(S);
 end;
 
 procedure TSatania.Error(S: String);
@@ -586,7 +587,6 @@ begin
     Self.Log(S)
   else
     Self.Talk(S);
-  Writeln(S);
 end;
 
 procedure TSatania.Chat(S: String);
