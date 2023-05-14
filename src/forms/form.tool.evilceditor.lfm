@@ -48,7 +48,6 @@ object FormEvilCEditor: TFormEvilCEditor
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnShow = FormShow
   Position = poDefault
   ShowInTaskBar = stAlways
   object ToolBar1: TToolBar

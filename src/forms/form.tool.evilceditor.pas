@@ -64,7 +64,6 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure MenuItemEditorCopyClick(Sender: TObject);
     procedure MenuItemEditorCutClick(Sender: TObject);
     procedure MenuItemEditorPasteClick(Sender: TObject);
@@ -183,24 +182,6 @@ begin
   Editor.Modified := False;
 end;
 
-procedure TFormEvilCEditor.FormShow(Sender: TObject);
-var
-  SL: TStringList;
-  I: Integer;
-  S: String;
-  Token: TSEToken;
-begin
-  ToolButtonNewClick(Sender);
-  {$ifdef WINDOWS}
-  //Editor.Font.Name := 'Consolas';
-  {$else}
-  Editor.Font.Name := 'Liberation Mono';
-  Editor.Font.Quality := fqAntialiased;
-  Editor.Font.Height := 16;
-  {$endif}
-  Self.ToolButtonSave.Enabled := Self.WorkingFile <> '';
-end;
-
 procedure TFormEvilCEditor.MenuItemEditorCopyClick(Sender: TObject);
 begin
   Editor.CopyToClipboard;
@@ -252,7 +233,15 @@ begin
   Self.Script := TEvilC.Create;
   Satania.RegisterFuncs(Self.Script);
   Satania.UpdateMeta(Self.Script);
-  LoadHighligher('evil');
+  ToolButtonNewClick(Sender);
+  {$ifdef WINDOWS}
+  //Editor.Font.Name := 'Consolas';
+  {$else}
+  Editor.Font.Name := 'Liberation Mono';
+  Editor.Font.Quality := fqAntialiased;
+  Editor.Font.Height := 16;
+  {$endif}
+  Self.ToolButtonSave.Enabled := Self.WorkingFile <> '';
 end;
 
 procedure TFormEvilCEditor.FormDestroy(Sender: TObject);
