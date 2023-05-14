@@ -26,9 +26,9 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  SynEdit, SynHighlighterCpp, SynEditMarkupSpecialLine, SynCompletion,
+  SynEdit, SynEditMarkupSpecialLine, SynCompletion,
   LCLTranslator, lclintf, Menus,
-  Mcdowell.EvilC, Types, LCLType;
+  Mcdowell.EvilC, Types, LCLType, SynFacilHighlighter, SynFacilBasic;
 
 type
 
@@ -44,7 +44,6 @@ type
     Editor: TSynEdit;
     StatusBar: TStatusBar;
     SynCompletion: TSynCompletion;
-    SynCppSyn: TSynCppSyn;
     ToolBar1: TToolBar;
     ToolButtonHelp: TToolButton;
     ToolButton2: TToolButton;
@@ -84,6 +83,7 @@ type
   private
     // For autocomplete
     Script: TEvilC;
+    Highlighter: TSynFacilSyn;
     procedure GenerateAutoComplete(const ASource: String = '');
   public
     ErrorPos: TPoint;
@@ -135,6 +135,7 @@ begin
       'yield',
       'break',
       'continue',
+      'return',
       'in',
       'to',
       'fn',
@@ -222,11 +223,32 @@ begin
 end;
 
 procedure TFormEvilCEditor.FormCreate(Sender: TObject);
+var
+  Blk: TFaSynBlock;
 begin
   ErrorPos.Y := -1;
   Self.Script := TEvilC.Create;
   Satania.RegisterFuncs(Self.Script);
   Satania.UpdateMeta(Self.Script);
+
+  Highlighter := TSynFacilSyn.Create(Self);
+  Highlighter.ClearMethodTables;
+  Highlighter.ClearSpecials;
+  Highlighter.DefTokIdentif('[$A-Za-z_]', '[A-Za-z0-9_]*');
+  Highlighter.DefTokContent('[0-9]', '[0-9.]*', Highlighter.tnNumber);
+  Highlighter.DefTokContent('0x', '[0-9a-fA-F]*', Highlighter.tnNumber);
+  Highlighter.AddIdentSpecList('using if for while do yield break continue return in to fn import', Highlighter.tnKeyword);
+  Highlighter.AddIdentSpecList('i8 i16 i32 i64 u8 u16 u32 u64 f64 buffer wbuffer null result true false', Highlighter.tnSymbol);
+  //create delimited tokens
+  Highlighter.DefTokDelim('''','''', Highlighter.tnString, tdMulLin);
+  Highlighter.DefTokDelim('"','"', Highlighter.tnString, tdMulLin);
+  Highlighter.DefTokDelim('//','', Highlighter.tnComment);
+  Highlighter.DefTokDelim('/\*','*/', Highlighter.tnComment, tdMulLin);
+  //define syntax block
+  Blk := Highlighter.AddBlock('{','}');
+  Blk.name :='blk';
+  Highlighter.Rebuild;
+  Editor.Highlighter := Highlighter;
 end;
 
 procedure TFormEvilCEditor.FormDestroy(Sender: TObject);

@@ -51,7 +51,6 @@ object FormEvilCEditor: TFormEvilCEditor
   OnShow = FormShow
   Position = poDefault
   ShowInTaskBar = stAlways
-  LCLVersion = '2.3.0.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
@@ -78,7 +77,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator2: TToolButton
       Left = 101
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator2'
       Style = tbsSeparator
@@ -101,7 +100,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator1: TToolButton
       Left = 24
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator1'
       Style = tbsSeparator
@@ -115,7 +114,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator3: TToolButton
       Left = 186
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator3'
       Style = tbsSeparator
@@ -130,7 +129,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton2: TToolButton
       Left = 155
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButton2'
       Style = tbsSeparator
@@ -169,7 +168,6 @@ object FormEvilCEditor: TFormEvilCEditor
     Gutter.MouseActions = <>
     RightGutter.Width = 0
     RightGutter.MouseActions = <>
-    Highlighter = SynCppSyn
     Keystrokes = <    
       item
         Command = ecUp
@@ -625,7 +623,7 @@ object FormEvilCEditor: TFormEvilCEditor
         MouseActions = <>
       end
       object SynGutterLineNumber1: TSynGutterLineNumber
-        Width = 19
+        Width = 17
         MouseActions = <>
         MarkupInfo.Background = clBtnFace
         MarkupInfo.Foreground = clNone
@@ -681,15 +679,6 @@ object FormEvilCEditor: TFormEvilCEditor
     Filter = 'Evil Scheme|*.evil|All|*.*'
     InitialDir = 'data/scripts'
     Left = 240
-    Top = 64
-  end
-  object SynCppSyn: TSynCppSyn
-    DefaultFilter = 'C++ Files (*.evil,*.c,*.cpp,*.h,*.hpp,*.hh)|*.c;*.cpp;*.h;*.hpp;*.hh'
-    Enabled = False
-    NumberAttri.Foreground = clNavy
-    StringAttri.Foreground = clNavy
-    SymbolAttri.Foreground = clRed
-    Left = 344
     Top = 64
   end
   object PopupMenuEditor: TPopupMenu
