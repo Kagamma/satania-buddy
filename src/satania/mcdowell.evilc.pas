@@ -3885,18 +3885,41 @@ begin
         end;
       '%':
         Token.Kind := tkMod;
-      '#':
+      '0'..'9':
         begin
-          Token.Value := '';
+          Token.Kind := tkNumber;
+          if (C = '0') and (PeekAtNextChar = 'x') then
+          begin
+            NextChar;
+            while PeekAtNextChar in ['0'..'9', 'A'..'F', 'a'..'f'] do
+            begin
+              C := NextChar;
+              Token.Value := Token.Value + C;
+            end;
+            Token.Value := IntToStr(Hex2Dec64(Token.Value));
+          end else
+          begin
+            Token.Value := C;
+            while PeekAtNextChar in ['0'..'9', '.'] do
+            begin
+              C := NextChar;
+              Token.Value := Token.Value + C;
+              if (C = '.') and not (PeekAtNextChar in ['0'..'9']) then
+                Error('Invalid number');
+            end;
+          end;
+        end;
+      'A'..'Z', 'a'..'z', '_':
+        begin
+          Token.Value := C;
           C := PeekAtNextChar;
           while C in ['0'..'9', 'A'..'Z', 'a'..'z', '_'] do
           begin
             Token.Value := Token.Value + NextChar;
             C := PeekAtNextChar;
           end;
-
           case Token.Value of
-            'include':
+            'using':
               begin
                 C := PeekAtNextChar;
                 while C = ' ' do
@@ -3942,47 +3965,8 @@ begin
                   FSource := BackupSource;
                   Self.IncludeList.Add(Token.Value);
                 end;
-              end
-            else
-              Error('Unknown preprocessor "' + Token.Value + '"');
-          end;
-          continue;
-        end;
-      '0'..'9':
-        begin
-          Token.Kind := tkNumber;
-          if (C = '0') and (PeekAtNextChar = 'x') then
-          begin
-            NextChar;
-            while PeekAtNextChar in ['0'..'9', 'A'..'F', 'a'..'f'] do
-            begin
-              C := NextChar;
-              Token.Value := Token.Value + C;
-            end;
-            Token.Value := IntToStr(Hex2Dec64(Token.Value));
-          end else
-          begin
-            Token.Value := C;
-            while PeekAtNextChar in ['0'..'9', '.'] do
-            begin
-              C := NextChar;
-              Token.Value := Token.Value + C;
-              if (C = '.') and not (PeekAtNextChar in ['0'..'9']) then
-                Error('Invalid number');
-            end;
-          end;
-        end;
-      'A'..'Z', 'a'..'z', '_':
-        begin
-          Token.Value := C;
-          C := PeekAtNextChar;
-          while C in ['0'..'9', 'A'..'Z', 'a'..'z', '_'] do
-          begin
-            Token.Value := Token.Value + NextChar;
-            C := PeekAtNextChar;
-          end;
-          C := 'H';
-          case Token.Value of
+                continue;
+              end;
             'if':
               Token.Kind := tkIf;
             'else':

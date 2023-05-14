@@ -15,7 +15,7 @@ talk('Hello, World!')
 *Include other scripts*
 
 #+begin_example
-#include 'absolute/path/to/script.evil'
+using 'absolute/path/to/script.evil'
 #+end_example
 
 *Types*

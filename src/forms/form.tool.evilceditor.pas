@@ -128,7 +128,7 @@ begin
     end;
     // Add keywords
     SL.AddStrings([
-      '#include',
+      'using',
       'if',
       'for',
       'while',
