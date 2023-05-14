@@ -46,6 +46,7 @@ object FormEvilCEditor: TFormEvilCEditor
     0000
   }
   OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poDefault

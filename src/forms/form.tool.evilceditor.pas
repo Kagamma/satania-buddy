@@ -62,6 +62,7 @@ type
     procedure EditorSpecialLineColors(Sender: TObject; Line: integer;
       var Special: boolean; var FG, BG: TColor);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure MenuItemEditorCopyClick(Sender: TObject);
@@ -263,14 +264,20 @@ end;
 procedure TFormEvilCEditor.FormClose(Sender: TObject;
   var CloseAction: TCloseAction);
 begin
+  CloseAction := caFree;
+end;
+
+procedure TFormEvilCEditor.FormCloseQuery(Sender: TObject; var CanClose: Boolean
+  );
+begin
+  CanClose := True;
   if Editor.Modified then
   begin
     if MessageDlg('', 'You have unsaved changes. Do you still want to close?', mtInformation, [mbYes, mbNo], 0) = mrYes then
-      CloseAction := caFree
+      Editor.Modified := False
     else
-      CloseAction := caNone;
-  end else
-    CloseAction := caFree;
+      CanClose := False;
+  end;
 end;
 
 procedure TFormEvilCEditor.EditorChange(Sender: TObject);
