@@ -601,6 +601,7 @@ object FormEvilCEditor: TFormEvilCEditor
     )
     Options = [eoAutoIndent, eoBracketHighlight, eoGroupUndo, eoScrollPastEol, eoSmartTabs, eoTabIndent, eoTabsToSpaces, eoTrimTrailingSpaces]
     VisibleSpecialChars = [vscSpace, vscTabAtLast]
+    RightEdge = -1
     SelectedColor.BackPriority = 50
     SelectedColor.ForePriority = 50
     SelectedColor.FramePriority = 50
