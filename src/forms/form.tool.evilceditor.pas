@@ -180,6 +180,7 @@ begin
   Editor.Lines.Clear;
   StatusBar.Panels[1].Text := '';
   LoadHighligher('evil');
+  Editor.Modified := False;
 end;
 
 procedure TFormEvilCEditor.FormShow(Sender: TObject);
@@ -273,7 +274,14 @@ end;
 procedure TFormEvilCEditor.FormClose(Sender: TObject;
   var CloseAction: TCloseAction);
 begin
-  CloseAction := caFree;
+  if Editor.Modified then
+  begin
+    if MessageDlg('', 'You have unsaved changes. Do you still want to close?', mtInformation, [mbYes, mbNo], 0) = mrYes then
+      CloseAction := caFree
+    else
+      CloseAction := caNone;
+  end else
+    CloseAction := caFree;
 end;
 
 procedure TFormEvilCEditor.EditorChange(Sender: TObject);
@@ -382,6 +390,7 @@ begin
   ErrorPos.Y := -1;
   Self.ToolButtonSave.Enabled := True;
   LoadHighligher(ExtractFileExt(AFileName));
+  Editor.Modified := False;
 end;
 
 end.
