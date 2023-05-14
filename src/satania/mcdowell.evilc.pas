@@ -3680,6 +3680,10 @@ var
   IsPathFound: Boolean;
   S,
   Path: String;
+  IsString: Boolean = False;
+
+label
+  IsStringLabel, EndLabel;
 
 begin
   Ln := 1;
@@ -3757,7 +3761,11 @@ begin
       '{':
         Token.Kind := tkBegin;
       '}':
-        Token.Kind := tkEnd;
+        begin
+          if IsString then
+            goto IsStringLabel;
+          Token.Kind := tkEnd;
+        end;
       ':':
         Token.Kind := tkColon;
       '''', '"':
@@ -3770,6 +3778,39 @@ begin
             case C of
               #0:
                 Error('Unterminated string literal', Token.BelongedFileName);
+              '$':
+                begin
+                  if PeekAtNextChar = '{' then
+                  begin
+                    NextChar;
+                    TokenList.Add(Token);
+                    // Add a plus sign
+                    Token.Value := '';
+                    Token.Kind := tkAdd;
+                    TokenList.Add(Token);
+                    // Add string function
+                    Token.Value := 'string';
+                    Token.Kind := tkIdent;
+                    TokenList.Add(Token);
+                    Token.Value := '';
+                    Token.Kind := tkBracketOpen;
+                    TokenList.Add(Token);
+                    //
+                    IsString := True;
+                    goto EndLabel;
+                    //
+                  IsStringLabel:
+                    IsString := False;
+                    Token.Value := '';
+                    Token.Kind := tkBracketClose;
+                    TokenList.Add(Token);
+                    // Add a plus sign
+                    Token.Kind := tkAdd;
+                    TokenList.Add(Token);
+                    Token.Kind := tkString;
+                  end else
+                    Token.Value := Token.Value + C;
+                end;
               '\':
                 begin
                   if PeekAtNextChar = 'n' then
@@ -4023,6 +4064,7 @@ begin
         Error('Unhandled symbol ' + C);
     end;
     TokenList.Add(Token);
+EndLabel:
   until C = #0;
   Self.IsLex := True;
 end;

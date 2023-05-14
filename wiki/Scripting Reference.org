@@ -83,6 +83,9 @@ a += 2 * 5
 a = 'a string'
 // 'a' is now a string
 
+b = 'this is ${a}'
+// Replace ${a} with the content in variable a. The result will be 'this is a string'
+
 a[2] = 'S'
 // Replace char "s" with "S" in string 'a'
 
