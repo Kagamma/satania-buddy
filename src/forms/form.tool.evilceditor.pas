@@ -346,6 +346,7 @@ begin
     WorkingFile := SaveDialog.FileName;
     Editor.Lines.SaveToFile(WorkingFile);
     Self.ToolButtonSave.Enabled := True;
+    Editor.Modified := False;
   end;
 end;
 
@@ -355,12 +356,14 @@ begin
   begin
     Editor.Lines.SaveToFile(WorkingFile);
     Caption := ExtractFileName(WorkingFile);
+    Editor.Modified := False;
   end else
   if SaveDialog.Execute then
   begin
     Caption := ExtractFileName(SaveDialog.FileName);
     WorkingFile := SaveDialog.FileName;
     Editor.Lines.SaveToFile(WorkingFile);
+    Editor.Modified := False;
   end;
 end;
 
