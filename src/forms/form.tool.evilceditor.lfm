@@ -1,11 +1,11 @@
 object FormEvilCEditor: TFormEvilCEditor
   Left = 256
-  Height = 556
+  Height = 663
   Top = 256
-  Width = 927
+  Width = 799
   Caption = 'EvilC Editor'
-  ClientHeight = 556
-  ClientWidth = 927
+  ClientHeight = 663
+  ClientWidth = 799
   Icon.Data = {
     7E04000000000100010010100000010020006804000016000000280000001000
     0000200000000100200000000000000400006400000064000000000000000000
@@ -51,12 +51,11 @@ object FormEvilCEditor: TFormEvilCEditor
   OnDestroy = FormDestroy
   Position = poDefault
   ShowInTaskBar = stAlways
-  LCLVersion = '2.3.0.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
     Top = 0
-    Width = 927
+    Width = 799
     Caption = 'ToolBar1'
     Images = FormMain.ImageList
     ParentColor = False
@@ -79,7 +78,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator2: TToolButton
       Left = 101
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator2'
       Style = tbsSeparator
@@ -102,7 +101,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator1: TToolButton
       Left = 24
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator1'
       Style = tbsSeparator
@@ -116,7 +115,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator3: TToolButton
       Left = 186
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator3'
       Style = tbsSeparator
@@ -131,7 +130,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton2: TToolButton
       Left = 155
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButton2'
       Style = tbsSeparator
@@ -153,9 +152,9 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   inline Editor: TSynEdit
     Left = 0
-    Height = 506
+    Height = 614
     Top = 26
-    Width = 927
+    Width = 799
     Align = alClient
     Color = 1644825
     Font.Color = 14737632
@@ -662,9 +661,9 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   object StatusBar: TStatusBar
     Left = 0
-    Height = 24
-    Top = 532
-    Width = 927
+    Height = 23
+    Top = 640
+    Width = 799
     Panels = <    
       item
         Width = 1
