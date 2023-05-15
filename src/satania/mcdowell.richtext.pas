@@ -222,78 +222,85 @@ var
   end;
 
 begin
-  if (not Self.FIsLexed) or (Self.TokenList.Count = 0) then
-    Self.Lex(IsEmote);
-  if not Self.IsStreaming then
-  begin
-    IMin := 0;
-    IMax := Self.TokenList.Count - 1
-  end else
-  begin
-    IMin := Self.LastTokenPos;
-    IMax := Min(Self.NextTokenPos, Self.TokenList.Count - 1);
-  end;
-  for I := IMin to IMax do
-  begin
-    Token := Self.TokenList[I];
-    case Token.Kind of
-      rtkText:
-        begin
-          if (Self.LastKind = Token.Kind) and (Memo.Blocks.Count > 0) then
+  try
+    if (not Self.FIsLexed) or (Self.TokenList.Count = 0) then
+      Self.Lex(IsEmote);
+    if not Self.IsStreaming then
+    begin
+      IMin := 0;
+      IMax := Self.TokenList.Count - 1
+    end else
+    begin
+      IMin := Self.LastTokenPos;
+      IMax := Min(Self.NextTokenPos, Self.TokenList.Count - 1);
+    end;
+    for I := IMin to IMax do
+    begin
+      Token := Self.TokenList[I];
+      case Token.Kind of
+        rtkText:
           begin
-            TB := TKMemoTextBlock(Memo.Blocks[Memo.Blocks.Count - 1]);
-            if IsPerformance then
-              S := S + Token.Value
-            else
-              TB.Text := TB.Text + Token.Value;
-          end else
-          begin
-            AddText;
-            TB := Memo.Blocks.AddTextBlock(Token.Value);
+            if (Self.LastKind = Token.Kind) and (Memo.Blocks.Count > 0) then
+            begin
+              TB := TKMemoTextBlock(Memo.Blocks[Memo.Blocks.Count - 1]);
+              if IsPerformance then
+                S := S + Token.Value
+              else
+                TB.Text := TB.Text + Token.Value;
+            end else
+            begin
+              AddText;
+              TB := Memo.Blocks.AddTextBlock(Token.Value);
+            end;
+            case Self.LastState of
+              rtsCode:
+                begin
+                  TB.TextStyle.Font.Color := $071330;
+                  {$ifdef WINDOWS}
+                  TB.TextStyle.Font.Name := 'Consolas';
+                  {$else}
+                  TB.TextStyle.Font.Name := 'Monospace';
+                  {$endif}
+                end;
+              rtsThink:
+                begin
+                  TB.TextStyle.Font.Color := $808080;
+                  TB.TextStyle.Font.Style := [fsItalic];
+                end
+              else
+                begin
+                  // Do nothing
+                end;
+            end;
           end;
-          case Self.LastState of
-            rtsCode:
-              begin
-                TB.TextStyle.Font.Color := $071330;
-                {$ifdef WINDOWS}
-                TB.TextStyle.Font.Name := 'Consolas';
-                {$else}
-                TB.TextStyle.Font.Name := 'Monospace';
-                {$endif}
-              end;
-            rtsThink:
-              begin
-                TB.TextStyle.Font.Color := $808080;
-                TB.TextStyle.Font.Style := [fsItalic];
-              end
-            else
-              begin
-                // Do nothing
-              end;
-          end;
-        end;
-      rtkNewLine:
-        begin
-          AddText;
-          Memo.Blocks.AddParagraph;
-        end;
-      rtkState:
-        begin
-          if (Token.State = rtsCode) or ((Token.State = rtsNormal) and (Self.LastState = rtsCode)) then
+        rtkNewLine:
           begin
             AddText;
             Memo.Blocks.AddParagraph;
           end;
-          Self.LastState := Token.State;
-        end;
-      rtkEOS:
-        begin
-          AddText;
-          Exit;
-        end;
+        rtkState:
+          begin
+            if (Token.State = rtsCode) or ((Token.State = rtsNormal) and (Self.LastState = rtsCode)) then
+            begin
+              AddText;
+              Memo.Blocks.AddParagraph;
+            end;
+            Self.LastState := Token.State;
+          end;
+        rtkEOS:
+          begin
+            AddText;
+            Exit;
+          end;
+      end;
+      Self.LastKind := Token.Kind;
+      Self.LastTokenPos := I + 1;
     end;
-    Self.LastKind := Token.Kind;
-    Self.LastTokenPos := I + 1;
+  except
+    on E: Exception do
+    begin
+      Writeln(E.Message);
+    end;
   end;
 end;
 
