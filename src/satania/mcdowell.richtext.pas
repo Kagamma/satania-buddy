@@ -126,7 +126,8 @@ label
   LB_Other;
 
 var
-  C    : Char;
+  C,
+  Bracket: Char;
   Token: TRichTextToken;
 
 begin
@@ -150,12 +151,34 @@ begin
             Self.FState := rtsThink;
             Token.Kind := rtkState;
             Token.State := Self.FState;
+            Bracket := '(';
           end else
             goto LB_Other;
         end;
       ')':
         begin
-          if IsEmote and (Self.FState = rtsThink) then
+          if IsEmote and (Self.FState = rtsThink) and (Bracket = '(') then
+          begin
+            Self.FState := rtsNormal;
+            Token.Kind := rtkState;
+            Token.State := Self.FState;
+          end else
+            goto LB_Other;
+        end;
+      '[':
+        begin
+          if IsEmote and (Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') then
+          begin
+            Self.FState := rtsThink;
+            Token.Kind := rtkState;
+            Token.State := Self.FState;
+            Bracket := '[';
+          end else
+            goto LB_Other;
+        end;
+      ']':
+        begin
+          if IsEmote and (Self.FState = rtsThink) and (Bracket = ']') then
           begin
             Self.FState := rtsNormal;
             Token.Kind := rtkState;

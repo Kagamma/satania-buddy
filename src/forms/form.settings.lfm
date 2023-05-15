@@ -50,7 +50,6 @@ object FormSettings: TFormSettings
   OnShow = FormShow
   Position = poScreenCenter
   ShowInTaskBar = stAlways
-  LCLVersion = '2.3.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -288,8 +287,8 @@ object FormSettings: TFormSettings
           Left = 24
           Height = 15
           Top = 368
-          Width = 160
-          Caption = 'Enable italic for user messages'
+          Width = 170
+          Caption = 'Enable styling for user messages'
         end
         object CheckBoxEnableItalicForUserText: TCheckBox
           Left = 295
