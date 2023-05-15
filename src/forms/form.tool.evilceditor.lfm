@@ -51,6 +51,7 @@ object FormEvilCEditor: TFormEvilCEditor
   OnDestroy = FormDestroy
   Position = poDefault
   ShowInTaskBar = stAlways
+  LCLVersion = '2.3.0.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
@@ -78,7 +79,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator2: TToolButton
       Left = 101
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator2'
       Style = tbsSeparator
@@ -101,7 +102,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator1: TToolButton
       Left = 24
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator1'
       Style = tbsSeparator
@@ -115,7 +116,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator3: TToolButton
       Left = 186
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator3'
       Style = tbsSeparator
@@ -130,7 +131,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton2: TToolButton
       Left = 155
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButton2'
       Style = tbsSeparator
@@ -623,11 +624,11 @@ object FormEvilCEditor: TFormEvilCEditor
     OnChange = EditorChange
     OnSpecialLineColors = EditorSpecialLineColors
     inline SynLeftGutterPartList1: TSynGutterPartList
-      object SynGutterMarks1: TSynGutterMarks
+      object SynGutterMarks: TSynGutterMarks
         Width = 24
         MouseActions = <>
       end
-      object SynGutterLineNumber1: TSynGutterLineNumber
+      object SynGutterLineNumber: TSynGutterLineNumber
         Width = 17
         MouseActions = <>
         MarkupInfo.Background = 1644825
@@ -638,19 +639,19 @@ object FormEvilCEditor: TFormEvilCEditor
         ZeroStart = False
         LeadingZeros = False
       end
-      object SynGutterChanges1: TSynGutterChanges
+      object SynGutterChanges: TSynGutterChanges
         Width = 4
         MouseActions = <>
         ModifiedColor = 59900
         SavedColor = clGreen
       end
-      object SynGutterSeparator1: TSynGutterSeparator
+      object SynGutterSeparator: TSynGutterSeparator
         Width = 2
         MouseActions = <>
         MarkupInfo.Background = clWhite
         MarkupInfo.Foreground = clGray
       end
-      object SynGutterCodeFolding1: TSynGutterCodeFolding
+      object SynGutterCodeFolding: TSynGutterCodeFolding
         MouseActions = <>
         MarkupInfo.Background = clNone
         MarkupInfo.Foreground = clGray
