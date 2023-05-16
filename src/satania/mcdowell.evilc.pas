@@ -2545,7 +2545,7 @@ var
     P := DispatchTable[TSEOpcode(Integer(BinaryLocal.Ptr(CodePtrLocal)^.VarPointer))];
     asm
       jmp P;
-    end;
+    end
   }
 {$else}
   {$define DispatchGoto :=
@@ -2558,7 +2558,7 @@ var
     P := DispatchTable[TSEOpcode(Integer(BinaryLocal.Ptr(CodePtrLocal)^.VarPointer))];
     asm
       b P;
-    end;
+    end
   }
 {$endif}
 
@@ -5613,9 +5613,12 @@ var
         begin
           NextToken;
           if FuncTraversal = 0 then
-            Error('Not in a function', Token);
-          List := ReturnStack.Peek;
-          List.Add(Pointer(Emit([Pointer(opJumpUnconditional), 0]) - 1));
+            Emit([Pointer(opHlt)])
+          else
+          begin
+            List := ReturnStack.Peek;
+            List.Add(Pointer(Emit([Pointer(opJumpUnconditional), 0]) - 1));
+          end;
         end;
       tkFunctionDecl:
         begin
