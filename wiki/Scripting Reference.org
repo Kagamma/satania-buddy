@@ -86,6 +86,10 @@ a = 'a string'
 b = 'this is ${a}'
 // Replace ${a} with the content in variable a. The result will be 'this is a string'
 
+b = 'this is
+a multi-line
+string'
+
 a[2] = 'S'
 // Replace char "s" with "S" in string 'a'
 
