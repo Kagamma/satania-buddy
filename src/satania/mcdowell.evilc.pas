@@ -1046,9 +1046,7 @@ end;
 
 class function TBuiltInFunction.SEString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  if Args[0].Kind in [sevkNumber, sevkBoolean] then
-    Exit(PointFloatToStr(Args[0].VarNumber));
-  Exit(Args[0].VarString^);
+  Exit(SEValueToText(Args[0]));
 end;
 
 class function TBuiltInFunction.SENumber(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
