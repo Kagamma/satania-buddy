@@ -377,10 +377,17 @@ begin
     FRichText.Reset;
   end;
 
+  // TODO: Optimize this horrible mess
   FRichText.Source := Msg;
-  FRichText.Lex((LogName <> Save.Settings.UserName) or Save.Settings.EnableItalicForUserText);
+  if LogName = 'System' then
+    FRichText.Lex(False)
+  else
+    FRichText.Lex((LogName <> Save.Settings.UserName) or Save.Settings.EnableItalicForUserText);
   FRichText.NextTokenPos := FRichText.TokenList.Count - 1;
-  FRichText.Parse(MemoChatLog, (LogName <> Save.Settings.UserName) or Save.Settings.EnableItalicForUserText);
+  if LogName = 'System' then
+    FRichText.Parse(MemoChatLog, False)
+  else
+    FRichText.Parse(MemoChatLog, ((LogName <> Save.Settings.UserName) or Save.Settings.EnableItalicForUserText));
 
   if FIsWriteToHistoryLog then
   begin

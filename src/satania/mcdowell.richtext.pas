@@ -178,7 +178,7 @@ begin
         end;
       ']':
         begin
-          if IsEmote and (Self.FState = rtsThink) and (Bracket = ']') then
+          if IsEmote and (Self.FState = rtsThink) and (Bracket = '[') then
           begin
             Self.FState := rtsNormal;
             Token.Kind := rtkState;
