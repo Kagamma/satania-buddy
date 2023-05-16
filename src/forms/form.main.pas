@@ -244,6 +244,8 @@ begin
 
     if Save.Settings.EmbeddedServerEnable then
       EmbeddedServerStart;
+
+    DockMaster.HeaderStyle := 'ThemedButton';
   end;
 end;
 
