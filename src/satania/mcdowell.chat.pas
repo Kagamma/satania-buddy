@@ -77,11 +77,11 @@ uses
 
 procedure TSataniaChatThread.SendToHer;
 begin
-  if ChatType = '' then Exit;
-  if ChatResponse = '' then
+  if (ChatType = '') or (ChatResponse = '') then
   begin
    // ChatType := 'chat';
    // ChatResponse := 'I couldn''t find any process with that name.';
+    FormChat.RemoveTyping;
   end else
   begin
     Satania.Action(ChatType, ChatResponse);
