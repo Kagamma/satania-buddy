@@ -183,6 +183,7 @@ begin
     end else
       Satania.StartAnimation(Satania.AnimTalkLoop);
     ScrollToBottom;
+    Self.Timer.Interval := 1000 div Self.FTypingSpeed;
   end;
 end;
 

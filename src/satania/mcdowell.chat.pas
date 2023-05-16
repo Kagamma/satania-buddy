@@ -31,6 +31,7 @@ uses
 type
   TSataniaChatThread = class(TThread)
   protected
+    procedure RemoveTyping;
     procedure SendToHer;
     procedure SpeakDontUnderstand;
     procedure ExecuteCustomEvilWorkerScript;
@@ -75,13 +76,17 @@ uses
   Form.chat,
   Mcdowell.EvilC;
 
+procedure TSataniaChatThread.RemoveTyping;
+begin
+  FormChat.RemoveTyping;
+end;
+
 procedure TSataniaChatThread.SendToHer;
 begin
   if (ChatType = '') or (ChatResponse = '') then
   begin
    // ChatType := 'chat';
    // ChatResponse := 'I couldn''t find any process with that name.';
-    FormChat.RemoveTyping;
   end else
   begin
     Satania.Action(ChatType, ChatResponse);
@@ -164,6 +169,7 @@ begin
   begin
     Delete(S, 1, 1);
     ChatType := 'chat';
+    Synchronize(@RemoveTyping);
     RunCommand(S, ChatResponse);
   end;
   Synchronize(@SendToHer);
