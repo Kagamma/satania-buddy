@@ -25,12 +25,11 @@ unit Mcdowell.EvilC;
   {$asmmode intel}
 {$endif}
 {$H+}
+{$macro on}
 {$modeswitch nestedprocvars}
 {$modeswitch advancedrecords}
 // enable this if you want to handle UTF-8 strings (requires LCL)
 {$define SE_STRING_UTF8}
-// enable this if you want precision (use Double instead of Single)
-{$define SE_PRECISION}
 
 interface
 
@@ -39,7 +38,7 @@ uses
   {$ifdef SE_STRING_UTF8},LazUTF8{$endif}, dynlibs;
 
 type
-  TSENumber = {$ifdef SE_PRECISION}Double{$else}Single{$endif};
+  TSENumber = Double;
 
   TSEOpcode = (
     opPushConst,
@@ -86,8 +85,8 @@ type
     opCallNative,
     opCallScript,
     opCallImport,
-    opNop,
-    opYield
+    opYield,
+    opHlt
   );
   TSEOpcodes = set of TSEOpcode;
   TSEOpcodeInfo = record
@@ -523,6 +522,7 @@ var
   GC: TSEGarbageCollector;
   ScriptCacheMap: TSECacheMap;
   SENull: TSEValue;
+  JumpTable: array[TSEOpcode] of Pointer;
 
 implementation
 
@@ -2481,7 +2481,8 @@ var
   ImportBufferWideString: array [0..31] of WideString;
   ImportResult: QWord;
   ImportResultD: TSENumber;
-  FuncImport, P, PP: Pointer;
+  FuncImport, P, PP, PC: Pointer;
+  BinaryLocalCountMinusOne: Integer;
 
   procedure Push(const Value: TSEValue); inline;
   begin
@@ -2490,8 +2491,6 @@ var
   end;
 
   function Pop: PSEValue; inline;
-  var
-    T: Integer;
   begin
     Dec(StackPtrLocal);
     Result := StackPtrLocal;
@@ -2537,11 +2536,135 @@ var
     (Self.FramePtr^.Stack + Integer(I))^ := Value^;
   end;
 
+{$ifdef CPUX86_64}
+  {$define DispatchGoto :=
+    if Self.IsPaused or Self.IsWaited then
+    begin
+      Self.CodePtr := CodePtrLocal;
+      Self.StackPtr := StackPtrLocal;
+      Exit;
+    end;
+    P := DispatchTable[TSEOpcode(Integer(BinaryLocal.Ptr(CodePtrLocal)^.VarPointer))];
+    asm
+      jmp P;
+    end;
+  }
+{$else}
+  {$define DispatchGoto :=
+    if Self.IsPaused or Self.IsWaited then
+    begin
+      Self.CodePtr := CodePtrLocal;
+      Self.StackPtr := StackPtrLocal;
+      Exit;
+    end;
+    P := DispatchTable[TSEOpcode(Integer(BinaryLocal.Ptr(CodePtrLocal)^.VarPointer))];
+    asm
+      b P;
+    end;
+  }
+{$endif}
+
 label
   Loop, FinishLoop, LoopMMX, LoopMMXAlloc, AllocMMX6, AllocMMX5, AllocMMX4, AllocMMX3, AllocMMX2, AllocMMX1,
   AllocMMX0, LoopMMXFinishAlloc, LoopReg, LoopRegAlloc, AllocRDI, AllocRSI, AllocRDX, AllocRCX, AllocR8, AllocR9, LoopRegFinishAlloc,
   LoopFinishAlloc,
-  CallScript, CallNative, CallImport;
+  CallScript, CallNative, CallImport,
+  labelPushConst,
+  labelPushGlobalVar,
+  labelPushLocalVar,
+  labelPushLocalArray,
+  labelPushGlobalArray,
+  labelPushArrayPop,
+  labelPopConst,
+  labelPopFrame,
+  labelAssignGlobalVar,
+  labelAssignGlobalArray,
+  labelAssignLocalVar,
+  labelAssignLocalArray,
+  labelJumpEqual,
+  labelJumpUnconditional,
+  labelJumpEqualOrGreater,
+  labelJumpEqualOrLesser,
+
+  labelOperatorAdd2,
+  labelOperatorSub2,
+  labelOperatorMul2,
+  labelOperatorDiv2,
+
+  labelOperatorAdd,
+  labelOperatorSub,
+  labelOperatorMul,
+  labelOperatorDiv,
+  labelOperatorMod,
+  labelOperatorPow,
+  labelOperatorNegative,
+  labelOperatorLesser,
+  labelOperatorLesserOrEqual,
+  labelOperatorGreater,
+  labelOperatorGreaterOrEqual,
+  labelOperatorEqual,
+  labelOperatorNotEqual,
+  labelOperatorAnd,
+  labelOperatorOr,
+  labelOperatorXor,
+  labelOperatorNot,
+
+  labelCallRef,
+  labelCallNative,
+  labelCallScript,
+  labelCallImport,
+  labelYield,
+  labelHlt;
+
+var
+  DispatchTable: array[TSEOpcode] of Pointer = (
+    @labelPushConst,
+    @labelPushGlobalVar,
+    @labelPushLocalVar,
+    @labelPushLocalArray,
+    @labelPushGlobalArray,
+    @labelPushArrayPop,
+    @labelPopConst,
+    @labelPopFrame,
+    @labelAssignGlobalVar,
+    @labelAssignGlobalArray,
+    @labelAssignLocalVar,
+    @labelAssignLocalArray,
+    @labelJumpEqual,
+    @labelJumpUnconditional,
+    @labelJumpEqualOrGreater,
+    @labelJumpEqualOrLesser,
+
+    @labelOperatorAdd2,
+    @labelOperatorSub2,
+    @labelOperatorMul2,
+    @labelOperatorDiv2,
+
+    @labelOperatorAdd,
+    @labelOperatorSub,
+    @labelOperatorMul,
+    @labelOperatorDiv,
+    @labelOperatorMod,
+    @labelOperatorPow,
+    @labelOperatorNegative,
+    @labelOperatorLesser,
+    @labelOperatorLesserOrEqual,
+    @labelOperatorGreater,
+    @labelOperatorGreaterOrEqual,
+    @labelOperatorEqual,
+    @labelOperatorNotEqual,
+    @labelOperatorAnd,
+    @labelOperatorOr,
+    @labelOperatorXor,
+    @labelOperatorNot,
+
+    @labelCallRef,
+    @labelCallNative,
+    @labelCallScript,
+    @labelCallImport,
+    @labelYield,
+    @labelHlt
+  );
 
 begin
   if Self.IsDone then
@@ -2552,894 +2675,930 @@ begin
   CodePtrLocal := Self.CodePtr;
   StackPtrLocal := Self.StackPtr;
   BinaryLocal := Self.Binary;
+  BinaryLocalCountMinusOne := BinaryLocal.Count - 1;
   GC.CheckForGC;
+
   try
-    while CodePtrLocal < BinaryLocal.Count do
+    DispatchGoto;
+    while True do
     begin
-      case TSEOpcode(Integer(BinaryLocal.Ptr(CodePtrLocal)^.VarPointer)) of
-        opOperatorAdd:
-          begin
-            B := Pop;
-            A := Pop;
-            SEValueAdd(StackPtrLocal^, A^, B^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal);
-          end;
-        opOperatorSub:
-          begin
-            B := Pop;
-            A := Pop;
-            SEValueSub(StackPtrLocal^, A^, B^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal);
-          end;
-        opOperatorMul:
-          begin
-            B := Pop;
-            A := Pop;
-            SEValueMul(StackPtrLocal^, A^, B^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal);
-          end;
-        opOperatorDiv:
-          begin
-            B := Pop;
-            A := Pop;
-            SEValueDiv(StackPtrLocal^, A^, B^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal);
-          end;
-        opOperatorMod:
-          begin
-            B := Pop;
-            A := Pop;
-            Push(A^ - B^ * Int(TSENumber(A^ / B^)));
-            Inc(CodePtrLocal);
-          end;
-        opOperatorEqual:
-          begin
-            B := Pop;
-            A := Pop;
-            SEValueEqual(StackPtrLocal^, A^, B^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal);
-          end;
-        opOperatorNotEqual:
-          begin
-            B := Pop;
-            A := Pop;
-            SEValueNotEqual(StackPtrLocal^, A^, B^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal);
-          end;
-        opOperatorLesser:
-          begin
-            B := Pop;
-            A := Pop;
-            SEValueLesser(StackPtrLocal^, A^, B^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal);
-          end;
-        opOperatorLesserOrEqual:
-          begin
-            B := Pop;
-            A := Pop;
-            SEValueLesserOrEqual(StackPtrLocal^, A^, B^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal);
-          end;
-        opOperatorGreater:
-          begin
-            B := Pop;
-            A := Pop;
-            SEValueGreater(StackPtrLocal^, A^, B^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal);
-          end;
-        opOperatorGreaterOrEqual:
-          begin
-            B := Pop;
-            A := Pop;
-            SEValueGreaterOrEqual(StackPtrLocal^, A^, B^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal);
-          end;
-        opOperatorAnd:
-          begin
-            B := Pop;
-            A := Pop;
-            Push(Integer(A^) and Integer(B^));
-            Inc(CodePtrLocal);
-          end;
-        opOperatorOr:
-          begin
-            B := Pop;
-            A := Pop;
-            Push(Integer(A^) or Integer(B^));
-            Inc(CodePtrLocal);
-          end;
-        opOperatorXor:
-          begin
-            B := Pop;
-            A := Pop;
-            Push(Integer(A^) xor Integer(B^));
-            Inc(CodePtrLocal);
-          end;
-        opOperatorNot:
-          begin
-            A := Pop;
-            SEValueNot(StackPtrLocal^, A^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal);
-          end;
-        opOperatorNegative:
-          begin
-            A := Pop;
-            SEValueNeg(StackPtrLocal^, A^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal);
-          end;
+      labelOperatorAdd:
+        begin
+          B := Pop;
+          A := Pop;
+          SEValueAdd(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorSub:
+        begin
+          B := Pop;
+          A := Pop;
+          SEValueSub(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorMul:
+        begin
+          B := Pop;
+          A := Pop;
+          SEValueMul(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorDiv:
+        begin
+          B := Pop;
+          A := Pop;
+          SEValueDiv(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorMod:
+        begin
+          B := Pop;
+          A := Pop;
+          Push(A^ - B^ * Int(TSENumber(A^ / B^)));
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorEqual:
+        begin
+          B := Pop;
+          A := Pop;
+          SEValueEqual(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorNotEqual:
+        begin
+          B := Pop;
+          A := Pop;
+          SEValueNotEqual(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorLesser:
+        begin
+          B := Pop;
+          A := Pop;
+          SEValueLesser(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorLesserOrEqual:
+        begin
+          B := Pop;
+          A := Pop;
+          SEValueLesserOrEqual(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorGreater:
+        begin
+          B := Pop;
+          A := Pop;
+          SEValueGreater(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorGreaterOrEqual:
+        begin
+          B := Pop;
+          A := Pop;
+          SEValueGreaterOrEqual(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorAnd:
+        begin
+          B := Pop;
+          A := Pop;
+          Push(Integer(A^) and Integer(B^));
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorOr:
+        begin
+          B := Pop;
+          A := Pop;
+          Push(Integer(A^) or Integer(B^));
+          Inc(CodePtrLocal); 
+          DispatchGoto;
+        end;
+      labelOperatorXor:
+        begin
+          B := Pop;
+          A := Pop;
+          Push(Integer(A^) xor Integer(B^));
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorNot:
+        begin
+          A := Pop;
+          SEValueNot(StackPtrLocal^, A^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorNegative:
+        begin
+          A := Pop;
+          SEValueNeg(StackPtrLocal^, A^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelOperatorAdd2:
+        begin
+          if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
+            SEValueAdd(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
+          else
+            SEValueAdd(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal, 4);
+          DispatchGoto;
+        end;
+      labelOperatorSub2:
+        begin
+          if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
+            SEValueSub(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
+          else
+            SEValueSub(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal, 4);
+          DispatchGoto;
+        end;
+      labelOperatorMul2:
+        begin
+          if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
+            SEValueMul(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
+          else
+            SEValueMul(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal, 4);
+          DispatchGoto;
+        end;
+      labelOperatorDiv2:
+        begin
+          if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
+            SEValueDiv(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
+          else
+            SEValueDiv(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal, 4);
+          DispatchGoto;
+        end;
 
-        opOperatorAdd2:
-          begin
-            if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
-              SEValueAdd(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
+      labelPushConst:
+        begin
+          Push(BinaryLocal.Ptr(CodePtrLocal + 1)^);
+          Inc(CodePtrLocal, 2);
+          DispatchGoto;
+        end;
+      labelPushGlobalVar:
+        begin
+          Push(GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^);
+          Inc(CodePtrLocal, 2);
+          DispatchGoto;
+        end;
+      labelPushLocalVar:
+        begin
+          Push(GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^);
+          Inc(CodePtrLocal, 2);
+          DispatchGoto;
+        end;
+      labelPushGlobalArray:
+        begin
+          A := BinaryLocal.Ptr(CodePtrLocal + 1);
+          B := GetGlobalInt(A^);
+          case B^.Kind of
+            sevkString:
+              {$ifdef SE_STRING_UTF8}
+                Push(UTF8Copy(B^.VarString^, Integer(Pop^) + 1, 1));
+              {$else}
+                Push(B^.VarString^[Integer(Pop^) + 1]);
+              {$endif}
+            sevkMap:
+              Push(SEMapGet(B^, Pop^));
             else
-              SEValueAdd(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal, 4);
-          end;
-        opOperatorSub2:
-          begin
-            if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
-              SEValueSub(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
-            else
-              SEValueSub(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal, 4);
-          end;
-        opOperatorMul2:
-          begin
-            if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
-              SEValueMul(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
-            else
-              SEValueMul(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal, 4);
-          end;
-        opOperatorDiv2:
-          begin
-            if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
-              SEValueDiv(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
-            else
-              SEValueDiv(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
-            Inc(StackPtrLocal);
-            Inc(CodePtrLocal, 4);
-          end;
-
-        opPushConst:
-          begin
-            Push(BinaryLocal.Ptr(CodePtrLocal + 1)^);
-            Inc(CodePtrLocal, 2);
-          end;
-        opPushGlobalVar:
-          begin
-            Push(GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^);
-            Inc(CodePtrLocal, 2);
-          end;
-        opPushLocalVar:
-          begin
-            Push(GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^);
-            Inc(CodePtrLocal, 2);
-          end;
-        opPushGlobalArray:
-          begin
-            A := BinaryLocal.Ptr(CodePtrLocal + 1);
-            B := GetGlobalInt(A^);
-            case B^.Kind of
-              sevkString:
-                {$ifdef SE_STRING_UTF8}
-                  Push(UTF8Copy(B^.VarString^, Integer(Pop^) + 1, 1));
-                {$else}
-                  Push(B^.VarString^[Integer(Pop^) + 1]);
-                {$endif}
-              sevkMap:
-                Push(SEMapGet(B^, Pop^));
-              else
-                begin
-                  Pop;
-                  Push(0);
-                end;
-            end;
-            Inc(CodePtrLocal, 2);
-          end;
-        opPushLocalArray:
-          begin
-            A := BinaryLocal.Ptr(CodePtrLocal + 1);
-            B := GetLocalInt(A^);
-            case B^.Kind of
-              sevkString:
-                {$ifdef SE_STRING_UTF8}
-                  Push(UTF8Copy(B^.VarString^, Integer(Pop^) + 1, 1));
-                {$else}
-                  Push(B^.VarString^[Integer(Pop^) + 1]);
-                {$endif}
-              sevkMap:
-                Push(SEMapGet(B^, Pop^));
-              else
-                begin
-                  Pop;
-                  Push(0);
-                end;
-            end;
-            Inc(CodePtrLocal, 2);
-          end;
-        opPushArrayPop:
-          begin
-            A := Pop;
-            B := Pop;
-            case B^.Kind of
-              sevkString:
-                {$ifdef SE_STRING_UTF8}
-                  Push(UTF8Copy(B^.VarString^, Integer(A^) + 1, 1));
-                {$else}
-                  Push(B^.VarString^[Integer(A^) + 1]);
-                {$endif}
-              sevkMap:
-                Push(SEMapGet(B^, A^));
-              else
+              begin
+                Pop;
                 Push(0);
-            end;
-            Inc(CodePtrLocal);
-          end;
-        opPopConst:
-          begin
-            Dec(StackPtrLocal); // Pop;
-            Inc(CodePtrLocal);
-          end;
-        opJumpEqual:
-          begin
-            B := Pop;
-            A := Pop;
-            if SEValueEqual(A^, B^) then
-              CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
-            else
-              Inc(CodePtrLocal, 2);
-          end;
-        opJumpUnconditional:
-          begin
-            CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
-          end;
-        opJumpEqualOrGreater:
-          begin
-            B := Pop;
-            A := Pop;
-            if SEValueGreaterOrEqual(A^, B^) then
-              CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
-            else
-              Inc(CodePtrLocal, 2);
-          end;
-        opJumpEqualOrLesser:
-          begin
-            B := Pop;
-            A := Pop;
-            if SEValueLesserOrEqual(A^, B^) then
-              CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
-            else
-              Inc(CodePtrLocal, 2);
-          end;
-        opCallRef:
-          begin
-            A := Pop; // Ref
-            if A^.Kind <> sevkFunction then
-              raise Exception.Create('Not a function reference');
-            BinaryLocal.Ptr(CodePtrLocal + 1)^ := Pointer(A^.VarFuncIndx);
-            case A^.VarFuncKind of
-              sefkScript:
-                begin
-                  goto CallScript;
-                end;
-              sefkImport:
-                begin
-                  goto CallImport;
-                end;
-              sefkNative:
-                begin
-                  goto CallNative;
-                end;
-            end;
-          end;
-        opCallNative:
-          begin
-          CallNative:
-            GC.CheckForGC;
-            FuncNativeInfo := PSEFuncNativeInfo(Pointer(BinaryLocal.Ptr(CodePtrLocal + 1)^));
-            ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
-            SetLength(Args, ArgCount);
-            for I := ArgCount - 1 downto 0 do
-            begin
-              Args[I] := Pop^;
-            end;
-            TV := FuncNativeInfo^.Func(Self, Args);
-            if IsDone then
-            begin
-              Exit;
-            end;
-            Push(TV);
-            Inc(CodePtrLocal, 3);
-          end;
-        opCallScript:
-          begin
-          CallScript:
-            GC.CheckForGC;
-            ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
-            FuncScriptInfo := Self.Parent.FuncScriptList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
-            Inc(Self.FramePtr);
-            if Self.FramePtr >= @Self.Frame[Self.FrameSize] then
-              raise Exception.Create('Too much recursion');
-            Self.FramePtr^.Stack := StackPtrLocal - ArgCount;
-            StackPtrLocal := StackPtrLocal + FuncScriptInfo^.VarCount;
-            Self.FramePtr^.Code := CodePtrLocal + 3;
-            CodePtrLocal := FuncScriptInfo^.Addr;
-          end;
-        opCallImport:
-          begin
-          CallImport:
-            GC.CheckForGC;
-            FuncImportInfo := Self.Parent.FuncImportList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
-            FuncImport := FuncImportInfo^.Func;
-            if FuncImport = nil then
-              raise Exception.Create(Format('Function "%s" is null', [FuncImportInfo^.Name]));
-            ArgCount := Length(FuncImportInfo^.Args);
-            ArgSize := ArgCount * 8;
-            RegCount := 0;
-            {$ifdef LINUX}
-            MMXCount := 0;
-            {$endif}
-
-            for I := ArgCount - 1 downto 0 do
-            begin
-              case FuncImportInfo^.Args[I] of
-                seakI8:
-                  begin
-                    Int64((@ImportBufferData[I * 8])^) := ShortInt(Round(Pop^.VarNumber));
-                    ImportBufferIndex[I] := 0;
-                    Inc(RegCount);
-                  end;
-                seakI16:
-                  begin
-                    Int64((@ImportBufferData[I * 8])^) := SmallInt(Round(Pop^.VarNumber));
-                    ImportBufferIndex[I] := 0;
-                    Inc(RegCount);
-                  end;
-                seakI32:
-                  begin
-                    Int64((@ImportBufferData[I * 8])^) := LongInt(Round(Pop^.VarNumber));
-                    ImportBufferIndex[I] := 0;
-                    Inc(RegCount);
-                  end;
-                seakI64:
-                  begin
-                    Int64((@ImportBufferData[I * 8])^) := Int64(Round(Pop^.VarNumber));
-                    ImportBufferIndex[I] := 0;
-                    Inc(RegCount);
-                  end;
-                seakU8:
-                  begin
-                    QWord((@ImportBufferData[I * 8])^) := Byte(Round(Pop^.VarNumber));
-                    ImportBufferIndex[I] := 0;
-                    Inc(RegCount);
-                  end;
-                seakU16:
-                  begin
-                    QWord((@ImportBufferData[I * 8])^) := Word(Round(Pop^.VarNumber));
-                    ImportBufferIndex[I] := 0;
-                    Inc(RegCount);
-                  end;
-                seakU32:
-                  begin
-                    QWord((@ImportBufferData[I * 8])^) := LongWord(Round(Pop^.VarNumber));
-                    ImportBufferIndex[I] := 0;
-                    Inc(RegCount);
-                  end;
-                seakU64:
-                  begin
-                    QWord((@ImportBufferData[I * 8])^) := QWord(Round(Pop^.VarNumber));
-                    ImportBufferIndex[I] := 0;
-                    Inc(RegCount);
-                  end;
-               { seakF32:
-                  begin
-                    TSENumber((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
-                  end;}
-                seakF64:
-                  begin
-                    TSENumber((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
-                    ImportBufferIndex[I] := 1;
-                    {$ifdef WINDOWS}
-                    Inc(RegCount);
-                    {$else}
-                    Inc(MMXCount);
-                    {$endif}
-                  end;
-                seakBuffer:
-                  begin
-                    A := Pop;
-                    if A^.Kind = sevkString then
-                    begin
-                      ImportBufferString[I] := A^.VarString^ + #0;
-                      PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferString[I]);
-                    end else
-                    if A^.Kind = sevkBuffer then
-                      PChar((@ImportBufferData[I * 8])^) := PChar(A^.VarBuffer^.Ptr)
-                    else
-                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
-                    ImportBufferIndex[I] := 0;
-                    Inc(RegCount);
-                  end;
-                seakWBuffer:
-                  begin
-                    A := Pop;
-                    if A^.Kind = sevkString then
-                    begin
-                      ImportBufferWideString[I] := UTF8Decode(A^.VarString^ + #0);
-                      PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferWideString[I]);
-                    end else
-                    if A^.Kind = sevkBuffer then
-                      PWideChar((@ImportBufferData[I * 8])^) := PWideChar(A^.VarBuffer^.Ptr)
-                    else
-                      QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
-                    ImportBufferIndex[I] := 0;
-                    Inc(RegCount);
-                  end;
               end;
-            end;
-            P := @ImportBufferData[0];
-            PP := @ImportBufferIndex[0];
-            {$if defined(WINDOWS)}
-            ArgCountStack := Max(0, Int64(RegCount) - 4);
-            {$elseif defined(LINUX)}
-            ArgCountStack := Max(0, Int64(MMXCount) - 8) + Max(0, Int64(RegCount) - 6);
-            {$endif}
-            {$ifdef CPUX86_64}
-            {$if defined(WINDOWS)}
-              asm
-                xor  rax,rax
-                mov  eax,ArgCount
-                mov  r10,rax
+          end;
+          Inc(CodePtrLocal, 2);
+          DispatchGoto;
+        end;
+      labelPushLocalArray:
+        begin
+          A := BinaryLocal.Ptr(CodePtrLocal + 1);
+          B := GetLocalInt(A^);
+          case B^.Kind of
+            sevkString:
+              {$ifdef SE_STRING_UTF8}
+                Push(UTF8Copy(B^.VarString^, Integer(Pop^) + 1, 1));
+              {$else}
+                Push(B^.VarString^[Integer(Pop^) + 1]);
+              {$endif}
+            sevkMap:
+              Push(SEMapGet(B^, Pop^));
+            else
+              begin
+                Pop;
+                Push(0);
+              end;
+          end;
+          Inc(CodePtrLocal, 2);
+          DispatchGoto;
+        end;
+      labelPushArrayPop:
+        begin
+          A := Pop;
+          B := Pop;
+          case B^.Kind of
+            sevkString:
+              {$ifdef SE_STRING_UTF8}
+                Push(UTF8Copy(B^.VarString^, Integer(A^) + 1, 1));
+              {$else}
+                Push(B^.VarString^[Integer(A^) + 1]);
+              {$endif}
+            sevkMap:
+              Push(SEMapGet(B^, A^));
+            else
+              Push(0);
+          end;
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelPopConst:
+        begin
+          Dec(StackPtrLocal); // Pop;
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelJumpEqual:
+        begin
+          B := Pop;
+          A := Pop;
+          if SEValueEqual(A^, B^) then
+            CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
+          else
+            Inc(CodePtrLocal, 2);
+          DispatchGoto;
+        end;
+      labelJumpUnconditional:
+        begin
+          CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^;
+          DispatchGoto;
+        end;
+      labelJumpEqualOrGreater:
+        begin
+          B := Pop;
+          A := Pop;
+          if SEValueGreaterOrEqual(A^, B^) then
+            CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
+          else
+            Inc(CodePtrLocal, 2);
+          DispatchGoto;
+        end;
+      labelJumpEqualOrLesser:
+        begin
+          B := Pop;
+          A := Pop;
+          if SEValueLesserOrEqual(A^, B^) then
+            CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
+          else
+            Inc(CodePtrLocal, 2);
+          DispatchGoto;
+        end;
+      labelCallRef:
+        begin
+          A := Pop; // Ref
+          if A^.Kind <> sevkFunction then
+            raise Exception.Create('Not a function reference');
+          BinaryLocal.Ptr(CodePtrLocal + 1)^ := Pointer(A^.VarFuncIndx);
+          case A^.VarFuncKind of
+            sefkScript:
+              begin
+                goto CallScript;
+              end;
+            sefkImport:
+              begin
+                goto CallImport;
+              end;
+            sefkNative:
+              begin
+                goto CallNative;
+              end;
+          end;
+        end;
+      labelCallNative:
+        begin
+        CallNative:
+          GC.CheckForGC;
+          FuncNativeInfo := PSEFuncNativeInfo(Pointer(BinaryLocal.Ptr(CodePtrLocal + 1)^));
+          ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
+          SetLength(Args, ArgCount);
+          for I := ArgCount - 1 downto 0 do
+          begin
+            Args[I] := Pop^;
+          end;
+          TV := FuncNativeInfo^.Func(Self, Args);
+          if IsDone then
+          begin
+            Exit;
+          end;
+          Push(TV);
+          Inc(CodePtrLocal, 3);
+          DispatchGoto;
+        end;
+      labelCallScript:
+        begin
+        CallScript:
+          GC.CheckForGC;
+          ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
+          FuncScriptInfo := Self.Parent.FuncScriptList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
+          Inc(Self.FramePtr);
+          if Self.FramePtr >= @Self.Frame[Self.FrameSize] then
+            raise Exception.Create('Too much recursion');
+          Self.FramePtr^.Stack := StackPtrLocal - ArgCount;
+          StackPtrLocal := StackPtrLocal + FuncScriptInfo^.VarCount;
+          Self.FramePtr^.Code := CodePtrLocal + 3;
+          CodePtrLocal := FuncScriptInfo^.Addr;
+          DispatchGoto;
+        end;
+      labelCallImport:
+        begin
+        CallImport:
+          GC.CheckForGC;
+          FuncImportInfo := Self.Parent.FuncImportList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
+          FuncImport := FuncImportInfo^.Func;
+          if FuncImport = nil then
+            raise Exception.Create(Format('Function "%s" is null', [FuncImportInfo^.Name]));
+          ArgCount := Length(FuncImportInfo^.Args);
+          ArgSize := ArgCount * 8;
+          RegCount := 0;
+          {$ifdef LINUX}
+          MMXCount := 0;
+          {$endif}
 
-                xor  rax,rax
-                mov  eax,ArgSize
-                mov  r14,rax
-
-                mov  rbx,P
-                add  rbx,r14
-                mov  rax,PP
-                add  rax,r14
-                mov  r12,RegCount
-              Loop:
-                sub  rax,8
-                sub  rbx,8
-                mov  r13,[rbx]
-                mov  r14,[rax]
-              LoopReg:
-                  cmp  r12,4
-                  jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
-                // Push to stack
-                  push r13 // Always push ...
-                  jmp  LoopRegFinishAlloc
-                LoopRegAlloc:
-                  cmp  r14,1 // MMX?
-                  je   LoopMMX
-
-                  cmp  r12,1
-                  je   AllocRCX
-                  cmp  r12,2
-                  je   AllocRDX
-                  cmp  r12,3
-                  je   AllocR8
-                // R9
-                  mov  r9,r13
-                  jmp  LoopRegFinishAlloc
-                AllocRCX:
-                  mov  rcx,r13
-                  jmp  LoopRegFinishAlloc
-                AllocRDX:
-                  mov  rdx,r13
-                  jmp  LoopRegFinishAlloc
-                AllocR8:
-                  mov  r8,r13
-                  jmp  LoopRegFinishAlloc
-
-                LoopMMX:
-                  cmp  r12,1
-                  je   AllocMMX0
-                  cmp  r12,2
-                  je   AllocMMX1
-                  cmp  r12,3
-                  je   AllocMMX2
-                // MMX3
-                  movsd xmm3,[rbx]
-                  jmp  LoopRegFinishAlloc
-                AllocMMX0:
-                  movsd xmm0,[rbx]
-                  jmp  LoopRegFinishAlloc
-                AllocMMX1:
-                  movsd xmm1,[rbx]
-                  jmp  LoopRegFinishAlloc
-                AllocMMX2:
-                  movsd xmm2,[rbx]
-
-                LoopRegFinishAlloc:
-                  dec  r12
-              LoopFinishAlloc:
-                dec  r10
-                cmp  r10,0 // Still have arguments to take care of?
-                jne  Loop
-              FinishLoop:
-                sub  rsp,32
-                call [FuncImport]
-                mov  ImportResult,rax
-                movsd ImportResultD,xmm0
-                xor  rax,rax
-                mov  eax,ArgCountStack
-                mov  ecx,8
-                mul  ecx
-                add  rsp,rax
-                add  rsp,32
-              end ['rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'xmm0', 'xmm1', 'xmm2', 'xmm3'];
-            {$elseif defined(LINUX)}
-              asm
-                xor  rax,rax
-                mov  eax,ArgCount
-                mov  r10,rax
-
-                xor  rax,rax
-                mov  eax,ArgSize
-                mov  r14,rax
-
-                mov  rbx,P
-                add  rbx,r14
-                mov  rax,PP
-                add  rax,r14
-                mov  r11,MMXCount
-                mov  r12,RegCount
-              Loop:
-                sub  rax,8
-                sub  rbx,8
-                mov  r13,[rbx]
-                mov  r14,[rax]
-                cmp  r14,0 // Reg?
-                je   LoopReg
-              LoopMMX:
-                  cmp  r11,8
-                  jle  LoopMMXAlloc // Lower or equal: Register allocation, Higher: Push to stack
-                // Push to stack
-                  push r13
-                  jmp  LoopMMXFinishAlloc
-                LoopMMXAlloc:
-                  cmp  r11,1
-                  je   AllocMMX0
-                  cmp  r11,2
-                  je   AllocMMX1
-                  cmp  r11,3
-                  je   AllocMMX2
-                  cmp  r11,4
-                  je   AllocMMX3
-                  cmp  r11,5
-                  je   AllocMMX4
-                  cmp  r11,6
-                  je   AllocMMX5
-                  cmp  r11,7
-                  je   AllocMMX6
-                // MMX7
-                  movsd xmm7,[rbx]
-                  jmp  LoopMMXFinishAlloc
-                AllocMMX6:
-                  movsd xmm6,[rbx]
-                  jmp  LoopMMXFinishAlloc
-                AllocMMX5:
-                  movsd xmm5,[rbx]
-                  jmp  LoopMMXFinishAlloc
-                AllocMMX4:
-                  movsd xmm4,[rbx]
-                  jmp  LoopMMXFinishAlloc
-                AllocMMX3:
-                  movsd xmm3,[rbx]
-                  jmp  LoopMMXFinishAlloc
-                AllocMMX2:
-                  movsd xmm2,[rbx]
-                  jmp  LoopMMXFinishAlloc
-                AllocMMX1:
-                  movsd xmm1,[rbx]
-                  jmp  LoopMMXFinishAlloc
-                AllocMMX0:
-                  movsd xmm0,[rbx]
-                LoopMMXFinishAlloc:
-                  dec  r11
-                  jmp  LoopFinishAlloc
-              LoopReg:
-                  cmp  r12,6
-                  jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
-                // Push to stack
-                  push r13
-                  jmp  LoopRegFinishAlloc
-                LoopRegAlloc:
-                  cmp  r12,1
-                  je   AllocRDI
-                  cmp  r12,2
-                  je   AllocRSI
-                  cmp  r12,3
-                  je   AllocRDX
-                  cmp  r12,4
-                  je   AllocRCX
-                  cmp  r12,5
-                  je   AllocR9
-                // R8
-                  mov  r8,r13
-                  jmp  LoopRegFinishAlloc
-                AllocRDI:
-                  mov  rdi,r13
-                  jmp  LoopRegFinishAlloc
-                AllocRSI:
-                  mov  rsi,r13
-                  jmp  LoopRegFinishAlloc
-                AllocRDX:
-                  mov  rdx,r13
-                  jmp  LoopRegFinishAlloc
-                AllocRCX:
-                  mov  rcx,r13
-                  jmp  LoopRegFinishAlloc
-                AllocR9:
-                  mov  r9,r13
-                LoopRegFinishAlloc:
-                  dec  r12
-              LoopFinishAlloc:
-                dec  r10
-                cmp  r10,0 // Still have arguments to take care of?
-                jne  Loop
-              FinishLoop:
-                call [FuncImport]
-                mov  ImportResult,rax
-                movsd ImportResultD,xmm0
-                xor  rax,rax
-                mov  eax,ArgCountStack
-                mov  ecx,8
-                mul  ecx
-                add  rsp,rax
-              end ['rsi', 'rdi', 'rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'xmm0', 'xmm1', 'xmm2', 'xmm3', 'xmm4', 'xmm5', 'xmm6', 'xmm7'];
-            {$endif}
-            {$else}
-            raise Exception.Create('Import external function does not support this CPU architecture');
-            {$endif} // CPUX86_64
-
-            case FuncImportInfo^.Return of
-              seakI8, seakI16, seakI32:
+          for I := ArgCount - 1 downto 0 do
+          begin
+            case FuncImportInfo^.Args[I] of
+              seakI8:
                 begin
-                  TV := Int64(LongInt(ImportResult))
+                  Int64((@ImportBufferData[I * 8])^) := ShortInt(Round(Pop^.VarNumber));
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
+                end;
+              seakI16:
+                begin
+                  Int64((@ImportBufferData[I * 8])^) := SmallInt(Round(Pop^.VarNumber));
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
+                end;
+              seakI32:
+                begin
+                  Int64((@ImportBufferData[I * 8])^) := LongInt(Round(Pop^.VarNumber));
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                 end;
               seakI64:
                 begin
-                  TV := Int64(ImportResult)
+                  Int64((@ImportBufferData[I * 8])^) := Int64(Round(Pop^.VarNumber));
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                 end;
-              seakU8, seakU16, seakU32:
+              seakU8:
                 begin
-                  TV := QWord(LongWord(ImportResult))
+                  QWord((@ImportBufferData[I * 8])^) := Byte(Round(Pop^.VarNumber));
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                 end;
-              seakU64, seakBuffer, seakWBuffer:
+              seakU16:
                 begin
-                  TV := QWord(ImportResult)
+                  QWord((@ImportBufferData[I * 8])^) := Word(Round(Pop^.VarNumber));
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                 end;
-             // seakF32,
+              seakU32:
+                begin
+                  QWord((@ImportBufferData[I * 8])^) := LongWord(Round(Pop^.VarNumber));
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
+                end;
+              seakU64:
+                begin
+                  QWord((@ImportBufferData[I * 8])^) := QWord(Round(Pop^.VarNumber));
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
+                end;
+             { seakF32:
+                begin
+                  TSENumber((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
+                end;}
               seakF64:
                 begin
-                  TV := ImportResultD;
+                  TSENumber((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
+                  ImportBufferIndex[I] := 1;
+                  {$ifdef WINDOWS}
+                  Inc(RegCount);
+                  {$else}
+                  Inc(MMXCount);
+                  {$endif}
+                end;
+              seakBuffer:
+                begin
+                  A := Pop;
+                  if A^.Kind = sevkString then
+                  begin
+                    ImportBufferString[I] := A^.VarString^ + #0;
+                    PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferString[I]);
+                  end else
+                  if A^.Kind = sevkBuffer then
+                    PChar((@ImportBufferData[I * 8])^) := PChar(A^.VarBuffer^.Ptr)
+                  else
+                    QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
+                end;
+              seakWBuffer:
+                begin
+                  A := Pop;
+                  if A^.Kind = sevkString then
+                  begin
+                    ImportBufferWideString[I] := UTF8Decode(A^.VarString^ + #0);
+                    PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferWideString[I]);
+                  end else
+                  if A^.Kind = sevkBuffer then
+                    PWideChar((@ImportBufferData[I * 8])^) := PWideChar(A^.VarBuffer^.Ptr)
+                  else
+                    QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                 end;
             end;
-            Push(TV);
-            Inc(CodePtrLocal, 3);
           end;
-        opPopFrame:
-          begin
-            CodePtrLocal := Self.FramePtr^.Code;
-            StackPtrLocal := Self.FramePtr^.Stack;
-            Dec(Self.FramePtr);
-          end;
-        opAssignGlobalVar:
-          begin
-            AssignGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Pop);
-            Inc(CodePtrLocal, 2);
-          end;
-        opAssignLocalVar:
-          begin
-            AssignLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Pop);
-            Inc(CodePtrLocal, 2);
-          end;
-        opAssignGlobalArray:
-          begin
-            A := BinaryLocal.Ptr(CodePtrLocal + 1);
-            V := GetGlobalInt(Integer(A^));
-            B := Pop;
-            ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
-            if ArgCount = 1 then
-              C := Pop
-            else
-            begin
-              for I := ArgCount - 1 downto 0 do
-                AA[I] := Pop;
-              C := AA[0];
-              for I := 1 to ArgCount - 1 do
+          P := @ImportBufferData[0];
+          PP := @ImportBufferIndex[0];
+          {$if defined(WINDOWS)}
+          ArgCountStack := Max(0, Int64(RegCount) - 4);
+          {$elseif defined(LINUX)}
+          ArgCountStack := Max(0, Int64(MMXCount) - 8) + Max(0, Int64(RegCount) - 6);
+          {$endif}
+          {$ifdef CPUX86_64}
+          {$if defined(WINDOWS)}
+            asm
+              xor  rax,rax
+              mov  eax,ArgCount
+              mov  r10,rax
+
+              xor  rax,rax
+              mov  eax,ArgSize
+              mov  r14,rax
+
+              mov  rbx,P
+              add  rbx,r14
+              mov  rax,PP
+              add  rax,r14
+              mov  r12,RegCount
+            Loop:
+              sub  rax,8
+              sub  rbx,8
+              mov  r13,[rbx]
+              mov  r14,[rax]
+            LoopReg:
+                cmp  r12,4
+                jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
+              // Push to stack
+                push r13 // Always push ...
+                jmp  LoopRegFinishAlloc
+              LoopRegAlloc:
+                cmp  r14,1 // MMX?
+                je   LoopMMX
+
+                cmp  r12,1
+                je   AllocRCX
+                cmp  r12,2
+                je   AllocRDX
+                cmp  r12,3
+                je   AllocR8
+              // R9
+                mov  r9,r13
+                jmp  LoopRegFinishAlloc
+              AllocRCX:
+                mov  rcx,r13
+                jmp  LoopRegFinishAlloc
+              AllocRDX:
+                mov  rdx,r13
+                jmp  LoopRegFinishAlloc
+              AllocR8:
+                mov  r8,r13
+                jmp  LoopRegFinishAlloc
+
+              LoopMMX:
+                cmp  r12,1
+                je   AllocMMX0
+                cmp  r12,2
+                je   AllocMMX1
+                cmp  r12,3
+                je   AllocMMX2
+              // MMX3
+                movsd xmm3,[rbx]
+                jmp  LoopRegFinishAlloc
+              AllocMMX0:
+                movsd xmm0,[rbx]
+                jmp  LoopRegFinishAlloc
+              AllocMMX1:
+                movsd xmm1,[rbx]
+                jmp  LoopRegFinishAlloc
+              AllocMMX2:
+                movsd xmm2,[rbx]
+
+              LoopRegFinishAlloc:
+                dec  r12
+            LoopFinishAlloc:
+              dec  r10
+              cmp  r10,0 // Still have arguments to take care of?
+              jne  Loop
+            FinishLoop:
+              sub  rsp,32
+              call [FuncImport]
+              mov  ImportResult,rax
+              movsd ImportResultD,xmm0
+              xor  rax,rax
+              mov  eax,ArgCountStack
+              mov  ecx,8
+              mul  ecx
+              add  rsp,rax
+              add  rsp,32
+            end ['rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'xmm0', 'xmm1', 'xmm2', 'xmm3'];
+          {$elseif defined(LINUX)}
+            asm
+              xor  rax,rax
+              mov  eax,ArgCount
+              mov  r10,rax
+
+              xor  rax,rax
+              mov  eax,ArgSize
+              mov  r14,rax
+
+              mov  rbx,P
+              add  rbx,r14
+              mov  rax,PP
+              add  rax,r14
+              mov  r11,MMXCount
+              mov  r12,RegCount
+            Loop:
+              sub  rax,8
+              sub  rbx,8
+              mov  r13,[rbx]
+              mov  r14,[rax]
+              cmp  r14,0 // Reg?
+              je   LoopReg
+            LoopMMX:
+                cmp  r11,8
+                jle  LoopMMXAlloc // Lower or equal: Register allocation, Higher: Push to stack
+              // Push to stack
+                push r13
+                jmp  LoopMMXFinishAlloc
+              LoopMMXAlloc:
+                cmp  r11,1
+                je   AllocMMX0
+                cmp  r11,2
+                je   AllocMMX1
+                cmp  r11,3
+                je   AllocMMX2
+                cmp  r11,4
+                je   AllocMMX3
+                cmp  r11,5
+                je   AllocMMX4
+                cmp  r11,6
+                je   AllocMMX5
+                cmp  r11,7
+                je   AllocMMX6
+              // MMX7
+                movsd xmm7,[rbx]
+                jmp  LoopMMXFinishAlloc
+              AllocMMX6:
+                movsd xmm6,[rbx]
+                jmp  LoopMMXFinishAlloc
+              AllocMMX5:
+                movsd xmm5,[rbx]
+                jmp  LoopMMXFinishAlloc
+              AllocMMX4:
+                movsd xmm4,[rbx]
+                jmp  LoopMMXFinishAlloc
+              AllocMMX3:
+                movsd xmm3,[rbx]
+                jmp  LoopMMXFinishAlloc
+              AllocMMX2:
+                movsd xmm2,[rbx]
+                jmp  LoopMMXFinishAlloc
+              AllocMMX1:
+                movsd xmm1,[rbx]
+                jmp  LoopMMXFinishAlloc
+              AllocMMX0:
+                movsd xmm0,[rbx]
+              LoopMMXFinishAlloc:
+                dec  r11
+                jmp  LoopFinishAlloc
+            LoopReg:
+                cmp  r12,6
+                jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
+              // Push to stack
+                push r13
+                jmp  LoopRegFinishAlloc
+              LoopRegAlloc:
+                cmp  r12,1
+                je   AllocRDI
+                cmp  r12,2
+                je   AllocRSI
+                cmp  r12,3
+                je   AllocRDX
+                cmp  r12,4
+                je   AllocRCX
+                cmp  r12,5
+                je   AllocR9
+              // R8
+                mov  r8,r13
+                jmp  LoopRegFinishAlloc
+              AllocRDI:
+                mov  rdi,r13
+                jmp  LoopRegFinishAlloc
+              AllocRSI:
+                mov  rsi,r13
+                jmp  LoopRegFinishAlloc
+              AllocRDX:
+                mov  rdx,r13
+                jmp  LoopRegFinishAlloc
+              AllocRCX:
+                mov  rcx,r13
+                jmp  LoopRegFinishAlloc
+              AllocR9:
+                mov  r9,r13
+              LoopRegFinishAlloc:
+                dec  r12
+            LoopFinishAlloc:
+              dec  r10
+              cmp  r10,0 // Still have arguments to take care of?
+              jne  Loop
+            FinishLoop:
+              call [FuncImport]
+              mov  ImportResult,rax
+              movsd ImportResultD,xmm0
+              xor  rax,rax
+              mov  eax,ArgCountStack
+              mov  ecx,8
+              mul  ecx
+              add  rsp,rax
+            end ['rsi', 'rdi', 'rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'xmm0', 'xmm1', 'xmm2', 'xmm3', 'xmm4', 'xmm5', 'xmm6', 'xmm7'];
+          {$endif}
+          {$else}
+          raise Exception.Create('Import external function does not support this CPU architecture');
+          {$endif} // CPUX86_64
+
+          case FuncImportInfo^.Return of
+            seakI8, seakI16, seakI32:
               begin
-                OC := C;
-                OV := V;
-                TV := SEMapGet(V^, C^);
-                V := @TV;
-                C := AA[I];
+                TV := Int64(LongInt(ImportResult))
               end;
+            seakI64:
+              begin
+                TV := Int64(ImportResult)
+              end;
+            seakU8, seakU16, seakU32:
+              begin
+                TV := QWord(LongWord(ImportResult))
+              end;
+            seakU64, seakBuffer, seakWBuffer:
+              begin
+                TV := QWord(ImportResult)
+              end;
+           // seakF32,
+            seakF64:
+              begin
+                TV := ImportResultD;
+              end;
+          end;
+          Push(TV);
+          Inc(CodePtrLocal, 3);
+          DispatchGoto;
+        end;
+      labelPopFrame:
+        begin
+          CodePtrLocal := Self.FramePtr^.Code;
+          StackPtrLocal := Self.FramePtr^.Stack;
+          Dec(Self.FramePtr);
+          DispatchGoto;
+        end;
+      labelAssignGlobalVar:
+        begin
+          AssignGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Pop);
+          Inc(CodePtrLocal, 2);
+          DispatchGoto;
+        end;
+      labelAssignLocalVar:
+        begin
+          AssignLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Pop);
+          Inc(CodePtrLocal, 2);
+          DispatchGoto;
+        end;
+      labelAssignGlobalArray:
+        begin
+          A := BinaryLocal.Ptr(CodePtrLocal + 1);
+          V := GetGlobalInt(Integer(A^));
+          B := Pop;
+          ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
+          if ArgCount = 1 then
+            C := Pop
+          else
+          begin
+            for I := ArgCount - 1 downto 0 do
+              AA[I] := Pop;
+            C := AA[0];
+            for I := 1 to ArgCount - 1 do
+            begin
+              OC := C;
+              OV := V;
+              TV := SEMapGet(V^, C^);
+              V := @TV;
+              C := AA[I];
             end;
-            case B^.Kind of
-              sevkString:
+          end;
+          case B^.Kind of
+            sevkString:
+              begin
+                if V^.Kind = sevkString then
                 begin
-                  if V^.Kind = sevkString then
-                  begin
-                    {$ifdef SE_STRING_UTF8}
-                      S1 := V^.VarString^;
-                      S2 := B^.VarString^;
-                      UTF8Delete(S1, Integer(C^) + 1, 1);
-                      S := UTF8Copy(S2, 1, 1);
-                      UTF8Insert(S, S1, Integer(C^) + 1);
-                      GC.AllocString(V, S1);
-                    {$else}
-                      V^.VarString^[Integer(C^) + 1] := B^.VarString^[1];
-                    {$endif}
-                    // Self.Stack[A] := S;
-                    if ArgCount >= 2 then
-                      SEMapSet(OV^, OC^, V^);
-                  end else
-                  begin
-                    SEMapSet(V^, C^, B^);
-                    if ArgCount = 1 then
-                      AssignGlobalInt(Integer(A^), V);
-                  end;
-                end;
-              sevkNumber, sevkBoolean:
-                begin
-                  if V^.Kind = sevkString then
-                  begin
-                    {$ifdef SE_STRING_UTF8}
-                      S1 := V^.VarString^;
-                      UTF8Delete(S1, Integer(C^) + 1, 1);
-                      S := Char(Round(B^.VarNumber));
-                      UTF8Insert(S, S1, Integer(C^) + 1);
-                      GC.AllocString(V, S1);
-                    {$else}
-                      V^.VarString^[Integer(C^) + 1] := Char(Round(B^.VarNumber));
-                    {$endif}
-                    // Self.Stack[A] := S;
-                    if ArgCount >= 2 then
-                      SEMapSet(OV^, OC^, V^);
-                  end else
-                  begin
-                    SEMapSet(V^, C^, B^);
-                    if ArgCount = 1 then
-                      AssignGlobalInt(Integer(A^), V);
-                  end;
-                end;
-              else
+                  {$ifdef SE_STRING_UTF8}
+                    S1 := V^.VarString^;
+                    S2 := B^.VarString^;
+                    UTF8Delete(S1, Integer(C^) + 1, 1);
+                    S := UTF8Copy(S2, 1, 1);
+                    UTF8Insert(S, S1, Integer(C^) + 1);
+                    GC.AllocString(V, S1);
+                  {$else}
+                    V^.VarString^[Integer(C^) + 1] := B^.VarString^[1];
+                  {$endif}
+                  // Self.Stack[A] := S;
+                  if ArgCount >= 2 then
+                    SEMapSet(OV^, OC^, V^);
+                end else
                 begin
                   SEMapSet(V^, C^, B^);
                   if ArgCount = 1 then
                     AssignGlobalInt(Integer(A^), V);
                 end;
-            end;
-            Inc(CodePtrLocal, 3);
-          end;
-        opAssignLocalArray:
-          begin
-            A := BinaryLocal.Ptr(CodePtrLocal + 1);
-            V := GetLocalInt(Integer(A^));
-            B := Pop;
-            ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
-            if ArgCount = 1 then
-              C := Pop
-            else
-            begin
-              for I := ArgCount - 1 downto 0 do
-                AA[I] := Pop;
-              C := AA[0];
-              for I := 1 to ArgCount - 1 do
-              begin
-                OC := C;
-                OV := V;
-                TV := SEMapGet(V^, C^);
-                V := @TV;
-                C := AA[I];
               end;
+            sevkNumber, sevkBoolean:
+              begin
+                if V^.Kind = sevkString then
+                begin
+                  {$ifdef SE_STRING_UTF8}
+                    S1 := V^.VarString^;
+                    UTF8Delete(S1, Integer(C^) + 1, 1);
+                    S := Char(Round(B^.VarNumber));
+                    UTF8Insert(S, S1, Integer(C^) + 1);
+                    GC.AllocString(V, S1);
+                  {$else}
+                    V^.VarString^[Integer(C^) + 1] := Char(Round(B^.VarNumber));
+                  {$endif}
+                  // Self.Stack[A] := S;
+                  if ArgCount >= 2 then
+                    SEMapSet(OV^, OC^, V^);
+                end else
+                begin
+                  SEMapSet(V^, C^, B^);
+                  if ArgCount = 1 then
+                    AssignGlobalInt(Integer(A^), V);
+                end;
+              end;
+            else
+              begin
+                SEMapSet(V^, C^, B^);
+                if ArgCount = 1 then
+                  AssignGlobalInt(Integer(A^), V);
+              end;
+          end;
+          Inc(CodePtrLocal, 3);
+          DispatchGoto;
+        end;
+      labelAssignLocalArray:
+        begin
+          A := BinaryLocal.Ptr(CodePtrLocal + 1);
+          V := GetLocalInt(Integer(A^));
+          B := Pop;
+          ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
+          if ArgCount = 1 then
+            C := Pop
+          else
+          begin
+            for I := ArgCount - 1 downto 0 do
+              AA[I] := Pop;
+            C := AA[0];
+            for I := 1 to ArgCount - 1 do
+            begin
+              OC := C;
+              OV := V;
+              TV := SEMapGet(V^, C^);
+              V := @TV;
+              C := AA[I];
             end;
-            case B^.Kind of
-              sevkString:
+          end;
+          case B^.Kind of
+            sevkString:
+              begin
+                if V^.Kind = sevkString then
                 begin
-                  if V^.Kind = sevkString then
-                  begin
-                    {$ifdef SE_STRING_UTF8}
-                      S1 := V^.VarString^;
-                      S2 := B^.VarString^;
-                      UTF8Delete(S1, Integer(C^) + 1, 1);
-                      S := UTF8Copy(S2, 1, 1);
-                      UTF8Insert(S, S1, Integer(C^) + 1);
-                      GC.AllocString(V, S1);
-                    {$else}
-                      V^.VarString^[Integer(C^) + 1] := B^.VarString^[1];
-                    {$endif}
-                    // Self.Stack[A] := S;
-                    if ArgCount >= 2 then
-                      SEMapSet(OV^, OC^, V^);
-                  end else
-                  begin
-                    SEMapSet(V^, C^, B^);
-                    if ArgCount = 1 then
-                      AssignLocalInt(Integer(A^), V);
-                  end;
-                end;
-              sevkNumber, sevkBoolean:
-                begin
-                  if V^.Kind = sevkString then
-                  begin
-                    {$ifdef SE_STRING_UTF8}
-                      S1 := V^.VarString^;
-                      UTF8Delete(S1, Integer(C^) + 1, 1);
-                      S := Char(Round(B^.VarNumber));
-                      UTF8Insert(S, S1, Integer(C^) + 1);
-                      GC.AllocString(V, S1);
-                    {$else}
-                      V^.VarString^[Integer(C^) + 1] := Char(Round(B^.VarNumber));
-                    {$endif}
-                    // Self.Stack[A] := S;
-                    if ArgCount >= 2 then
-                      SEMapSet(OV^, OC^, V^);
-                  end else
-                  begin
-                    SEMapSet(V^, C^, B^);
-                    if ArgCount = 1 then
-                      AssignLocalInt(Integer(A^), V);
-                  end;
-                end;
-              else
+                  {$ifdef SE_STRING_UTF8}
+                    S1 := V^.VarString^;
+                    S2 := B^.VarString^;
+                    UTF8Delete(S1, Integer(C^) + 1, 1);
+                    S := UTF8Copy(S2, 1, 1);
+                    UTF8Insert(S, S1, Integer(C^) + 1);
+                    GC.AllocString(V, S1);
+                  {$else}
+                    V^.VarString^[Integer(C^) + 1] := B^.VarString^[1];
+                  {$endif}
+                  // Self.Stack[A] := S;
+                  if ArgCount >= 2 then
+                    SEMapSet(OV^, OC^, V^);
+                end else
                 begin
                   SEMapSet(V^, C^, B^);
                   if ArgCount = 1 then
                     AssignLocalInt(Integer(A^), V);
                 end;
-            end;
-            Inc(CodePtrLocal, 3);
+              end;
+            sevkNumber, sevkBoolean:
+              begin
+                if V^.Kind = sevkString then
+                begin
+                  {$ifdef SE_STRING_UTF8}
+                    S1 := V^.VarString^;
+                    UTF8Delete(S1, Integer(C^) + 1, 1);
+                    S := Char(Round(B^.VarNumber));
+                    UTF8Insert(S, S1, Integer(C^) + 1);
+                    GC.AllocString(V, S1);
+                  {$else}
+                    V^.VarString^[Integer(C^) + 1] := Char(Round(B^.VarNumber));
+                  {$endif}
+                  // Self.Stack[A] := S;
+                  if ArgCount >= 2 then
+                    SEMapSet(OV^, OC^, V^);
+                end else
+                begin
+                  SEMapSet(V^, C^, B^);
+                  if ArgCount = 1 then
+                    AssignLocalInt(Integer(A^), V);
+                end;
+              end;
+            else
+              begin
+                SEMapSet(V^, C^, B^);
+                if ArgCount = 1 then
+                  AssignLocalInt(Integer(A^), V);
+              end;
           end;
-        opYield:
-          begin
-            Self.IsYielded := True;
-            Inc(CodePtrLocal);
-            Self.CodePtr := CodePtrLocal;
-            Self.StackPtr := StackPtrLocal;
-            Exit;
-          end;
-        opNop:
-          begin
-            Inc(CodePtrLocal);
-            Continue;
-          end;
-        opOperatorPow:
-          begin
-            B := Pop;
-            A := Pop;
-            Push(Power(A^.VarNumber, B^.VarNumber));
-            Inc(CodePtrLocal);
-          end;
-      end;
-      if Self.IsPaused or Self.IsWaited then
-      begin
-        Self.CodePtr := CodePtrLocal;
-        Self.StackPtr := StackPtrLocal;
-        Exit;
-      end;
+          Inc(CodePtrLocal, 3);
+          DispatchGoto;
+        end;
+      labelYield:
+        begin
+          Self.IsYielded := True;
+          Inc(CodePtrLocal);
+          Self.CodePtr := CodePtrLocal;
+          Self.StackPtr := StackPtrLocal;
+          Exit;
+        end;
+      labelOperatorPow:
+        begin
+          B := Pop;
+          A := Pop;
+          Push(Power(A^.VarNumber, B^.VarNumber));
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      labelHlt:
+        begin
+          Self.CodePtr := CodePtrLocal;
+          Self.IsDone := True;
+          Self.Parent.IsDone := True;
+          Exit;
+        end;
     end;
   except
     on E: Exception do
@@ -5542,6 +5701,7 @@ begin
     repeat
       ParseBlock;
     until PeekAtNextToken.Kind = tkEOF;
+    Emit([Pointer(opHlt)]);
     Self.IsParsed := True;
   finally
     FreeAndNil(ContinueStack);
