@@ -1314,11 +1314,7 @@ begin
   begin
     V := '';
     Value := SEMapGet(Args[1], I);
-    if Value.Kind in [sevkNumber, sevkBoolean] then
-      V := PointFloatToStr(Value.VarNumber)
-    else
-    if Value.Kind = sevkString then
-      V := Value.VarString^;
+    V := SEValueToText(Value);
     S := StringReplace(S, '{' + IntToStr(I) + '}', V, [rfReplaceAll]);
   end;
   Result := S;
