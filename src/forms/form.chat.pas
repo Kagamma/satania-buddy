@@ -44,6 +44,7 @@ type
     LabelEditMode: TLabel;
     MemoEdit: TMemo;
     MemoChatLog: TKMemo;
+    MenuItemStopGenerating: TMenuItem;
     MenuItemClearHistory: TMenuItem;
     MenuItemEditMode: TMenuItem;
     PageControl: TPageControl;
@@ -74,6 +75,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MenuItemStopGeneratingClick(Sender: TObject);
   private
     FRichText: TSataniaRichText;
     FStreamingPartCount: Integer;
@@ -115,6 +117,7 @@ begin
   FRichText.IsStreaming := True;
   FStreamingPartCount := 0;
   Satania.TakeLocalBoundingBoxSnapshot;
+  MenuItemStopGenerating.Enabled := True;
 end;
 
 procedure TFormChat.DisableStreaming;
@@ -126,6 +129,7 @@ begin
     RemoveTyping;
     MemoChatLog.Blocks.AddParagraph;
     ChatHistory.SaveLastestMessage;
+    MenuItemStopGenerating.Enabled := False;
   end;
 end;
 
@@ -202,6 +206,11 @@ begin
   // Load list of services
   LoadServiceList;
   Self.ButtonOpenService.Enabled := Self.ComboBoxService.ItemIndex > 0;
+end;
+
+procedure TFormChat.MenuItemStopGeneratingClick(Sender: TObject);
+begin
+  MenuItemStopGenerating.Enabled := False;
 end;
 
 procedure TFormChat.EditChatKeyDown(Sender: TObject; var Key: Word;
