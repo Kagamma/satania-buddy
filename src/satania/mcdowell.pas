@@ -108,6 +108,7 @@ type
     procedure Chat(S: String);
     procedure Action(Typ, Message: String);
     procedure Worker(const AKey, AScript: String; const ATime: Single; const AArgs: TSEValue);
+    procedure WorkerDelete(const AKey: String);
     procedure ActionFromFile(FileName: String; IsChecked: Boolean = True);
     procedure SetScale(Scale: Single);
     procedure ResetScript;
@@ -438,6 +439,15 @@ end;
 procedure TSatania.Worker(const AKey, AScript: String; const ATime: Single; const AArgs: TSEValue);
 begin
   Self.SEWorkerCreate(nil, [AKey, AScript, ATime, AArgs]);
+end;
+
+procedure TSatania.WorkerDelete(const AKey: String);
+begin
+  if Self.BackgroundScriptDict.ContainsKey(AKey) then
+  begin
+    Self.BackgroundScriptDict[AKey].Script.Free;
+    Self.BackgroundScriptDict.Remove(AKey);
+  end;
 end;
 
 procedure TSatania.ActionFromFile(FileName: String; IsChecked: Boolean = True);

@@ -210,6 +210,12 @@ end;
 
 procedure TFormChat.MenuItemStopGeneratingClick(Sender: TObject);
 begin
+  // Stop worker script
+  Satania.WorkerDelete('___worker');
+  // Restore state
+  DisableStreaming;
+  FormBubble.DisableStreaming;
+  //
   MenuItemStopGenerating.Enabled := False;
 end;
 

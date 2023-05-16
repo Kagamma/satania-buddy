@@ -1151,11 +1151,7 @@ end;
 
 function TSatania.SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  if Self.BackgroundScriptDict.ContainsKey(Args[0]) then
-  begin
-    Self.BackgroundScriptDict[Args[0]].Script.Free;
-    Self.BackgroundScriptDict.Remove(Args[0]);
-  end;
+  Self.WorkerDelete(Args[0]);
 end;
 
 function TSatania.SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
