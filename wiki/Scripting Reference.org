@@ -130,8 +130,11 @@ expressions = a + b * c / d + (5 - 2)
 
 s_concat = 'a string ' + "another string"
 
-m_concat = [1, 2, 'pine'] + [5, 7]
-// Concat arrays. This only work correctly if maps are valid array.
+array_concat = [1, 2, 'pine'] + [5, 7]
+// Concat arrays. This only work correctly if both maps are valid array.
+
+map_concat = ['a': 1] + ['b': 2, 'c': 3]
+// Concat maps. This only work correctly if both maps are not valid array.
 
 and = a & b
 

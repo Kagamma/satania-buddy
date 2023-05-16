@@ -1582,7 +1582,7 @@ procedure SEValueAdd(out R: TSEValue; constref V1, V2: TSEValue); inline; overlo
 var
   I, Len: Integer;
   Temp: TSEValue;
-  Key: String;
+  Key, S: String;
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
@@ -1598,12 +1598,21 @@ begin
     sevkMap:
       begin
         GC.AllocMap(@Temp);
-        Len := SESize(V1);
-        TSEValueMap(Temp.VarMap).List.Count := Len + SESize(V2);
-        for I := 0 to Len - 1 do
-          SEMapSet(Temp, I, SEMapGet(V1, I));
-        for I := Len to Len + SESize(V2) - 1 do
-          SEMapSet(Temp, I, SEMapGet(V2, I - Len));
+        if (not SEMapIsValidArray(V1)) and (not SEMapIsValidArray(V2)) then
+        begin
+          for S in TSEValueMap(V1.VarMap).Keys do
+            SEMapSet(Temp, S, SEMapGet(V1, S));
+          for S in TSEValueMap(V2.VarMap).Keys do
+            SEMapSet(Temp, S, SEMapGet(V2, S));
+        end else
+        begin
+          Len := SESize(V1);
+          TSEValueMap(Temp.VarMap).List.Count := Len + SESize(V2);
+          for I := 0 to Len - 1 do
+            SEMapSet(Temp, I, SEMapGet(V1, I));
+          for I := Len to Len + SESize(V2) - 1 do
+            SEMapSet(Temp, I, SEMapGet(V2, I - Len));
+        end;
         R := Temp;
       end;
     sevkPointer:
@@ -1918,6 +1927,7 @@ end;
 operator + (V1, V2: TSEValue) R: TSEValue; inline;
 var
   I, Len: Integer;
+  S: String;
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
@@ -1933,12 +1943,21 @@ begin
     sevkMap:
       begin
         GC.AllocMap(@R);
-        Len := SESize(V1);
-        TSEValueMap(R.VarMap).List.Count := Len + SESize(V2);
-        for I := 0 to Len - 1 do
-          SEMapSet(R, I, SEMapGet(V1, I));
-        for I := Len to Len + SESize(V2) - 1 do
-          SEMapSet(R, I, SEMapGet(V2, I - Len));
+        if (not SEMapIsValidArray(V1)) and (not SEMapIsValidArray(V2)) then
+        begin
+          for S in TSEValueMap(V1.VarMap).Keys do
+            SEMapSet(R, S, SEMapGet(V1, S));
+          for S in TSEValueMap(V2.VarMap).Keys do
+            SEMapSet(R, S, SEMapGet(V2, S));
+        end else
+        begin
+          Len := SESize(V1);
+          TSEValueMap(R.VarMap).List.Count := Len + SESize(V2);
+          for I := 0 to Len - 1 do
+            SEMapSet(R, I, SEMapGet(V1, I));
+          for I := Len to Len + SESize(V2) - 1 do
+            SEMapSet(R, I, SEMapGet(V2, I - Len));
+        end;
       end;
     sevkBuffer:
       begin
