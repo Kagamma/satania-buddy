@@ -71,7 +71,7 @@ Bitwise operator     Description
  !                    not
 #+end_example
 
-/Evil script does not distinguish between =, &, | and ==, &&, ||, allowing them to be used interchangeably./
+/Evil script does not support logic operators, thus it does not distinguish between =, &, | and ==, &&, ||, allowing them to be used interchangeably./
 
 *Variable declarations / assignments*
 
@@ -214,6 +214,24 @@ for value in [1, 2, 5, 7, 9] {
   if value = 5
     break
 }
+#+end_example
+
+*Switch-case block*
+
+#+begin_example
+a = 5
+switch a {
+  case 4:
+  case 5:
+    writeln('4,5')
+    break
+  case 6:
+    writeln('6')
+    break
+  default:
+    writeln('default')
+}
+#+end_example
 
 for value, index in [1, 2, 5, 7, 9] {
   talk(string(index) + ": " + string(value))
