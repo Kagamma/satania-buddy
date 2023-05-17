@@ -4483,33 +4483,33 @@ var
   function EmitPushVar(const Ident: TSEIdent): Integer; inline;
   begin
     if Ident.IsLocal then
-      Emit([Pointer(opPushLocalVar), Pointer(Ident.Addr)])
+      Result := Emit([Pointer(opPushLocalVar), Pointer(Ident.Addr)])
     else
-      Emit([Pointer(opPushGlobalVar), Pointer(Ident.Addr)]);
+      Result := Emit([Pointer(opPushGlobalVar), Pointer(Ident.Addr)]);
   end;
 
   function EmitPushArray(const Ident: TSEIdent): Integer; inline;
   begin
     if Ident.IsLocal then
-      Emit([Pointer(opPushLocalArray), Ident.Addr])
+      Result := Emit([Pointer(opPushLocalArray), Ident.Addr])
     else
-      Emit([Pointer(opPushGlobalArray), Ident.Addr]);
+      Result := Emit([Pointer(opPushGlobalArray), Ident.Addr]);
   end;
 
   function EmitAssignVar(const Ident: TSEIdent): Integer; inline;
   begin
     if Ident.IsLocal then
-      Emit([Pointer(opAssignLocalVar), Pointer(Ident.Addr)])
+      Result := Emit([Pointer(opAssignLocalVar), Pointer(Ident.Addr)])
     else
-      Emit([Pointer(opAssignGlobalVar), Pointer(Ident.Addr)]);
+      Result := Emit([Pointer(opAssignGlobalVar), Pointer(Ident.Addr)]);
   end;
 
   function EmitAssignArray(const Ident: TSEIdent; const ArgCount: Integer): Integer; inline;
   begin
     if Ident.IsLocal then
-      Emit([Pointer(opAssignLocalArray), Ident.Addr, ArgCount])
+      Result := Emit([Pointer(opAssignLocalArray), Ident.Addr, ArgCount])
     else
-      Emit([Pointer(opAssignGlobalArray), Ident.Addr, ArgCount]);
+      Result := Emit([Pointer(opAssignGlobalArray), Ident.Addr, ArgCount]);
   end;
 
   procedure Patch(const Addr: Integer; const Data: TSEValue); inline;
@@ -4517,15 +4517,15 @@ var
     Self.VM.Binary[Addr] := Data;
   end;
 
-  function PatchMulti(const Pos: Integer; const Data: array of TSEValue): Integer; inline;
+  function PatchRange(const Addr: Integer; const Data: array of TSEValue): Integer; inline;
   var
     I: Integer;
   begin
     for I := Low(Data) to High(Data) do
     begin
-      Self.VM.Binary[Pos + I] := Data[I];
+      Self.VM.Binary[Addr + I] := Data[I];
     end;
-    Exit(Pos + I + 1);
+    Exit(Addr + I + 1);
   end;
 
   function IdentifyIdent(const Ident: String): TSETokenKind; inline;
