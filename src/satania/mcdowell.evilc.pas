@@ -4580,6 +4580,7 @@ var
     TProc = TSENestedProc;
   var
     PushConstCount: Integer = 0;
+    IsTailed: Boolean = False;
 
     procedure Logic; forward;
 
@@ -4710,7 +4711,7 @@ var
         end;
       begin
         Result := False;
-        if PushConstCount < 2 then Exit;
+        if (PushConstCount < 2) or (IsTailed) then Exit;
         OpInfoPrev1 := PeekAtPrevOpExpected([opPushConst]);
         OpInfoPrev2 := PeekAtPrevOpExpected2([opPushConst]);
         if (OpInfoPrev1 <> nil) and (OpInfoPrev1 <> nil) and SameKind then
@@ -4910,6 +4911,7 @@ var
                       tkSquareBracketOpen:
                         begin
                           PushConstCount := 0;
+                          IsTailed := True;
                           NextToken;
                           ParseExpr;
                           NextTokenExpected([tkSquareBracketClose]);
@@ -4923,6 +4925,7 @@ var
                       tkDot:
                         begin
                           PushConstCount := 0;
+                          IsTailed := True;
                           NextToken;
                           Token2 := NextTokenExpected([tkIdent]);
                           EmitExpr([Pointer(opPushConst), Token2.Value]);
