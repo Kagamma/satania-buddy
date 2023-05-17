@@ -3454,8 +3454,6 @@ begin
           AssignGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Pop);
           Inc(CodePtrLocal, 2);
           DispatchGoto;
-            for I := ArgCount - 1 downto 0 do
-              AA[I] := Pop;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelAssignLocalVar{$else}opAssignLocalVar{$endif}:
         begin
