@@ -216,6 +216,12 @@ for value in [1, 2, 5, 7, 9] {
 }
 #+end_example
 
+#+begin_example
+for value, index in [1, 2, 5, 7, 9] {
+  talk(string(index) + ": " + string(value))
+}
+#+end_example
+
 *Switch-case block*
 
 #+begin_example
@@ -230,11 +236,6 @@ switch a {
     break
   default:
     writeln('default')
-}
-#+end_example
-
-for value, index in [1, 2, 5, 7, 9] {
-  talk(string(index) + ": " + string(value))
 }
 #+end_example
 
