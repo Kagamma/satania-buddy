@@ -4489,11 +4489,11 @@ var
   var
     I: Integer;
   begin
-    for I := Count - 1 downto 0 do
+    for I := 0 to Count - 1 do
     begin
-      Self.VM.Binary.Add(Self.VM.Binary[StartAddr]);
-      Self.VM.Binary.Delete(StartAddr);
+      Self.VM.Binary.Add(Self.VM.Binary[StartAddr + I]);
     end;
+    Self.VM.Binary.DeleteRange(StartAddr, Count);
   end;
 
   function Emit(const Data: array of TSEValue): Integer; inline;
