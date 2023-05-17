@@ -1,7 +1,7 @@
 object FormEvilCEditor: TFormEvilCEditor
-  Left = 256
+  Left = 50
   Height = 663
-  Top = 256
+  Top = 50
   Width = 799
   Caption = 'EvilC Editor'
   ClientHeight = 663
@@ -49,7 +49,7 @@ object FormEvilCEditor: TFormEvilCEditor
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  Position = poDefault
+  Position = poDefaultPosOnly
   ShowInTaskBar = stAlways
   object ToolBar1: TToolBar
     Left = 0
@@ -634,7 +634,7 @@ object FormEvilCEditor: TFormEvilCEditor
         MarkupInfo.Foreground = clGray
         MarkupInfo.FrameColor = 1644825
         DigitCount = 2
-        ShowOnlyLineNumbersMultiplesOf = 1
+        ShowOnlyLineNumbersMultiplesOf = 5
         ZeroStart = False
         LeadingZeros = False
       end
