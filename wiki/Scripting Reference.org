@@ -71,6 +71,8 @@ Bitwise operator     Description
  !                    not
 #+end_example
 
+/Evil script does not distinguish between =, &, | and ==, &&, ||, allowing them to be used interchangeably./
+
 *Variable declarations / assignments*
 
 #+begin_example
