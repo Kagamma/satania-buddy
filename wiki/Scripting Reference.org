@@ -245,12 +245,13 @@ fn add(a, b) {
   result = a + b
 }
 add_ref = add
+calc = []
+calc.add = add
 
-talk(add_ref(5, 3))
-talk(add = add_ref) // Print "true"
+talk(add_ref(5, 3)) // Print "8"
+talk(calc.add(2, 4)) // Print "6"
+talk(calc.add = add_ref) // Print "true"
 #+end_example
-
-- /Currently, only named variables / parameters can be called. Map items are not supported yet./
 
 *Yield*
 
