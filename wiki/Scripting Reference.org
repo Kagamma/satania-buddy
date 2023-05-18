@@ -239,7 +239,7 @@ switch a {
 }
 #+end_example
 
-/- Unlike C, Evil script's switch case allows the use of expressions, so the above example can be written like this:/
+- /Unlike C, Evil script's switch case allows the use of expressions, so the above example can be written like this:/
 
 #+begin_example
 a = 5
@@ -255,8 +255,9 @@ switch true {
 }
 #+end_example
 
-/- Strings are allowed:/
+- /Strings are allowed:/
 
+#+begin_example
 s = 'alpha'
 switch s {
   case 'alpha':
@@ -268,6 +269,7 @@ switch s {
   case 'gamma':
     talk('gamma')
 }
+#+end_example
 
 *Function declaration*
 
