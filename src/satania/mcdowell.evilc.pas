@@ -117,7 +117,7 @@ type
   );
   PSECommonString = ^String;
   TSEBuffer = record
-    Base: String;
+    Base: RawByteString;
     Ptr: Pointer;
   end;
   PSEBuffer = ^TSEBuffer;
