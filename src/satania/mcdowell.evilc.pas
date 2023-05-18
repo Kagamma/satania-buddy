@@ -5613,8 +5613,7 @@ var
     JumpBlock2,
     StartCaseBlock,
     EndCaseBlock,
-    JumpNext,
-    StartBlock,
+    JumpNextBlock,
     EndBlock: Integer;
   begin
     Token.Kind := tkIdent;
@@ -5624,11 +5623,9 @@ var
     ParseExpr;
     EmitAssignVar(VarHiddenIdent);
 
-    StartBlock := Self.VM.Binary.Count;
-
     NextTokenExpected([tkBegin]);
     BreakList := TList.Create;
-    JumpNext := -1;
+    JumpNextBlock := -1;
     try
       BreakStack.Push(BreakList);
 
@@ -5643,16 +5640,16 @@ var
           JumpBlock2 := Emit([Pointer(opJumpUnconditional), 0]);
         end;
         StartCaseBlock := Self.VM.Binary.Count;
-        if JumpNext <> -1 then
+        if JumpNextBlock <> -1 then
         begin
-          Patch(JumpNext - 1, StartCaseBlock);
-          JumpNext := -1;
+          Patch(JumpNextBlock - 1, StartCaseBlock);
+          JumpNextBlock := -1;
         end;
         PeekAtNextTokenExpected([tkColon]);
         ParseBlock(True);
         if Token.Kind = tkCase then
         begin
-          JumpNext := Emit([Pointer(opJumpUnconditional), 0]);
+          JumpNextBlock := Emit([Pointer(opJumpUnconditional), 0]);
           EndCaseBlock := Self.VM.Binary.Count;
           Patch(JumpBlock1 - 1, StartCaseBlock);
           Patch(JumpBlock2 - 1, EndCaseBlock);
