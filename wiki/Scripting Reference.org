@@ -358,18 +358,18 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 ** Constants
 *PI: number*
 
-*true: number*
+*true: boolean*
 
-*false: number*
+*false: boolean*
 
 *name: string*
-
+- Get character's name
 *username: string*
-
+- Get user's name
 *character: string*
-
+- Get character's directory name
 *meta: map*
-
+- ~meta.json~ content
 *os: string*
 - Get OS name
 
