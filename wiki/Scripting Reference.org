@@ -239,6 +239,22 @@ switch a {
 }
 #+end_example
 
+/Unlike C, Evil script's switch case allows the use of expressions, so the above example can be written like this:/
+
+#+begin_example
+a = 5
+switch true {
+  case (a = 4) | (a = 5):
+    writeln('4,5')
+    break
+  case (a = 6):
+    writeln('6')
+    break
+  default:
+    writeln('default')
+}
+#+end_example
+
 *Function declaration*
 
 #+begin_example
