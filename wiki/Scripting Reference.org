@@ -229,31 +229,45 @@ a = 5
 switch a {
   case 4:
   case 5:
-    writeln('4,5')
+    talk('4,5')
     break
   case 6:
-    writeln('6')
+    talk('6')
     break
   default:
-    writeln('default')
+    talk('default')
 }
 #+end_example
 
-/Unlike C, Evil script's switch case allows the use of expressions, so the above example can be written like this:/
+/- Unlike C, Evil script's switch case allows the use of expressions, so the above example can be written like this:/
 
 #+begin_example
 a = 5
 switch true {
   case (a = 4) | (a = 5):
-    writeln('4,5')
+    talk('4,5')
     break
   case (a = 6):
-    writeln('6')
+    talk('6')
     break
   default:
-    writeln('default')
+    talk('default')
 }
 #+end_example
+
+/- Strings are allowed:/
+
+s = 'alpha'
+switch s {
+  case 'alpha':
+    talk('alpha')
+    break
+  case 'beta':
+    talk('beta')
+    break
+  case 'gamma':
+    talk('gamma')
+}
 
 *Function declaration*
 
