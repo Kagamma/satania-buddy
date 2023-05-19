@@ -2984,13 +2984,7 @@ begin
                 end;
               end;
             else
-              begin
-                Writeln(SEValueToText(A^));
-                Writeln(SEValueToText(Pop^));
-                Writeln(SEValueToText(Pop^));
-                Writeln(SEValueToText(Pop^));
-                raise Exception.Create('Not a function reference');
-              end;
+              raise Exception.Create('Not a function reference');
           end;
           BinaryLocal.Ptr(CodePtrLocal + 1)^ := Pointer(A^.VarFuncIndx);
           case A^.VarFuncKind of
