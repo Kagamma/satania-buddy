@@ -2982,14 +2982,14 @@ begin
           B := Pop;
           A := Pop;
           if SEValueEqual(A^, B^) then
-            CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
+            CodePtrLocal := Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer)
           else
             Inc(CodePtrLocal, 2);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelJumpUnconditional{$else}opJumpUnconditional{$endif}:
         begin
-          CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^;
+          CodePtrLocal := Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelJumpEqualOrGreater{$else}opJumpEqualOrGreater{$endif}:
@@ -2997,7 +2997,7 @@ begin
           B := Pop;
           A := Pop;
           if SEValueGreaterOrEqual(A^, B^) then
-            CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
+            CodePtrLocal := Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer)
           else
             Inc(CodePtrLocal, 2);
           DispatchGoto;
@@ -3007,7 +3007,7 @@ begin
           B := Pop;
           A := Pop;
           if SEValueLesserOrEqual(A^, B^) then
-            CodePtrLocal := BinaryLocal.Ptr(CodePtrLocal + 1)^
+            CodePtrLocal := Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer)
           else
             Inc(CodePtrLocal, 2);
           DispatchGoto;
@@ -3056,8 +3056,8 @@ begin
         begin
         CallNative:
           GC.CheckForGC;
-          FuncNativeInfo := PSEFuncNativeInfo(Pointer(BinaryLocal.Ptr(CodePtrLocal + 1)^));
-          ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
+          FuncNativeInfo := PSEFuncNativeInfo(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer);
+          ArgCount := Integer(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer);
           SetLength(Args, ArgCount);
           for I := ArgCount - 1 downto 0 do
           begin
@@ -3076,8 +3076,8 @@ begin
         begin
         CallScript:
           GC.CheckForGC;
-          ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
-          FuncScriptInfo := Self.Parent.FuncScriptList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
+          ArgCount := Integer(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer);
+          FuncScriptInfo := Self.Parent.FuncScriptList.Ptr(Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer));
           Inc(Self.FramePtr);
           if Self.FramePtr >= @Self.Frame[Self.FrameSize] then
             raise Exception.Create('Too much recursion');
@@ -3091,7 +3091,7 @@ begin
         begin
         CallImport:
           GC.CheckForGC;
-          FuncImportInfo := Self.Parent.FuncImportList.Ptr(BinaryLocal.Ptr(CodePtrLocal + 1)^);
+          FuncImportInfo := Self.Parent.FuncImportList.Ptr(Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer));
           FuncImport := FuncImportInfo^.Func;
           if FuncImport = nil then
             raise Exception.Create(Format('Function "%s" is null', [FuncImportInfo^.Name]));
@@ -5123,7 +5123,7 @@ var
     // Push map to stack
     Rewind(RewindStartAdd, RewindCount);
     EmitPushVar(Ident);
-    Emit([Pointer(opCallRef), Pointer(DeepCount), ArgCount]);
+    Emit([Pointer(opCallRef), Pointer(DeepCount), Pointer(ArgCount)]);
   end;
 
   procedure ParseFuncRefCallByRewind(const RewindStartAdd: Integer);
@@ -5141,7 +5141,7 @@ var
     until Token.Kind = tkBracketClose;
     // Func def already exists in stack, rewind to access it
     Rewind(RewindStartAdd, RewindCount);
-    Emit([Pointer(opCallRef), Pointer(0), ArgCount]);
+    Emit([Pointer(opCallRef), Pointer(0), Pointer(ArgCount)]);
   end;
 
   procedure ParseFuncRefCallByName(const Name: String);
@@ -5157,7 +5157,7 @@ var
     until Token.Kind = tkBracketClose;
     // We now push func def to stack
     EmitPushVar(FindVar(Name)^);
-    Emit([Pointer(opCallRef), Pointer(0), ArgCount]);
+    Emit([Pointer(opCallRef), Pointer(0), Pointer(ArgCount)]);
   end;
 
   procedure ParseFuncCall(const Name: String);
@@ -5212,13 +5212,14 @@ var
       NextTokenExpected([tkBracketOpen]);
       NextTokenExpected([tkBracketClose]);
     end;
+    ArgCount := Max(0, ArgCount);
     if FuncNativeInfo <> nil then
-      Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), ArgCount])
+      Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), Pointer(ArgCount)])
     else
     if FuncScriptInfo <> nil then
-      Emit([Pointer(opCallScript), Ind, ArgCount])
+      Emit([Pointer(opCallScript), Pointer(Ind), Pointer(ArgCount)])
     else
-      Emit([Pointer(opCallImport), Ind, 0]);
+      Emit([Pointer(opCallImport), Pointer(Ind), Pointer(0)]);
   end;
 
   procedure ParseFuncDecl;
@@ -5256,18 +5257,18 @@ var
         Token := NextTokenExpected([tkComma, tkBracketClose]);
       until Token.Kind = tkBracketClose;
 
-      JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
+      JumpBlock := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
       Addr := JumpBlock;
       Func := RegisterScriptFunc(Name, Addr, ArgCount);
       ParseBlock;
 
       ReturnList := ReturnStack.Pop;
       for I := 0 to ReturnList.Count - 1 do
-        Patch(Integer(ReturnList[I]), Self.VM.Binary.Count);
+        Patch(Integer(ReturnList[I]), Pointer(Self.VM.Binary.Count));
 
       // EmitPushVar(ResultIdent);
       Emit([Pointer(opPopFrame)]);
-      Patch(JumpBlock - 1, Self.VM.Binary.Count);
+      Patch(JumpBlock - 1, Pointer(Self.VM.Binary.Count));
 
       Func^.VarCount := Self.LocalVarCount - ArgCount;
     finally
@@ -5392,18 +5393,18 @@ var
       StartBlock := Self.VM.Binary.Count;
       ParseExpr;
       Emit([Pointer(opPushConst), False]);
-      JumpEnd := Emit([Pointer(opJumpEqual), 0]);
+      JumpEnd := Emit([Pointer(opJumpEqual), Pointer(0)]);
       ParseBlock;
-      JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
+      JumpBlock := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
       EndBlock := Self.VM.Binary.Count;
       ContinueList := ContinueStack.Pop;
       BreakList := BreakStack.Pop;
       for I := 0 to ContinueList.Count - 1 do
-        Patch(Integer(ContinueList[I]), StartBlock);
+        Patch(Integer(ContinueList[I]), Pointer(StartBlock));
       for I := 0 to BreakList.Count - 1 do
-        Patch(Integer(BreakList[I]), EndBlock);
-      Patch(JumpBlock - 1, StartBlock);
-      Patch(JumpEnd - 1, EndBlock);
+        Patch(Integer(BreakList[I]), Pointer(EndBlock));
+      Patch(JumpBlock - 1, Pointer(StartBlock));
+      Patch(JumpEnd - 1, Pointer(EndBlock));
     finally
       ContinueList.Free;
       BreakList.Free;
@@ -5430,17 +5431,17 @@ var
       NextTokenExpected([tkWhile]);
       ParseExpr;
       Emit([Pointer(opPushConst), False]);
-      JumpEnd := Emit([Pointer(opJumpEqual), 0]);
-      JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
+      JumpEnd := Emit([Pointer(opJumpEqual), Pointer(0)]);
+      JumpBlock := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
       EndBlock := Self.VM.Binary.Count;
       ContinueList := ContinueStack.Pop;
       BreakList := BreakStack.Pop;
       for I := 0 to ContinueList.Count - 1 do
-        Patch(Integer(ContinueList[I]), StartBlock);
+        Patch(Integer(ContinueList[I]), Pointer(StartBlock));
       for I := 0 to BreakList.Count - 1 do
-        Patch(Integer(BreakList[I]), EndBlock);
-      Patch(JumpBlock - 1, StartBlock);
-      Patch(JumpEnd - 1, EndBlock);
+        Patch(Integer(BreakList[I]), Pointer(EndBlock));
+      Patch(JumpBlock - 1, Pointer(StartBlock));
+      Patch(JumpEnd - 1, Pointer(EndBlock));
     finally
       ContinueList.Free;
       BreakList.Free;
@@ -5494,13 +5495,13 @@ var
         begin
           Emit([Pointer(opPushConst), 1]);
           Emit([Pointer(opOperatorAdd)]);
-          JumpEnd := Emit([Pointer(opJumpEqualOrGreater), 0]);
+          JumpEnd := Emit([Pointer(opJumpEqualOrGreater), Pointer(0)]);
         end else
         if Token.Kind = tkDownto then
         begin
           Emit([Pointer(opPushConst), 1]);
           Emit([Pointer(opOperatorSub)]);
-          JumpEnd := Emit([Pointer(opJumpEqualOrLesser), 0]);
+          JumpEnd := Emit([Pointer(opJumpEqualOrLesser), Pointer(0)]);
         end;
 
         ParseBlock;
@@ -5517,7 +5518,7 @@ var
           Emit([Pointer(opOperatorSub)]);
         end;
         EmitAssignVar(VarIdent);
-        JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
+        JumpBlock := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
         EndBLock := JumpBlock;
       end else
       begin
@@ -5543,9 +5544,9 @@ var
         StartBlock := Self.VM.Binary.Count;
 
         EmitPushVar(VarHiddenArrayIdent);
-        Emit([Pointer(opCallNative), FindFuncNative('length', Ind), 1]);
+        Emit([Pointer(opCallNative), FindFuncNative('length', Ind), Pointer(1)]);
         EmitPushVar(VarHiddenCountIdent);
-        JumpEnd := Emit([Pointer(opJumpEqualOrLesser), 0]);
+        JumpEnd := Emit([Pointer(opJumpEqualOrLesser), Pointer(0)]);
 
         EmitPushVar(VarHiddenArrayIdent);
         EmitPushVar(VarHiddenCountIdent);
@@ -5558,18 +5559,18 @@ var
         Emit([Pointer(opPushConst), 1]);
         Emit([Pointer(opOperatorAdd)]);
         EmitAssignVar(VarHiddenCountIdent);
-        JumpBlock := Emit([Pointer(opJumpUnconditional), 0]);
+        JumpBlock := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
         EndBLock := JumpBlock;
       end;
 
       ContinueList := ContinueStack.Pop;
       BreakList := BreakStack.Pop;
       for I := 0 to ContinueList.Count - 1 do
-        Patch(Integer(ContinueList[I]), StartBlock);
+        Patch(Integer(ContinueList[I]), Pointer(StartBlock));
       for I := 0 to BreakList.Count - 1 do
-        Patch(Integer(BreakList[I]), EndBlock);
-      Patch(JumpBlock - 1, StartBlock);
-      Patch(JumpEnd - 1, EndBlock);
+        Patch(Integer(BreakList[I]), Pointer(EndBlock));
+      Patch(JumpBlock - 1, Pointer(StartBlock));
+      Patch(JumpEnd - 1, Pointer(EndBlock));
     finally
       ContinueList.Free;
       BreakList.Free;
@@ -5587,11 +5588,11 @@ var
   begin
     ParseExpr;
     Emit([Pointer(opPushConst), True]);
-    JumpBlock1 := Emit([Pointer(opJumpEqual), 0]);
-    JumpBlock2 := Emit([Pointer(opJumpUnconditional), 0]);
+    JumpBlock1 := Emit([Pointer(opJumpEqual), Pointer(0)]);
+    JumpBlock2 := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
     StartBlock1 := Self.VM.Binary.Count;
     ParseBlock;
-    JumpEnd := Emit([Pointer(opJumpUnconditional), 0]);
+    JumpEnd := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
     StartBlock2 := Self.VM.Binary.Count;
     if PeekAtNextToken.Kind = tkElse then
     begin
@@ -5599,9 +5600,9 @@ var
       ParseBlock;
     end;
     EndBlock2 := Self.VM.Binary.Count;
-    Patch(JumpBlock1 - 1, StartBlock1);
-    Patch(JumpBlock2 - 1, StartBlock2);
-    Patch(JumpEnd - 1, EndBlock2);
+    Patch(JumpBlock1 - 1, Pointer(StartBlock1));
+    Patch(JumpBlock2 - 1, Pointer(StartBlock2));
+    Patch(JumpEnd - 1, Pointer(EndBlock2));
   end;
 
   procedure ParseSwitch;
@@ -5636,23 +5637,23 @@ var
         begin
           ParseExpr;
           EmitPushVar(VarHiddenIdent);
-          JumpBlock1 := Emit([Pointer(opJumpEqual), 0]);
-          JumpBlock2 := Emit([Pointer(opJumpUnconditional), 0]);
+          JumpBlock1 := Emit([Pointer(opJumpEqual), Pointer(0)]);
+          JumpBlock2 := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
         end;
         StartCaseBlock := Self.VM.Binary.Count;
         if JumpNextBlock <> -1 then
         begin
-          Patch(JumpNextBlock - 1, StartCaseBlock);
+          Patch(JumpNextBlock - 1, Pointer(StartCaseBlock));
           JumpNextBlock := -1;
         end;
         PeekAtNextTokenExpected([tkColon]);
         ParseBlock(True);
         if Token.Kind = tkCase then
         begin
-          JumpNextBlock := Emit([Pointer(opJumpUnconditional), 0]);
+          JumpNextBlock := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
           EndCaseBlock := Self.VM.Binary.Count;
-          Patch(JumpBlock1 - 1, StartCaseBlock);
-          Patch(JumpBlock2 - 1, EndCaseBlock);
+          Patch(JumpBlock1 - 1, Pointer(StartCaseBlock));
+          Patch(JumpBlock2 - 1, Pointer(EndCaseBlock));
         end else
           Break;
       end;
@@ -5662,7 +5663,7 @@ var
       BreakList := BreakStack.Pop;
 
       for I := 0 to BreakList.Count - 1 do
-        Patch(Integer(BreakList[I]), EndBlock);
+        Patch(Integer(BreakList[I]), Pointer(EndBlock));
     finally
       BreakList.Free;
     end;
@@ -5697,7 +5698,7 @@ var
       end;
       Token := NextTokenExpected([tkComma, tkSquareBracketClose]);
     until Token.Kind = tkSquareBracketClose;
-    Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), ArgCount]);
+    Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), Pointer(ArgCount)]);
   end;
 
   procedure ParseVarAssign(const Name: String);
@@ -5808,7 +5809,7 @@ var
           if BreakStack.Count = 0 then
             Error('Not in loop but "break" found', Token);
           List := BreakStack.Peek;
-          List.Add(Pointer(Emit([Pointer(opJumpUnconditional), 0]) - 1));
+          List.Add(Pointer(Emit([Pointer(opJumpUnconditional), Pointer(0)]) - 1));
         end;
       tkContinue:
         begin
@@ -5816,7 +5817,7 @@ var
           if ContinueStack.Count = 0 then
             Error('Not in loop but "continue" found', Token);
           List := ContinueStack.Peek;
-          List.Add(Pointer(Emit([Pointer(opJumpUnconditional), 0]) - 1));
+          List.Add(Pointer(Emit([Pointer(opJumpUnconditional), Pointer(0)]) - 1));
         end;
       tkReturn:
         begin
@@ -5826,7 +5827,7 @@ var
           else
           begin
             List := ReturnStack.Peek;
-            List.Add(Pointer(Emit([Pointer(opJumpUnconditional), 0]) - 1));
+            List.Add(Pointer(Emit([Pointer(opJumpUnconditional), Pointer(0)]) - 1));
           end;
         end;
       tkFunctionDecl:
