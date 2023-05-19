@@ -3497,7 +3497,7 @@ begin
                     UTF8Delete(S1, Integer(C^) + 1, 1);
                     S := UTF8Copy(S2, 1, 1);
                     UTF8Insert(S, S1, Integer(C^) + 1);
-                    GC.AllocString(V, S1);
+                    V^.VarString^ := S1;
                   {$else}
                     V^.VarString^[Integer(C^) + 1] := B^.VarString^[1];
                   {$endif}
@@ -3520,7 +3520,7 @@ begin
                     UTF8Delete(S1, Integer(C^) + 1, 1);
                     S := Char(Round(B^.VarNumber));
                     UTF8Insert(S, S1, Integer(C^) + 1);
-                    GC.AllocString(V, S1);
+                    V^.VarString^ := S1;
                   {$else}
                     V^.VarString^[Integer(C^) + 1] := Char(Round(B^.VarNumber));
                   {$endif}
@@ -3577,7 +3577,7 @@ begin
                     UTF8Delete(S1, Integer(C^) + 1, 1);
                     S := UTF8Copy(S2, 1, 1);
                     UTF8Insert(S, S1, Integer(C^) + 1);
-                    GC.AllocString(V, S1);
+                    V^.VarString^ := S1;
                   {$else}
                     V^.VarString^[Integer(C^) + 1] := B^.VarString^[1];
                   {$endif}
@@ -3600,7 +3600,7 @@ begin
                     UTF8Delete(S1, Integer(C^) + 1, 1);
                     S := Char(Round(B^.VarNumber));
                     UTF8Insert(S, S1, Integer(C^) + 1);
-                    GC.AllocString(V, S1);
+                    V^.VarString^ := S1;
                   {$else}
                     V^.VarString^[Integer(C^) + 1] := Char(Round(B^.VarNumber));
                   {$endif}
