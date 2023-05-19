@@ -2984,7 +2984,13 @@ begin
                 end;
               end;
             else
-              raise Exception.Create('Not a function reference');
+              begin
+                Writeln(SEValueToText(A^));
+                Writeln(SEValueToText(Pop^));
+                Writeln(SEValueToText(Pop^));
+                Writeln(SEValueToText(Pop^));
+                raise Exception.Create('Not a function reference');
+              end;
           end;
           BinaryLocal.Ptr(CodePtrLocal + 1)^ := Pointer(A^.VarFuncIndx);
           case A^.VarFuncKind of
@@ -4813,12 +4819,43 @@ var
 
     procedure Factor;
     var
-      Token, Token2: TSEToken;
+      Token, Token2, FuncRefToken: TSEToken;
       Ident: PSEIdent;
       FuncValue: TSEValue;
       Ind: Integer;
       P: Pointer;
       RewindStartAddr: Integer;
+      FuncRefIdent: TSEIdent;
+
+      procedure FuncTail;
+      var
+        IsFirst: Boolean = True;
+      begin
+        while PeekAtNextToken.Kind = tkBracketOpen do
+        begin
+          ParseFuncRefCallByRewind(RewindStartAddr);
+          IsFirst := True;
+          while PeekAtNextToken.Kind in [tkSquareBracketOpen, tkDot] do
+          begin
+            if IsFirst then
+            begin
+              if FuncRefToken.Value = '' then
+              begin
+                FuncRefToken.Value := '___f' + IntToStr(Random($FFFFFFFF));
+                FuncRefToken.Kind := tkIdent;
+                FuncRefIdent := CreateIdent(ikVariable, FuncRefToken);
+                FuncRefIdent.IsUsed := True;
+              end;
+              IsFirst := False;
+              EmitAssignVar(FuncRefIdent);
+              RewindStartAddr := Self.VM.Binary.Count;
+            end;
+            EmitPushVar(FuncRefIdent);
+            Tail;
+          end;
+        end;
+      end;
+
     begin
       Token := PeekAtNextTokenExpected([
         tkBracketOpen, tkBracketClose, tkSquareBracketOpen, tkDot, tkNumber, tkEOF,
@@ -4871,12 +4908,7 @@ var
                           Emit([Pointer(opPushArrayPop)]);
                           NextTokenExpected([tkSquareBracketClose]);
                           Tail;
-                          while PeekAtNextToken.Kind = tkBracketOpen do // Likely function ref
-                          begin
-                            ParseFuncRefCallByRewind(RewindStartAddr);
-                            RewindStartAddr := Self.VM.Binary.Count;
-                            Tail;
-                          end;
+                          FuncTail;
                         end;
                       tkDot:
                         begin
@@ -4888,12 +4920,7 @@ var
                           EmitExpr([Pointer(opPushConst), Token2.Value]);
                           Emit([Pointer(opPushArrayPop)]);
                           Tail;
-                          while PeekAtNextToken.Kind = tkBracketOpen do // Likely function ref
-                          begin
-                            ParseFuncRefCallByRewind(RewindStartAddr);
-                            RewindStartAddr := Self.VM.Binary.Count;
-                            Tail;
-                          end;
+                          FuncTail;
                         end;
                       else
                         EmitPushVar(Ident^);
@@ -4926,13 +4953,17 @@ var
                   begin
                     ParseFuncCall(Token.Value);
                   end;
-                  RewindStartAddr := Self.VM.Binary.Count;
-                  Tail;
-                  while PeekAtNextToken.Kind = tkBracketOpen do // Likely function ref
+                  if PeekAtNextToken.Kind in [tkSquareBracketOpen, tkDot] then
                   begin
-                    ParseFuncRefCallByRewind(RewindStartAddr);
+                    FuncRefToken.Value := '___f' + IntToStr(Random($FFFFFFFF));
+                    FuncRefToken.Kind := tkIdent;
+                    FuncRefIdent := CreateIdent(ikVariable, FuncRefToken);
+                    FuncRefIdent.IsUsed := True;
+                    EmitAssignVar(FuncRefIdent);
                     RewindStartAddr := Self.VM.Binary.Count;
+                    EmitPushVar(FuncRefIdent);
                     Tail;
+                    FuncTail;
                   end;
                 end;
               else
@@ -5202,6 +5233,7 @@ var
       Token.Value := 'result';
       Token.Kind := tkIdent;
       ResultIdent := CreateIdent(ikVariable, Token);
+      ResultIdent.IsUsed := True;
 
       NextTokenExpected([tkBracketOpen]);
       repeat
@@ -5433,6 +5465,7 @@ var
       if Token.Kind = tkIdent then
       begin
         VarIdent := CreateIdent(ikVariable, Token);
+        VarIdent.IsLocal := True;
       end else
       begin
         VarIdent := FindVar(Token.Value)^;
@@ -5489,8 +5522,10 @@ var
         VarHiddenArrayName := '___a' + VarIdent.Name;
         Token.Value := VarHiddenCountName;
         VarHiddenCountIdent := CreateIdent(ikVariable, Token);
+        VarHiddenCountIdent.IsUsed := True;
         Token.Value := VarHiddenArrayName;
         VarHiddenArrayIdent := CreateIdent(ikVariable, Token);
+        VarHiddenArrayIdent.IsUsed := True;
 
         ParseExpr;
 
@@ -5577,6 +5612,7 @@ var
     Token.Kind := tkIdent;
     Token.Value := '___s' + IntToStr(Random($FFFFFFFF));
     VarHiddenIdent := CreateIdent(ikVariable, Token);
+    VarHiddenIdent.IsUsed := True;
 
     ParseExpr;
     EmitAssignVar(VarHiddenIdent);
@@ -5658,14 +5694,24 @@ var
     Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), Pointer(ArgCount)]);
   end;
 
-  function ParseAssignTail(const RewindStartAddr: Integer): Boolean;
+  procedure ParseAssignTail;
   var
-    Token: TSEToken;
+    RewindStartAddr: Integer;
+    Token, FuncRefToken: TSEToken;
+    FuncRefIdent: TSEIdent;
   begin
-    Result := False;
     while PeekAtNextToken.Kind in [tkSquareBracketOpen, tkDot] do
     begin
-      Result := True;
+      if FuncRefToken.Value = '' then
+      begin
+        FuncRefToken.Value := '___f' + IntToStr(Random($FFFFFFFF));
+        FuncRefToken.Kind := tkIdent;
+        FuncRefIdent := CreateIdent(ikVariable, FuncRefToken);
+        FuncRefIdent.IsUsed := True;
+      end;
+      EmitAssignVar(FuncRefIdent);
+      RewindStartAddr := Self.VM.Binary.Count;
+      EmitPushVar(FuncRefIdent);
       while PeekAtNextToken.Kind in [tkSquareBracketOpen, tkDot] do
       begin
         case PeekAtNextToken.Kind of
@@ -5757,7 +5803,7 @@ var
       tkBracketOpen:
         begin
           ParseFuncRefCallByMapRewind(Ident^, ArgCount, RewindStartAddr);
-          ParseAssignTail(RewindStartAddr);
+          ParseAssignTail;
         end;
     end;
   end;
@@ -5888,18 +5934,16 @@ var
                 NextToken;
                 if PeekAtNextToken.Kind = tkBracketOpen then // Likely function ref
                 begin
-                  RewindStartAddr := Self.VM.Binary.Count;
                   ParseFuncRefCallByName(Token.Value);
-                  ParseAssignTail(RewindStartAddr);
+                  ParseAssignTail;
                 end else
                   ParseVarAssign(Token.Value);
               end;
             tkFunction:
               begin
                 NextToken;
-                RewindStartAddr := Self.VM.Binary.Count;
                 ParseFuncCall(Token.Value);
-                ParseAssignTail(RewindStartAddr);
+                ParseAssignTail;
               end;
             else
               Error('Invalid statement', Token);
