@@ -289,6 +289,7 @@ c = add(5, 3)
 #+end_example
 
 - /Unlike C, you need to assign return values to/ =result=
+- /Currently nested functions cannot access local variables from parent function/
 
 *Function reference*
 
@@ -305,7 +306,21 @@ talk(calc.add(2, 4)) // Print "6"
 talk(calc.add = add_ref) // Print "true"
 #+end_example
 
-*self*
+*Anonymous function*
+
+#+begin_example
+fn test(func) {
+  func('Satania')
+}
+
+test(fn(v) writeln('Hello, ${v}!'))
+test(fn(v) {
+  s = 'Goodbye, ${v}!'
+  writeln(s)
+})
+#+end_example
+
+*Self*
 
 #+begin_example
 fn obj_hello() {
