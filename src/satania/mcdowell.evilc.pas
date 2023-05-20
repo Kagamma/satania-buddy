@@ -2358,7 +2358,7 @@ begin
     end;
     for J := 0 to High(VM.Binaries) do
     begin
-      Binary := VM.Binaries[K];
+      Binary := VM.Binaries[J];
       for K := 0 to Binary.Count - 1 do
       begin
         P := Binary.Ptr(K);
