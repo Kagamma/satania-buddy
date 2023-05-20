@@ -322,25 +322,27 @@ fn test(func) {
 
 test(fn(v) writeln('Hello, ${v}!'))
 test(fn(v) {
-  s = 'Goodbye, ${v}!'
-  writeln(s)
+  writeln('Goodbye, ${v}!')
 })
 #+end_example
 
 *Self*
 
 #+begin_example
-fn obj_hello() {
-  result = 'Hello, ' + self.name + '!'
+fn obj_create() {
+  fn hello() {
+    result = 'Hello, ' + self.name + '!'
+  }
+
+  result = [
+    name: '',
+    hello: hello
+  ]
 }
 
-obj = [
-  name: 'Satania',
-  hello: obj_hello
-]
-
-s = obj.hello() // obj will be passed to obj_hello() as "self"
-writeln(s)
+obj = obj_create()
+obj.name = 'Satania'
+writeln(obj.hello()) // obj will be passed to hello() as "self"
 #+end_example
 
 *Yield*
