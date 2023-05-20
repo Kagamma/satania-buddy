@@ -431,7 +431,9 @@ type
   TEvilC = class
   private
     FSource: String;
+    FInternalIdentCount: QWord;
     procedure SetSource(V: String);
+    function InternalIdent: String;
   public
     ErrorLn, ErrorCol: Integer;
     VM: TSEVM;
@@ -3826,6 +3828,12 @@ begin
   Self.FSource := V;
 end;
 
+function TEvilC.InternalIdent: String; inline;
+begin
+  Inc(Self.FInternalIdentCount);
+  Result := IntToStr(FInternalIdentCount);
+end;
+
 function TEvilC.IsWaited: Boolean;
 begin
   Exit(Self.VM.IsWaited);
@@ -4312,22 +4320,22 @@ var
   var
     I: Integer;
   begin
-    for I := 0 to Self.FuncNativeList.Count - 1 do
-    begin
-      Result := Self.FuncNativeList.Ptr(I);
-      if PSEFuncNativeInfo(Result)^.Name = Name then
-        Exit(Result);
-    end;
-    for I := 0 to Self.FuncScriptList.Count - 1 do
+    for I := Self.FuncScriptList.Count - 1 downto 0 do
     begin
       Result := Self.FuncScriptList.Ptr(I);
       if PSEFuncScriptInfo(Result)^.Name = Name then
         Exit(Result);
     end;
-    for I := 0 to Self.FuncImportList.Count - 1 do
+    for I := Self.FuncImportList.Count - 1 downto 0 do
     begin
       Result := Self.FuncImportList.Ptr(I);
       if PSEFuncImportInfo(Result)^.Name = Name then
+        Exit(Result);
+    end;
+    for I := Self.FuncNativeList.Count - 1 downto 0 do
+    begin
+      Result := Self.FuncNativeList.Ptr(I);
+      if PSEFuncNativeInfo(Result)^.Name = Name then
         Exit(Result);
     end;
     Exit(nil);
@@ -4337,7 +4345,7 @@ var
   var
     I: Integer;
   begin
-    for I := 0 to Self.FuncNativeList.Count - 1 do
+    for I := Self.FuncNativeList.Count - 1 downto 0 do
     begin
       Result := Self.FuncNativeList.Ptr(I);
       if Result^.Name = Name then
@@ -4353,7 +4361,7 @@ var
   var
     I: Integer;
   begin
-    for I := 0 to Self.FuncScriptList.Count - 1 do
+    for I := Self.FuncScriptList.Count - 1 downto 0 do
     begin
       Result := Self.FuncScriptList.Ptr(I);
       if Result^.Name = Name then
@@ -4369,7 +4377,7 @@ var
   var
     I: Integer;
   begin
-    for I := 0 to Self.FuncImportList.Count - 1 do
+    for I := Self.FuncImportList.Count - 1 downto 0 do
     begin
       Result := Self.FuncImportList.Ptr(I);
       if Result^.Name = Name then
@@ -4891,7 +4899,7 @@ var
             begin
               if FuncRefToken.Value = '' then
               begin
-                FuncRefToken.Value := '___f' + IntToStr(Random($FFFFFFFF));
+                FuncRefToken.Value := '___f' + Self.InternalIdent;
                 FuncRefToken.Kind := tkIdent;
                 FuncRefIdent := CreateIdent(ikVariable, FuncRefToken, True);
               end;
@@ -5011,7 +5019,7 @@ var
                   end;
                   if PeekAtNextToken.Kind in [tkSquareBracketOpen, tkDot] then
                   begin
-                    FuncRefToken.Value := '___f' + IntToStr(Random($FFFFFFFF));
+                    FuncRefToken.Value := '___f' + Self.InternalIdent;
                     FuncRefToken.Kind := tkIdent;
                     FuncRefIdent := CreateIdent(ikVariable, FuncRefToken, True);
                     EmitAssignVar(FuncRefIdent);
@@ -5321,12 +5329,12 @@ var
       begin
         Token := NextTokenExpected([tkIdent]);
         Name := Token.Value;
-        if FindFunc(Name) <> nil then
+        if (FuncTraversal = 0) and (FindFunc(Name) <> nil) then
           Error(Format('Duplicate function declaration "%s"', [Token.Value]), Token);
       end else
       begin
         Token.Kind := tkIdent;
-        Token.Value := '___fn' + IntToHex(Random($FFFFFFFF), 8) + IntToHex(Random($FFFFFFFF), 8);
+        Token.Value := '___fn' + Self.InternalIdent;
         Name := Token.Value;
       end;
       Result := Token;
@@ -5744,7 +5752,7 @@ var
     EndBlock: Integer;
   begin
     Token.Kind := tkIdent;
-    Token.Value := '___s' + IntToStr(Random($FFFFFFFF));
+    Token.Value := '___s' + Self.InternalIdent;
     VarHiddenIdent := CreateIdent(ikVariable, Token, True);
 
     ParseExpr;
@@ -5837,7 +5845,7 @@ var
     begin
       if FuncRefToken.Value = '' then
       begin
-        FuncRefToken.Value := '___f' + IntToStr(Random($FFFFFFFF));
+        FuncRefToken.Value := '___f' + Self.InternalIdent;
         FuncRefToken.Kind := tkIdent;
         FuncRefIdent := CreateIdent(ikVariable, FuncRefToken, True);
       end;
