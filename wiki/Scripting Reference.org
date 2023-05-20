@@ -306,6 +306,22 @@ talk(calc.add(2, 4)) // Print "6"
 talk(calc.add = add_ref) // Print "true"
 #+end_example
 
+*self*
+
+#+begin_example
+fn obj_hello() {
+  result = 'Hello, ' + self.name + '!'
+}
+
+obj = [
+  name: 'Satania',
+  hello: obj_hello
+]
+
+s = obj.hello() // obj will be passed to obj_hello() as "self"
+writeln(s)
+#+end_example
+
 *Yield*
 
 - Quit the script and returns to main process. When the process execute the script in next frame, it will continue at where yield's called.
