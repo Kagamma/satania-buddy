@@ -288,6 +288,14 @@ foo()
 c = add(5, 3)
 #+end_example
 
+- /Alternative way to declare a function is by returning a function reference:/
+
+#+begin_example
+add = fn(a, b) {
+  result = a + b
+}
+#+end_example
+
 - /Unlike C, you need to assign return values to/ =result=
 - /Currently nested functions cannot access local variables from parent function/
 
