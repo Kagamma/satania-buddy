@@ -289,7 +289,6 @@ c = add(5, 3)
 #+end_example
 
 - /Unlike C, you need to assign return values to/ =result=
-- /You cannot declare a function inside another function/
 
 *Function reference*
 

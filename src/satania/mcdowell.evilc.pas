@@ -444,6 +444,7 @@ type
     FuncImportList: TSEFuncImportList;
     ConstMap: TSEConstMap;
     ScopeStack: TSEScopeStack;
+    ScopeFunc: TSEScopeStack;
     LineOfCodeList: TIntegerList;
     IsLex,
     IsParsed: Boolean;
@@ -3641,6 +3642,7 @@ begin
   Self.FuncImportList := TSEFuncImportList.Create;
   Self.ConstMap := TSEConstMap.Create;
   Self.ScopeStack := TSEScopeStack.Create;
+  Self.ScopeFunc := TSEScopeStack.Create;
   Self.LineOfCodeList := TIntegerList.Create;
   Self.IncludeList := TStringList.Create;
   Self.IncludePathList := TStringList.Create;
@@ -3748,6 +3750,7 @@ begin
   FreeAndNil(Self.FuncImportList);
   FreeAndNil(Self.ConstMap);
   FreeAndNil(Self.ScopeStack);
+  FreeAndNil(Self.ScopeFunc);
   FreeAndNil(Self.LineOfCodeList);
   FreeAndNil(Self.IncludeList);
   FreeAndNil(Self.IncludePathList);
@@ -5785,7 +5788,7 @@ var
     while PeekAtNextToken.Kind in [tkSquareBracketOpen, tkDot] do
     begin
       if IsNew then
-        Error(Format('Variable "%s" is definitely not an array / a map', [Name]), PeekAtNextToken);
+        Error(Format('Variable "%s" is not an array / a map', [Name]), PeekAtNextToken);
       case PeekAtNextToken.Kind of
         tkSquareBracketOpen:
           begin
@@ -5839,7 +5842,7 @@ var
       tkBracketOpen:
         begin
           if IsNew then
-            Error(Format('Variable "%s" is definitely not a function', [Name]), PeekAtNextToken);
+            Error(Format('Variable "%s" is not a function', [Name]), PeekAtNextToken);
           ParseFuncRefCallByMapRewind(Ident^, ArgCount, RewindStartAddr, Ident);
           ParseAssignTail;
         end;
@@ -5851,7 +5854,7 @@ var
     Token: TSEToken;
     Ident: TSEIdent;
     List: TList;
-    I, RewindStartAddr: Integer;
+    I, J, RewindStartAddr: Integer;
   begin
     Token := PeekAtNextToken;
     case Token.Kind of
@@ -5910,14 +5913,18 @@ var
       tkFunctionDecl:
         begin
           Inc(FuncTraversal);
-          if FuncTraversal > 1 then
-            Error('Nested functions are not supported', Token);
           Self.LocalVarCount := -1;
           NextToken;
           Self.ScopeStack.Push(Self.VarList.Count);
+          Self.ScopeFunc.Push(Self.FuncScriptList.Count + 1);
           ParseFuncDecl;
           I := Self.ScopeStack.Pop;
           Self.VarList.DeleteRange(I, Self.VarList.Count - I);
+          I := Self.ScopeFunc.Pop;
+          for J := I to Self.FuncScriptList.Count - 1 do
+          begin
+            Self.FuncScriptList.Ptr(J)^.Name := '';
+          end;
           Dec(FuncTraversal);
         end;
       tkYield:
@@ -6034,6 +6041,8 @@ begin
   Self.TokenList.Clear;
   Self.OpcodeInfoList.Clear;
   Self.IncludeList.Clear;
+  Self.ScopeFunc.Clear;
+  Self.ScopeStack.Clear;
   Self.GlobalVarCount := 1;
   Ident.Kind := ikVariable;
   Ident.Addr := 0;
