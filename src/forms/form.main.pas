@@ -332,7 +332,8 @@ end;
 
 procedure TFormMain.MenuItemQuitClick(Sender: TObject);
 begin
-  Halt(0);
+  //Halt(0);
+  Application.Terminate;
 end;
 
 procedure TFormMain.MenuItemRefreshMenuClick(Sender: TObject);

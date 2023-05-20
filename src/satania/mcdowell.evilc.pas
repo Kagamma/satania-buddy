@@ -406,7 +406,7 @@ type
     Kind: TSEIdentKind;
     Addr: Integer;
     IsUsed: Boolean;
-    IsLocal: Boolean;
+    Local: Integer;
     Ln: Integer;
     Col: Integer;
     Name: String;
@@ -2550,9 +2550,9 @@ var
     Self.Stack[Integer(I)] := Value^;
   end;
 
-  procedure AssignLocal(const I: Pointer; const Value: PSEValue); inline;
+  procedure AssignLocal(const I: Pointer; const F: Integer; const Value: PSEValue); inline;
   begin
-    (Self.FramePtr^.Stack + Integer(I))^ := Value^;
+    ((Self.FramePtr - F)^.Stack + Integer(I))^ := Value^;
   end;
 
   function GetGlobal(const I: Pointer): PSEValue; inline;
@@ -2560,9 +2560,9 @@ var
     Exit(@Self.Stack[Integer(I)]);
   end;
 
-  function GetLocal(const I: Pointer): PSEValue; inline;
+  function GetLocal(const I: Pointer; const F: Integer): PSEValue; inline;
   begin
-    Exit(Self.FramePtr^.Stack + Integer(I));
+    Exit((Self.FramePtr - F)^.Stack + Integer(I));
   end;
 
   function GetGlobalInt(const I: Integer): PSEValue; inline;
@@ -2570,9 +2570,9 @@ var
     Exit(@Self.Stack[Integer(I)]);
   end;
 
-  function GetLocalInt(const I: Integer): PSEValue; inline;
+  function GetLocalInt(const I, F: Integer): PSEValue; inline;
   begin
-    Exit(Self.FramePtr^.Stack + Integer(I));
+    Exit((Self.FramePtr - F)^.Stack + Integer(I));
   end;
 
   procedure AssignGlobalInt(const I: Integer; const Value: PSEValue); inline;
@@ -2580,9 +2580,9 @@ var
     Self.Stack[Integer(I)] := Value^;
   end;
 
-  procedure AssignLocalInt(const I: Integer; const Value: PSEValue); inline;
+  procedure AssignLocalInt(const I: Integer; const F: Integer; const Value: PSEValue); inline;
   begin
-    (Self.FramePtr^.Stack + Integer(I))^ := Value^;
+    ((Self.FramePtr - F)^.Stack + Integer(I))^ := Value^;
   end;
 
 {$ifdef SE_COMPUTED_GOTO}
@@ -2881,40 +2881,44 @@ begin
         end;
       {$ifdef SE_COMPUTED_GOTO}labelOperatorAdd2{$else}opOperatorAdd2{$endif}:
         begin
-          if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
+          P := BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer;
+          if P = Pointer($FFFFFFFF) then
             SEValueAdd(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
           else
-            SEValueAdd(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
+            SEValueAdd(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Integer(P))^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^, Integer(P))^);
           Inc(StackPtrLocal);
           Inc(CodePtrLocal, 4);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelOperatorSub2{$else}opOperatorSub2{$endif}:
         begin
-          if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
+          P := BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer;
+          if P = Pointer($FFFFFFFF) then
             SEValueSub(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
           else
-            SEValueSub(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
+            SEValueSub(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Integer(P))^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^, Integer(P))^);
           Inc(StackPtrLocal);
           Inc(CodePtrLocal, 4);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelOperatorMul2{$else}opOperatorMul2{$endif}:
         begin
-          if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
+          P := BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer;
+          if P = Pointer($FFFFFFFF) then
             SEValueMul(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
           else
-            SEValueMul(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
+            SEValueMul(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Integer(P))^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^, Integer(P))^);
           Inc(StackPtrLocal);
           Inc(CodePtrLocal, 4);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelOperatorDiv2{$else}opOperatorDiv2{$endif}:
         begin
-          if BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer = Pointer(0) then
+          P := BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer;
+          if P = Pointer($FFFFFFFF) then
             SEValueDiv(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
           else
-            SEValueDiv(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^);
+            SEValueDiv(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Integer(P))^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^, Integer(P))^);
           Inc(StackPtrLocal);
           Inc(CodePtrLocal, 4);
           DispatchGoto;
@@ -2934,8 +2938,8 @@ begin
         end;
       {$ifdef SE_COMPUTED_GOTO}labelPushLocalVar{$else}opPushLocalVar{$endif}:
         begin
-          Push(GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^);
-          Inc(CodePtrLocal, 2);
+          Push(GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Integer(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer))^);
+          Inc(CodePtrLocal, 3);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelPushArrayPop{$else}opPushArrayPop{$endif}:
@@ -3455,8 +3459,8 @@ begin
         end;
       {$ifdef SE_COMPUTED_GOTO}labelAssignLocalVar{$else}opAssignLocalVar{$endif}:
         begin
-          AssignLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Pop);
-          Inc(CodePtrLocal, 2);
+          AssignLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Integer(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer), Pop);
+          Inc(CodePtrLocal, 3);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelAssignGlobalArray{$else}opAssignGlobalArray{$endif}:
@@ -3542,7 +3546,8 @@ begin
       {$ifdef SE_COMPUTED_GOTO}labelAssignLocalArray{$else}opAssignLocalArray{$endif}:
         begin
           A := BinaryLocal.Ptr(CodePtrLocal + 1);
-          V := GetLocalInt(Integer(A^));
+          J := Integer(BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer);
+          V := GetLocalInt(Integer(A^), J);
           B := Pop;
           ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
           if ArgCount = 1 then
@@ -3583,7 +3588,7 @@ begin
                 begin
                   SEMapSet(V^, C^, B^);
                   if ArgCount = 1 then
-                    AssignLocalInt(Integer(A^), V);
+                    AssignLocalInt(Integer(A^), J, V);
                 end;
               end;
             sevkNumber, sevkBoolean:
@@ -3606,17 +3611,17 @@ begin
                 begin
                   SEMapSet(V^, C^, B^);
                   if ArgCount = 1 then
-                    AssignLocalInt(Integer(A^), V);
+                    AssignLocalInt(Integer(A^), J, V);
                 end;
               end;
             else
               begin
                 SEMapSet(V^, C^, B^);
                 if ArgCount = 1 then
-                  AssignLocalInt(Integer(A^), V);
+                  AssignLocalInt(Integer(A^), J, V);
               end;
           end;
-          Inc(CodePtrLocal, 3);
+          Inc(CodePtrLocal, 4);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelYield{$else}opYield{$endif}:
@@ -3639,6 +3644,8 @@ begin
       {$ifdef SE_COMPUTED_GOTO}labelHlt{$else}opHlt{$endif}:
         begin
           Self.CodePtr := CodePtrLocal;
+          Self.StackPtr := StackPtrLocal;
+          Self.BinaryPtr := BinaryPtrLocal;
           Self.IsDone := True;
           Self.Parent.IsDone := True;
           Exit;
@@ -4486,9 +4493,9 @@ var
     Result.Ln := Token.Ln;
     Result.Col := Token.Col;
     Result.Name := Token.Value;
-    Result.IsLocal := Self.FuncTraversal > 0;
+    Result.Local := Self.FuncTraversal;
     Result.IsUsed := IsUsed;
-    if Result.IsLocal then
+    if Result.Local > 0 then
     begin
       Result.Addr := Self.LocalVarCount;
       Inc(Self.LocalVarCount);
@@ -4531,24 +4538,24 @@ var
 
   function EmitPushVar(const Ident: TSEIdent): Integer; inline;
   begin
-    if Ident.IsLocal then
-      Result := Emit([Pointer(opPushLocalVar), Pointer(Ident.Addr)])
+    if Ident.Local > 0 then
+      Result := Emit([Pointer(opPushLocalVar), Pointer(Ident.Addr), Pointer(Self.FuncTraversal - Ident.Local)])
     else
       Result := Emit([Pointer(opPushGlobalVar), Pointer(Ident.Addr)]);
   end;
 
   function EmitAssignVar(const Ident: TSEIdent): Integer; inline;
   begin
-    if Ident.IsLocal then
-      Result := Emit([Pointer(opAssignLocalVar), Pointer(Ident.Addr)])
+    if Ident.Local > 0 then
+      Result := Emit([Pointer(opAssignLocalVar), Pointer(Ident.Addr), Pointer(Self.FuncTraversal - Ident.Local)])
     else
       Result := Emit([Pointer(opAssignGlobalVar), Pointer(Ident.Addr)]);
   end;
 
   function EmitAssignArray(const Ident: TSEIdent; const ArgCount: Integer): Integer; inline;
   begin
-    if Ident.IsLocal then
-      Result := Emit([Pointer(opAssignLocalArray), Ident.Addr, ArgCount])
+    if Ident.Local > 0 then
+      Result := Emit([Pointer(opAssignLocalArray), Ident.Addr, ArgCount, Pointer(Self.FuncTraversal - Ident.Local)])
     else
       Result := Emit([Pointer(opAssignGlobalArray), Ident.Addr, ArgCount]);
   end;
@@ -4603,45 +4610,22 @@ var
       OpInfoPrev1,
       OpInfoPrev2: PSEOpcodeInfo;
 
-      function PeekAtPrevOp: PSEOpcodeInfo; inline;
+      function PeekAtPrevOp(const Ind: Integer): PSEOpcodeInfo; inline;
       var
         I: Integer;
       begin
-        I := Self.OpcodeInfoList.Count - 1;
+        I := Self.OpcodeInfoList.Count - 1 - Ind;
         if I >= 0 then
           Result := Self.OpcodeInfoList.Ptr(I)
         else
           Result := nil;
       end;
 
-      function PeekAtPrevOp2: PSEOpcodeInfo; inline;
-      var
-        I: Integer;
-      begin
-        I := Self.OpcodeInfoList.Count - 2;
-        if I >= 0 then
-          Result := Self.OpcodeInfoList.Ptr(I)
-        else
-          Result := nil;
-      end;
-
-      function PeekAtPrevOpExpected(const Expected: TSEOpcodes): PSEOpcodeInfo; inline;
+      function PeekAtPrevOpExpected(const Ind: Integer; const Expected: TSEOpcodes): PSEOpcodeInfo; inline;
       var
         Op: TSEOpcode;
       begin
-        Result := PeekAtPrevOp;
-        if Result <> nil then
-          for Op in Expected do
-            if Op = Result^.Op then
-              Exit;
-        Result := nil;
-      end;
-
-      function PeekAtPrevOpExpected2(const Expected: TSEOpcodes): PSEOpcodeInfo; inline;
-      var
-        Op: TSEOpcode;
-      begin
-        Result := PeekAtPrevOp2;
+        Result := PeekAtPrevOp(Ind);
         if Result <> nil then
           for Op in Expected do
             if Op = Result^.Op then
@@ -4667,6 +4651,7 @@ var
       var
         A, B: TSEValue;
         I: Integer;
+        P: Pointer;
       begin
         Result := False;
         case Op of
@@ -4675,8 +4660,8 @@ var
           opOperatorMul,
           opOperatorDiv:
             begin
-              OpInfoPrev1 := PeekAtPrevOpExpected([opPushGlobalVar]);
-              OpInfoPrev2 := PeekAtPrevOpExpected2([opPushGlobalVar]);
+              OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushGlobalVar]);
+              OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar]);
               if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
               begin
                 B := Self.Binary[OpInfoPrev1^.Pos + 1];
@@ -4684,21 +4669,24 @@ var
                 Op := OpToOp2(Op);
                 Self.Binary.DeleteRange(Self.Binary.Count - 4, 4);
                 Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
-                Emit([Pointer(Integer(Op)), A.VarPointer, B.VarPointer, Pointer(0)]);
+                Emit([Pointer(Integer(Op)), A.VarPointer, B.VarPointer, Pointer($FFFFFFFF)]);
                 Result := True;
                 PushConstCount := 0;
               end else
               begin
-                OpInfoPrev1 := PeekAtPrevOpExpected([opPushLocalVar]);
-                OpInfoPrev2 := PeekAtPrevOpExpected2([opPushLocalVar]);
+                OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushLocalVar]);
+                OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushLocalVar]);
                 if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
                 begin
+                  if Self.Binary[OpInfoPrev1^.Pos + 2].VarPointer <> Self.Binary[OpInfoPrev2^.Pos + 2].VarPointer then
+                    Exit;
+                  P := Self.Binary[OpInfoPrev1^.Pos + 2].VarPointer;
                   B := Self.Binary[OpInfoPrev1^.Pos + 1];
                   A := Self.Binary[OpInfoPrev2^.Pos + 1];
                   Op := OpToOp2(Op);
-                  Self.Binary.DeleteRange(Self.Binary.Count - 4, 4);
+                  Self.Binary.DeleteRange(Self.Binary.Count - 6, 6);
                   Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
-                  Emit([Pointer(Integer(Op)), A.VarPointer, B.VarPointer, Pointer(1)]);
+                  Emit([Pointer(Integer(Op)), A.VarPointer, B.VarPointer, Pointer(P)]);
                   Result := True;
                   PushConstCount := 0;
                 end;
@@ -4724,8 +4712,8 @@ var
       begin
         Result := False;
         if (PushConstCount < 2) or (IsTailed) then Exit;
-        OpInfoPrev1 := PeekAtPrevOpExpected([opPushConst]);
-        OpInfoPrev2 := PeekAtPrevOpExpected2([opPushConst]);
+        OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
+        OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushConst]);
         if (OpInfoPrev1 <> nil) and (OpInfoPrev1 <> nil) and SameKind then
         begin
           Result := True;
@@ -6155,7 +6143,7 @@ begin
   Ident.Kind := ikVariable;
   Ident.Addr := 0;
   Ident.Name := 'result';
-  Ident.IsLocal := False;
+  Ident.Local := 0;
   Self.VarList[0] := Ident;
   ErrorLn := -1;
   ErrorCol := -1;
