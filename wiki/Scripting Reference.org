@@ -427,10 +427,12 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Wait in seconds. This won't block the main process.
 *map_create(): map*
 - Create a new map. This function is comparable to [] syntax.
-*map_delete(a: map; key: number/string): map*
+*map_delete(a: map, key: number/string): map*
 - Delete map elements.
 *map_keys_get(a: map): map*
 - Return map contains all keys from map a.
+*array_resize(a: map, size: number): map*
+- Resize a valid array.
 *length(a: map/string)*
 - Return length of string or map.
 *random(n: number): number*
@@ -484,23 +486,23 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Get 8-byte data from buffer.
 *buffer_f64_get(buffer: buffer): number*
 - Get double-type data from buffer.
-*buffer_u8_set(buffer: buffer; data: number): number*
+*buffer_u8_set(buffer: buffer, data: number): number*
 - Write 1-byte unsigned data to buffer.
-*buffer_i8_set(buffer: buffer; data: number): number*
+*buffer_i8_set(buffer: buffer, data: number): number*
 - Write 1-byte data to buffer.
-*buffer_u16_set(buffer: buffer; data: number): number*
+*buffer_u16_set(buffer: buffer, data: number): number*
 - Write 2-byte unsigned data to buffer.
-*buffer_i16_set(buffer: buffer; data: number): number*
+*buffer_i16_set(buffer: buffer, data: number): number*
 - Write 2-byte data to buffer.
-*buffer_u32_set(buffer: buffer; data: number): number*
+*buffer_u32_set(buffer: buffer, data: number): number*
 - Write 4-byte unsigned data to buffer.
-*buffer_i32_set(buffer: buffer; data: number): number*
+*buffer_i32_set(buffer: buffer, data: number): number*
 - Write 4-byte data to buffer.
-*buffer_u64_set(buffer: buffer; data: number): number*
+*buffer_u64_set(buffer: buffer, data: number): number*
 - Write 8-byte unsigned data to buffer.
-*buffer_i64_set(buffer: buffer; data: number): number*
+*buffer_i64_set(buffer: buffer, data: number): number*
 - Write 8-byte data to buffer.
-*buffer_f64_set(buffer: buffer; data: number): number*
+*buffer_f64_set(buffer: buffer, data: number): number*
 - Write double-type data to buffer.
 *string_to_buffer(s: string): buffer*
 - Return pointer point to the first element of the string.
@@ -524,15 +526,15 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Concatenate s1 and s2 and save result to s, without creating a new copy of s. Use this instead of =s = s1 + s2= if you try to concatenate a lot of strings.
 *string_empty(s)*
 - Empty string s. It is used to set a string built by /string_concat()/ back to an empty string.
-*string_insert(source, substring: string; index: number): string*
+*string_insert(source, substring: string, index: number): string*
 - Insert a string at index.
-*string_grep(s: string; subs: map of strings): string*
+*string_grep(s: string, subs: map of strings): string*
 - grep a string
 *string_split(s, delimiter: string): map*
 - Split a string into multiple parts.
 *string_find(s, sub: string): number*
 - Find location of substring in a string. Return -1 if no substring is found.
-*string_delete(s: string; index, count: number): string*
+*string_delete(s: string, index, count: number): string*
 - Delete part of a string at index.
 *string_replace(s, old, new: string): string*
 - Replace all old with new.
@@ -546,7 +548,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Trim left of string.
 *string_trim_right(s: string): string*
 - Trim right of string.
-*string_format(s: string; subs: map): string*
+*string_format(s: string, subs: map): string*
 - Replace a string with contents from map
   + Example: ~string_format('{0} is {1} gold', ['Key', 500])~ => Key is 500 gold
 *string_find_regex(s, regex: string): map*
@@ -583,7 +585,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Create new directory.
 *fs_directory_delete(path: string)*
 - Delete directory.
-*fs_directory_find_all(path: string; is_subdir: boolean)*
+*fs_directory_find_all(path: string, is_subdir: boolean)*
 - Perform search for directories in certain paths. Return map of paths.
 *fs_directory_exists(path: string): boolean*.
 - Check if a directory is exists.
@@ -591,7 +593,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Read text from file.
 *fs_file_write(filename, text: string)*
 - Write text to file. If the file is not exist then create a new file.
-*fs_file_find_all(path, mask: string; is_subdir: boolean; attribute:
+*fs_file_find_all(path, mask: string, is_subdir: boolean, attribute:
 number): map*
 - Perform search for files in certain paths. Return map of paths.
 - List of attributes:
@@ -632,9 +634,9 @@ number): map*
 - Decode URL element.
 *http_open(url: string)*
 - Open an URL using default web browser.
-*http_fetch(method, url: string; headers: map; data: string/map): string*
+*http_fetch(method, url: string, headers: map, data: string/map): string*
 - Make a request to URL. Return guid.
-*http_upload(url: string; headers: map; data: string/map; field, file: string): string*
+*http_upload(url: string, headers: map, data: string/map, field, file: string): string*
 - Upload a file to URL. Return guid.
 *http_is_success(guid: string): boolean*
 - Check if url query (get, post, etc) is finished.
@@ -670,8 +672,8 @@ number): map*
 ** Workers
 - /Please note workers run on the same thread as main script. Make sure to use yield to avoid infinite loop./
 
-*worker_create(worker_name: string; evil_script: string; interval:
-number; consts: map): string*
+*worker_create(worker_name: string, evil_script: string, interval:
+number, consts: map): string*
 - Create a new worker. Unlike main script, workers will automatically delete itself once its done executing.
   + ~worker_name~: Name of worker.
   + ~evil_script~: The script that will be executed by worker.
@@ -709,7 +711,7 @@ number; consts: map): string*
 - Stream a text to chat window / speech bubble
 *notify(message: string)*
 - Shows a notification at top-left of the screen.
-*ask(caption, message: string; width, height: number)*
+*ask(caption, message: string, width, height: number)*
 - Shows asking dialog. Supports HTML 4.01. /width/ and /height/ are optional parameters allows to change dialog's size. Satania will be blocked until one answer is provided so make sure to provide at least 1 way to answer the question. Look at examples below for ways to provide answers.
 - Example #1:
 
@@ -744,17 +746,17 @@ What do you think about me?<br />
 - Stop all animations.
 *sprite_load(sprite: string)*
 - Load a model (supports X3D, Spine, images, glTF, Cocos2D, Starling) in /data/sprites/current_character/
-*sprite_animation_speed_set(animation_name: string; total_time:
+*sprite_animation_speed_set(animation_name: string, total_time:
 number)*
 - Set animation's interval in seconds.
-*sprite_animation_play(animation_name: string; loop: boolean = false)*
+*sprite_animation_play(animation_name: string, loop: boolean = false)*
 - Play an animation by name
 - For skeletal animations, the animations are not override each other so you can play multiple animations at once.
 *sprite_animation_is_playing(animation_name: string): boolean*
 - Return true if animation is playing.
 *sprite_animation_stop(animation_name: string)*
 - Stop an animation.
-*sprite_animation_talk_set(loop, finish: string; random_script_files: map of strings)*
+*sprite_animation_talk_set(loop, finish: string, random_script_files: map of strings)*
 -  Set default talking animations.
 - ~random_script_files~ is optional, which indicates which script to run when start talking
 *sprite_scale_set(scale: number)*
@@ -773,15 +775,15 @@ number)*
 - Return true if Speech Recognition is turned on.
 *flag_global_get(flag: string): string*
 - Set a flag. Result stores in ~configs.json~.
-*flag_global_set(flag: string; value: string)*
+*flag_global_set(flag: string, value: string)*
 - Get a flag from ~configs.json~.
 *flag_local_get(flag: string): string*
 - Set a flag. Result stores in ~scripts/flags.ini~.
-*flag_local_set(flag: string; value: string)*
+*flag_local_set(flag: string, value: string)*
 - Get a flag from ~scripts/flags.ini~.
 *get(flag: string): any*
 - Set a flag. Result stores in memory.
-*set(flag: string; value: any)*
+*set(flag: string, value: any)*
 - Get a flag from memory.
 *scheme_load(scheme_name: string)*
 - Load an .evil scheme file in ~data/scripts/current_character~. This will also stop the current script.
