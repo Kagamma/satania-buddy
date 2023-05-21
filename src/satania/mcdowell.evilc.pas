@@ -3740,6 +3740,7 @@ begin
   Self.RegisterFunc('wait', @TBuiltInFunction(nil).SEWait, 1);
   Self.RegisterFunc('length', @TBuiltInFunction(nil).SELength, 1);
   Self.RegisterFunc('map_create', @TBuiltInFunction(nil).SEMapCreate, -1);
+  Self.RegisterFunc('___map_create', @TBuiltInFunction(nil).SEMapCreate, -1);
   Self.RegisterFunc('map_delete', @TBuiltInFunction(nil).SEMapDelete, 2);
   Self.RegisterFunc('map_keys_get', @TBuiltInFunction(nil).SEMapKeysGet, 1);
   Self.RegisterFunc('array_resize', @TBuiltInFunction(nil).SEArrayResize, 2);
@@ -5310,13 +5311,9 @@ var
   function ParseFuncDecl(const IsAnon: Boolean = False): TSEToken;
   var
     Token: TSEToken;
-    ResultIdent,
-    ThisIdent: TSEIdent;
     Name: String;
     ArgCount: Integer = 0;
-    I, Ind,
-    JumpBlock,
-    Addr: Integer;
+    I: Integer;
     ReturnList: TList;
     Func: PSEFuncScriptInfo;
     ParentBinary: TSEBinary;
@@ -5340,7 +5337,7 @@ var
 
       Token.Value := 'result';
       Token.Kind := tkIdent;
-      ResultIdent := CreateIdent(ikVariable, Token, True);
+      CreateIdent(ikVariable, Token, True);
 
       NextTokenExpected([tkBracketOpen]);
       repeat
@@ -5355,7 +5352,7 @@ var
 
       Token.Value := 'self';
       Token.Kind := tkIdent;
-      ThisIdent := CreateIdent(ikVariable, Token, True);
+      CreateIdent(ikVariable, Token, True);
 
       Func := RegisterScriptFunc(Name, ArgCount);
       ParentBinary := Self.Binary;
@@ -5810,7 +5807,7 @@ var
     Token: TSEToken;
   begin
     I := 0;
-    FuncNativeInfo := FindFuncNative('map_create', Ind);
+    FuncNativeInfo := FindFuncNative('___map_create', Ind);
     repeat
       if PeekAtNextToken.Kind <> tkSquareBracketClose then
       begin
