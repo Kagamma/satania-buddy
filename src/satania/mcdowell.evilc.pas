@@ -92,6 +92,7 @@ type
   TSEOpcodeInfo = record
     Op: TSEOpcode;
     Pos: Integer;
+    Binary: Pointer;
     Size: Integer;
   end;
   PSEOpcodeInfo = ^TSEOpcodeInfo;
@@ -4540,6 +4541,7 @@ var
     OpcodeInfo.Op := TSEOpcode(Integer(Data[0].VarPointer));
     OpcodeInfo.Pos := Self.Binary.Count;
     OpcodeInfo.Size := Length(Data);
+    OpcodeInfo.Binary := Self.Binary;
     Self.OpcodeInfoList.Add(OpcodeInfo);
     for I := Low(Data) to High(Data) do
     begin
@@ -4676,6 +4678,8 @@ var
               OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar]);
               if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
               begin
+                if (OpInfoPrev1^.Binary <> Pointer(Self.Binary)) or (OpInfoPrev2^.Binary <> Pointer(Self.Binary)) then
+                  Exit;
                 B := Self.Binary[OpInfoPrev1^.Pos + 1];
                 A := Self.Binary[OpInfoPrev2^.Pos + 1];
                 Op := OpToOp2(Op);
@@ -4690,6 +4694,8 @@ var
                 OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushLocalVar]);
                 if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
                 begin
+                  if (OpInfoPrev1^.Binary <> Pointer(Self.Binary)) or (OpInfoPrev2^.Binary <> Pointer(Self.Binary)) then
+                    Exit;
                   if Self.Binary[OpInfoPrev1^.Pos + 2].VarPointer <> Self.Binary[OpInfoPrev2^.Pos + 2].VarPointer then
                     Exit;
                   P := Self.Binary[OpInfoPrev1^.Pos + 2].VarPointer;
