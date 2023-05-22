@@ -65,7 +65,7 @@ type
 implementation
 
 uses
-  Math;
+  Math, Globals;
 
 procedure TSataniaRichText.SetSource(S: String);
 begin
@@ -242,6 +242,7 @@ var
     //
     TB.TextStyle.Font.Name := Memo.Font.Name;
     TB.TextStyle.Font.Size := Memo.Font.Size;
+    TB.TextStyle.Font.Quality := fqCleartype;
     //
     if not (TB is TKMemoTextBlock) then Exit;
     TB.Text := TB.Text + S;
@@ -282,7 +283,7 @@ begin
             case Self.LastState of
               rtsCode:
                 begin
-                  TB.TextStyle.Font.Color := $071330;
+                  TB.TextStyle.Font.Color := CColor($071330);
                   {$ifdef WINDOWS}
                   TB.TextStyle.Font.Name := 'Consolas';
                   {$else}
@@ -291,7 +292,7 @@ begin
                 end;
               rtsThink:
                 begin
-                  TB.TextStyle.Font.Color := $808080;
+                  TB.TextStyle.Font.Color := CColor($808080);
                   TB.TextStyle.Font.Style := [fsItalic];
                 end
               else

@@ -49,6 +49,7 @@ object FormChat: TFormChat
   OnShow = FormShow
   Position = poDefault
   ShowInTaskBar = stAlways
+  LCLVersion = '2.3.0.0'
   object PageControl: TPageControl
     Left = 0
     Height = 509
@@ -71,6 +72,7 @@ object FormChat: TFormChat
         BevelOuter = bvNone
         ClientHeight = 362
         ClientWidth = 529
+        ParentBackground = False
         TabOrder = 0
         object Panel1: TPanel
           Left = 0
@@ -81,6 +83,7 @@ object FormChat: TFormChat
           BevelOuter = bvSpace
           ClientHeight = 362
           ClientWidth = 529
+          ParentBackground = False
           TabOrder = 0
           object MemoChatLog: TKMemo
             Left = 1
@@ -107,6 +110,7 @@ object FormChat: TFormChat
         Align = alBottom
         ClientHeight = 71
         ClientWidth = 529
+        ParentBackground = False
         TabOrder = 1
         object EditChat: TMemo
           Left = 7
@@ -138,6 +142,7 @@ object FormChat: TFormChat
         Align = alBottom
         ClientHeight = 43
         ClientWidth = 529
+        ParentBackground = False
         TabOrder = 3
         object CheckBoxAlwaysOnTop: TCheckBox
           Left = 9
@@ -241,6 +246,7 @@ object FormChat: TFormChat
         Align = alBottom
         ClientHeight = 43
         ClientWidth = 529
+        ParentBackground = False
         TabOrder = 1
         object ButtonEditCancel: TSpeedButton
           Left = 470
