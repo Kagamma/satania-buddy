@@ -356,7 +356,7 @@ obj.func().func().call()
 
 - However, the following examples won't work:
 
-+begin_example
+#+begin_example
 obj.middle.call() // obj will be passed as "self" instead of middle
 func().middle.call() // the result from func() will be passed as "self" instead of middle
 #+end_example
