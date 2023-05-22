@@ -68,6 +68,8 @@ type
     procedure MenuItemEditorCopyClick(Sender: TObject);
     procedure MenuItemEditorCutClick(Sender: TObject);
     procedure MenuItemEditorPasteClick(Sender: TObject);
+    procedure MenuItemOpenCharacterScriptClick(Sender: TObject);
+    procedure MenuItemOpenCommonScriptClick(Sender: TObject);
     procedure SynCompletionBeforeExecute(ASender: TSynBaseCompletion;
       var ACurrentString: String; var APosition: Integer; var AnX,
       AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
@@ -175,6 +177,11 @@ end;
 
 procedure TFormEvilCEditor.ToolButtonNewClick(Sender: TObject);
 begin
+  if Editor.Modified then
+  begin
+    if MessageDlg('', 'You have unsaved changes. Do you still want to reset?', mtInformation, [mbYes, mbNo], 0) = mrNo then
+      Exit;
+  end;
   WorkingFile := '';
   Caption := 'New Evil Scheme';
   Editor.Lines.Clear;
@@ -302,6 +309,11 @@ end;
 
 procedure TFormEvilCEditor.ToolButtonOpenClick(Sender: TObject);
 begin
+  if Editor.Modified then
+  begin
+    if MessageDlg('', 'You have unsaved changes. Do you still want to open another file?', mtInformation, [mbYes, mbNo], 0) = mrNo then
+      Exit;
+  end;
   if OpenDialog.Execute then
   begin
     Self.LoadFromFile(OpenDialog.FileName);
