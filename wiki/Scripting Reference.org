@@ -12,15 +12,15 @@ talk('Hello, World!')
 #+end_example
 
 ** Language
-*Include other scripts*
+*** Include other scripts
 
-- /The script engine will first look for scripts at the absolute path, and if no script is found there, it will search for scripts in the character's scripts directory./
+- The script engine will first look for scripts at the absolute path, and if no script is found there, it will search for scripts in the character's scripts directory.
 
 #+begin_example
 using 'path/to/script.evil'
 #+end_example
 
-*Types*
+*** Types
 
 #+begin_example
 string, number, boolean, map, buffer, function, null
@@ -50,7 +50,7 @@ Strings, Maps and Buffers are subject to automatic memory management.
 You do not have to worry about allocation and deallocation of these data
 types.
 
-*Operators*
+*** Operators
 
 #+begin_example
 Operator                               Precedence
@@ -73,7 +73,7 @@ Bitwise operator     Description
 
 /Evil script does not support logic operators, thus it does not distinguish between =, &, | and ==, &&, ||, allowing them to be used interchangeably./
 
-*Variable declarations / assignments*
+*** Variable declarations / assignments
 
 #+begin_example
 a = 5
@@ -125,7 +125,7 @@ d['a'] = 5
 
 - /Strings are copy-of-write, while maps are passed by reference./
 
-*Statements*
+*** Statements
 
 #+begin_example
 expressions = a + b * c / d + (5 - 2)
@@ -147,7 +147,7 @@ not = !a
 pow = a^b
 #+end_example
 
-*If block*
+*** If block
 
 #+begin_example
 if (a < b) & (c < d) {
@@ -159,7 +159,7 @@ if (a < b) & (c < d) {
 }
 #+end_example
 
-*While block*
+*** While block
 
 #+begin_example
 i = 0
@@ -174,7 +174,7 @@ while i < a {
 }
 #+end_example
 
-*Do..while block*
+*** Do..while block
 
 #+begin_example
 i = 0
@@ -189,7 +189,7 @@ do {
 } while i < a
 #+end_example
 
-*For block*
+*** For block
 
 #+begin_example
 for i = 0 to 4 {
@@ -205,7 +205,7 @@ for i = 4 downto 0 {
 }
 #+end_example
 
-*For-in block*
+*** For-in block
 
 For-in block only work correctly with valid array.
 
@@ -222,7 +222,7 @@ for value, index in [1, 2, 5, 7, 9] {
 }
 #+end_example
 
-*Switch-case block*
+*** Switch-case block
 
 #+begin_example
 a = 5
@@ -239,7 +239,7 @@ switch a {
 }
 #+end_example
 
-- /Unlike C, Evil script's switch case allows the use of expressions, so the above example can be written like this:/
+- Unlike C, Evil script's switch case allows the use of expressions, so the above example can be written like this:
 
 #+begin_example
 a = 5
@@ -255,7 +255,7 @@ switch true {
 }
 #+end_example
 
-- /Strings are allowed:/
+- Strings are allowed:
 
 #+begin_example
 s = 'alpha'
@@ -271,7 +271,7 @@ switch s {
 }
 #+end_example
 
-*Function declaration*
+*** Function declaration
 
 #+begin_example
 fn foo() {
@@ -288,7 +288,7 @@ foo()
 c = add(5, 3)
 #+end_example
 
-- /Alternative way to declare a function is by returning a function reference:/
+- Alternative way to declare a function is by returning a function reference:
 
 #+begin_example
 add = fn(a, b) {
@@ -296,9 +296,9 @@ add = fn(a, b) {
 }
 #+end_example
 
-- /Unlike C, you need to assign return values to/ =result=
+- Unlike C, you need to assign return values to =result=
 
-*Function reference*
+*** Function reference
 
 #+begin_example
 fn add(a, b) {
@@ -313,7 +313,7 @@ talk(calc.add(2, 4)) // Print "6"
 talk(calc.add = add_ref) // Print "true"
 #+end_example
 
-*Anonymous function*
+*** Anonymous function
 
 #+begin_example
 fn test(func) {
@@ -326,7 +326,7 @@ test(fn(v) {
 })
 #+end_example
 
-*Self*
+*** Self
 
 #+begin_example
 fn obj_create() {
@@ -345,7 +345,23 @@ obj.name = 'Satania'
 writeln(obj.hello()) // obj will be passed to hello() as "self"
 #+end_example
 
-*Yield*
+- There are limitations in how ~self~ is passed to the calling function. Only a named variable or a map returned from the nearest function call can be passed.
+- The following examples will work correctly:
+
+#+begin_example
+obj.call()
+func().call()
+obj.func().func().call()
+#+end_example
+
+- However, the following examples won't work:
+
++begin_example
+obj.middle.call() // obj will be passed as "self" instead of middle
+func().middle.call() // the result from func() will be passed as "self" instead of middle
+#+end_example
+
+*** Yield
 
 - Quit the script and returns to main process. When the process execute the script in next frame, it will continue at where yield's called.
 
@@ -355,7 +371,7 @@ while true {
 }
 #+end_example
 
-*Comment*
+*** Comment
 
 #+begin_example
 // A comment
@@ -367,7 +383,7 @@ while true {
 */
 #+end_example
 
-** Import external functions from dynamic libraries
+*** Import external functions from dynamic libraries
 #+begin_example
 import 'test.dll' {
   fn Add(i32, i32): i32
@@ -456,8 +472,10 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 *cot(n: number): number*
 
 *range(x, y: number): map*
+- Return [x..y] array with step = 1.
 
 *range(x, y, step: number): map*
+- Return [x..y] array.
 
 *min(...): number*
 
