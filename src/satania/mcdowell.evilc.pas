@@ -5886,10 +5886,14 @@ var
     Ident: PSEIdent;
     Token, Token2: TSEToken;
     ArgCount: Integer = 0;
-    RewindStartAddr: Integer;
+    I, J,
+    RewindStartAddr,
+    VarStartTokenPos,
+    VarEndTokenPos: Integer;
   begin
     Ident := FindVar(Name);
     RewindStartAddr := Self.Binary.Count;
+    VarStartTokenPos := Pos;
     while PeekAtNextToken.Kind in [tkSquareBracketOpen, tkDot] do
     begin
       if IsNew then
@@ -5916,13 +5920,20 @@ var
       tkEqual,
       tkOpAssign:
         begin
+          VarEndTokenPos := Pos;
           NextToken;
           if Token.Kind = tkOpAssign then
           begin
             if ArgCount > 0 then
-              // EmitPushArray(Ident^)
-              Error('Assignment operator does not support array/map at the moment', Token)
-            else
+            begin
+              J := Pos + 1;
+              for I := VarStartTokenPos to VarEndTokenPos do
+              begin
+                Self.TokenList.Insert(J, Self.TokenList[I]);
+                Inc(J);
+              end;
+              ParseExpr;
+            end else
               EmitPushVar(Ident^);
           end;
           ParseExpr;
