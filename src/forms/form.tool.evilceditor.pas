@@ -68,8 +68,6 @@ type
     procedure MenuItemEditorCopyClick(Sender: TObject);
     procedure MenuItemEditorCutClick(Sender: TObject);
     procedure MenuItemEditorPasteClick(Sender: TObject);
-    procedure MenuItemOpenCharacterScriptClick(Sender: TObject);
-    procedure MenuItemOpenCommonScriptClick(Sender: TObject);
     procedure SynCompletionBeforeExecute(ASender: TSynBaseCompletion;
       var ACurrentString: String; var APosition: Integer; var AnX,
       AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
