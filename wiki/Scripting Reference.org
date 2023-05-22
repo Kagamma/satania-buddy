@@ -351,7 +351,7 @@ writeln(obj.hello()) // obj will be passed to hello() as "self"
 #+begin_example
 obj.call()
 func().call()
-obj.func().func().call()
+obj.func().func2().call()
 #+end_example
 
 - However, the following examples won't work:
