@@ -180,6 +180,12 @@ type
     FSkin: String;
     FSTTVoskModel: String;
     FSTTBackend: Integer;
+    FChatWindowFont: String;
+    FChatWindowFontSize: Integer;
+    FChatBubbleFont: String;
+    FChatBubbleFontSize: Integer;
+    FChatBubbleSizeX,
+    FChatBubbleSizeY: Integer;
   published
     property Version: Cardinal read FVersion write FVersion;
     property EmbeddedServerPort: Word read FEmbeddedServerPort write FEmbeddedServerPort default 8666;  
@@ -203,7 +209,6 @@ type
     property EmailSmtpUsername: String read FEmailSmtpUsername write FEmailSmtpUsername;
     property EmailSmtpPassword: String read FEmailSmtpPassword write FEmailSmtpPassword;
     property EmailSmtpUseSSL: Boolean read FEmailSmtpUseSSL write FEmailSmtpUseSSL;
-    property FontSize: Integer read FFontSize write FFontSize default 0;
     property FrameSkip: Integer read FFrameSkip write FFrameSkip;
     property Lewd: Boolean read FLewd write FLewd default False;
     property DeveloperMode: Boolean read FDeveloperMode write FDeveloperMode default False;
@@ -215,6 +220,12 @@ type
     property SystemErrorMessage: Boolean read FSystemErrorMessage write FSystemErrorMessage default False;
     property LastServiceUsed: String read FLastServiceUsed write FLastServiceUsed;
     property EnableItalicForUserText: Boolean read FEnableItalicForUserText write FEnableItalicForUserText default False;
+    property ChatWindowFont: String read FChatWindowFont write FChatWindowFont;
+    property ChatWindowFontSize: Integer read FChatWindowFontSize write FChatWindowFontSize default 0;
+    property ChatBubbleFont: String read FChatBubbleFont write FChatBubbleFont;
+    property ChatBubbleFontSize: Integer read FChatBubbleFontSize write FChatBubbleFontSize default 0;
+    property ChatBubbleSizeX: Integer read FChatBubbleSizeX write FChatBubbleSizeX default 300;
+    property ChatBubbleSizeY: Integer read FChatBubbleSizeY write FChatBubbleSizeY default 200;
   end;
 
   TSave = class(TPersistent)
@@ -315,7 +326,6 @@ begin
   FSettings.BaseScaling := 1;
   FSettings.DefaultEvilScheme := 'main.evil';
   FSettings.ImageQuality := 'Nicest';
-  FSettings.FontSize := 0;
   FSettings.FrameSkip := 0;
   FSettings.Lewd := False;
   FSettings.Skin := 'satania (bloomers)';
@@ -328,6 +338,10 @@ begin
   FSettings.FUserName := 'Anon';
   FSettings.FLastServiceUsed := 'WolframAlpha.evil';
   FSettings.FSystemErrorMessage := False;
+  FSettings.FChatWindowFont := 'default';
+  FSettings.FChatBubbleFont := 'default';
+  FSettings.FChatBubbleSizeX := 300;     
+  FSettings.FChatBubbleSizeY := 200;
 end;
 
 destructor TSave.Destroy;

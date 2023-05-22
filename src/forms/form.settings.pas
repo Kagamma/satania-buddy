@@ -36,7 +36,9 @@ type
 
   TFormSettings = class(TForm)
     ButtonCancel: TBitBtn;
-    ButtonOk: TBitBtn;
+    ButtonChatBubbleFont: TSpeedButton;
+    ButtonApply: TBitBtn;
+    CheckBoxChatSpeechBalloon: TCheckBox;
     CheckBoxErrorMessage: TCheckBox;
     CheckBoxEmailUseSSL: TCheckBox;
     CheckBoxEmailSmtpUseSSL: TCheckBox;
@@ -45,14 +47,18 @@ type
     CheckBoxDeveloperMode: TCheckBox;
     CheckBoxEmbeddedServerEnable: TCheckBox;
     CheckBoxRules: TCheckBox;
-    CheckBoxChatSpeechBalloon: TCheckBox;
     ComboBoxSTTVoskModel: TComboBox;
     ComboBoxSkin: TComboBox;
     ComboBoxSTTBackend: TComboBox;
     ComboBoxImageQuality: TComboBox;
+    EditChatBubbleDelay: TSpinEdit;
+    EditChatBubbleSizeX: TSpinEdit;
+    EditChatBubbleSizeY: TSpinEdit;
+    EditChatWindowFont: TEdit;
+    EditChatBubbleFont: TEdit;
+    EditTextSpeed: TSpinEdit;
     EditYourName: TEdit;
     EditDefaultEvilScheme: TEdit;
-    EditChatBubbleDelay: TSpinEdit;
     EditEmailFetchFrom: TEdit;
     EditEmailPassword: TEdit;
     EditEmailSmtpPassword: TEdit;
@@ -66,15 +72,18 @@ type
     EditFrameSkip: TSpinEdit;
     EditFPS: TSpinEdit;
     EditSoWRightMargin: TSpinEdit;
-    EditFontSize: TSpinEdit;
-    EditTextSpeed: TSpinEdit;
     EditBaseScaling: TFloatSpinEdit;
+    FontDialog: TFontDialog;
     GroupBoxEmailIMAP: TGroupBox;
     GroupBoxEmailSMTP: TGroupBox;
     GroupBoxSTTVosk: TGroupBox;
     Label1: TLabel;
     Label4: TLabel;
     LabelChatbotServer4: TLabel;
+    LabelChatBubbleDelay: TLabel;
+    LabelChatBubbleSize: TLabel;
+    LabelChatSpeechBalloon: TLabel;
+    LabelChatBubbleFont: TLabel;
     LabelErrorMessage: TLabel;
     LabelEmbeddedServiceNotice: TLabel;
     LabelDeveloperMode: TLabel;
@@ -92,40 +101,44 @@ type
     LabelFetchFrom: TLabel;
     LabelEmbeddedServerPort: TLabel;
     LabelEmbeddedServerEnable: TLabel;
+    LabelChatWindowFont: TLabel;
     LabelRules: TLabel;
-    LabelChatSpeechBalloon: TLabel;
+    LabelTextSpeed: TLabel;
     LabelYourName: TLabel;
     LabelSTTBackend: TLabel;
     LabelBaseScaling: TLabel;
     LabelFontSkin: TLabel;
-    LabelFontSize: TLabel;
     LabelFrameSkip: TLabel;
     LabelLewd: TLabel;
     LabelFPS: TLabel;
-    LabelChatBubbleDelay: TLabel;
     LabelSoWRightMargin: TLabel;
     LabelSTTModel1: TLabel;
-    LabelTextSpeed: TLabel;
     LabelDefaultEvilScheme: TLabel;
     LabelImageQuality: TLabel;
     ListBoxSettings: TListBox;
     PageControl: TPageControl;
     PanelButtons: TPanel;
     PanelSettings: TPanel;
+    ButtonChatWindowFont: TSpeedButton;
     Splitter1: TSplitter;
-    TabSheet1: TTabSheet;
+    TabSheetChatBubble: TTabSheet;
+    TabSheetGeneral: TTabSheet;
+    TabSheetChatWindow: TTabSheet;
     TabSheetEmbeddedServer: TTabSheet;
     TabSheetOptimization: TTabSheet;
     TabSheetSpeechRecognition: TTabSheet;
     TabSheetIMAP: TTabSheet;
     TabSheetGraphics: TTabSheet;
     procedure ButtonCancelClick(Sender: TObject);
-    procedure ButtonOkClick(Sender: TObject);
+    procedure ButtonChatBubbleFontClick(Sender: TObject);
+    procedure ButtonChatWindowFontClick(Sender: TObject);
+    procedure ButtonApplyClick(Sender: TObject);
     procedure ComboBoxSTTBackendChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ListBoxSettingsSelectionChange(Sender: TObject; User: boolean);
   private
-
+    EditChatWindowFontSize: Integer;
+    EditChatBubbleFontSize: Integer;
   public
 
   end;
@@ -182,6 +195,14 @@ begin
   CheckBoxErrorMessage.Checked := Save.Settings.SystemErrorMessage;
   CheckBoxChatSpeechBalloon.Checked := Save.Settings.ChatSpeechBalloon;
   CheckBoxEnableItalicForUserText.Checked := Save.Settings.EnableItalicForUserText;
+
+  EditChatWindowFont.Text := Save.Settings.ChatWindowFont;
+  EditChatWindowFontSize := Save.Settings.ChatWindowFontSize;
+
+  EditChatBubbleFont.Text := Save.Settings.ChatBubbleFont;
+  EditChatBubbleFontSize := Save.Settings.ChatBubbleFontSize;
+  EditChatBubbleSizeX.Value := Save.Settings.ChatBubbleSizeX;
+  EditChatBubbleSizeY.Value := Save.Settings.ChatBubbleSizeY;
 
   ComboBoxSkin.Items.Clear;
   SL := TStringList.Create;
@@ -250,8 +271,6 @@ begin
   CheckBoxEmbeddedServerEnable.Checked := Save.Settings.EmbeddedServerEnable;
   EditEmbeddedServerPort.Value := Save.Settings.EmbeddedServerPort;
 
-  EditFontSize.Value := Save.Settings.FontSize;
-  EditFontSize.Value := Save.Settings.FontSize;
   if Save.Settings.EmailPassword <> '' then
     EditEmailPassword.Text := Decrypt(Save.Settings.EmailPassword)
   else
@@ -278,7 +297,7 @@ begin
   PageControl.TabIndex := ListboxSettings.ItemIndex;
 end;
 
-procedure TFormSettings.ButtonOkClick(Sender: TObject);
+procedure TFormSettings.ButtonApplyClick(Sender: TObject);
 var
   IsSkinChanged: Boolean = False;
 begin
@@ -319,8 +338,13 @@ begin
     Save.Settings.EmbeddedServerPort := EditEmbeddedServerPort.Value;     
     Save.Settings.EmbeddedServerEnable := CheckBoxEmbeddedServerEnable.Checked;
 
-    Save.Settings.FontSize := EditFontSize.Value;
-    Save.Settings.FontSize := EditFontSize.Value;
+    Save.Settings.ChatWindowFont := EditChatWindowFont.Text;
+    Save.Settings.ChatWindowFontSize := EditChatWindowFontSize;
+
+    Save.Settings.ChatBubbleFont := EditChatBubbleFont.Text;
+    Save.Settings.ChatBubbleFontSize := EditChatBubbleFontSize;
+    Save.Settings.ChatBubbleSizeX := EditChatBubbleSizeX.Value;
+    Save.Settings.ChatBubbleSizeY := EditChatBubbleSizeY.Value;
 
     if EditEmailPassword.Text <> '' then
       Save.Settings.EmailPassword := Encrypt(EditEmailPassword.Text)
@@ -342,13 +366,15 @@ begin
     Satania.SetImageQuality(Save.Settings.ImageQuality);
     Satania.UpdateMeta(Satania.Script);
     Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
-    FormBubble.KMemo.TextStyle.Font.Size := Save.Settings.FontSize;
     Satania.SpriteAsSpine.AnimateSkipTicks := Save.Settings.FrameSkip;
     Satania.SpriteAsX3D.AnimateSkipTicks := Save.Settings.FrameSkip;
     Satania.UpdateMenuItems;
 
     // Load local flag
     Satania.LoadLocalFlags;
+    //
+    FormChat.ApplySettings;
+    FormBubble.ApplySettings;
 
     if (ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex] <> Save.Settings.STTVoskModel)
       or (ComboBoxSTTBackend.ItemIndex <> Save.Settings.STTBackend) then
@@ -380,6 +406,28 @@ end;
 procedure TFormSettings.ButtonCancelClick(Sender: TObject);
 begin
   Hide;
+end;
+
+procedure TFormSettings.ButtonChatBubbleFontClick(Sender: TObject);
+begin
+  FontDialog.Font.Name := EditChatBubbleFont.Text;
+  FontDialog.Font.Size := EditChatBubbleFontSize;
+  if FontDialog.Execute then
+  begin
+    EditChatBubbleFont.Text := FontDialog.Font.Name;
+    EditChatBubbleFontSize := FontDialog.Font.Size;
+  end;
+end;
+
+procedure TFormSettings.ButtonChatWindowFontClick(Sender: TObject);
+begin
+  FontDialog.Font.Name := EditChatWindowFont.Text;
+  FontDialog.Font.Size := EditChatWindowFontSize;
+  if FontDialog.Execute then
+  begin
+    EditChatWindowFont.Text := FontDialog.Font.Name;
+    EditChatWindowFontSize := FontDialog.Font.Size;
+  end;
 end;
 
 end.

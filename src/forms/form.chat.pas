@@ -93,6 +93,7 @@ type
     procedure RemoveTyping;
     procedure LoadServiceList;
     procedure LoadChatHistoryFromFile;
+    procedure ApplySettings;
     property RichText: TSataniaRichText read FRichText;
   end;
 
@@ -167,6 +168,7 @@ begin
   LoadServiceList;
   LoadChatHistoryFromFile;
   FIsWriteToHistoryLog := True;
+  ApplySettings;
 end;
 
 procedure TFormChat.FormDestroy(Sender: TObject);
@@ -437,6 +439,13 @@ begin
   if MemoChatLog.Blocks.Count <> 0 then
     MemoChatLog.Blocks.Delete(MemoChatLog.Blocks.Count - 1);
   Self.Typing := nil;
+end;
+
+procedure TFormChat.ApplySettings;
+begin
+  MemoChatLog.Font.Name := Save.Settings.ChatWindowFont;
+  MemoChatLog.Font.Size := Save.Settings.ChatWindowFontSize;
+  LoadChatHistoryFromFile;
 end;
 
 end.

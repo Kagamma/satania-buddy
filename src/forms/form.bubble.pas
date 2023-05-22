@@ -55,6 +55,7 @@ type
     procedure EnableStreaming;
     procedure DisableStreaming;
     procedure Streaming(S: String);
+    procedure ApplySettings;
     property Text: String read FText write SetText;
     property TypingSpeed: Integer read FTypingSpeed write SetTypingSpeed;
     property VisibleViaSize: Boolean read FVisibleViaSize write SetVisibleViaSize;
@@ -81,9 +82,9 @@ begin
     if B then
     begin
       if Self.Width = 0 then
-        Self.Width := 300;
+        Self.Width := Save.Settings.ChatBubbleSizeX;
       if Self.Height = 0 then
-        Self.Height := 200;
+        Self.Height := Save.Settings.ChatBubbleSizeY;
     end else
     begin
       Self.Width := 0;
@@ -108,8 +109,8 @@ procedure TFormBubble.Streaming(S: String);
 begin
   if Self.FVisibleViaSize then
   begin
-    Self.Width := 300;
-    Self.Height := 200;
+    Self.Width := Save.Settings.ChatBubbleSizeX;
+    Self.Height := Save.Settings.ChatBubbleSizeY;
   end;
   if (Self.FText = '') and (Satania.AnimTalkLoop <> '') then
   begin
@@ -144,14 +145,14 @@ begin
     Self.FRichText.Reset;
     Self.FRichText.Source := S;
     if Self.FVisibleViaSize then
-      if (Length(S) < 100) and not (Self.IsPersistent) then
+      {if (Length(S) < 100) and not (Self.IsPersistent) then
       begin
         Self.Width := 200;
         Self.Height := 100;
-      end else
+      end else}
       begin
-        Self.Width := 300;
-        Self.Height := 200;
+        Self.Width := Save.Settings.ChatBubbleSizeX;
+        Self.Height := Save.Settings.ChatBubbleSizeY;
       end;
   end;
 end;
@@ -193,10 +194,10 @@ begin
   Self.FRichText.IsStreaming := True;
   Self.FRichText.IsPerformance := False;
   AddFormToIgnoreHandleList(Self);
-  Self.KMemo.TextStyle.Font.Size := Save.Settings.FontSize;
   Self.TypingSpeed := Save.Settings.TextSpeed;
   Self.Width := 0;
   Self.Height := 0;
+  ApplySettings;
 end;
 
 procedure TFormBubble.FormActivate(Sender: TObject);
@@ -213,6 +214,12 @@ procedure TFormBubble.FormShow(Sender: TObject);
 begin
   if (FormChat <> nil) and FormChat.Visible then
     FormChat.MemoChatLog.SetFocus;
+end;
+
+procedure TFormBubble.ApplySettings;
+begin
+  KMemo.Font.Name := Save.Settings.ChatBubbleFont;
+  KMemo.Font.Size := Save.Settings.ChatBubbleFontSize;
 end;
 
 end.

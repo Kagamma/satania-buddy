@@ -72,7 +72,7 @@ object FormSettings: TFormSettings
       OnClick = ButtonCancelClick
       TabOrder = 0
     end
-    object ButtonOk: TBitBtn
+    object ButtonApply: TBitBtn
       Left = 770
       Height = 24
       Top = 9
@@ -82,7 +82,7 @@ object FormSettings: TFormSettings
       Caption = 'Ok'
       Images = FormMain.ImageList
       ImageIndex = 11
-      OnClick = ButtonOkClick
+      OnClick = ButtonApplyClick
       TabOrder = 1
     end
   end
@@ -100,94 +100,44 @@ object FormSettings: TFormSettings
       Height = 546
       Top = 1
       Width = 707
-      ActivePage = TabSheet1
+      ActivePage = TabSheetGeneral
       Align = alClient
       TabIndex = 0
       TabOrder = 0
-      object TabSheet1: TTabSheet
+      object TabSheetGeneral: TTabSheet
         Caption = 'General'
         ClientHeight = 518
         ClientWidth = 699
-        object LabelChatBubbleDelay: TLabel
-          Left = 24
-          Height = 15
-          Top = 48
-          Width = 97
-          Caption = 'Chat Bubble Delay'
-        end
-        object EditChatBubbleDelay: TSpinEdit
-          Left = 192
-          Height = 23
-          Top = 48
-          Width = 98
-          MaxValue = 100000
-          MinValue = 10
-          TabOrder = 0
-          Value = 10
-        end
         object LabelSoWRightMargin: TLabel
           Left = 24
           Height = 15
-          Top = 112
+          Top = 48
           Width = 96
           Caption = 'SoW Right Margin'
         end
         object EditSoWRightMargin: TSpinEdit
           Left = 192
           Height = 23
-          Top = 112
+          Top = 48
           Width = 98
           MaxValue = 10000
           MinValue = -10000
-          TabOrder = 1
-        end
-        object LabelTextSpeed: TLabel
-          Left = 24
-          Height = 15
-          Top = 80
-          Width = 56
-          Caption = 'Text Speed'
-        end
-        object EditTextSpeed: TSpinEdit
-          Left = 192
-          Height = 23
-          Top = 80
-          Width = 98
-          MaxValue = 100000
-          MinValue = 1
-          TabOrder = 2
-          Value = 1
+          TabOrder = 0
         end
         object EditDefaultEvilScheme: TEdit
           Left = 192
           Height = 23
-          Top = 144
+          Top = 80
           Width = 400
           Enabled = False
-          TabOrder = 3
+          TabOrder = 1
         end
         object LabelDefaultEvilScheme: TLabel
           Left = 24
           Height = 15
-          Top = 144
+          Top = 80
           Width = 104
           Caption = 'Default Evil Scheme'
-        end
-        object EditFontSize: TSpinEdit
-          Left = 192
-          Height = 23
-          Top = 208
-          Width = 98
-          MaxValue = 100
-          TabOrder = 4
-          Value = 1
-        end
-        object LabelFontSize: TLabel
-          Left = 24
-          Height = 15
-          Top = 208
-          Width = 47
-          Caption = 'Font Size'
         end
         object LabelLewd: TLabel
           Left = 24
@@ -201,101 +151,87 @@ object FormSettings: TFormSettings
           Height = 17
           Top = 16
           Width = 18
-          TabOrder = 5
+          TabOrder = 2
         end
         object LabelFontSkin: TLabel
           Left = 24
           Height = 15
-          Top = 176
+          Top = 112
           Width = 51
           Caption = 'Character'
         end
         object ComboBoxSkin: TComboBox
           Left = 192
           Height = 23
-          Top = 176
+          Top = 112
           Width = 400
           ItemHeight = 15
           ReadOnly = True
-          TabOrder = 6
+          TabOrder = 3
         end
         object CheckBoxRules: TCheckBox
           Left = 192
           Height = 17
-          Top = 240
+          Top = 152
           Width = 18
-          TabOrder = 7
+          TabOrder = 4
         end
         object LabelRules: TLabel
           Left = 24
           Height = 15
-          Top = 240
+          Top = 152
           Width = 28
           Caption = 'Rules'
         end
         object Label4: TLabel
           Left = 224
           Height = 15
-          Top = 240
+          Top = 152
           Width = 434
           Caption = '*Consider disable this if you use external services like ChatGPT, KoboldAI or similar'
         end
         object LabelYourName: TLabel
           Left = 24
           Height = 15
-          Top = 272
+          Top = 184
           Width = 59
           Caption = 'Your Name'
         end
         object EditYourName: TEdit
           Left = 192
           Height = 23
-          Top = 272
+          Top = 184
           Width = 400
-          TabOrder = 8
+          TabOrder = 5
           Text = 'EditYourName'
-        end
-        object CheckBoxChatSpeechBalloon: TCheckBox
-          Left = 295
-          Height = 17
-          Top = 312
-          Width = 18
-          TabOrder = 9
-        end
-        object LabelChatSpeechBalloon: TLabel
-          Left = 24
-          Height = 15
-          Top = 312
-          Width = 256
-          Caption = 'Disable speech balloon if chat window is opened'
         end
         object LabelErrorMessage: TLabel
           Left = 24
           Height = 15
-          Top = 340
+          Top = 224
           Width = 185
           Caption = 'Display error messages as "System"'
         end
         object CheckBoxErrorMessage: TCheckBox
           Left = 295
           Height = 17
-          Top = 340
+          Top = 224
           Width = 18
-          TabOrder = 10
+          TabOrder = 6
         end
         object LabelEnableItalicForUserText: TLabel
           Left = 24
           Height = 15
-          Top = 368
+          Top = 252
           Width = 170
           Caption = 'Enable styling for user messages'
         end
         object CheckBoxEnableItalicForUserText: TCheckBox
           Left = 295
           Height = 17
-          Top = 368
+          Top = 252
           Width = 18
-          TabOrder = 11
+          TabOrder = 7
         end
       end
       object TabSheetGraphics: TTabSheet
@@ -375,6 +311,137 @@ object FormSettings: TFormSettings
           Top = 112
           Width = 58
           Caption = 'Frame Skip'
+        end
+      end
+      object TabSheetChatBubble: TTabSheet
+        Caption = 'Speech Balloon'
+        ClientHeight = 518
+        ClientWidth = 699
+        object LabelChatBubbleDelay: TLabel
+          Left = 24
+          Height = 15
+          Top = 48
+          Width = 152
+          Caption = 'Speech Balloon Delay (msec)'
+        end
+        object EditChatBubbleDelay: TSpinEdit
+          Left = 192
+          Height = 23
+          Top = 48
+          Width = 98
+          MaxValue = 100000
+          MinValue = 10
+          TabOrder = 0
+          Value = 10
+        end
+        object CheckBoxChatSpeechBalloon: TCheckBox
+          Left = 312
+          Height = 17
+          Top = 152
+          Width = 18
+          TabOrder = 1
+        end
+        object LabelChatSpeechBalloon: TLabel
+          Left = 24
+          Height = 15
+          Top = 152
+          Width = 256
+          Caption = 'Disable speech balloon if chat window is opened'
+        end
+        object LabelTextSpeed: TLabel
+          Left = 24
+          Height = 15
+          Top = 80
+          Width = 112
+          Caption = 'Text Speed (char/sec)'
+        end
+        object EditTextSpeed: TSpinEdit
+          Left = 192
+          Height = 23
+          Top = 80
+          Width = 98
+          MaxValue = 100000
+          MinValue = 1
+          TabOrder = 2
+          Value = 1
+        end
+        object LabelChatBubbleFont: TLabel
+          Left = 24
+          Height = 15
+          Top = 16
+          Width = 24
+          Caption = 'Font'
+        end
+        object EditChatBubbleFont: TEdit
+          Left = 192
+          Height = 23
+          Top = 16
+          Width = 400
+          TabOrder = 3
+        end
+        object ButtonChatBubbleFont: TSpeedButton
+          Left = 592
+          Height = 22
+          Top = 17
+          Width = 23
+          Images = FormMain.ImageList
+          ImageIndex = 0
+          OnClick = ButtonChatBubbleFontClick
+        end
+        object LabelChatBubbleSize: TLabel
+          Left = 24
+          Height = 15
+          Top = 112
+          Width = 104
+          Caption = 'Speech Balloon Size'
+        end
+        object EditChatBubbleSizeX: TSpinEdit
+          Left = 192
+          Height = 23
+          Top = 112
+          Width = 98
+          MaxValue = 100000
+          MinValue = 10
+          TabOrder = 4
+          Value = 10
+        end
+        object EditChatBubbleSizeY: TSpinEdit
+          Left = 304
+          Height = 23
+          Top = 112
+          Width = 98
+          MaxValue = 100000
+          MinValue = 10
+          TabOrder = 5
+          Value = 10
+        end
+      end
+      object TabSheetChatWindow: TTabSheet
+        Caption = 'Chat Window'
+        ClientHeight = 518
+        ClientWidth = 699
+        object LabelChatWindowFont: TLabel
+          Left = 24
+          Height = 15
+          Top = 16
+          Width = 24
+          Caption = 'Font'
+        end
+        object EditChatWindowFont: TEdit
+          Left = 192
+          Height = 23
+          Top = 16
+          Width = 400
+          TabOrder = 0
+        end
+        object ButtonChatWindowFont: TSpeedButton
+          Left = 592
+          Height = 22
+          Top = 17
+          Width = 23
+          Images = FormMain.ImageList
+          ImageIndex = 0
+          OnClick = ButtonChatWindowFontClick
         end
       end
       object TabSheetEmbeddedServer: TTabSheet
@@ -690,6 +757,8 @@ object FormSettings: TFormSettings
       Items.Strings = (
         'General'
         'Graphics'
+        'Speech Balloon'
+        'Chat Window'
         'Embedded Server'
         'Email'
         'Speech Recognition'
@@ -712,5 +781,11 @@ object FormSettings: TFormSettings
     Top = 16
     Width = 54
     Caption = 'Secret Key'
+  end
+  object FontDialog: TFontDialog
+    MinFontSize = 0
+    MaxFontSize = 0
+    Left = 8
+    Top = 552
   end
 end

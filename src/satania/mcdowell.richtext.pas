@@ -239,6 +239,10 @@ var
   begin
     if (not IsPerformance) or (S = '') then Exit;
     TB := TKMemoTextBlock(Memo.Blocks[Memo.Blocks.Count - 1]);
+    //
+    TB.TextStyle.Font.Name := Memo.Font.Name;
+    TB.TextStyle.Font.Size := Memo.Font.Size;
+    //
     if not (TB is TKMemoTextBlock) then Exit;
     TB.Text := TB.Text + S;
     S := '';
