@@ -280,7 +280,7 @@ begin
               TB.TextStyle.Font.Color := Memo.Font.Color;
               TB.TextStyle.Font.Name := Memo.Font.Name;
               TB.TextStyle.Font.Size := Memo.Font.Size;
-              TB.TextStyle.Font.Quality := fqCleartypeNatural;
+              TB.TextStyle.Font.Quality := Memo.Font.Quality;
             end;
             case Self.LastState of
               rtsCode:

@@ -34,6 +34,7 @@
 {"hash":33204386,"name":"tformsettings.labelchatwindowcolornormaltext.caption","sourcebytes":[78,111,114,109,97,108,32,84,101,120,116,32,67,111,108,111,114],"value":"Normal Text Color"},
 {"hash":156067762,"name":"tformsettings.labelchatwindowcoloritalictext.caption","sourcebytes":[73,116,97,108,105,99,32,84,101,120,116,32,67,111,108,111,114],"value":"Italic Text Color"},
 {"hash":99170450,"name":"tformsettings.labelchatwindowcolorcodeblocktext.caption","sourcebytes":[67,111,100,101,32,66,108,111,99,107,32,84,101,120,116,32,67,111,108,111,114],"value":"Code Block Text Color"},
+{"hash":193464901,"name":"tformsettings.labelchatwindowcleartype.caption","sourcebytes":[67,108,101,97,114,84,121,112,101],"value":"ClearType"},
 {"hash":220625810,"name":"tformsettings.tabsheetembeddedserver.caption","sourcebytes":[69,109,98,101,100,100,101,100,32,83,101,114,118,101,114],"value":"Embedded Server"},
 {"hash":358036,"name":"tformsettings.labelembeddedserverport.caption","sourcebytes":[80,111,114,116],"value":"Port"},
 {"hash":161481956,"name":"tformsettings.labelembeddedservicenotice.caption","sourcebytes":[42,82,101,115,116,97,114,116,32,115,97,116,97,110,105,97,45,98,117,100,100,121,32,105,115,32,114,101,113,117,105,114,101,100,32,102,111,114,32,99,104,97,110,103,101,115,32,116,111,32,116,97,107,101,32,101,102,102,101,99,116],"value":"*Restart satania-buddy is required for changes to take effect"},

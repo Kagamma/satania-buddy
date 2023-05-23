@@ -46,6 +46,7 @@ type
     CheckBoxLewd: TCheckBox;
     CheckBoxDeveloperMode: TCheckBox;
     CheckBoxEmbeddedServerEnable: TCheckBox;
+    CheckBoxChatWindowCleartype: TCheckBox;
     CheckBoxRules: TCheckBox;
     ColorButtonChatWindowCharacterName: TColorButton;
     ColorButtonChatWindowUserName: TColorButton;
@@ -116,6 +117,7 @@ type
     LabelEmbeddedServerPort: TLabel;
     LabelEmbeddedServerEnable: TLabel;
     LabelChatWindowFont: TLabel;
+    LabelChatWindowCleartype: TLabel;
     LabelRules: TLabel;
     LabelTextSpeed: TLabel;
     LabelYourName: TLabel;
@@ -219,6 +221,7 @@ begin
   ColorButtonChatWindowNormalText.ButtonColor := Save.Settings.ChatWindowColorNormalText;
   ColorButtonChatWindowItalicText.ButtonColor := Save.Settings.ChatWindowColorItalicText;
   ColorButtonChatWindowCodeBlockText.ButtonColor := Save.Settings.ChatWindowColorCodeBlockText;
+  CheckBoxChatWindowCleartype.Checked := Save.Settings.ChatWindowClearType;
 
   EditChatBubbleFont.Text := Save.Settings.ChatBubbleFont;
   EditChatBubbleFontSize := Save.Settings.ChatBubbleFontSize;
@@ -348,6 +351,7 @@ begin
     Save.Settings.SystemErrorMessage := CheckBoxErrorMessage.Checked;
     Save.Settings.EnableItalicForUserText := CheckBoxEnableItalicForUserText.Checked;
     // Clear sketch and workers if skin is changed
+    Save.Settings.ChatWindowClearType := CheckBoxChatWindowCleartype.Checked;
     if Save.Settings.Skin <> ComboBoxSkin.Items[ComboBoxSkin.ItemIndex] then
     begin
       SataniaSketch.DeleteAll;
@@ -376,7 +380,8 @@ begin
     Save.Settings.ChatWindowColorSystemName := ColorButtonChatWindowSystemName.ButtonColor;
     Save.Settings.ChatWindowColorNormalText := ColorButtonChatWindowNormalText.ButtonColor;
     Save.Settings.ChatWindowColorItalicText := ColorButtonChatWindowItalicText.ButtonColor;
-    Save.Settings.ChatWindowColorCodeBlockText := ColorButtonChatWindowCodeBlockText.ButtonColor;
+    Save.Settings.ChatWindowColorCodeBlockText := ColorButtonChatWindowCodeBlockText.ButtonColor;    
+    Save.Settings.ChatWindowClearType := CheckBoxChatWindowCleartype.Checked;
 
     Save.Settings.ChatBubbleFont := EditChatBubbleFont.Text;
     Save.Settings.ChatBubbleFontSize := EditChatBubbleFontSize;

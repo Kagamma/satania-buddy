@@ -449,6 +449,10 @@ begin
   MemoChatLog.Font.Color := Save.Settings.ChatWindowColorNormalText;
   MemoChatLog.Color := Save.Settings.ChatWindowColorBackground;  
   MemoChatLog.Colors.BkGnd := Save.Settings.ChatWindowColorBackground;
+  if Save.Settings.ChatWindowClearType then
+    MemoChatLog.Font.Quality := fqCleartype
+  else
+    MemoChatLog.Font.Quality := fqDefault;
   //MemoEdit.Color := Save.Settings.ChatWindowColorBackground;
   //MemoEdit.Font.Color := Save.Settings.ChatWindowColorNormalText;
   //LabelEditMode.Font.Color := Save.Settings.ChatWindowColorNormalText;

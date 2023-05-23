@@ -555,6 +555,20 @@ object FormSettings: TFormSettings
           ButtonColorSize = 16
           ButtonColor = clBlack
         end
+        object LabelChatWindowCleartype: TLabel
+          Left = 24
+          Height = 15
+          Top = 48
+          Width = 51
+          Caption = 'ClearType'
+        end
+        object CheckBoxChatWindowCleartype: TCheckBox
+          Left = 192
+          Height = 17
+          Top = 48
+          Width = 18
+          TabOrder = 1
+        end
       end
       object TabSheetEmbeddedServer: TTabSheet
         Caption = 'Embedded Server'
