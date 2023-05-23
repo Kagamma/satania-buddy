@@ -32,7 +32,7 @@ begin
     C.Y := 255 - C.Y;
     C.Z := 255 - C.Z;
     Result := RGBToColor(C.X, C.Y, C.Z);
-  end else}
+  end else
     Result := Color;
 end;
 
