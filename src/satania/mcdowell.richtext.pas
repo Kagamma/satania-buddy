@@ -53,6 +53,8 @@ type
     LastKind: TRichTextKind;
     TokenList: TRichTextTokenList;
     IsPerformance: Boolean;
+    ColorItalicText,
+    ColorCodeBlockText: Cardinal;
     constructor Create;
     destructor Destroy; override;
     procedure Lex(const IsEmote: Boolean = True);
@@ -92,6 +94,8 @@ begin
   inherited;
   Self.TokenList := TRichTextTokenList.Create;
   Self.IsPerformance := True;
+  Self.ColorItalicText := $808080;
+  Self.ColorCodeBlockText := $071330;
 end;
 
 procedure TSataniaRichText.Lex(const IsEmote: Boolean = True);
@@ -285,7 +289,7 @@ begin
             case Self.LastState of
               rtsCode:
                 begin
-                  TB.TextStyle.Font.Color := CColor(Save.Settings.ChatWindowColorCodeBlockText);
+                  TB.TextStyle.Font.Color := CColor(ColorCodeBlockText);
                   {$ifdef WINDOWS}
                   TB.TextStyle.Font.Name := 'Consolas';
                   {$else}
@@ -294,7 +298,7 @@ begin
                 end;
               rtsThink:
                 begin
-                  TB.TextStyle.Font.Color := CColor(Save.Settings.ChatWindowColorItalicText);
+                  TB.TextStyle.Font.Color := CColor(ColorItalicText);
                   TB.TextStyle.Font.Style := [fsItalic];
                 end
               else

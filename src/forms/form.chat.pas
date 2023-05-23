@@ -453,6 +453,8 @@ begin
     MemoChatLog.Font.Quality := fqCleartype
   else
     MemoChatLog.Font.Quality := fqDefault;
+  Self.RichText.ColorCodeBlockText := Save.Settings.ChatWindowColorCodeBlockText;
+  Self.RichText.ColorItalicText := Save.Settings.ChatWindowColorItalicText;
   //MemoEdit.Color := Save.Settings.ChatWindowColorBackground;
   //MemoEdit.Font.Color := Save.Settings.ChatWindowColorNormalText;
   //LabelEditMode.Font.Color := Save.Settings.ChatWindowColorNormalText;

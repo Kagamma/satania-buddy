@@ -229,9 +229,9 @@ type
     property LastServiceUsed: String read FLastServiceUsed write FLastServiceUsed;
     property EnableItalicForUserText: Boolean read FEnableItalicForUserText write FEnableItalicForUserText default False;
     property ChatWindowFont: String read FChatWindowFont write FChatWindowFont;
-    property ChatWindowFontSize: Integer read FChatWindowFontSize write FChatWindowFontSize default 0;
+    property ChatWindowFontSize: Integer read FChatWindowFontSize write FChatWindowFontSize default 11;
     property ChatBubbleFont: String read FChatBubbleFont write FChatBubbleFont;
-    property ChatBubbleFontSize: Integer read FChatBubbleFontSize write FChatBubbleFontSize default 0;
+    property ChatBubbleFontSize: Integer read FChatBubbleFontSize write FChatBubbleFontSize default 11;
     property ChatBubbleSizeX: Integer read FChatBubbleSizeX write FChatBubbleSizeX default 300;
     property ChatBubbleSizeY: Integer read FChatBubbleSizeY write FChatBubbleSizeY default 200;
     property ChatWindowColorBackground: Cardinal read FChatWindowColorBackground write FChatWindowColorBackground default $FFFFFF;
@@ -365,6 +365,8 @@ begin
   FSettings.FChatWindowColorNormalText := $000000;
   FSettings.FChatWindowColorItalicText := $808080;
   FSettings.FChatWindowColorCodeBlockText := $071330;
+  FSettings.FChatWindowFontSize := 11;
+  FSettings.FChatBubbleFontSize := 11;
 end;
 
 destructor TSave.Destroy;
