@@ -65,6 +65,7 @@ type
 implementation
 
 uses
+  Globals,
   Math,
   Utils.Colors;
 
@@ -241,10 +242,6 @@ var
     if (not IsPerformance) or (S = '') then Exit;
     TB := TKMemoTextBlock(Memo.Blocks[Memo.Blocks.Count - 1]);
     //
-    TB.TextStyle.Font.Name := Memo.Font.Name;
-    TB.TextStyle.Font.Size := Memo.Font.Size;
-    TB.TextStyle.Font.Quality := fqCleartype;
-    //
     if not (TB is TKMemoTextBlock) then Exit;
     TB.Text := TB.Text + S;
     S := '';
@@ -280,11 +277,15 @@ begin
             begin
               AddText;
               TB := Memo.Blocks.AddTextBlock(Token.Value);
+              TB.TextStyle.Font.Color := Memo.Font.Color;
+              TB.TextStyle.Font.Name := Memo.Font.Name;
+              TB.TextStyle.Font.Size := Memo.Font.Size;
+              TB.TextStyle.Font.Quality := fqCleartypeNatural;
             end;
             case Self.LastState of
               rtsCode:
                 begin
-                  TB.TextStyle.Font.Color := CColor($071330);
+                  TB.TextStyle.Font.Color := CColor(Save.Settings.ChatWindowColorCodeBlockText);
                   {$ifdef WINDOWS}
                   TB.TextStyle.Font.Name := 'Consolas';
                   {$else}
@@ -293,7 +294,7 @@ begin
                 end;
               rtsThink:
                 begin
-                  TB.TextStyle.Font.Color := CColor($808080);
+                  TB.TextStyle.Font.Color := CColor(Save.Settings.ChatWindowColorItalicText);
                   TB.TextStyle.Font.Style := [fsItalic];
                 end
               else

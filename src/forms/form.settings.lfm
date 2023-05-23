@@ -100,9 +100,9 @@ object FormSettings: TFormSettings
       Height = 546
       Top = 1
       Width = 707
-      ActivePage = TabSheetGeneral
+      ActivePage = TabSheetChatWindow
       Align = alClient
-      TabIndex = 0
+      TabIndex = 3
       TabOrder = 0
       object TabSheetGeneral: TTabSheet
         Caption = 'General'
@@ -442,6 +442,118 @@ object FormSettings: TFormSettings
           Images = FormMain.ImageList
           ImageIndex = 0
           OnClick = ButtonChatWindowFontClick
+        end
+        object ColorButtonChatWindowCharacterName: TColorButton
+          Left = 192
+          Height = 25
+          Top = 112
+          Width = 75
+          BorderWidth = 2
+          ButtonColorSize = 16
+          ButtonColor = clBlack
+        end
+        object LabelChatWindowColorCharacterName: TLabel
+          Left = 24
+          Height = 15
+          Top = 112
+          Width = 118
+          Caption = 'Character Name Color'
+        end
+        object LabelChatWindowColorUserName: TLabel
+          Left = 24
+          Height = 15
+          Top = 144
+          Width = 90
+          Caption = 'User Name Color'
+        end
+        object ColorButtonChatWindowUserName: TColorButton
+          Left = 192
+          Height = 25
+          Top = 144
+          Width = 75
+          BorderWidth = 2
+          ButtonColorSize = 16
+          ButtonColor = clBlack
+        end
+        object LabelChatWindowColorSystemName: TLabel
+          Left = 24
+          Height = 15
+          Top = 176
+          Width = 105
+          Caption = 'System Name Color'
+        end
+        object ColorButtonChatWindowSystemName: TColorButton
+          Left = 192
+          Height = 25
+          Top = 176
+          Width = 75
+          BorderWidth = 2
+          ButtonColorSize = 16
+          ButtonColor = clBlack
+        end
+        object LabelChatWindowColorBackground: TLabel
+          Left = 24
+          Height = 15
+          Top = 80
+          Width = 96
+          Caption = 'Background Color'
+        end
+        object ColorButtonChatWindowBackground: TColorButton
+          Left = 192
+          Height = 25
+          Top = 80
+          Width = 75
+          BorderWidth = 2
+          ButtonColorSize = 16
+          ButtonColor = clBlack
+        end
+        object LabelChatWindowColorNormalText: TLabel
+          Left = 24
+          Height = 15
+          Top = 208
+          Width = 96
+          Caption = 'Normal Text Color'
+        end
+        object ColorButtonChatWindowNormalText: TColorButton
+          Left = 192
+          Height = 25
+          Top = 208
+          Width = 75
+          BorderWidth = 2
+          ButtonColorSize = 16
+          ButtonColor = clBlack
+        end
+        object LabelChatWindowColorItalicText: TLabel
+          Left = 24
+          Height = 15
+          Top = 240
+          Width = 81
+          Caption = 'Italic Text Color'
+        end
+        object ColorButtonChatWindowItalicText: TColorButton
+          Left = 192
+          Height = 25
+          Top = 240
+          Width = 75
+          BorderWidth = 2
+          ButtonColorSize = 16
+          ButtonColor = clBlack
+        end
+        object LabelChatWindowColorCodeBlockText: TLabel
+          Left = 24
+          Height = 15
+          Top = 272
+          Width = 116
+          Caption = 'Code Block Text Color'
+        end
+        object ColorButtonChatWindowCodeBlockText: TColorButton
+          Left = 192
+          Height = 25
+          Top = 272
+          Width = 75
+          BorderWidth = 2
+          ButtonColorSize = 16
+          ButtonColor = clBlack
         end
       end
       object TabSheetEmbeddedServer: TTabSheet

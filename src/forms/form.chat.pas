@@ -363,19 +363,19 @@ begin
     TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsBold];
     if LogName = 'System' then
     begin
-      TB.TextStyle.Font.Color := CColor($800000);
+      TB.TextStyle.Font.Color := CColor(Save.Settings.ChatWindowColorSystemName);
       CH.SenderType := cseSystem;
       TB := MemoChatLog.Blocks.AddTextBlock(' [' + Time + ']');
       TB.TextStyle.Font.Style := TB.TextStyle.Font.Style + [fsItalic];
-      TB.TextStyle.Font.Color := CColor($808080);
+      TB.TextStyle.Font.Color := CColor(Save.Settings.ChatWindowColorItalicText);
     end else
     if LogName = Save.Settings.UserName then
     begin
-      TB.TextStyle.Font.Color := CColor($008000);
+      TB.TextStyle.Font.Color := CColor(Save.Settings.ChatWindowColorUserName);
       CH.SenderType := cseUser;
     end else
     begin
-      TB.TextStyle.Font.Color := CColor($0000B0);
+      TB.TextStyle.Font.Color := CColor(Save.Settings.ChatWindowColorCharacterName);
       CH.SenderType := cseSatania;
     end;
     MemoChatLog.Blocks.AddParagraph;
@@ -430,7 +430,7 @@ begin
   RemoveTyping;
   Typing := MemoChatLog.Blocks.AddTextBlock(' ' + Satania.Name + ' is typing...');
   Typing.TextStyle.Font.Style := Typing.TextStyle.Font.Style + [fsItalic];
-  Typing.TextStyle.Font.Color := CColor($818181);
+  Typing.TextStyle.Font.Color := CColor(Save.Settings.ChatWindowColorItalicText);
 end;
 
 procedure TFormChat.RemoveTyping;
@@ -446,6 +446,13 @@ procedure TFormChat.ApplySettings;
 begin
   MemoChatLog.Font.Name := Save.Settings.ChatWindowFont;
   MemoChatLog.Font.Size := Save.Settings.ChatWindowFontSize;
+  MemoChatLog.Font.Color := Save.Settings.ChatWindowColorNormalText;
+  MemoChatLog.Color := Save.Settings.ChatWindowColorBackground;  
+  MemoChatLog.Colors.BkGnd := Save.Settings.ChatWindowColorBackground;
+  //MemoEdit.Color := Save.Settings.ChatWindowColorBackground;
+  //MemoEdit.Font.Color := Save.Settings.ChatWindowColorNormalText;
+  //LabelEditMode.Font.Color := Save.Settings.ChatWindowColorNormalText;
+  //Self.Color := Save.Settings.ChatWindowColorBackground;
   LoadChatHistoryFromFile;
 end;
 

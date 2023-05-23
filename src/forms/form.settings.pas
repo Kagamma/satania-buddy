@@ -47,6 +47,13 @@ type
     CheckBoxDeveloperMode: TCheckBox;
     CheckBoxEmbeddedServerEnable: TCheckBox;
     CheckBoxRules: TCheckBox;
+    ColorButtonChatWindowCharacterName: TColorButton;
+    ColorButtonChatWindowUserName: TColorButton;
+    ColorButtonChatWindowSystemName: TColorButton;
+    ColorButtonChatWindowBackground: TColorButton;
+    ColorButtonChatWindowNormalText: TColorButton;
+    ColorButtonChatWindowItalicText: TColorButton;
+    ColorButtonChatWindowCodeBlockText: TColorButton;
     ComboBoxSTTVoskModel: TComboBox;
     ComboBoxSkin: TComboBox;
     ComboBoxSTTBackend: TComboBox;
@@ -84,6 +91,13 @@ type
     LabelChatBubbleSize: TLabel;
     LabelChatSpeechBalloon: TLabel;
     LabelChatBubbleFont: TLabel;
+    LabelChatWindowColorCharacterName: TLabel;
+    LabelChatWindowColorUserName: TLabel;
+    LabelChatWindowColorSystemName: TLabel;
+    LabelChatWindowColorBackground: TLabel;
+    LabelChatWindowColorNormalText: TLabel;
+    LabelChatWindowColorItalicText: TLabel;
+    LabelChatWindowColorCodeBlockText: TLabel;
     LabelErrorMessage: TLabel;
     LabelEmbeddedServiceNotice: TLabel;
     LabelDeveloperMode: TLabel;
@@ -198,6 +212,13 @@ begin
 
   EditChatWindowFont.Text := Save.Settings.ChatWindowFont;
   EditChatWindowFontSize := Save.Settings.ChatWindowFontSize;
+  ColorButtonChatWindowBackground.ButtonColor := Save.Settings.ChatWindowColorBackground;
+  ColorButtonChatWindowUserName.ButtonColor := Save.Settings.ChatWindowColorUserName;
+  ColorButtonChatWindowCharacterName.ButtonColor := Save.Settings.ChatWindowColorCharacterName;
+  ColorButtonChatWindowSystemName.ButtonColor := Save.Settings.ChatWindowColorSystemName;
+  ColorButtonChatWindowNormalText.ButtonColor := Save.Settings.ChatWindowColorNormalText;
+  ColorButtonChatWindowItalicText.ButtonColor := Save.Settings.ChatWindowColorItalicText;
+  ColorButtonChatWindowCodeBlockText.ButtonColor := Save.Settings.ChatWindowColorCodeBlockText;
 
   EditChatBubbleFont.Text := Save.Settings.ChatBubbleFont;
   EditChatBubbleFontSize := Save.Settings.ChatBubbleFontSize;
@@ -310,7 +331,16 @@ begin
     Save.Settings.TextSpeed := EditTextSpeed.Value;
     Save.Settings.BaseScaling := EditBaseScaling.Value;
     Save.Settings.DefaultEvilScheme := EditDefaultEvilScheme.Text;
-    Save.Settings.ImageQuality := ComboBoxImageQuality.Items[ComboBoxImageQuality.ItemIndex];
+    Save.Settings.ImageQuality := ComboBoxImageQuality.Items[ComboBoxImageQuality.ItemIndex]; 
+    Save.Settings.ChatWindowFont := EditChatWindowFont.Text;
+    Save.Settings.ChatWindowFontSize := EditChatWindowFontSize;
+    Save.Settings.ChatWindowColorBackground := ColorButtonChatWindowBackground.Color;
+    Save.Settings.ChatWindowColorUserName := ColorButtonChatWindowUserName.Color;
+    Save.Settings.ChatWindowColorCharacterName := ColorButtonChatWindowCharacterName.Color;
+    Save.Settings.ChatWindowColorSystemName := ColorButtonChatWindowSystemName.Color;
+    Save.Settings.ChatWindowColorNormalText := ColorButtonChatWindowNormalText.Color;
+    Save.Settings.ChatWindowColorItalicText := ColorButtonChatWindowItalicText.Color;
+    Save.Settings.ChatWindowColorCodeBlockText := ColorButtonChatWindowCodeBlockText.Color;
     Save.Settings.FrameSkip := EditFrameSkip.Value;
     Save.Settings.Rules := CheckBoxRules.Checked;
     Save.Settings.ChatSpeechBalloon := CheckBoxChatSpeechBalloon.Checked;
@@ -340,6 +370,13 @@ begin
 
     Save.Settings.ChatWindowFont := EditChatWindowFont.Text;
     Save.Settings.ChatWindowFontSize := EditChatWindowFontSize;
+    Save.Settings.ChatWindowColorBackground := ColorButtonChatWindowBackground.ButtonColor;
+    Save.Settings.ChatWindowColorUserName := ColorButtonChatWindowUserName.ButtonColor;
+    Save.Settings.ChatWindowColorCharacterName := ColorButtonChatWindowCharacterName.ButtonColor;
+    Save.Settings.ChatWindowColorSystemName := ColorButtonChatWindowSystemName.ButtonColor;
+    Save.Settings.ChatWindowColorNormalText := ColorButtonChatWindowNormalText.ButtonColor;
+    Save.Settings.ChatWindowColorItalicText := ColorButtonChatWindowItalicText.ButtonColor;
+    Save.Settings.ChatWindowColorCodeBlockText := ColorButtonChatWindowCodeBlockText.ButtonColor;
 
     Save.Settings.ChatBubbleFont := EditChatBubbleFont.Text;
     Save.Settings.ChatBubbleFontSize := EditChatBubbleFontSize;

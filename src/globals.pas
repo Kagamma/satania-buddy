@@ -186,6 +186,13 @@ type
     FChatBubbleFontSize: Integer;
     FChatBubbleSizeX,
     FChatBubbleSizeY: Integer;
+    FChatWindowColorBackground,
+    FChatWindowColorUserName,
+    FChatWindowColorCharacterName,
+    FChatWindowColorSystemName,
+    FChatWindowColorNormalText,
+    FChatWindowColorItalicText,
+    FChatWindowColorCodeBlockText: Cardinal;
   published
     property Version: Cardinal read FVersion write FVersion;
     property EmbeddedServerPort: Word read FEmbeddedServerPort write FEmbeddedServerPort default 8666;  
@@ -226,6 +233,13 @@ type
     property ChatBubbleFontSize: Integer read FChatBubbleFontSize write FChatBubbleFontSize default 0;
     property ChatBubbleSizeX: Integer read FChatBubbleSizeX write FChatBubbleSizeX default 300;
     property ChatBubbleSizeY: Integer read FChatBubbleSizeY write FChatBubbleSizeY default 200;
+    property ChatWindowColorBackground: Cardinal read FChatWindowColorBackground write FChatWindowColorBackground default $FFFFFF;
+    property ChatWindowColorUserName: Cardinal read FChatWindowColorUserName write FChatWindowColorUserName default $008000;
+    property ChatWindowColorCharacterName: Cardinal read FChatWindowColorCharacterName write FChatWindowColorCharacterName default $0000B0;
+    property ChatWindowColorSystemName: Cardinal read FChatWindowColorSystemName write FChatWindowColorSystemName default $800000;
+    property ChatWindowColorNormalText: Cardinal read FChatWindowColorNormalText write FChatWindowColorNormalText default $000000;
+    property ChatWindowColorItalicText: Cardinal read FChatWindowColorItalicText write FChatWindowColorItalicText default $808080;
+    property ChatWindowColorCodeBlockText: Cardinal read FChatWindowColorCodeBlockText write FChatWindowColorCodeBlockText default $071330;
   end;
 
   TSave = class(TPersistent)
@@ -342,6 +356,13 @@ begin
   FSettings.FChatBubbleFont := 'default';
   FSettings.FChatBubbleSizeX := 300;     
   FSettings.FChatBubbleSizeY := 200;
+  FSettings.ChatWindowColorBackground := $FFFFFF;
+  FSettings.FChatWindowColorUserName := $008000;
+  FSettings.FChatWindowColorCharacterName := $0000B0;
+  FSettings.FChatWindowColorSystemName := $800000;
+  FSettings.FChatWindowColorNormalText := $000000;
+  FSettings.FChatWindowColorItalicText := $808080;
+  FSettings.FChatWindowColorCodeBlockText := $071330;
 end;
 
 destructor TSave.Destroy;

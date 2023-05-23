@@ -13,7 +13,7 @@ function CColor(const Color: Cardinal): Cardinal;
 
 implementation
 
-function IsDarkTheme: Boolean;
+function IsDarkTheme: Boolean; inline;
 var
   Luminance: Single;
 begin
@@ -21,18 +21,18 @@ begin
   Result := Luminance < 180 / 255;
 end;
 
-function CColor(const Color: Cardinal): Cardinal;
+function CColor(const Color: Cardinal): Cardinal; inline;
 var
   C: TVector3Byte;
 begin
-  if IsDarkTheme then
+  {if IsDarkTheme then
   begin
     C := ColorToVector3Byte(Color);
     C.X := 255 - C.X;
     C.Y := 255 - C.Y;
     C.Z := 255 - C.Z;
     Result := RGBToColor(C.X, C.Y, C.Z);
-  end else
+  end else}
     Result := Color;
 end;
 
