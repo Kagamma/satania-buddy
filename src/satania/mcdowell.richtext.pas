@@ -65,7 +65,8 @@ type
 implementation
 
 uses
-  Math, Globals;
+  Math,
+  Utils.Colors;
 
 procedure TSataniaRichText.SetSource(S: String);
 begin

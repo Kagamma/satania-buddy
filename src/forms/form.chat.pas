@@ -109,6 +109,7 @@ uses
   Globals,
   form.tool.evilceditor,
   Form.Bubble,
+  Utils.Colors,
   Mcdowell;
 
 { TFormChat }

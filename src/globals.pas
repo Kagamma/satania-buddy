@@ -256,9 +256,6 @@ type
     property SpeechToText: Boolean read FSpeechToText write FSpeechToText default False;
   end;
 
-function IsDarkTheme: Boolean;
-function CColor(const Color: Cardinal): Cardinal;
-
 var
   OwnedWindowHandleList: TQWordList;
   Save: TSave;
@@ -269,30 +266,7 @@ var
 implementation
 
 uses
-  Mcdowell, Graphics, CastleUtils, CastleColors, CastleLCLUtils;
-
-function IsDarkTheme: Boolean;
-var
-  Luminance: Single;
-begin
-  Luminance := GrayscaleValue(ColorToVector3(clForm));
-  Result := Luminance < 180 / 255;
-end;
-
-function CColor(const Color: Cardinal): Cardinal;
-var
-  C: TVector3Byte;
-begin
-  if IsDarkTheme then
-  begin
-    C := ColorToVector3Byte(Color);
-    C.X := 255 - C.X;
-    C.Y := 255 - C.Y;
-    C.Z := 255 - C.Z;
-    Result := RGBToColor(C.X, C.Y, C.Z);
-  end else
-    Result := Color;
-end;
+  Mcdowell;
 
 constructor TReminderCollectionItem.Create;
 begin

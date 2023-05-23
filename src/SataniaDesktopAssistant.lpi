@@ -378,6 +378,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Mcdowell.Chat.History"/>
       </Unit>
+      <Unit>
+        <Filename Value="utils/utils.colors.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Utils.Colors"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
