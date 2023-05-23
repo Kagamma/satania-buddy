@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteVisibleSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpriteVisibleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESpritePositionSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStreamEnable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStreamDisable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -458,6 +459,11 @@ end;
 function TSatania.SESpriteVisibleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Sprite.Visible;
+end;
+
+function TSatania.SESpritePositionSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  SetPosition(Round(Args[0]), Round(Args[1]));
 end;
 
 function TSatania.SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

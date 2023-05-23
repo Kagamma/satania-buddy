@@ -6229,9 +6229,9 @@ begin
   FuncImportInfo.Func := nil;
   if Lib <> nil then
   begin
-    FuncImportInfo.Func := GetProcAddress(Lib, ActualName); 
-    Self.FuncImportList.Add(FuncImportInfo);
+    FuncImportInfo.Func := GetProcAddress(Lib, ActualName);
   end;
+  Self.FuncImportList.Add(FuncImportInfo);
 end;
 
 function TEvilC.Backup: TSECache;
