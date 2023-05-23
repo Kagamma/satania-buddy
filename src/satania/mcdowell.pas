@@ -87,6 +87,7 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure RegisterFuncs(const S: TEvilC; const IsSafe: Boolean = False);
+    procedure SetPosition(X, Y: Integer);
     procedure DefaultPosition;
     procedure LoadModel(S: String);
     procedure LoadLocalFlags;
@@ -220,6 +221,7 @@ begin
   S.RegisterFunc('sprite_animation_is_playing', @SEIsAnimationPlaying, 1);
   S.RegisterFunc('sprite_animation_stop', @SEStopAnimation, 1);
   S.RegisterFunc('sprite_animation_talk_set', @SESpriteTalkSet, -1);
+  S.RegisterFunc('sprite_position_set', @SESpritePositionSet, 2);
   S.RegisterFunc('is_sow', @SEIsSoW, 0);
   S.RegisterFunc('is_lewd', @SEIsLewd, 0);
   S.RegisterFunc('is_silent', @SEIsSilent, 0);
@@ -280,6 +282,12 @@ begin
   S.RegisterFunc('worker_delete', @SEWorkerDelete, 1);
   S.RegisterFunc('tool_evilc_editor', @SEToolEvilCEditor, 1);
   S.RegisterFunc('tool_hex_editor', @SEToolHexEditor, 1);
+end;
+
+procedure TSatania.SetPosition(X, Y: Integer);
+begin
+  SpriteAsX3D.Translation := Vector3(X, ScreenHeight - Y, 0);
+  SpriteAsSpine.Translation := Vector3(X, ScreenHeight - Y, 0);
 end;
 
 procedure TSatania.DefaultPosition;

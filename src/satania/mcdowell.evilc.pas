@@ -1644,7 +1644,7 @@ begin
     if (V1.Kind = sevkBuffer) and (V2.Kind in [sevkNumber, sevkBoolean]) then
     begin
       GC.AllocBuffer(@Temp, 1);
-      Temp.VarBuffer^.Ptr := V1.VarBuffer^.Ptr + Pointer(Round(V2.VarNumber));
+      Temp.VarBuffer^.Ptr := Pointer(QWord(V1.VarBuffer^.Ptr) + Round(V2.VarNumber));
       R := Temp;
     end;
 end;
@@ -1667,7 +1667,7 @@ begin
     sevkBuffer:
       begin
         GC.AllocBuffer(@Temp, 1);
-        Temp.VarBuffer^.Ptr := Pointer(V1.VarBuffer^.Ptr - Pointer(Round(V2.VarNumber)));
+        Temp.VarBuffer^.Ptr := Pointer(QWord(V1.VarBuffer^.Ptr) - Round(V2.VarNumber));
         R := Temp;
       end;
   end;
@@ -1981,7 +1981,7 @@ begin
     sevkBuffer:
       begin
         GC.AllocBuffer(@R, 1);
-        R.VarBuffer^.Ptr := V1.VarBuffer^.Ptr + Pointer(Round(V2.VarNumber));
+        R.VarBuffer^.Ptr := Pointer(QWord(V1.VarBuffer^.Ptr) + Round(V2.VarNumber));
       end;
     sevkPointer:
       begin
@@ -2016,7 +2016,7 @@ begin
     sevkBuffer:
       begin
         GC.AllocBuffer(@R, 1);
-        R.VarBuffer^.Ptr := Pointer(V1.VarBuffer^.Ptr - Pointer(Round(V2.VarNumber)));
+        R.VarBuffer^.Ptr := Pointer(QWord(V1.VarBuffer^.Ptr) - Round(V2.VarNumber));
       end;
   end;
 end;
@@ -6228,8 +6228,10 @@ begin
   FuncImportInfo.Name := Name;
   FuncImportInfo.Func := nil;
   if Lib <> nil then
-    FuncImportInfo.Func := GetProcAddress(Lib, ActualName);
-  Self.FuncImportList.Add(FuncImportInfo);
+  begin
+    FuncImportInfo.Func := GetProcAddress(Lib, ActualName); 
+    Self.FuncImportList.Add(FuncImportInfo);
+  end;
 end;
 
 function TEvilC.Backup: TSECache;
