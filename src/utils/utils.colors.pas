@@ -9,7 +9,7 @@ uses
   CastleVectors;
 
 function IsDarkTheme: Boolean;
-function CColor(const Color: Cardinal): Cardinal;
+function CColor(const Color: Cardinal; const IsInvert: Boolean = False): Cardinal;
 
 implementation
 
@@ -21,11 +21,11 @@ begin
   Result := Luminance < 180 / 255;
 end;
 
-function CColor(const Color: Cardinal): Cardinal; inline;
+function CColor(const Color: Cardinal; const IsInvert: Boolean = False): Cardinal; inline;
 var
   C: TVector3Byte;
 begin
-  {if IsDarkTheme then
+  if IsInvert and IsDarkTheme then
   begin
     C := ColorToVector3Byte(Color);
     C.X := 255 - C.X;
