@@ -3723,6 +3723,14 @@ begin
   Self.IncludePathList := TStringList.Create;
   Self.CurrentFileList := TStringList.Create;
   Self.LocalVarCountList := TIntegerList.Create;
+  //
+  Self.FuncNativeList.Capacity := 64;
+  Self.FuncScriptList.Capacity := 64;
+  Self.FuncImportList.Capacity := 64;
+  Self.ConstMap.Capacity := 64;
+  Self.ScopeStack.Capacity := 16;
+  Self.LineOfCodeList.Capacity := 1024;
+  //
   Self.VM.Parent := Self;
   Self.RegisterFunc('buffer_create', @TBuiltInFunction(nil).SEBufferCreate, 1);
   Self.RegisterFunc('buffer_length', @TBuiltInFunction(nil).SEBufferLength, 1);
