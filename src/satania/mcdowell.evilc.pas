@@ -5411,7 +5411,7 @@ var
         Patch(Integer(ReturnList[I]), Pointer(Self.Binary.Count));
       Emit([Pointer(opPopFrame)]);
 
-      // TODO: Not sure why we have to assign Func again, maybe FPC bug?
+      // The pointer may be changed due to reallocation, need to query for it again
       Func := Self.FuncScriptList.Ptr(FuncIndex);
       Func^.VarCount := Self.LocalVarCountList[Self.LocalVarCountList.Count - 1] - ArgCount;
       Self.Binary := ParentBinary;
