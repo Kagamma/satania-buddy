@@ -3924,7 +3924,7 @@ var
     if N = '' then
       raise Exception.CreateFmt('[%d,%d] %s', [Ln, Col, S])
     else
-      raise Exception.CreateFmt('(%s) [%d,%d] %s', [N, Ln, Col, S]);
+      raise Exception.CreateFmt('(%s:%d:%d) [%d,%d] %s', [Token.BelongedFileName, Token.Ln, Token.Col, Token.Ln, Token.Col, S]);
   end;
 
 var
