@@ -100,9 +100,9 @@ object FormSettings: TFormSettings
       Height = 546
       Top = 1
       Width = 707
-      ActivePage = TabSheetGeneral
+      ActivePage = TabSheetChatBubble
       Align = alClient
-      TabIndex = 0
+      TabIndex = 2
       TabOrder = 0
       object TabSheetGeneral: TTabSheet
         Caption = 'General'
@@ -320,14 +320,14 @@ object FormSettings: TFormSettings
         object LabelChatBubbleDelay: TLabel
           Left = 24
           Height = 15
-          Top = 48
+          Top = 80
           Width = 152
           Caption = 'Speech Balloon Delay (msec)'
         end
         object EditChatBubbleDelay: TSpinEdit
           Left = 192
           Height = 23
-          Top = 48
+          Top = 80
           Width = 98
           MaxValue = 100000
           MinValue = 10
@@ -337,28 +337,28 @@ object FormSettings: TFormSettings
         object CheckBoxChatSpeechBalloon: TCheckBox
           Left = 312
           Height = 17
-          Top = 152
+          Top = 184
           Width = 18
           TabOrder = 1
         end
         object LabelChatSpeechBalloon: TLabel
           Left = 24
           Height = 15
-          Top = 152
+          Top = 184
           Width = 256
           Caption = 'Disable speech balloon if chat window is opened'
         end
         object LabelTextSpeed: TLabel
           Left = 24
           Height = 15
-          Top = 80
+          Top = 112
           Width = 112
           Caption = 'Text Speed (char/sec)'
         end
         object EditTextSpeed: TSpinEdit
           Left = 192
           Height = 23
-          Top = 80
+          Top = 112
           Width = 98
           MaxValue = 100000
           MinValue = 1
@@ -391,14 +391,14 @@ object FormSettings: TFormSettings
         object LabelChatBubbleSize: TLabel
           Left = 24
           Height = 15
-          Top = 112
+          Top = 144
           Width = 104
           Caption = 'Speech Balloon Size'
         end
         object EditChatBubbleSizeX: TSpinEdit
           Left = 192
           Height = 23
-          Top = 112
+          Top = 144
           Width = 98
           MaxValue = 100000
           MinValue = 10
@@ -408,12 +408,26 @@ object FormSettings: TFormSettings
         object EditChatBubbleSizeY: TSpinEdit
           Left = 304
           Height = 23
-          Top = 112
+          Top = 144
           Width = 98
           MaxValue = 100000
           MinValue = 10
           TabOrder = 5
           Value = 10
+        end
+        object LabelChatBubbleCleartype: TLabel
+          Left = 24
+          Height = 15
+          Top = 48
+          Width = 51
+          Caption = 'ClearType'
+        end
+        object CheckBoxChatBubbleCleartype: TCheckBox
+          Left = 192
+          Height = 17
+          Top = 48
+          Width = 18
+          TabOrder = 6
         end
       end
       object TabSheetChatWindow: TTabSheet

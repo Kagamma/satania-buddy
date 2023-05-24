@@ -220,6 +220,10 @@ procedure TFormBubble.ApplySettings;
 begin
   KMemo.Font.Name := Save.Settings.ChatBubbleFont;
   KMemo.Font.Size := Save.Settings.ChatBubbleFontSize;
+  if Save.Settings.ChatBubbleClearType then
+    KMemo.Font.Quality := fqCleartype
+  else
+    KMemo.Font.Quality := fqDefault;
 end;
 
 end.

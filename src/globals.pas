@@ -193,7 +193,8 @@ type
     FChatWindowColorNormalText,
     FChatWindowColorItalicText,
     FChatWindowColorCodeBlockText: Cardinal;
-    FChatWindowClearType: Boolean;
+    FChatWindowClearType: Boolean;       
+    FChatBubbleClearType: Boolean;
   published
     property Version: Cardinal read FVersion write FVersion;
     property EmbeddedServerPort: Word read FEmbeddedServerPort write FEmbeddedServerPort default 8666;  
@@ -242,6 +243,7 @@ type
     property ChatWindowColorItalicText: Cardinal read FChatWindowColorItalicText write FChatWindowColorItalicText default $808080;
     property ChatWindowColorCodeBlockText: Cardinal read FChatWindowColorCodeBlockText write FChatWindowColorCodeBlockText default $071330;
     property ChatWindowClearType: Boolean read FChatWindowClearType write FChatWindowClearType default False;
+    property ChatBubbleClearType: Boolean read FChatBubbleClearType write FChatBubbleClearType default False;
   end;
 
   TSave = class(TPersistent)

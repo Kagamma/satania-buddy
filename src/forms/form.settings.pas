@@ -39,6 +39,7 @@ type
     ButtonChatBubbleFont: TSpeedButton;
     ButtonApply: TBitBtn;
     CheckBoxChatSpeechBalloon: TCheckBox;
+    CheckBoxChatBubbleCleartype: TCheckBox;
     CheckBoxErrorMessage: TCheckBox;
     CheckBoxEmailUseSSL: TCheckBox;
     CheckBoxEmailSmtpUseSSL: TCheckBox;
@@ -92,6 +93,7 @@ type
     LabelChatBubbleSize: TLabel;
     LabelChatSpeechBalloon: TLabel;
     LabelChatBubbleFont: TLabel;
+    LabelChatBubbleCleartype: TLabel;
     LabelChatWindowColorCharacterName: TLabel;
     LabelChatWindowColorUserName: TLabel;
     LabelChatWindowColorSystemName: TLabel;
@@ -227,6 +229,7 @@ begin
   EditChatBubbleFontSize := Save.Settings.ChatBubbleFontSize;
   EditChatBubbleSizeX.Value := Save.Settings.ChatBubbleSizeX;
   EditChatBubbleSizeY.Value := Save.Settings.ChatBubbleSizeY;
+  CheckBoxChatBubbleCleartype.Checked := Save.Settings.ChatBubbleClearType;
 
   ComboBoxSkin.Items.Clear;
   SL := TStringList.Create;
@@ -387,6 +390,7 @@ begin
     Save.Settings.ChatBubbleFontSize := EditChatBubbleFontSize;
     Save.Settings.ChatBubbleSizeX := EditChatBubbleSizeX.Value;
     Save.Settings.ChatBubbleSizeY := EditChatBubbleSizeY.Value;
+    Save.Settings.ChatBubbleClearType := CheckBoxChatBubbleCleartype.Checked;
 
     if EditEmailPassword.Text <> '' then
       Save.Settings.EmailPassword := Encrypt(EditEmailPassword.Text)
