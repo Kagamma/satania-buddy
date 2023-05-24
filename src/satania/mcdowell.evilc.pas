@@ -657,6 +657,19 @@ begin
   Result := FloatToStr(X, FS);
 end;
 
+function GetOS: String; inline;
+begin
+  {$if defined(WINDOWS)}
+  Result := 'windows';
+  {$elseif defined(LINUX)}
+  Result := 'linux';
+  {$elseif defined(DARWIN)}
+  Result := 'darwin';
+  {$else}
+  Result := 'unknown';
+  {$endif}
+end;
+
 function StringIndexOf(S, P: String): Integer; inline;
 begin
   {$ifdef SE_STRING_UTF8}
@@ -3823,23 +3836,12 @@ begin
 end;
 
 procedure TEvilC.AddDefaultConsts;
-var
-  OS: String;
 begin
-  {$if defined(WINDOWS)}
-  OS := 'windows';
-  {$elseif defined(LINUX)}
-  OS := 'linux';
-  {$elseif defined(DARWIN)}
-  OS := 'darwin';
-  {$else}
-  OS := 'unknown';
-  {$endif}
   Self.ConstMap.AddOrSetValue('PI', PI);
   Self.ConstMap.AddOrSetValue('true', True);
   Self.ConstMap.AddOrSetValue('false', False);
   Self.ConstMap.AddOrSetValue('null', SENull);
-  Self.ConstMap.AddOrSetValue('os', OS);
+  Self.ConstMap.AddOrSetValue('os', GetOS);
 end;
 
 procedure TEvilC.SetSource(V: String);
@@ -4199,6 +4201,41 @@ begin
             end;
           end;
         end;
+      '#':
+        begin
+          C := PeekAtNextChar;
+          while C in ['0'..'9', 'A'..'Z', 'a'..'z', '_'] do
+          begin
+            Token.Value := Token.Value + NextChar;
+            C := PeekAtNextChar;
+          end;
+          case Token.Value of
+            'require':
+              begin
+                Token.Value := '';
+                C := PeekAtNextChar;
+                while C = ' ' do
+                begin
+                  NextChar;
+                  C := PeekAtNextChar;
+                end;
+                C := PeekAtNextChar;
+                while C in ['0'..'9', 'A'..'Z', 'a'..'z', '_'] do
+                begin
+                  Token.Value := Token.Value + NextChar;
+                  C := PeekAtNextChar;
+                end;
+                if Token.Value <> GetOS then
+                begin
+                  C := #0;
+                  goto EndLabel;
+                end else
+                  Continue;
+              end
+            else
+              Error('Unhandled directive ' + C);
+          end;
+        end;
       'A'..'Z', 'a'..'z', '_':
         begin
           Token.Value := C;
@@ -4267,6 +4304,7 @@ begin
                   FSource := BackupSource;
                   Self.IncludeList.Add(Path);
                 end;
+                C := PeekAtNextChar;
                 continue;
               end;
             'if':
