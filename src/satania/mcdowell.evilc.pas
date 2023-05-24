@@ -6210,7 +6210,7 @@ begin
   Self.IncludeList.Clear;
   Self.ScopeFunc.Clear;
   Self.ScopeStack.Clear;
-  Self.GlobalVarCount := 10;
+  Self.GlobalVarCount := 1;
   Self.VarList.Count := Self.GlobalVarCount; // Safeguard
   Ident.Kind := ikVariable;
   Ident.Addr := 0;
