@@ -442,7 +442,7 @@ type
     IncludeList: TStrings;
     TokenList: TSETokenList;
     OpcodeInfoList: TSEOpcodeInfoList;
-    LocalVarCount,
+    LocalVarCountList: TIntegerList;
     GlobalVarCount: Integer;
     VarList: TSEIdentList;
     FuncNativeList: TSEFuncNativeList;
@@ -3722,6 +3722,7 @@ begin
   Self.IncludeList := TStringList.Create;
   Self.IncludePathList := TStringList.Create;
   Self.CurrentFileList := TStringList.Create;
+  Self.LocalVarCountList := TIntegerList.Create;
   Self.VM.Parent := Self;
   Self.RegisterFunc('buffer_create', @TBuiltInFunction(nil).SEBufferCreate, 1);
   Self.RegisterFunc('buffer_length', @TBuiltInFunction(nil).SEBufferLength, 1);
@@ -3832,6 +3833,7 @@ begin
   FreeAndNil(Self.IncludeList);
   FreeAndNil(Self.IncludePathList);
   FreeAndNil(Self.CurrentFileList);
+  FreeAndNil(Self.LocalVarCountList);
   inherited;
 end;
 
@@ -4548,8 +4550,8 @@ var
     Result.IsUsed := IsUsed;
     if Result.Local > 0 then
     begin
-      Result.Addr := Self.LocalVarCount;
-      Inc(Self.LocalVarCount);
+      Result.Addr := Self.LocalVarCountList.Last;
+      Self.LocalVarCountList[Self.LocalVarCountList.Count - 1] := Self.LocalVarCountList.Last + 1;
     end else
     begin
       Result.Addr := Self.GlobalVarCount;
@@ -5357,7 +5359,7 @@ var
     Token: TSEToken;
     Name: String;
     ArgCount: Integer = 0;
-    I: Integer;
+    I, FuncIndex: Integer;
     ReturnList: TList;
     Func: PSEFuncScriptInfo;
     ParentBinary: TSEBinary;
@@ -5399,6 +5401,7 @@ var
       CreateIdent(ikVariable, Token, True);
 
       Func := RegisterScriptFunc(Name, ArgCount);
+      FuncIndex := Self.FuncScriptList.Count - 1;
       ParentBinary := Self.Binary;
       Self.Binary := Self.VM.Binaries[Func^.BinaryPos];
       ParseBlock;
@@ -5408,7 +5411,9 @@ var
         Patch(Integer(ReturnList[I]), Pointer(Self.Binary.Count));
       Emit([Pointer(opPopFrame)]);
 
-      Func^.VarCount := Self.LocalVarCount - ArgCount;
+      // TODO: Not sure why we have to assign Func again, maybe FPC bug?
+      Func := Self.FuncScriptList.Ptr(FuncIndex);
+      Func^.VarCount := Self.LocalVarCountList[Self.LocalVarCountList.Count - 1] - ArgCount;
       Self.Binary := ParentBinary;
     finally
       ReturnList.Free;
@@ -5423,7 +5428,7 @@ var
     P: Pointer;
   begin
     Inc(FuncTraversal);
-    Self.LocalVarCount := -1;
+    Self.LocalVarCountList.Add(-1);
     Self.ScopeStack.Push(Self.VarList.Count);
     Self.ScopeFunc.Push(Self.FuncScriptList.Count + 1);
     Token := ParseFuncDecl(True);
@@ -5435,6 +5440,7 @@ var
       if Self.FuncScriptList.Ptr(J)^.Name.IndexOf('___fn') <> 0 then
         Self.FuncScriptList.Ptr(J)^.Name := '';
     end;
+    Self.LocalVarCountList.Delete(Self.LocalVarCountList.Count - 1);
     Dec(FuncTraversal);
     //
     P := FindFunc(Token.Value, FuncValue.VarFuncKind, Ind);
@@ -6066,9 +6072,9 @@ var
         end;
       tkFunctionDecl:
         begin
-          Inc(FuncTraversal);
-          Self.LocalVarCount := -1;
           NextToken;
+          Inc(FuncTraversal);
+          Self.LocalVarCountList.Add(-1);
           Self.ScopeStack.Push(Self.VarList.Count);
           Self.ScopeFunc.Push(Self.FuncScriptList.Count + 1);
           ParseFuncDecl;
@@ -6080,6 +6086,7 @@ var
             if Self.FuncScriptList.Ptr(J)^.Name.IndexOf('___fn') <> 0 then
               Self.FuncScriptList.Ptr(J)^.Name := '';
           end;
+          Self.LocalVarCountList.Delete(Self.LocalVarCountList.Count - 1);
           Dec(FuncTraversal);
         end;
       tkYield:
@@ -6166,6 +6173,7 @@ begin
   BreakStack := TSEListStack.Create;
   ReturnStack := TSEListStack.Create;
   try
+    Self.LocalVarCountList.Clear;
     Self.Binary := Self.VM.Binaries[0];
     repeat
       ParseBlock;
@@ -6187,6 +6195,7 @@ begin
   Self.FuncScriptList.Clear;
   Self.FuncImportList.Clear;
   Self.CurrentFileList.Clear;
+  Self.LocalVarCountList.Clear;
   Self.VM.Reset;
 
   Self.VM.BinaryClear;
