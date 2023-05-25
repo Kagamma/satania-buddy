@@ -2425,7 +2425,7 @@ begin
   PValue^.Kind := sevkBuffer;
   New(PValue^.VarBuffer);
   SetLength(PValue^.VarBuffer^.Base, Size);
-  PValue^.VarBuffer^.Ptr := PChar(@PValue^.VarBuffer^.Base[1]);
+  PValue^.VarBuffer^.Ptr := PChar(PValue^.VarBuffer^.Base);
   PValue^.Size := Size;
   Self.FAllocatedMem := Self.FAllocatedMem + Size;
   Self.AddToList(PValue);
