@@ -3724,6 +3724,8 @@ begin
   Self.CurrentFileList := TStringList.Create;
   Self.LocalVarCountList := TIntegerList.Create;
   //
+  Self.TokenList.Capacity := 1024;
+  Self.VarList.Capacity := 256;
   Self.FuncNativeList.Capacity := 64;
   Self.FuncScriptList.Capacity := 64;
   Self.FuncImportList.Capacity := 64;
