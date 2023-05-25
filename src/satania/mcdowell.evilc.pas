@@ -729,6 +729,10 @@ begin
       end;
     sevkNull:
       Result := 'null';
+    sevkPointer:
+      begin
+        Result := IntToStr(QWord(Value.VarBuffer^.Ptr));
+      end
     else
       Result := Value;
   end;
@@ -2421,7 +2425,7 @@ begin
   PValue^.Kind := sevkBuffer;
   New(PValue^.VarBuffer);
   SetLength(PValue^.VarBuffer^.Base, Size);
-  PValue^.VarBuffer^.Ptr := PChar(PValue^.VarBuffer^.Base);
+  PValue^.VarBuffer^.Ptr := PChar(@PValue^.VarBuffer^.Base[1]);
   PValue^.Size := Size;
   Self.FAllocatedMem := Self.FAllocatedMem + Size;
   Self.AddToList(PValue);
