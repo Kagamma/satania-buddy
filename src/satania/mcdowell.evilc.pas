@@ -729,10 +729,8 @@ begin
       end;
     sevkNull:
       Result := 'null';
-    sevkPointer:
-      begin
-        Result := IntToStr(QWord(Value.VarBuffer^.Ptr));
-      end
+    sevkBuffer:
+      Result := 'buffer@' + IntToStr(QWord(Value.VarBuffer^.Ptr));
     else
       Result := Value;
   end;
@@ -2226,6 +2224,7 @@ var
 begin
   inherited;
   Self.FValueList := TSEGCValueList.Create;
+  Self.FValueList.Capacity := 65536;
   Self.FValueList.Add(Ref0);
   Self.FValueAvailList := TSEGCValueAvailList.Create;;
   Self.FTicks := GetTickCount64;
