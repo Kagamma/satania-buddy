@@ -3476,6 +3476,8 @@ begin
           BinaryPtrLocal := Self.FramePtr^.Binary;
           BinaryLocal := Self.Binaries[BinaryPtrLocal];
           Dec(Self.FramePtr);
+          if Self.FramePtr < @Self.Frame[0] then
+            Break;
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelAssignGlobalVar{$else}opAssignGlobalVar{$endif}:
