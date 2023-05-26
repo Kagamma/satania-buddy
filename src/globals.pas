@@ -274,6 +274,8 @@ type
     property SpeechToText: Boolean read FSpeechToText write FSpeechToText default False;
   end;
 
+procedure DumpExceptionCallStack(E: Exception);
+
 var
   OwnedWindowHandleList: TQWordList;
   Save: TSave;
@@ -285,6 +287,25 @@ implementation
 
 uses
   Mcdowell;
+
+procedure DumpExceptionCallStack(E: Exception);
+var
+  I: Integer;
+  Frames: PPointer;
+  Report: string;
+begin
+  Report := 'Program exception! ' + LineEnding +
+    'Stacktrace:' + LineEnding + LineEnding;
+  if E <> nil then begin
+    Report := Report + 'Exception class: ' + E.ClassName + LineEnding +
+    'Message: ' + E.Message + LineEnding;
+  end;
+  Report := Report + BackTraceStrFunc(ExceptAddr);
+  Frames := ExceptFrames;
+  for I := 0 to ExceptFrameCount - 1 do
+    Report := Report + LineEnding + BackTraceStrFunc(Frames[I]);
+  Writeln(Report);
+end;
 
 constructor TReminderCollectionItem.Create;
 begin
@@ -446,6 +467,7 @@ begin
 end;
 
 initialization
+  SetCurrentDir('s:\spaces\AISpace\satania-buddy');
   OwnedWindowHandleList := TQWordList.Create;
 
 finalization

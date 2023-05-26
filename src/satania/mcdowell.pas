@@ -678,6 +678,7 @@ begin
     begin
       ResetScript;
       IsAction := False;
+      DumpExceptionCallStack(E);
       Error(E.Message);
     end;
   end;
