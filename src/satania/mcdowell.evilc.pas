@@ -31,15 +31,13 @@ unit Mcdowell.EvilC;
 // enable this if you want to handle UTF-8 strings (requires LCL)
 {$define SE_STRING_UTF8}
 // use computed goto instead of case of
-{$ifdef cpu64}
-  {$define SE_COMPUTED_GOTO}
-{$endif}
+{$define SE_COMPUTED_GOTO}
 
 interface
 
 uses
   SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr
-  {$ifdef SE_STRING_UTF8},LazUTF8{$endif}{$ifdef cpu64}, dynlibs{$endif};
+  {$ifdef SE_STRING_UTF8},LazUTF8{$endif}{$ifdef CPU64}, dynlibs{$endif};
 
 type
   TSENumber = Double;
@@ -2615,7 +2613,7 @@ var
   end;
 
 {$ifdef SE_COMPUTED_GOTO}
-  {$ifdef CPUX86_64}
+  {$if defined(CPUX86_64) or defined(CPUi386)}
     {$define DispatchGoto :=
       if Self.IsPaused or Self.IsWaited then
       begin
@@ -2629,7 +2627,7 @@ var
         jmp P;
       end
     }
-  {$else}
+  {$elseif CPUARM}
     {$define DispatchGoto :=
       if Self.IsPaused or Self.IsWaited then
       begin
