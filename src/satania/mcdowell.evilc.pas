@@ -229,12 +229,15 @@ type
 
   TSEVM = class;
   TSEVMList = specialize TList<TSEVM>;
+  TSEFuncNativeKind = (sefnkNormal, sefnkSelf);
   TSEFunc = function(const VM: TSEVM; const Args: array of TSEValue): TSEValue of object;
+  TSEFuncWithSelf = function(const VM: TSEVM; const Args: array of TSEValue; const This: TSEValue): TSEValue of object;
 
   TSEFuncNativeInfo = record
     Name: String;
     Func: TSEFunc;
     ArgCount: Integer;
+    Kind: TSEFuncNativeKind;
   end;
   PSEFuncNativeInfo = ^TSEFuncNativeInfo;
 
@@ -470,6 +473,7 @@ type
     procedure Reset;
     function Exec: TSEValue;
     procedure RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);
+    procedure RegisterFuncWithSElf(const Name: String; const Func: TSEFuncWithSelf; const ArgCount: Integer);
     function RegisterScriptFunc(const Name: String; const ArgCount: Integer): PSEFuncScriptInfo;
     procedure RegisterImportFunc(const Name, ActualName, LibName: String; const Args: TSEAtomKindArray; const Return: TSEAtomKind);
     function Backup: TSECache;
@@ -2545,6 +2549,7 @@ var
   FuncScriptInfo: PSEFuncScriptInfo;
   FuncImportInfo: PSEFuncImportInfo;
   I, J, ArgCountStack, ArgCount, ArgSize: Integer;
+  This: TSEValue;
   Args: array of TSEValue;
   CodePtrLocal: Integer;
   StackPtrLocal: PSEValue;
@@ -3061,14 +3066,13 @@ begin
               end;
             sefkImport:
               begin
-                Dec(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer);
                 Pop; // import has no this
                 goto CallImport;
               end;
             sefkNative:
               begin
-                Dec(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer);
-                Pop; // native has no this
+                This := Pop^;
+                Dec(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer); // ArgCount contains this, so we minus it by 1
                 goto CallNative;
               end;
           end;
@@ -3084,7 +3088,10 @@ begin
           begin
             Args[I] := Pop^;
           end;
-          TV := FuncNativeInfo^.Func(Self, Args);
+          if FuncNativeInfo^.Kind = sefnkNormal then
+            TV := TSEFunc(FuncNativeInfo^.Func)(Self, Args)
+          else
+            TV := TSEFuncWithSelf(FuncNativeInfo^.Func)(Self, Args, This);
           if IsDone then
           begin
             Exit;
@@ -5357,8 +5364,9 @@ var
     end;
     ArgCount := Max(0, ArgCount);
     if FuncNativeInfo <> nil then
-      Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), Pointer(ArgCount)])
-    else
+    begin
+      Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), Pointer(ArgCount)]);
+    end else
     if FuncScriptInfo <> nil then
     begin
       Emit([Pointer(opPushConst), SENull]); // this
@@ -6258,6 +6266,18 @@ begin
   FuncNativeInfo.ArgCount := ArgCount;
   FuncNativeInfo.Func := Func;
   FuncNativeInfo.Name := Name;
+  FuncNativeInfo.Kind := sefnkNormal;
+  Self.FuncNativeList.Add(FuncNativeInfo);
+end;
+
+procedure TEvilC.RegisterFuncWithSelf(const Name: String; const Func: TSEFuncWithSelf; const ArgCount: Integer);
+var
+  FuncNativeInfo: TSEFuncNativeInfo;
+begin
+  FuncNativeInfo.ArgCount := ArgCount;
+  FuncNativeInfo.Func := TSEFunc(Func);
+  FuncNativeInfo.Name := Name;
+  FuncNativeInfo.Kind := sefnkSelf;
   Self.FuncNativeList.Add(FuncNativeInfo);
 end;
 
