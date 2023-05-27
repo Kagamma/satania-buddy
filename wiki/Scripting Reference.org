@@ -332,7 +332,7 @@ fn(n) = n + 1
 
 fn(n) result = n + 1
 
-fn(n) { result = n + 1}
+fn(n) { result = n + 1 }
 #+end_example
 
 *** Self
@@ -368,6 +368,13 @@ obj.func().func2().call()
 #+begin_example
 obj.middle.call() // obj will be passed as "self" instead of middle
 func().middle.call() // the result from func() will be passed as "self" instead of middle
+#+end_example
+
+- Solution for this issue is to assign ~middle~ to a named variable:
+
+#+begin_example
+mid = obj.middle
+mid.call()
 #+end_example
 
 *** Yield
