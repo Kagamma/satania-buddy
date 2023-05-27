@@ -5371,7 +5371,7 @@ var
 
   function ParseFuncDecl(const IsAnon: Boolean = False): TSEToken;
   var
-    Token: TSEToken;
+    Token, TokenResult: TSEToken;
     Name: String;
     ArgCount: Integer = 0;
     I, FuncIndex: Integer;
@@ -5396,9 +5396,9 @@ var
       end;
       Result := Token;
 
-      Token.Value := 'result';
-      Token.Kind := tkIdent;
-      CreateIdent(ikVariable, Token, True);
+      TokenResult.Value := 'result';
+      TokenResult.Kind := tkIdent;
+      CreateIdent(ikVariable, TokenResult, True);
 
       NextTokenExpected([tkBracketOpen]);
       repeat
@@ -5419,6 +5419,8 @@ var
       FuncIndex := Self.FuncScriptList.Count - 1;
       ParentBinary := Self.Binary;
       Self.Binary := Self.VM.Binaries[Func^.BinaryPos];
+      if PeekAtNextToken.Kind = tkEqual then
+        Self.TokenList.Insert(Pos + 1, TokenResult);
       ParseBlock;
 
       ReturnList := ReturnStack.Pop;

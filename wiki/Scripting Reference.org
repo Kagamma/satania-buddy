@@ -326,6 +326,15 @@ test(fn(v) {
 })
 #+end_example
 
+- The following function declarations are the same:
+#+begin_example
+fn(n) = n + 1
+
+fn(n) result = n + 1
+
+fn(n) { result = n + 1}
+#+end_example
+
 *** Self
 
 #+begin_example
