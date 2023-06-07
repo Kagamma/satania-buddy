@@ -253,7 +253,7 @@ end;
 
 procedure TFormChat.ButtonClearClick(Sender: TObject);
 begin
-  if FormBubble.FinishedTyping then
+  if not FRichText.IsStreaming then
   begin
     if MessageDlg('', 'Clear chat history?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
