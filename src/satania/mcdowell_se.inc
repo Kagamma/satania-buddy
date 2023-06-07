@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SESpriteVisibleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESpritePositionSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SELog(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStreamEnable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStreamDisable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStream(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -112,6 +113,15 @@ begin
   FormChat.DisableStreaming;
   Talk(SEValueToText(Args[0]));
   VM.IsPaused := True;
+end;
+
+function TSatania.SELog(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  S: String;
+begin
+  S := SEValueToText(Args[0]);
+  Log('System', S);
+  Writeln(S);
 end;
 
 function TSatania.SEStreamEnable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
