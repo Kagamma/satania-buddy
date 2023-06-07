@@ -2343,21 +2343,32 @@ procedure TSEGarbageCollector.GC;
     case Value.Value.Kind of
       sevkMap:
         begin
-          if SEMapIsValidArray(PValue^) then
-          begin
-            for I := 0 to TSEValueMap(PValue^.VarMap).List.Count - 1 do
+          if PValue^.VarMap <> nil then
+            if SEMapIsValidArray(PValue^) then
             begin
-              RValue := SEMapGet(PValue^, I);
-              Mark(@RValue);
-            end;
-          end else
-          begin
-            for Key in TSEValueMap(PValue^.VarMap).Keys do
+              try
+                for I := 0 to TSEValueMap(PValue^.VarMap).List.Count - 1 do
+                begin
+                  RValue := SEMapGet(PValue^, I);
+                  Mark(@RValue);
+                end;
+              except
+                on E: Exception do
+                  Writeln(E.Message);
+              end;
+            end else
             begin
-              RValue := SEMapGet(PValue^, Key);
-              Mark(@RValue);
+              try
+                for Key in TSEValueMap(PValue^.VarMap).Keys do
+                begin
+                  RValue := SEMapGet(PValue^, Key);
+                  Mark(@RValue);
+                end;
+              except
+                on E: Exception do
+                  Writeln(E.Message);
+              end;
             end;
-          end;
         end;
     end;
     Value.Garbage := False;
