@@ -183,7 +183,7 @@ object FormChat: TFormChat
           BorderSpacing.Top = 8
           BorderSpacing.Bottom = 8
           Images = FormMain.ImageList
-          ImageIndex = 0
+          ImageIndex = 22
           OnClick = ButtonOpenServiceClick
         end
         object ButtonRefreshService: TSpeedButton
