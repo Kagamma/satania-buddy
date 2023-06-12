@@ -300,6 +300,7 @@ type
   TSETrap = record
     FramePtr: PSEFrame;
     Stack: PSEValue;
+    Binary: Integer;
     CatchCode: Integer;
   end;
   PSETrap = ^TSETrap;
@@ -3731,6 +3732,7 @@ begin
           Inc(Self.TrapPtr);
           Self.TrapPtr^.FramePtr := Self.FramePtr;   
           Self.TrapPtr^.Stack := StackPtrLocal;
+          Self.TrapPtr^.Binary := BinaryPtrLocal;
           Self.TrapPtr^.CatchCode := Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer);
           Inc(CodePtrLocal, 2);
           DispatchGoto;
@@ -3751,7 +3753,7 @@ begin
             Self.FramePtr := Self.TrapPtr^.FramePtr;
             CodePtrLocal := Self.TrapPtr^.CatchCode;
             StackPtrLocal := Self.TrapPtr^.Stack;
-            BinaryPtrLocal := Self.FramePtr^.Binary; 
+            BinaryPtrLocal := Self.TrapPtr^.Binary;
             BinaryLocal := Self.Binaries[BinaryPtrLocal];
             Push(TV);
             Dec(Self.TrapPtr);
