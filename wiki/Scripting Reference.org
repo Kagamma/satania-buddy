@@ -387,6 +387,22 @@ while true {
 }
 #+end_example
 
+*** Try-catch
+
+#+begin_example
+fn test() {
+  throw 'Test exception'
+}
+
+try {
+  writeln('start')
+  test()
+  writeln('finish')
+} catch(e) {
+  writeln('Exception: ', e)
+}
+#+end_example
+
 *** Comment
 
 #+begin_example
