@@ -202,6 +202,7 @@ type
     FTicks: QWord;
     procedure Sweep;
   public
+    CeilMem: QWord;
     constructor Create;
     destructor Destroy; override;
     procedure AddToList(const PValue: PSEValue);
@@ -1807,8 +1808,6 @@ begin
 end;
 
 procedure SEValueShiftLeft(out R: TSEValue; constref V1, V2: TSEValue); inline; overload;
-var
-  Temp: TSEValue;
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
@@ -1821,8 +1820,6 @@ begin
 end;
 
 procedure SEValueShiftRight(out R: TSEValue; constref V1, V2: TSEValue); inline; overload;
-var
-  Temp: TSEValue;
 begin
   if V1.Kind = V2.Kind then
   case V1.Kind of
@@ -2282,6 +2279,7 @@ begin
   Self.FValueAvailList := TSEGCValueAvailList.Create;;
   Self.FTicks := GetTickCount64;
   Self.FAllocatedMem := 0;
+  Self.CeilMem := 1024 * 1024 * 128;
 end;
 
 destructor TSEGarbageCollector.Destroy;
@@ -2323,7 +2321,7 @@ end;
 
 procedure TSEGarbageCollector.CheckForGC; inline;
 begin
-  if (GetTickCount64 - Self.FTicks > 1000 * 60 * 2) or (Self.FAllocatedMem > 1024 * 1024 * 128) then
+  if (GetTickCount64 - Self.FTicks > 1000 * 60 * 2) or (Self.FAllocatedMem > Self.CeilMem) then
   begin
     Self.GC;
     Self.FTicks := GetTickCount64;
@@ -4355,7 +4353,7 @@ begin
       '0'..'9':
         begin
           Token.Kind := tkNumber;
-          if (C = '0') and (PeekAtNextChar = 'x') then
+          if (C = '0') and (LowerCase(PeekAtNextChar) = 'x') then
           begin
             NextChar;
             while PeekAtNextChar in ['0'..'9', 'A'..'F', 'a'..'f'] do
