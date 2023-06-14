@@ -2401,7 +2401,7 @@ procedure TSEGarbageCollector.GC;
                 end;
               except
                 on E: Exception do
-                  Writeln(E.Message);
+                  Writeln(E.Message + ', ' + SEValueToText(PValue^));
               end;
             end else
             begin
@@ -2413,7 +2413,7 @@ procedure TSEGarbageCollector.GC;
                 end;
               except
                 on E: Exception do
-                  Writeln(E.Message);
+                  Writeln(E.Message + ', ' + SEValueToText(PValue^));
               end;
             end;
         end;
