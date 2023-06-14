@@ -80,6 +80,8 @@ type
     opOperatorOr,
     opOperatorXor,
     opOperatorNot,
+    opOperatorShiftLeft,
+    opOperatorShiftRight,
 
     opCallRef,
     opCallNative,
@@ -357,6 +359,8 @@ type
     tkDiv,
     tkMod,
     tkPow,
+    tkShiftLeft,
+    tkShiftRight,
     tkOpAssign,
     tkEqual,
     tkNotEqual,
@@ -409,7 +413,7 @@ type
 TSETokenKinds = set of TSETokenKind;
 
 const TokenNames: array[TSETokenKind] of String = (
-  'EOF', '.', '+', '-', '*', 'div', 'mod', '^', 'operator assign', '=', '!=', '<',
+  'EOF', '.', '+', '-', '*', 'div', 'mod', '^', '<<', '>>', 'operator assign', '=', '!=', '<',
   '>', '<=', '>=', '{', '}', ':', '(', ')', 'neg', 'number', 'string',
   ',', 'if', 'switch', 'case', 'default', 'identity', 'function', 'fn', 'variable', 'const',
   'unknown', 'else', 'while', 'break', 'continue', 'yield',
@@ -1802,6 +1806,34 @@ begin
     R := True;
 end;
 
+procedure SEValueShiftLeft(out R: TSEValue; constref V1, V2: TSEValue); inline; overload;
+var
+  Temp: TSEValue;
+begin
+  if V1.Kind = V2.Kind then
+  case V1.Kind of
+    sevkNumber, sevkBoolean:
+      begin
+        R.Kind := sevkNumber;
+        R.VarNumber := Round(V1.VarNumber) shl Round(V2.VarNumber);
+      end;
+  end;
+end;
+
+procedure SEValueShiftRight(out R: TSEValue; constref V1, V2: TSEValue); inline; overload;
+var
+  Temp: TSEValue;
+begin
+  if V1.Kind = V2.Kind then
+  case V1.Kind of
+    sevkNumber, sevkBoolean:
+      begin
+        R.Kind := sevkNumber;
+        R.VarNumber := Round(V1.VarNumber) shr Round(V2.VarNumber);
+      end;
+  end;
+end;
+
 function SEValueLesser(constref V1, V2: TSEValue): Boolean; inline; overload;
 begin
   Result := V1.VarNumber < V2.VarNumber;
@@ -2728,6 +2760,8 @@ label
   labelOperatorOr,
   labelOperatorXor,
   labelOperatorNot,
+  labelOperatorShiftLeft,
+  labelOperatorShiftRight,
 
   labelCallRef,
   labelCallNative,
@@ -2780,6 +2814,8 @@ var
     @labelOperatorOr,
     @labelOperatorXor,
     @labelOperatorNot,
+    @labelOperatorShiftLeft,
+    @labelOperatorShiftRight,
 
     @labelCallRef,
     @labelCallNative,
@@ -2872,6 +2908,24 @@ begin
           B := Pop;
           A := Pop;
           SEValueNotEqual(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      {$ifdef SE_COMPUTED_GOTO}labelOperatorShiftLeft{$else}opOperatorShiftLeft{$endif}:
+        begin
+          B := Pop;
+          A := Pop;
+          SEValueShiftLeft(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      {$ifdef SE_COMPUTED_GOTO}labelOperatorShiftRight{$else}opOperatorShiftRight{$endif}:
+        begin
+          B := Pop;
+          A := Pop;
+          SEValueShiftRight(StackPtrLocal^, A^, B^);
           Inc(StackPtrLocal);
           Inc(CodePtrLocal);
           DispatchGoto;
@@ -4270,6 +4324,11 @@ begin
             NextChar;
             Token.Kind := tkSmallerOrEqual;
           end else
+          if PeekAtNextChar = '<' then
+          begin
+            NextChar;
+            Token.Kind := tkShiftLeft;
+          end else
           if PeekAtNextChar = '>' then
           begin
             NextChar;
@@ -4283,6 +4342,11 @@ begin
           begin
             NextChar;
             Token.Kind := tkGreaterOrEqual;
+          end else
+          if PeekAtNextChar = '>' then
+          begin
+            NextChar;
+            Token.Kind := tkShiftRight;
           end else
             Token.Kind := tkGreater;
         end;
@@ -5283,11 +5347,30 @@ var
       end;
     end;
 
-    procedure Logic;
+    procedure Bitwise;
     var
       Token: TSEToken;
     begin
       Expr;
+      while True do
+      begin
+        Token := PeekAtNextToken;
+        case Token.Kind of
+          tkShiftLeft:
+            BinaryOp(opOperatorShiftLeft, @Expr, True);
+          tkShiftRight:
+            BinaryOp(opOperatorShiftRight, @Expr, True);
+          else
+            Exit;
+        end;
+      end;
+    end;
+
+    procedure Logic;
+    var
+      Token: TSEToken;
+    begin
+      Bitwise;
       while True do
       begin
         Token := PeekAtNextToken;

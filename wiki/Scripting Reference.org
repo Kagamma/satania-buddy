@@ -53,18 +53,22 @@ types.
 *** Operators
 
 #+begin_example
-Operator                               Precedence
-====================================== ==========
- !, sign "-"                            5
- *, /                                   4
- +, -                                   3
- =, !=, <, <=, >, >=, &, |, ~, pow "^"  2
- =, +=, -=, *=, /=                      1
+Operator                                        Precedence
+==============================================  ==========
+ !, sign "-"                                     1
+ *, /                                            2
+ +, -                                            3
+ equal "=", !=, <, <=, >, >=, &, |, ~, pow "^"   4
+ <<, >>                                          5
+ assign "=", +=, -=, *=, /=                      6
+
 #+end_example
 
 #+begin_example
 Bitwise operator     Description
-==================== ===========
+==================== =============
+ <<                   Shift left
+ >>                   Shift right
  &                    and
  |                    or
  ~                    xor
@@ -145,6 +149,10 @@ or = a | b
 not = !a
 
 pow = a^b
+
+bitwise_left_shift = a << b
+
+bitwise_right_shift = a >> b
 #+end_example
 
 *** If block
