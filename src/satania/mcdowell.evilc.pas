@@ -6306,6 +6306,7 @@ var
     Token: TSEToken;
     VarIdent: TSEIdent;
     PVarIdent: PSEIdent;
+    I,
     JumpCatchBlock,
     CatchBlock,
     JumpFinallyBlock: Integer;
@@ -6315,6 +6316,7 @@ var
     Emit([Pointer(opPopTrap)]);
     JumpFinallyBlock := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
 
+    Self.ScopeStack.Push(Self.VarList.Count);
     CatchBlock := Self.Binary.Count;
     NextTokenExpected([tkCatch]);
     NextTokenExpected([tkBracketOpen]);
@@ -6331,6 +6333,8 @@ var
                                                
     Patch(JumpCatchBlock - 1, Pointer(CatchBlock));
     Patch(JumpFinallyBlock - 1, Pointer(Self.Binary.Count));
+    I := Self.ScopeStack.Pop;
+    Self.VarList.DeleteRange(I, Self.VarList.Count - I);
   end;
 
   procedure ParseThrow;
