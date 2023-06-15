@@ -443,6 +443,7 @@ List of supported data types:
 - u32: unsigned long
 - i64: long long
 - u64: unsigned long long
+- f32: float
 - f64: double
 - buffer: char*
 - wbuffer: wchar*

@@ -227,7 +227,7 @@ type
     seakU16,
     seakU32,
     seakU64,
-   // seakF32,
+    seakF32,
     seakF64,
     seakBuffer,
     seakWBuffer
@@ -2624,6 +2624,7 @@ var
   ImportBufferWideString: array [0..31] of WideString;
   ImportResult: QWord;
   ImportResultD: TSENumber;
+  ImportResultS: Single;
   FuncImport, P, PP, PC: Pointer;
   BinaryLocalCountMinusOne: Integer;
 
@@ -3275,10 +3276,16 @@ begin
                   ImportBufferIndex[I] := 0;
                   Inc(RegCount);
                 end;
-             { seakF32:
+              seakF32:
                 begin
-                  TSENumber((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
-                end;}
+                  Single((@ImportBufferData[I * 8])^) := Single(Pop^.VarNumber);
+                  ImportBufferIndex[I] := 2;
+                  {$ifdef WINDOWS}
+                  Inc(RegCount);
+                  {$else}
+                  Inc(MMXCount);
+                  {$endif}
+                end;
               seakF64:
                 begin
                   TSENumber((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
@@ -3358,6 +3365,8 @@ begin
               LoopRegAlloc:
                 cmp  r14,1 // MMX?
                 je   LoopMMX
+                cmp  r14,2 // MMX 32bit?
+                je   @LoopMMX32
 
                 cmp  r12,1
                 je   AllocRCX
@@ -3396,6 +3405,26 @@ begin
                 jmp  LoopRegFinishAlloc
               AllocMMX2:
                 movsd xmm2,[rbx]
+                jmp  LoopRegFinishAlloc
+
+              @LoopMMX32:
+                cmp  r12,1
+                je   @AllocMMX032
+                cmp  r12,2
+                je   @AllocMMX132
+                cmp  r12,3
+                je   @AllocMMX232
+              // MMX3
+                movss xmm3,[rbx]
+                jmp  LoopRegFinishAlloc
+              @AllocMMX032:
+                movss xmm0,[rbx]
+                jmp  LoopRegFinishAlloc
+              @AllocMMX132:
+                movss xmm1,[rbx]
+                jmp  LoopRegFinishAlloc
+              @AllocMMX232:
+                movss xmm2,[rbx]
 
               LoopRegFinishAlloc:
                 dec  r12
@@ -3407,7 +3436,8 @@ begin
               sub  rsp,32
               call [FuncImport]
               mov  ImportResult,rax
-              movsd ImportResultD,xmm0
+              movsd ImportResultD,xmm0   
+              movss ImportResultS,xmm0
               xor  rax,rax
               mov  eax,ArgCountStack
               mov  ecx,8
@@ -3438,6 +3468,8 @@ begin
               mov  r14,[rax]
               cmp  r14,0 // Reg?
               je   LoopReg
+              cmp  r14,2 // MMX 32bit?
+              je   @LoopMMX32
             LoopMMX:
                 cmp  r11,8
                 jle  LoopMMXAlloc // Lower or equal: Register allocation, Higher: Push to stack
@@ -3482,9 +3514,56 @@ begin
                 jmp  LoopMMXFinishAlloc
               AllocMMX0:
                 movsd xmm0,[rbx]
+                jmp  LoopMMXFinishAlloc
+
+            @LoopMMX32:
+                cmp  r11,8
+                jle  @LoopMMXAlloc32 // Lower or equal: Register allocation, Higher: Push to stack
+              // Push to stack
+                push r13
+                jmp  LoopMMXFinishAlloc
+              @LoopMMXAlloc32:
+                cmp  r11,1
+                je   @AllocMMX032
+                cmp  r11,2
+                je   @AllocMMX132
+                cmp  r11,3
+                je   @AllocMMX232
+                cmp  r11,4
+                je   @AllocMMX332
+                cmp  r11,5
+                je   @AllocMMX432
+                cmp  r11,6
+                je   @AllocMMX532
+                cmp  r11,7
+                je   @AllocMMX632
+              // MMX7
+                movss xmm7,[rbx]
+                jmp  LoopMMXFinishAlloc
+              @AllocMMX632:
+                movss xmm6,[rbx]
+                jmp  LoopMMXFinishAlloc
+              @AllocMMX532:
+                movss xmm5,[rbx]
+                jmp  LoopMMXFinishAlloc
+              @AllocMMX432:
+                movss xmm4,[rbx]
+                jmp  LoopMMXFinishAlloc
+              @AllocMMX332:
+                movss xmm3,[rbx]
+                jmp  LoopMMXFinishAlloc
+              @AllocMMX232:
+                movss xmm2,[rbx]
+                jmp  LoopMMXFinishAlloc
+              @AllocMMX132:
+                movss xmm1,[rbx]
+                jmp  LoopMMXFinishAlloc
+              @AllocMMX032:
+                movss xmm0,[rbx]
               LoopMMXFinishAlloc:
                 dec  r11
                 jmp  LoopFinishAlloc
+
             LoopReg:
                 cmp  r12,6
                 jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
@@ -3529,6 +3608,7 @@ begin
               call [FuncImport]
               mov  ImportResult,rax
               movsd ImportResultD,xmm0
+              movss ImportResultS,xmm0
               xor  rax,rax
               mov  eax,ArgCountStack
               mov  ecx,8
@@ -3557,7 +3637,10 @@ begin
               begin
                 TV := QWord(ImportResult)
               end;
-           // seakF32,
+            seakF32:
+              begin
+                TV := ImportResultS;
+              end;
             seakF64:
               begin
                 TV := ImportResultD;
@@ -4510,7 +4593,7 @@ begin
               Token.Kind := tkReturn;
             'fn':
               Token.Kind := tkFunctionDecl;
-            'void', 'i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f64', 'buffer', 'wbuffer':
+            'void', 'i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f32', 'f64', 'buffer', 'wbuffer':
               Token.Kind := tkAtom;
             'import':
               Token.Kind := tkImport;
@@ -5680,8 +5763,8 @@ var
           Result := seakI32;
         'i64':
           Result := seakI64;
-        {'f32':
-          Result := seakF32;}
+        'f32':
+          Result := seakF32;
         'f64':
           Result := seakF64;
         'buffer':
