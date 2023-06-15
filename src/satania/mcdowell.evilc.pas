@@ -577,7 +577,8 @@ type
     class function SEBufferGetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferGetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferGetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEBufferGetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferGetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    class function SEBufferGetF32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferGetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferSetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferSetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -587,6 +588,7 @@ type
     class function SEBufferSetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferSetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferSetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferSetF32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferSetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringToBuffer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -937,6 +939,12 @@ begin
   Result.VarNumber := Int64((Args[0].VarBuffer^.Ptr)^);
 end;
 
+class function TBuiltInFunction.SEBufferGetF32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result.Kind := sevkNumber;
+  Result.VarNumber := TSENumber(Single((Args[0].VarBuffer^.Ptr)^));
+end;
+
 class function TBuiltInFunction.SEBufferGetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result.Kind := sevkNumber;
@@ -984,6 +992,11 @@ end;
 class function TBuiltInFunction.SEBufferSetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Int64(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
+end; 
+
+class function TBuiltInFunction.SEBufferSetF32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Single(Args[0].VarBuffer^.Ptr^) := Single(Args[1].VarNumber);
 end;
 
 class function TBuiltInFunction.SEBufferSetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -3973,6 +3986,7 @@ begin
   Self.RegisterFunc('buffer_i16_get', @TBuiltInFunction(nil).SEBufferGetI16, 1);
   Self.RegisterFunc('buffer_i32_get', @TBuiltInFunction(nil).SEBufferGetI32, 1);
   Self.RegisterFunc('buffer_i64_get', @TBuiltInFunction(nil).SEBufferGetI64, 1);
+  Self.RegisterFunc('buffer_f32_get', @TBuiltInFunction(nil).SEBufferGetF32, 1);
   Self.RegisterFunc('buffer_f64_get', @TBuiltInFunction(nil).SEBufferGetF64, 1);
   Self.RegisterFunc('buffer_u8_set', @TBuiltInFunction(nil).SEBufferSetU8, 2);
   Self.RegisterFunc('buffer_u16_set', @TBuiltInFunction(nil).SEBufferSetU16, 2);
@@ -3982,6 +3996,7 @@ begin
   Self.RegisterFunc('buffer_i16_set', @TBuiltInFunction(nil).SEBufferSetI16, 2);
   Self.RegisterFunc('buffer_i32_set', @TBuiltInFunction(nil).SEBufferSetI32, 2);
   Self.RegisterFunc('buffer_i64_set', @TBuiltInFunction(nil).SEBufferSetI64, 2);
+  Self.RegisterFunc('buffer_f32_set', @TBuiltInFunction(nil).SEBufferSetF32, 2);
   Self.RegisterFunc('buffer_f64_set', @TBuiltInFunction(nil).SEBufferSetF64, 2);
   Self.RegisterFunc('string_to_buffer', @TBuiltInFunction(nil).SEStringToBuffer, 1);
   Self.RegisterFunc('buffer_to_string', @TBuiltInFunction(nil).SEBufferToString, 1);
