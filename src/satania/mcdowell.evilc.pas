@@ -2715,9 +2715,6 @@ var
 {$endif}
 
 label
-  Loop, FinishLoop, LoopMMX, LoopMMXAlloc, AllocMMX6, AllocMMX5, AllocMMX4, AllocMMX3, AllocMMX2, AllocMMX1,
-  AllocMMX0, LoopMMXFinishAlloc, LoopReg, LoopRegAlloc, AllocRDI, AllocRSI, AllocRDX, AllocRCX, AllocR8, AllocR9, LoopRegFinishAlloc,
-  LoopFinishAlloc,
   CallScript, CallNative, CallImport
   {$ifdef SE_COMPUTED_GOTO},
   labelPushConst,
@@ -3351,61 +3348,61 @@ begin
               mov  rax,PP
               add  rax,r14
               mov  r12,RegCount
-            Loop:
+            @Loop:
               sub  rax,8
               sub  rbx,8
               mov  r13,[rbx]
               mov  r14,[rax]
-            LoopReg:
+            @LoopReg:
                 cmp  r12,4
-                jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
+                jle  @LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
               // Push to stack
                 push r13 // Always push ...
-                jmp  LoopRegFinishAlloc
-              LoopRegAlloc:
+                jmp  @LoopRegFinishAlloc
+              @LoopRegAlloc:
                 cmp  r14,1 // MMX?
-                je   LoopMMX
+                je   @LoopMMX
                 cmp  r14,2 // MMX 32bit?
                 je   @LoopMMX32
 
                 cmp  r12,1
-                je   AllocRCX
+                je   @AllocRCX
                 cmp  r12,2
-                je   AllocRDX
+                je   @AllocRDX
                 cmp  r12,3
-                je   AllocR8
+                je   @AllocR8
               // R9
                 mov  r9,r13
-                jmp  LoopRegFinishAlloc
-              AllocRCX:
+                jmp  @LoopRegFinishAlloc
+              @AllocRCX:
                 mov  rcx,r13
-                jmp  LoopRegFinishAlloc
-              AllocRDX:
+                jmp  @LoopRegFinishAlloc
+              @AllocRDX:
                 mov  rdx,r13
-                jmp  LoopRegFinishAlloc
-              AllocR8:
+                jmp  @LoopRegFinishAlloc
+              @AllocR8:
                 mov  r8,r13
-                jmp  LoopRegFinishAlloc
+                jmp  @LoopRegFinishAlloc
 
-              LoopMMX:
+              @LoopMMX:
                 cmp  r12,1
-                je   AllocMMX0
+                je   @AllocMMX0
                 cmp  r12,2
-                je   AllocMMX1
+                je   @AllocMMX1
                 cmp  r12,3
-                je   AllocMMX2
+                je   @AllocMMX2
               // MMX3
                 movsd xmm3,[rbx]
-                jmp  LoopRegFinishAlloc
-              AllocMMX0:
+                jmp  @LoopRegFinishAlloc
+              @AllocMMX0:
                 movsd xmm0,[rbx]
-                jmp  LoopRegFinishAlloc
-              AllocMMX1:
+                jmp  @LoopRegFinishAlloc
+              @AllocMMX1:
                 movsd xmm1,[rbx]
-                jmp  LoopRegFinishAlloc
-              AllocMMX2:
+                jmp  @LoopRegFinishAlloc
+              @AllocMMX2:
                 movsd xmm2,[rbx]
-                jmp  LoopRegFinishAlloc
+                jmp  @LoopRegFinishAlloc
 
               @LoopMMX32:
                 cmp  r12,1
@@ -3416,23 +3413,23 @@ begin
                 je   @AllocMMX232
               // MMX3
                 movss xmm3,[rbx]
-                jmp  LoopRegFinishAlloc
+                jmp  @LoopRegFinishAlloc
               @AllocMMX032:
                 movss xmm0,[rbx]
-                jmp  LoopRegFinishAlloc
+                jmp  @LoopRegFinishAlloc
               @AllocMMX132:
                 movss xmm1,[rbx]
-                jmp  LoopRegFinishAlloc
+                jmp  @LoopRegFinishAlloc
               @AllocMMX232:
                 movss xmm2,[rbx]
 
-              LoopRegFinishAlloc:
+              @LoopRegFinishAlloc:
                 dec  r12
-            LoopFinishAlloc:
+            @LoopFinishAlloc:
               dec  r10
               cmp  r10,0 // Still have arguments to take care of?
-              jne  Loop
-            FinishLoop:
+              jne  @Loop
+            @FinishLoop:
               sub  rsp,32
               call [FuncImport]
               mov  ImportResult,rax
@@ -3461,67 +3458,67 @@ begin
               add  rax,r14
               mov  r11,MMXCount
               mov  r12,RegCount
-            Loop:
+            @Loop:
               sub  rax,8
               sub  rbx,8
               mov  r13,[rbx]
               mov  r14,[rax]
               cmp  r14,0 // Reg?
-              je   LoopReg
+              je   @LoopReg
               cmp  r14,2 // MMX 32bit?
               je   @LoopMMX32
-            LoopMMX:
+            @LoopMMX:
                 cmp  r11,8
-                jle  LoopMMXAlloc // Lower or equal: Register allocation, Higher: Push to stack
+                jle  @LoopMMXAlloc // Lower or equal: Register allocation, Higher: Push to stack
               // Push to stack
                 push r13
-                jmp  LoopMMXFinishAlloc
-              LoopMMXAlloc:
+                jmp  @LoopMMXFinishAlloc
+              @LoopMMXAlloc:
                 cmp  r11,1
-                je   AllocMMX0
+                je   @AllocMMX0
                 cmp  r11,2
-                je   AllocMMX1
+                je   @AllocMMX1
                 cmp  r11,3
-                je   AllocMMX2
+                je   @AllocMMX2
                 cmp  r11,4
-                je   AllocMMX3
+                je   @AllocMMX3
                 cmp  r11,5
-                je   AllocMMX4
+                je   @AllocMMX4
                 cmp  r11,6
-                je   AllocMMX5
+                je   @AllocMMX5
                 cmp  r11,7
-                je   AllocMMX6
+                je   @AllocMMX6
               // MMX7
                 movsd xmm7,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX6:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX6:
                 movsd xmm6,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX5:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX5:
                 movsd xmm5,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX4:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX4:
                 movsd xmm4,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX3:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX3:
                 movsd xmm3,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX2:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX2:
                 movsd xmm2,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX1:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX1:
                 movsd xmm1,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX0:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX0:
                 movsd xmm0,[rbx]
-                jmp  LoopMMXFinishAlloc
+                jmp  @LoopMMXFinishAlloc
 
             @LoopMMX32:
                 cmp  r11,8
                 jle  @LoopMMXAlloc32 // Lower or equal: Register allocation, Higher: Push to stack
               // Push to stack
                 push r13
-                jmp  LoopMMXFinishAlloc
+                jmp  @LoopMMXFinishAlloc
               @LoopMMXAlloc32:
                 cmp  r11,1
                 je   @AllocMMX032
@@ -3539,72 +3536,72 @@ begin
                 je   @AllocMMX632
               // MMX7
                 movss xmm7,[rbx]
-                jmp  LoopMMXFinishAlloc
+                jmp  @LoopMMXFinishAlloc
               @AllocMMX632:
                 movss xmm6,[rbx]
-                jmp  LoopMMXFinishAlloc
+                jmp  @LoopMMXFinishAlloc
               @AllocMMX532:
                 movss xmm5,[rbx]
-                jmp  LoopMMXFinishAlloc
+                jmp  @LoopMMXFinishAlloc
               @AllocMMX432:
                 movss xmm4,[rbx]
-                jmp  LoopMMXFinishAlloc
+                jmp  @LoopMMXFinishAlloc
               @AllocMMX332:
                 movss xmm3,[rbx]
-                jmp  LoopMMXFinishAlloc
+                jmp  @LoopMMXFinishAlloc
               @AllocMMX232:
                 movss xmm2,[rbx]
-                jmp  LoopMMXFinishAlloc
+                jmp  @LoopMMXFinishAlloc
               @AllocMMX132:
                 movss xmm1,[rbx]
-                jmp  LoopMMXFinishAlloc
+                jmp  @LoopMMXFinishAlloc
               @AllocMMX032:
                 movss xmm0,[rbx]
-              LoopMMXFinishAlloc:
+              @LoopMMXFinishAlloc:
                 dec  r11
-                jmp  LoopFinishAlloc
+                jmp  @LoopFinishAlloc
 
-            LoopReg:
+            @LoopReg:
                 cmp  r12,6
-                jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
+                jle  @LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
               // Push to stack
                 push r13
-                jmp  LoopRegFinishAlloc
-              LoopRegAlloc:
+                jmp  @LoopRegFinishAlloc
+              @LoopRegAlloc:
                 cmp  r12,1
-                je   AllocRDI
+                je   @AllocRDI
                 cmp  r12,2
-                je   AllocRSI
+                je   @AllocRSI
                 cmp  r12,3
-                je   AllocRDX
+                je   @AllocRDX
                 cmp  r12,4
-                je   AllocRCX
+                je   @AllocRCX
                 cmp  r12,5
-                je   AllocR9
+                je   @AllocR9
               // R8
                 mov  r8,r13
-                jmp  LoopRegFinishAlloc
-              AllocRDI:
+                jmp  @LoopRegFinishAlloc
+              @AllocRDI:
                 mov  rdi,r13
-                jmp  LoopRegFinishAlloc
-              AllocRSI:
+                jmp  @LoopRegFinishAlloc
+              @AllocRSI:
                 mov  rsi,r13
-                jmp  LoopRegFinishAlloc
-              AllocRDX:
+                jmp  @LoopRegFinishAlloc
+              @AllocRDX:
                 mov  rdx,r13
-                jmp  LoopRegFinishAlloc
-              AllocRCX:
+                jmp  @LoopRegFinishAlloc
+              @AllocRCX:
                 mov  rcx,r13
-                jmp  LoopRegFinishAlloc
-              AllocR9:
+                jmp  @LoopRegFinishAlloc
+              @AllocR9:
                 mov  r9,r13
-              LoopRegFinishAlloc:
+              @LoopRegFinishAlloc:
                 dec  r12
-            LoopFinishAlloc:
+            @LoopFinishAlloc:
               dec  r10
               cmp  r10,0 // Still have arguments to take care of?
-              jne  Loop
-            FinishLoop:
+              jne  @Loop
+            @FinishLoop:
               call [FuncImport]
               mov  ImportResult,rax
               movsd ImportResultD,xmm0
