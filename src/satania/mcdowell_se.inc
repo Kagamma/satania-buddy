@@ -192,7 +192,6 @@ begin
       SEMapSet(Result, FormAsk.Answer.Names[I], FormAsk.Answer.ValueFromIndex[I]);
   end;
   FormAsk.IsAnswerText := False;
-  Result := SENull;
 end;
 
 function TSatania.SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
