@@ -493,7 +493,7 @@ end;
 
 function TSatania.SESpritePositionSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SetPosition(Round(Args[0]), Round(Args[1]));
+  SetPosition(Round(Args[0].VarNumber), Round(Args[1].VarNumber));
   Result := SENull;
 end;
 
