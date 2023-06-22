@@ -186,6 +186,10 @@ begin
     ScrollToBottom;
     Self.Timer.Interval := 1000 div Self.FTypingSpeed;
   end;
+  {$ifdef LINUX}
+  if (Self.KMemo.Focused) and (FormChat <> nil) and FormChat.Visible then
+    FormChat.EditChat.SetFocus;
+  {$endif}
 end;
 
 procedure TFormBubble.FormCreate(Sender: TObject);
