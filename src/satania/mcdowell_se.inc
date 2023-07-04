@@ -113,6 +113,7 @@ begin
   FormChat.DisableStreaming;
   Talk(SEValueToText(Args[0]));
   VM.IsPaused := True;
+  Result := SENull;
 end;
 
 function TSatania.SELog(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -122,24 +123,28 @@ begin
   S := SEValueToText(Args[0]);
   Log('System', S);
   Writeln(S);
+  Result := SENull;
 end;
 
 function TSatania.SEStreamEnable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   FormChat.EnableStreaming;
   FormBubble.EnableStreaming;
+  Result := SENull;
 end;
 
 function TSatania.SEStreamDisable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   FormChat.DisableStreaming;
   FormBubble.DisableStreaming;
+  Result := SENull;
 end;
 
 function TSatania.SEStream(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   FormChat.Streaming(Args[0].VarString^);
   FormBubble.Streaming(Args[0].VarString^);
+  Result := SENull;
 end;
 
 function TSatania.SEStreamPositionGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -170,7 +175,8 @@ begin
     FormAsk.Width := 314;
     FormAsk.Height := 148;
   end;
-  VM.IsPaused := True
+  VM.IsPaused := True;
+  Result := SENull;
 end;
 
 function TSatania.SEAnswer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -191,6 +197,7 @@ end;
 function TSatania.SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Notify(Name, SEValueToText(Args[0]));
+  Result := SENull;
 end;
 
 function TSatania.SEProcessRun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -250,6 +257,7 @@ end;
 function TSatania.SESpriteLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   LoadModel(Args[0]);
+  Result := SENull;
 end;
 
 function TSatania.SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -288,36 +296,43 @@ end;
 function TSatania.SEStartAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   StartAnimation(Args[0], Boolean(Round(Args[1].VarNumber)));
+  Result := SENull;
 end;
 
 function TSatania.SESetAnimationSpeed(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   SetAnimationSpeed(Args[0], Args[1].VarNumber);
+  Result := SENull;
 end;
 
 function TSatania.SEStopAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   StopAnimation(Args[0]);
+  Result := SENull;
 end;
 
 function TSatania.SEStopAllAnimations(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   StopAllAnimations;
+  Result := SENull;
 end;
 
 function TSatania.SESchemeLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Satania.ActionFromFile(Args[0]);
+  Result := SENull;
 end;
 
 function TSatania.SEDelta(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Delta;
+  Result := SENull;
 end;
 
 function TSatania.SELoadEmails(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   SataniaIMAP.GetMessages;
+  Result := SENull;
 end;
 
 function TSatania.SEGetUnseenEmailCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -390,16 +405,19 @@ begin
   B := TSataniaSoundBehavior.Create(Sprite);
   B.URL := Args[0];
   Sprite.AddBehavior(B);
+  Result := SENull;
 end;
 
 function TSatania.SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   OpenURL(Args[0]);
+  Result := SENull;
 end;
 
 function TSatania.SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   ChatMode := Round(Args[0].VarNumber);
+  Result := SENull;
 end;
 
 function TSatania.SEChatResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -456,6 +474,7 @@ end;
 function TSatania.SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   SetScale(Args[0].VarNumber);
+  Result := SENull;
 end;
 
 function TSatania.SESpriteVisibleSet(const VM: TSEVM  ; const Args: array of TSEValue): TSEValue;
@@ -464,6 +483,7 @@ begin
     SetVisible(False)
   else
     SetVisible(True);
+  Result := SENull;
 end;
 
 function TSatania.SESpriteVisibleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -473,7 +493,8 @@ end;
 
 function TSatania.SESpritePositionSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SetPosition(Round(Args[0]), Round(Args[1]));
+  SetPosition(Round(Args[0].VarNumber), Round(Args[1].VarNumber));
+  Result := SENull;
 end;
 
 function TSatania.SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -664,6 +685,7 @@ begin
   Reminder.Minute := MM;
   Reminder.Script := Args[2];
   Save.SaveToFile('configs.json');
+  Result := SENull;
 end;
 
 function TSatania.SEReminderTodayGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -803,6 +825,7 @@ end;
 function TSatania.SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   DeleteFile(Args[0].VarString^);
+  Result := SENull;
 end;
 
 function TSatania.SEFileFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -824,11 +847,13 @@ end;
 function TSatania.SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   CreateDir(Args[0].VarString^);
+  Result := SENull;
 end;
 
 function TSatania.SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   DeleteDirectory(Args[0], False);
+  Result := SENull;
 end;
 
 function TSatania.SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1050,6 +1075,7 @@ end;
 function TSatania.SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   LocalFlagIni.WriteString('Flags', Args[0], Args[1]);
+  Result := SENull;
 end;
 
 function TSatania.SESketchCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1128,6 +1154,7 @@ end;
 function TSatania.SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   SataniaSketch.DeleteAll;
+  Result := SENull;
 end;
 
 function TSatania.SEWorkerCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1168,6 +1195,7 @@ end;
 function TSatania.SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Self.WorkerDelete(Args[0]);
+  Result := SENull;
 end;
 
 function TSatania.SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1177,12 +1205,14 @@ begin
   Frm := TFormEvilCEditor.Create(nil);
   DockMaster.MakeDockable(Frm);
   Frm.LoadFromFile(Args[0]);
+  Result := SENull;
 end;
 
 function TSatania.SEToolHexEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   FormHexEditor.Show;
   FormHexEditor.LoadFromFile(Args[0]);
+  Result := SENull;
 end;
 
 {$endif}

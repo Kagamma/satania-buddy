@@ -227,7 +227,7 @@ type
     seakU16,
     seakU32,
     seakU64,
-   // seakF32,
+    seakF32,
     seakF64,
     seakBuffer,
     seakWBuffer
@@ -577,7 +577,8 @@ type
     class function SEBufferGetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferGetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferGetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEBufferGetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferGetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    class function SEBufferGetF32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferGetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferSetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferSetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -587,6 +588,7 @@ type
     class function SEBufferSetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferSetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferSetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferSetF32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferSetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringToBuffer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -937,6 +939,12 @@ begin
   Result.VarNumber := Int64((Args[0].VarBuffer^.Ptr)^);
 end;
 
+class function TBuiltInFunction.SEBufferGetF32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result.Kind := sevkNumber;
+  Result.VarNumber := TSENumber(Single((Args[0].VarBuffer^.Ptr)^));
+end;
+
 class function TBuiltInFunction.SEBufferGetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result.Kind := sevkNumber;
@@ -946,26 +954,31 @@ end;
 class function TBuiltInFunction.SEBufferSetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Byte(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
+  Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Word(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
+  Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   LongWord(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
+  Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetU64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   QWord(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
+  Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   ShortInt(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
+  Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -974,21 +987,31 @@ var
 begin
   P := Pointer(Round(Args[0].VarNumber));
   SmallInt(P^) := Round(Args[1].VarNumber);
+  Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   LongInt(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
+  Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Int64(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
+  Result := SENull;
+end; 
+
+class function TBuiltInFunction.SEBufferSetF32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Single(Args[0].VarBuffer^.Ptr^) := Single(Args[1].VarNumber);
+  Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   TSENumber(Args[0].VarBuffer^.Ptr^) := Args[1];
+  Result := SENull;
 end;
 
 class function TBuiltInFunction.SEStringToBuffer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1049,6 +1072,7 @@ begin
   begin
     Write(SEValueToText(Args[I]));
   end;
+  Result := SENull;
 end;
 
 class function TBuiltInFunction.SEWriteln(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1057,6 +1081,7 @@ var
 begin
   TBuiltInFunction.SEWrite(VM, Args);
   Writeln;
+  Result := SENull;
 end;
 
 class function TBuiltInFunction.SERandom(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1095,6 +1120,7 @@ end;
 class function TBuiltInFunction.SESet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   ScriptVarMap.AddOrSetValue(Args[0].VarString^, Args[1]);
+  Result := SENull;
 end;
 
 class function TBuiltInFunction.SEString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1110,6 +1136,7 @@ end;
 class function TBuiltInFunction.SEWait(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   VM.WaitTime := GetTickCount64 + Round(Args[0].VarNumber * 1000);
+  Result := SENull;
 end;
 
 class function TBuiltInFunction.SELength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1381,8 +1408,6 @@ begin
 end;
 
 class function TBuiltInFunction.SEStringUpperCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-var
-  S: String;
 begin
   Result := '';
   case Args[0].Kind of
@@ -1393,8 +1418,6 @@ begin
 end;
 
 class function TBuiltInFunction.SEStringLowerCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-var
-  S: String;
 begin
   Result := '';
   case Args[0].Kind of
@@ -1515,8 +1538,6 @@ begin
 end;
 
 class function TBuiltInFunction.SEGetTickCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-var
-  S: TSENumber;
 begin
   Exit(GetTickCount64);
 end;
@@ -1604,6 +1625,7 @@ end;
 class function TBuiltInFunction.SEGCCollect(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   GC.GC;
+  Result := SENull;
 end;
 
 function TSEOpcodeInfoList.Ptr(const P: Integer): PSEOpcodeInfo; inline;
@@ -2624,6 +2646,7 @@ var
   ImportBufferWideString: array [0..31] of WideString;
   ImportResult: QWord;
   ImportResultD: TSENumber;
+  ImportResultS: Single;
   FuncImport, P, PP, PC: Pointer;
   BinaryLocalCountMinusOne: Integer;
 
@@ -2694,7 +2717,7 @@ var
         jmp P;
       end
     }
-  {$elseif CPUARM}
+  {$elseif defined(CPUARM) or defined(CPUAARCH64)}
     {$define DispatchGoto :=
       if Self.IsPaused or Self.IsWaited then
       begin
@@ -2714,9 +2737,6 @@ var
 {$endif}
 
 label
-  Loop, FinishLoop, LoopMMX, LoopMMXAlloc, AllocMMX6, AllocMMX5, AllocMMX4, AllocMMX3, AllocMMX2, AllocMMX1,
-  AllocMMX0, LoopMMXFinishAlloc, LoopReg, LoopRegAlloc, AllocRDI, AllocRSI, AllocRDX, AllocRCX, AllocR8, AllocR9, LoopRegFinishAlloc,
-  LoopFinishAlloc,
   CallScript, CallNative, CallImport
   {$ifdef SE_COMPUTED_GOTO},
   labelPushConst,
@@ -2839,6 +2859,7 @@ begin
   BinaryLocalCountMinusOne := BinaryLocal.Count - 1;
   GC.CheckForGC;
 
+  while True do
   try
     DispatchGoto;
     while True do
@@ -3275,10 +3296,16 @@ begin
                   ImportBufferIndex[I] := 0;
                   Inc(RegCount);
                 end;
-             { seakF32:
+              seakF32:
                 begin
-                  TSENumber((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
-                end;}
+                  Single((@ImportBufferData[I * 8])^) := Single(Pop^.VarNumber);
+                  ImportBufferIndex[I] := 2;
+                  {$ifdef WINDOWS}
+                  Inc(RegCount);
+                  {$else}
+                  Inc(MMXCount);
+                  {$endif}
+                end;
               seakF64:
                 begin
                   TSENumber((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
@@ -3344,70 +3371,93 @@ begin
               mov  rax,PP
               add  rax,r14
               mov  r12,RegCount
-            Loop:
+            @Loop:
               sub  rax,8
               sub  rbx,8
               mov  r13,[rbx]
               mov  r14,[rax]
-            LoopReg:
+            @LoopReg:
                 cmp  r12,4
-                jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
+                jle  @LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
               // Push to stack
                 push r13 // Always push ...
-                jmp  LoopRegFinishAlloc
-              LoopRegAlloc:
+                jmp  @LoopRegFinishAlloc
+              @LoopRegAlloc:
                 cmp  r14,1 // MMX?
-                je   LoopMMX
+                je   @LoopMMX
+                cmp  r14,2 // MMX 32bit?
+                je   @LoopMMX32
 
                 cmp  r12,1
-                je   AllocRCX
+                je   @AllocRCX
                 cmp  r12,2
-                je   AllocRDX
+                je   @AllocRDX
                 cmp  r12,3
-                je   AllocR8
+                je   @AllocR8
               // R9
                 mov  r9,r13
-                jmp  LoopRegFinishAlloc
-              AllocRCX:
+                jmp  @LoopRegFinishAlloc
+              @AllocRCX:
                 mov  rcx,r13
-                jmp  LoopRegFinishAlloc
-              AllocRDX:
+                jmp  @LoopRegFinishAlloc
+              @AllocRDX:
                 mov  rdx,r13
-                jmp  LoopRegFinishAlloc
-              AllocR8:
+                jmp  @LoopRegFinishAlloc
+              @AllocR8:
                 mov  r8,r13
-                jmp  LoopRegFinishAlloc
+                jmp  @LoopRegFinishAlloc
 
-              LoopMMX:
+              @LoopMMX:
                 cmp  r12,1
-                je   AllocMMX0
+                je   @AllocMMX0
                 cmp  r12,2
-                je   AllocMMX1
+                je   @AllocMMX1
                 cmp  r12,3
-                je   AllocMMX2
+                je   @AllocMMX2
               // MMX3
                 movsd xmm3,[rbx]
-                jmp  LoopRegFinishAlloc
-              AllocMMX0:
+                jmp  @LoopRegFinishAlloc
+              @AllocMMX0:
                 movsd xmm0,[rbx]
-                jmp  LoopRegFinishAlloc
-              AllocMMX1:
+                jmp  @LoopRegFinishAlloc
+              @AllocMMX1:
                 movsd xmm1,[rbx]
-                jmp  LoopRegFinishAlloc
-              AllocMMX2:
+                jmp  @LoopRegFinishAlloc
+              @AllocMMX2:
                 movsd xmm2,[rbx]
+                jmp  @LoopRegFinishAlloc
 
-              LoopRegFinishAlloc:
+              @LoopMMX32:
+                cmp  r12,1
+                je   @AllocMMX032
+                cmp  r12,2
+                je   @AllocMMX132
+                cmp  r12,3
+                je   @AllocMMX232
+              // MMX3
+                movss xmm3,[rbx]
+                jmp  @LoopRegFinishAlloc
+              @AllocMMX032:
+                movss xmm0,[rbx]
+                jmp  @LoopRegFinishAlloc
+              @AllocMMX132:
+                movss xmm1,[rbx]
+                jmp  @LoopRegFinishAlloc
+              @AllocMMX232:
+                movss xmm2,[rbx]
+
+              @LoopRegFinishAlloc:
                 dec  r12
-            LoopFinishAlloc:
+            @LoopFinishAlloc:
               dec  r10
               cmp  r10,0 // Still have arguments to take care of?
-              jne  Loop
-            FinishLoop:
+              jne  @Loop
+            @FinishLoop:
               sub  rsp,32
               call [FuncImport]
               mov  ImportResult,rax
-              movsd ImportResultD,xmm0
+              movsd ImportResultD,xmm0   
+              movss ImportResultS,xmm0
               xor  rax,rax
               mov  eax,ArgCountStack
               mov  ecx,8
@@ -3431,104 +3481,154 @@ begin
               add  rax,r14
               mov  r11,MMXCount
               mov  r12,RegCount
-            Loop:
+            @Loop:
               sub  rax,8
               sub  rbx,8
               mov  r13,[rbx]
               mov  r14,[rax]
               cmp  r14,0 // Reg?
-              je   LoopReg
-            LoopMMX:
+              je   @LoopReg
+              cmp  r14,2 // MMX 32bit?
+              je   @LoopMMX32
+            @LoopMMX:
                 cmp  r11,8
-                jle  LoopMMXAlloc // Lower or equal: Register allocation, Higher: Push to stack
+                jle  @LoopMMXAlloc // Lower or equal: Register allocation, Higher: Push to stack
               // Push to stack
                 push r13
-                jmp  LoopMMXFinishAlloc
-              LoopMMXAlloc:
+                jmp  @LoopMMXFinishAlloc
+              @LoopMMXAlloc:
                 cmp  r11,1
-                je   AllocMMX0
+                je   @AllocMMX0
                 cmp  r11,2
-                je   AllocMMX1
+                je   @AllocMMX1
                 cmp  r11,3
-                je   AllocMMX2
+                je   @AllocMMX2
                 cmp  r11,4
-                je   AllocMMX3
+                je   @AllocMMX3
                 cmp  r11,5
-                je   AllocMMX4
+                je   @AllocMMX4
                 cmp  r11,6
-                je   AllocMMX5
+                je   @AllocMMX5
                 cmp  r11,7
-                je   AllocMMX6
+                je   @AllocMMX6
               // MMX7
                 movsd xmm7,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX6:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX6:
                 movsd xmm6,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX5:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX5:
                 movsd xmm5,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX4:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX4:
                 movsd xmm4,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX3:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX3:
                 movsd xmm3,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX2:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX2:
                 movsd xmm2,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX1:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX1:
                 movsd xmm1,[rbx]
-                jmp  LoopMMXFinishAlloc
-              AllocMMX0:
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX0:
                 movsd xmm0,[rbx]
-              LoopMMXFinishAlloc:
-                dec  r11
-                jmp  LoopFinishAlloc
-            LoopReg:
-                cmp  r12,6
-                jle  LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
+                jmp  @LoopMMXFinishAlloc
+
+            @LoopMMX32:
+                cmp  r11,8
+                jle  @LoopMMXAlloc32 // Lower or equal: Register allocation, Higher: Push to stack
               // Push to stack
                 push r13
-                jmp  LoopRegFinishAlloc
-              LoopRegAlloc:
+                jmp  @LoopMMXFinishAlloc
+              @LoopMMXAlloc32:
+                cmp  r11,1
+                je   @AllocMMX032
+                cmp  r11,2
+                je   @AllocMMX132
+                cmp  r11,3
+                je   @AllocMMX232
+                cmp  r11,4
+                je   @AllocMMX332
+                cmp  r11,5
+                je   @AllocMMX432
+                cmp  r11,6
+                je   @AllocMMX532
+                cmp  r11,7
+                je   @AllocMMX632
+              // MMX7
+                movss xmm7,[rbx]
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX632:
+                movss xmm6,[rbx]
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX532:
+                movss xmm5,[rbx]
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX432:
+                movss xmm4,[rbx]
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX332:
+                movss xmm3,[rbx]
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX232:
+                movss xmm2,[rbx]
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX132:
+                movss xmm1,[rbx]
+                jmp  @LoopMMXFinishAlloc
+              @AllocMMX032:
+                movss xmm0,[rbx]
+              @LoopMMXFinishAlloc:
+                dec  r11
+                jmp  @LoopFinishAlloc
+
+            @LoopReg:
+                cmp  r12,6
+                jle  @LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
+              // Push to stack
+                push r13
+                jmp  @LoopRegFinishAlloc
+              @LoopRegAlloc:
                 cmp  r12,1
-                je   AllocRDI
+                je   @AllocRDI
                 cmp  r12,2
-                je   AllocRSI
+                je   @AllocRSI
                 cmp  r12,3
-                je   AllocRDX
+                je   @AllocRDX
                 cmp  r12,4
-                je   AllocRCX
+                je   @AllocRCX
                 cmp  r12,5
-                je   AllocR9
+                je   @AllocR9
               // R8
                 mov  r8,r13
-                jmp  LoopRegFinishAlloc
-              AllocRDI:
+                jmp  @LoopRegFinishAlloc
+              @AllocRDI:
                 mov  rdi,r13
-                jmp  LoopRegFinishAlloc
-              AllocRSI:
+                jmp  @LoopRegFinishAlloc
+              @AllocRSI:
                 mov  rsi,r13
-                jmp  LoopRegFinishAlloc
-              AllocRDX:
+                jmp  @LoopRegFinishAlloc
+              @AllocRDX:
                 mov  rdx,r13
-                jmp  LoopRegFinishAlloc
-              AllocRCX:
+                jmp  @LoopRegFinishAlloc
+              @AllocRCX:
                 mov  rcx,r13
-                jmp  LoopRegFinishAlloc
-              AllocR9:
+                jmp  @LoopRegFinishAlloc
+              @AllocR9:
                 mov  r9,r13
-              LoopRegFinishAlloc:
+              @LoopRegFinishAlloc:
                 dec  r12
-            LoopFinishAlloc:
+            @LoopFinishAlloc:
               dec  r10
               cmp  r10,0 // Still have arguments to take care of?
-              jne  Loop
-            FinishLoop:
+              jne  @Loop
+            @FinishLoop:
               call [FuncImport]
               mov  ImportResult,rax
               movsd ImportResultD,xmm0
+              movss ImportResultS,xmm0
               xor  rax,rax
               mov  eax,ArgCountStack
               mov  ecx,8
@@ -3557,7 +3657,10 @@ begin
               begin
                 TV := QWord(ImportResult)
               end;
-           // seakF32,
+            seakF32:
+              begin
+                TV := ImportResultS;
+              end;
             seakF64:
               begin
                 TV := ImportResultD;
@@ -3821,6 +3924,7 @@ begin
       end;
       {$endif}
     end;
+    Break;
   except
     on E: Exception do
     begin  
@@ -3844,6 +3948,7 @@ begin
         Push(E.Message);
         Dec(Self.TrapPtr);
         DispatchGoto;
+        Break;
       end;
     end;
   end;
@@ -3893,6 +3998,7 @@ begin
   Self.RegisterFunc('buffer_i16_get', @TBuiltInFunction(nil).SEBufferGetI16, 1);
   Self.RegisterFunc('buffer_i32_get', @TBuiltInFunction(nil).SEBufferGetI32, 1);
   Self.RegisterFunc('buffer_i64_get', @TBuiltInFunction(nil).SEBufferGetI64, 1);
+  Self.RegisterFunc('buffer_f32_get', @TBuiltInFunction(nil).SEBufferGetF32, 1);
   Self.RegisterFunc('buffer_f64_get', @TBuiltInFunction(nil).SEBufferGetF64, 1);
   Self.RegisterFunc('buffer_u8_set', @TBuiltInFunction(nil).SEBufferSetU8, 2);
   Self.RegisterFunc('buffer_u16_set', @TBuiltInFunction(nil).SEBufferSetU16, 2);
@@ -3902,6 +4008,7 @@ begin
   Self.RegisterFunc('buffer_i16_set', @TBuiltInFunction(nil).SEBufferSetI16, 2);
   Self.RegisterFunc('buffer_i32_set', @TBuiltInFunction(nil).SEBufferSetI32, 2);
   Self.RegisterFunc('buffer_i64_set', @TBuiltInFunction(nil).SEBufferSetI64, 2);
+  Self.RegisterFunc('buffer_f32_set', @TBuiltInFunction(nil).SEBufferSetF32, 2);
   Self.RegisterFunc('buffer_f64_set', @TBuiltInFunction(nil).SEBufferSetF64, 2);
   Self.RegisterFunc('string_to_buffer', @TBuiltInFunction(nil).SEStringToBuffer, 1);
   Self.RegisterFunc('buffer_to_string', @TBuiltInFunction(nil).SEBufferToString, 1);
@@ -4510,7 +4617,7 @@ begin
               Token.Kind := tkReturn;
             'fn':
               Token.Kind := tkFunctionDecl;
-            'void', 'i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f64', 'buffer', 'wbuffer':
+            'void', 'i8', 'i16', 'i32', 'i64', 'u8', 'u16', 'u32', 'u64', 'f32', 'f64', 'buffer', 'wbuffer':
               Token.Kind := tkAtom;
             'import':
               Token.Kind := tkImport;
@@ -4737,8 +4844,7 @@ var
 
   procedure Rewind(const StartAddr, Count: Integer); inline;
   var
-    Addr, I, J: Integer;
-    FuncScript: PSEFuncScriptInfo;
+    Addr, I: Integer;
   begin
     for I := 0 to Count - 1 do
     begin
@@ -5054,13 +5160,10 @@ var
         Emit(Data);
     end;
 
-    procedure BinaryOp(const Op: TSEOpcode; const Func: TProc; const IsString: Boolean = False); inline;
+    procedure BinaryOp(const Op: TSEOpcode; const Func: TProc); inline;
     begin
       NextToken;
-      if IsString then
-        PeekAtNextTokenExpected([tkBracketOpen, tkSquareBracketOpen, tkDot, tkNumber, tkString, tkNegative, tkIdent])
-      else
-        PeekAtNextTokenExpected([tkBracketOpen, tkSquareBracketOpen, tkDot, tkNumber, tkNegative, tkNot, tkIdent]);
+      PeekAtNextTokenExpected([tkBracketOpen, tkSquareBracketOpen, tkDot, tkNumber, tkString, tkNegative, tkIdent]);
       Func;
       EmitExpr([Pointer({$ifdef CPU64}Int64(Op){$else}Op{$endif})]);
     end;
@@ -5296,7 +5399,7 @@ var
         Token := PeekAtNextToken;
         case Token.Kind of
           tkPow:
-            BinaryOp(opOperatorPow, @SignedFactor, True);
+            BinaryOp(opOperatorPow, @SignedFactor);
           else
             Exit;
         end;
@@ -5313,11 +5416,11 @@ var
         Token := PeekAtNextToken;
         case Token.Kind of
           tkMul:
-            BinaryOp(opOperatorMul, @Pow, True);
+            BinaryOp(opOperatorMul, @Pow);
           tkDiv:
-            BinaryOp(opOperatorDiv, @Pow, True);
+            BinaryOp(opOperatorDiv, @Pow);
           tkMod:
-            BinaryOp(opOperatorMod, @Pow, True);
+            BinaryOp(opOperatorMod, @Pow);
           else
             Exit;
         end;
@@ -5334,9 +5437,9 @@ var
         Token := PeekAtNextToken;
         case Token.Kind of
           tkAdd:
-            BinaryOp(opOperatorAdd, @Term, True);
+            BinaryOp(opOperatorAdd, @Term);
           tkSub:
-            BinaryOp(opOperatorSub, @Term, True);
+            BinaryOp(opOperatorSub, @Term);
           else
             Exit;
         end;
@@ -5353,9 +5456,9 @@ var
         Token := PeekAtNextToken;
         case Token.Kind of
           tkShiftLeft:
-            BinaryOp(opOperatorShiftLeft, @Expr, True);
+            BinaryOp(opOperatorShiftLeft, @Expr);
           tkShiftRight:
-            BinaryOp(opOperatorShiftRight, @Expr, True);
+            BinaryOp(opOperatorShiftRight, @Expr);
           else
             Exit;
         end;
@@ -5372,23 +5475,23 @@ var
         Token := PeekAtNextToken;
         case Token.Kind of
           tkEqual:
-            BinaryOp(opOperatorEqual, @Expr, True);
+            BinaryOp(opOperatorEqual, @Expr);
           tkNotEqual:
-            BinaryOp(opOperatorNotEqual, @Expr, True);
+            BinaryOp(opOperatorNotEqual, @Expr);
           tkGreater:
-            BinaryOp(opOperatorGreater, @Expr, True);
+            BinaryOp(opOperatorGreater, @Expr);
           tkGreaterOrEqual:
-            BinaryOp(opOperatorGreaterOrEqual, @Expr, True);
+            BinaryOp(opOperatorGreaterOrEqual, @Expr);
           tkSmaller:
-            BinaryOp(opOperatorLesser, @Expr, True);
+            BinaryOp(opOperatorLesser, @Expr);
           tkSmallerOrEqual:
-            BinaryOp(opOperatorLesserOrEqual, @Expr, True);
+            BinaryOp(opOperatorLesserOrEqual, @Expr);
           tkAnd:
-            BinaryOp(opOperatorAnd, @Expr, True);
+            BinaryOp(opOperatorAnd, @Expr);
           tkOr:
-            BinaryOp(opOperatorOr, @Expr, True);
+            BinaryOp(opOperatorOr, @Expr);
           tkXor:
-            BinaryOp(opOperatorXor, @Expr, True);
+            BinaryOp(opOperatorXor, @Expr);
           else
             Exit;
         end;
@@ -5403,7 +5506,6 @@ var
     Token: TSEToken;
     ArgCount: Integer = 1;
     RewindCount: Integer;
-    ThisAddr: Integer;
   begin
     RewindCount := Self.Binary.Count - RewindStartAdd;
     NextTokenExpected([tkBracketOpen]);
@@ -5680,8 +5782,8 @@ var
           Result := seakI32;
         'i64':
           Result := seakI64;
-        {'f32':
-          Result := seakF32;}
+        'f32':
+          Result := seakF32;
         'f64':
           Result := seakF64;
         'buffer':
@@ -5697,7 +5799,6 @@ var
       Name, ActualName: String;
       Return: TSEAtomKind;
       Args: TSEAtomKindArray;
-      I: Integer;
     begin
       NextTokenExpected([tkFunctionDecl]);
       Token := NextTokenExpected([tkIdent]);
@@ -6211,6 +6312,7 @@ var
     Token: TSEToken;
     VarIdent: TSEIdent;
     PVarIdent: PSEIdent;
+    I,
     JumpCatchBlock,
     CatchBlock,
     JumpFinallyBlock: Integer;
@@ -6220,6 +6322,7 @@ var
     Emit([Pointer(opPopTrap)]);
     JumpFinallyBlock := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
 
+    Self.ScopeStack.Push(Self.VarList.Count);
     CatchBlock := Self.Binary.Count;
     NextTokenExpected([tkCatch]);
     NextTokenExpected([tkBracketOpen]);
@@ -6236,6 +6339,8 @@ var
                                                
     Patch(JumpCatchBlock - 1, Pointer(CatchBlock));
     Patch(JumpFinallyBlock - 1, Pointer(Self.Binary.Count));
+    I := Self.ScopeStack.Pop;
+    Self.VarList.DeleteRange(I, Self.VarList.Count - I);
   end;
 
   procedure ParseThrow;
@@ -6435,7 +6540,6 @@ end;
 procedure TEvilC.Reset;
 var
   Ident: TSEIdent;
-  I: Integer;
 begin
   Self.FuncScriptList.Clear;
   Self.FuncImportList.Clear;

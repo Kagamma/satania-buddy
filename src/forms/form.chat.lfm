@@ -49,6 +49,7 @@ object FormChat: TFormChat
   OnShow = FormShow
   Position = poDefault
   ShowInTaskBar = stAlways
+  LCLVersion = '2.3.0.0'
   object PageControl: TPageControl
     Left = 0
     Height = 509
@@ -60,8 +61,8 @@ object FormChat: TFormChat
     TabOrder = 0
     object TabSheetChat: TTabSheet
       Caption = 'Chat'
-      ClientHeight = 481
-      ClientWidth = 529
+      ClientHeight = 470
+      ClientWidth = 527
       object PanelChatlog: TPanel
         Left = 0
         Height = 362
@@ -226,8 +227,8 @@ object FormChat: TFormChat
     end
     object TabSheetChatEdit: TTabSheet
       Caption = 'Chat Edit'
-      ClientHeight = 481
-      ClientWidth = 529
+      ClientHeight = 470
+      ClientWidth = 527
       object MemoEdit: TMemo
         Left = 0
         Height = 438

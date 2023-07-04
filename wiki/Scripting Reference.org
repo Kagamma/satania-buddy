@@ -443,6 +443,7 @@ List of supported data types:
 - u32: unsigned long
 - i64: long long
 - u64: unsigned long long
+- f32: float
 - f64: double
 - buffer: char*
 - wbuffer: wchar*
@@ -542,6 +543,8 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Get 8-byte unsigned data from buffer.
 *buffer_i64_get(buffer: buffer): number*
 - Get 8-byte data from buffer.
+*buffer_f32_get(buffer: buffer): number*
+- Get float-type data from buffer.
 *buffer_f64_get(buffer: buffer): number*
 - Get double-type data from buffer.
 *buffer_u8_set(buffer: buffer, data: number): number*
@@ -560,6 +563,8 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Write 8-byte unsigned data to buffer.
 *buffer_i64_set(buffer: buffer, data: number): number*
 - Write 8-byte data to buffer.
+*buffer_f32_set(buffer: buffer, data: number): number*
+- Write float-type data to buffer.
 *buffer_f64_set(buffer: buffer, data: number): number*
 - Write double-type data to buffer.
 *string_to_buffer(s: string): buffer*
