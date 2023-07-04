@@ -40,7 +40,7 @@ uses
   frame.rules.edititem, vosk, voskthread, voskbassaudiosource, mcdowell.chat,
   mcdowell.net, mcdowell.numbers, utils.strings, utils.encdec, utils.coords,
   utils.threads, utils.files, mcdowell.smtp, utils.smartptr, Com.Talk,
-  Com.Brokers, form.ask, utils.htmltext, utils.sprites, mcdowell.sketch,
+  Com.Brokers, form.ask, utils.sprites, mcdowell.sketch,
   form.tool.hexeditor, Mcdowell.RichText, Form.Bubble, Utils.Colors;
 
 {$R *.res}
