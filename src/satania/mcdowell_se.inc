@@ -631,12 +631,12 @@ end;
 
 function TSatania.SEURLEncode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := EncodeURLElement(Args[0]);
+  Result := EncodeURLElement(Args[0].VarString^);
 end;
 
 function TSatania.SEURLDecode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := DecodeURLElement(Args[0]);
+  Result := DecodeURLElement(Args[0].VarString^);
 end;
 
 function TSatania.SENumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
