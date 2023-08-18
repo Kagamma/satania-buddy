@@ -195,8 +195,6 @@ end;
 
 procedure TSatania.RegisterFuncs(const S: TEvilC; const IsSafe: Boolean = False);
 begin
-  Self.Script.IncludePathList.Clear;
-  Self.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
   if not IsSafe then
   begin
     S.RegisterFunc('ask', @SEAsk, -1);
@@ -428,6 +426,8 @@ procedure TSatania.Action(Typ, Message: String);
 begin
   CSAction.Enter;
   try
+    Self.Script.IncludePathList.Clear;
+    Self.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
     case Typ of
       'chat':
         Talk(Message);
