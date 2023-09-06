@@ -292,6 +292,10 @@ fn add(a, b) {
   result = a + b
 }
 
+fn sub(a, b) {
+  return (a - b)
+}
+
 foo()
 c = add(5, 3)
 #+end_example
@@ -304,7 +308,9 @@ add = fn(a, b) {
 }
 #+end_example
 
-- Unlike C, you need to assign return values to =result=
+There're 2 ways to return a value:
+- Assign function result to =result= variable
+- Use =return=. Note that you need to wrap expression in brackets, for example =return (true)=
 
 *** Function reference
 

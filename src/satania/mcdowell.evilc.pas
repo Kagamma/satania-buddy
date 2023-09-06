@@ -6402,6 +6402,14 @@ var
       tkReturn:
         begin
           NextToken;
+          if PeekAtNextToken.Kind = tkBracketOpen then
+          begin
+            NextToken;
+            Token.Kind := tkEqual;
+            TokenList.Insert(Pos + 1, Token); // Insert equal token
+            ParseVarAssign('result');
+            NextTokenExpected([tkBracketClose]);
+          end;
           if FuncTraversal = 0 then
             Emit([Pointer(opHlt)])
           else
