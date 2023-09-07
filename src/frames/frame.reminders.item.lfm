@@ -1,35 +1,38 @@
 object FrameRemindersItem: TFrameRemindersItem
   Left = 0
-  Height = 26
+  Height = 142
   Top = 0
   Width = 1041
-  ClientHeight = 26
+  BorderSpacing.Around = 4
+  ClientHeight = 142
   ClientWidth = 1041
+  ParentBackground = False
   TabOrder = 0
   DesignLeft = 348
   DesignTop = 27
   object Panel1: TPanel
     Left = 0
-    Height = 26
+    Height = 142
     Top = 0
-    Width = 280
+    Width = 240
     Align = alLeft
-    ClientHeight = 26
-    ClientWidth = 280
+    ClientHeight = 142
+    ClientWidth = 240
+    ParentBackground = False
     TabOrder = 0
     object DateTimePicker: TDateTimePicker
-      Left = 104
-      Height = 24
-      Top = 1
-      Width = 175
+      Left = 48
+      Height = 23
+      Top = 40
+      Width = 178
       CenturyFrom = 1941
       MaxDate = 2958465
       MinDate = -53780
+      AutoSize = False
       TabOrder = 0
       TrailingSeparator = False
       TextForNullDate = 'NULL'
       LeadingZeros = True
-      Align = alClient
       Kind = dtkTime
       TimeFormat = tf24
       TimeDisplay = tdHM
@@ -41,11 +44,10 @@ object FrameRemindersItem: TFrameRemindersItem
       MonthNames = 'Long'
     end
     object ComboBoxKind: TComboBox
-      Left = 1
+      Left = 48
       Height = 23
-      Top = 1
-      Width = 103
-      Align = alLeft
+      Top = 9
+      Width = 178
       ItemHeight = 15
       ItemIndex = 0
       Items.Strings = (
@@ -57,161 +59,181 @@ object FrameRemindersItem: TFrameRemindersItem
       TabOrder = 1
       Text = 'Alarm'
     end
+    object LabelAlarmType: TLabel
+      Left = 9
+      Height = 15
+      Top = 9
+      Width = 24
+      Caption = 'Type'
+      ParentColor = False
+    end
+    object LabelAlarmTime: TLabel
+      Left = 9
+      Height = 15
+      Top = 39
+      Width = 26
+      Caption = 'Time'
+      ParentColor = False
+    end
   end
   object Panel2: TPanel
-    Left = 990
-    Height = 26
+    Left = 952
+    Height = 142
     Top = 0
-    Width = 51
+    Width = 89
     Align = alRight
-    ClientHeight = 26
-    ClientWidth = 51
+    ClientHeight = 142
+    ClientWidth = 89
+    ParentBackground = False
     TabOrder = 1
     object CheckBoxEnable: TCheckBox
-      Left = 9
-      Height = 24
+      Left = 8
+      Height = 19
       Hint = 'Enable'
-      Top = 1
-      Width = 18
-      Align = alRight
+      Top = 40
+      Width = 53
+      Caption = 'Enable'
       Checked = True
       State = cbChecked
       TabOrder = 0
     end
     object ButtonDelete: TSpeedButton
-      Left = 27
-      Height = 24
-      Top = 1
-      Width = 23
-      Align = alRight
+      Left = 48
+      Height = 30
+      Top = 4
+      Width = 32
       Images = FormMain.ImageList
       ImageIndex = 10
     end
-  end
-  object Panel3: TPanel
-    Left = 464
-    Height = 26
-    Top = 0
-    Width = 526
-    Align = alClient
-    ClientHeight = 26
-    ClientWidth = 526
-    TabOrder = 2
-    object EditScript: TEdit
-      Left = 1
-      Height = 24
-      Top = 1
-      Width = 501
-      Align = alClient
-      TabOrder = 0
-      Text = 's ="It''s time!" notify(s) talk(s) sound_play("beep.ogg")'
-    end
     object ButtonRun: TSpeedButton
-      Left = 502
-      Height = 24
-      Top = 1
-      Width = 23
-      Align = alRight
+      Left = 8
+      Height = 30
+      Top = 4
+      Width = 32
       Images = FormMain.ImageList
       ImageIndex = 2
       OnClick = ButtonRunClick
     end
   end
-  object PanelDate: TPanel
-    Left = 280
-    Height = 26
+  object Panel3: TPanel
+    Left = 384
+    Height = 142
     Top = 0
-    Width = 184
-    Align = alLeft
-    ClientHeight = 26
-    ClientWidth = 184
-    TabOrder = 3
-    object CheckBoxSunday: TCheckBox
+    Width = 568
+    Align = alClient
+    ClientHeight = 142
+    ClientWidth = 568
+    ParentBackground = False
+    TabOrder = 2
+    object MemoScript: TMemo
       Left = 1
-      Height = 24
-      Hint = 'Sunday'
+      Height = 140
       Top = 1
-      Width = 18
-      Align = alLeft
-      Checked = True
-      State = cbChecked
+      Width = 566
+      Align = alClient
+      Lines.Strings = (
+        '// Code that will be executed'
+        's ="It''s time!"'
+        'notify(s)'
+        'talk(s)'
+        'sound_play("beep.ogg")'
+      )
       TabOrder = 0
     end
+  end
+  object PanelDate: TPanel
+    Left = 240
+    Height = 142
+    Top = 0
+    Width = 144
+    Align = alLeft
+    ClientHeight = 142
+    ClientWidth = 144
+    ParentBackground = False
+    TabOrder = 3
     object CheckBoxMonday: TCheckBox
-      Left = 19
-      Height = 24
+      Left = 1
+      Height = 19
       Hint = 'Monday'
-      Top = 1
-      Width = 18
-      Align = alLeft
+      Top = 20
+      Width = 142
+      Align = alTop
+      Caption = 'Monday'
       Checked = True
       State = cbChecked
       TabOrder = 1
     end
     object CheckBoxSaturday: TCheckBox
-      Left = 109
-      Height = 24
+      Left = 1
+      Height = 19
       Hint = 'Saturday'
-      Top = 1
-      Width = 34
-      Align = alLeft
-      Caption = 'Sat'
+      Top = 115
+      Width = 142
+      Align = alTop
+      Caption = 'Saturday'
       Checked = True
       State = cbChecked
-      TabOrder = 2
+      TabOrder = 6
     end
     object CheckBoxFriday: TCheckBox
-      Left = 91
-      Height = 24
+      Left = 1
+      Height = 19
       Hint = 'Friday'
-      Top = 1
-      Width = 18
-      Align = alLeft
+      Top = 96
+      Width = 142
+      Align = alTop
+      Caption = 'Friday'
       Checked = True
       State = cbChecked
-      TabOrder = 3
+      TabOrder = 5
     end
     object CheckBoxThursday: TCheckBox
-      Left = 73
-      Height = 24
+      Left = 1
+      Height = 19
       Hint = 'Thursday'
-      Top = 1
-      Width = 18
-      Align = alLeft
+      Top = 77
+      Width = 142
+      Align = alTop
+      Caption = 'Thursday'
       Checked = True
       State = cbChecked
       TabOrder = 4
     end
     object CheckBoxWednesday: TCheckBox
-      Left = 55
-      Height = 24
+      Left = 1
+      Height = 19
       Hint = 'Wednesday'
-      Top = 1
-      Width = 18
-      Align = alLeft
+      Top = 58
+      Width = 142
+      Align = alTop
+      Caption = 'Wednesday'
       Checked = True
       State = cbChecked
-      TabOrder = 5
+      TabOrder = 3
     end
     object CheckBoxTuesday: TCheckBox
-      Left = 37
-      Height = 24
+      Left = 1
+      Height = 19
       Hint = 'Tuesday'
-      Top = 1
-      Width = 18
-      Align = alLeft
+      Top = 39
+      Width = 142
+      Align = alTop
+      Caption = 'Tuesday'
       Checked = True
       State = cbChecked
-      TabOrder = 6
+      TabOrder = 2
     end
-    object PanelDateSize: TPanel
-      Left = 143
-      Height = 24
+    object CheckBoxSunday: TCheckBox
+      Left = 1
+      Height = 19
+      Hint = 'Sunday'
       Top = 1
-      Width = 1
-      Align = alLeft
-      TabOrder = 7
-      OnPaint = PanelDateSizePaint
+      Width = 142
+      Align = alTop
+      Caption = 'Sunday'
+      Checked = True
+      State = cbChecked
+      TabOrder = 0
     end
   end
 end

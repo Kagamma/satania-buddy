@@ -117,7 +117,7 @@ begin
     Item.Saturday := Frame.CheckBoxSaturday.Checked;
     Item.Sunday := Frame.CheckBoxSunday.Checked;
     Item.Name := GUIDName;
-    Item.Script := Frame.EditScript.Text;
+    Item.Script := Frame.MemoScript.Lines.Text;
     Save.SaveToFile('configs.json');
   end;
   Satania.UsedRemindersList.Clear;
@@ -181,7 +181,7 @@ begin
     end;
     Frame.DateTimePicker.Time := EncodeTime(Item.Hour, Item.Minute, 0, 0);
     Frame.CheckBoxEnable.Checked := Item.Enabled;
-    Frame.EditScript.Text := Item.Script;
+    Frame.MemoScript.Lines.Text := Item.Script;
 
     Frame.CheckBoxMonday.Checked := Item.Monday;
     Frame.CheckBoxTuesday.Checked := Item.Tuesday;

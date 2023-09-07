@@ -43,17 +43,17 @@ type
     CheckBoxTuesday: TCheckBox;
     ComboBoxKind: TComboBox;
     DateTimePicker: TDateTimePicker;
-    EditScript: TEdit;
+    LabelAlarmTime: TLabel;
+    LabelAlarmType: TLabel;
+    MemoScript: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
     ButtonDelete: TSpeedButton;
     ButtonRun: TSpeedButton;
-    PanelDateSize: TPanel;
     PanelDate: TPanel;
     procedure ComboBoxKindChange(Sender: TObject);
     procedure ButtonRunClick(Sender: TObject);
-    procedure PanelDateSizePaint(Sender: TObject);
   private
 
   public
@@ -87,12 +87,7 @@ end;
 
 procedure TFrameRemindersItem.ButtonRunClick(Sender: TObject);
 begin
-  Satania.Action('script', EditScript.Text);
-end;
-
-procedure TFrameRemindersItem.PanelDateSizePaint(Sender: TObject);
-begin
-  PanelDate.Width := PanelDateSize.Left + 1;
+  Satania.Action('script', MemoScript.Lines.Text);
 end;
 
 end.
