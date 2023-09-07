@@ -26,7 +26,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  FileUtil,
+  FileUtil, CopyDir,
   ExtCtrls, Buttons, Spin, MaskEdit, Menus, CastleApplicationProperties,
   Types, LCLTranslator, IniFiles;
 
@@ -35,6 +35,7 @@ type
   { TFormSettings }
 
   TFormSettings = class(TForm)
+    ButtonCloneSkin: TBitBtn;
     ButtonCancel: TBitBtn;
     ButtonChatBubbleFont: TSpeedButton;
     ButtonApply: TBitBtn;
@@ -151,6 +152,7 @@ type
     procedure ButtonChatBubbleFontClick(Sender: TObject);
     procedure ButtonChatWindowFontClick(Sender: TObject);
     procedure ButtonApplyClick(Sender: TObject);
+    procedure ButtonCloneSkinClick(Sender: TObject);
     procedure ComboBoxSTTBackendChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ListBoxSettingsSelectionChange(Sender: TObject; User: boolean);
@@ -438,6 +440,36 @@ begin
   except
     on E: Exception do
       Satania.Error(E.Message);
+  end;
+end;
+
+procedure TFormSettings.ButtonCloneSkinClick(Sender: TObject);
+var
+  CurrentSkinName, NewSkinName: String;
+  I: Integer;
+  CD: TCopyDir;
+begin
+  if InputQuery('Clone to new character', 'Character''s directory name:', False, NewSkinName) then
+  begin
+    for I := 0 to ComboBoxSkin.Items.Count - 1 do
+    begin
+      if NewSkinName = ComboBoxSkin.Items[I] then
+      begin
+        MessageDlg('', 'Character with the same directory name is already existed!', mtError, [mbOk], 0);
+        Exit;
+      end;
+    end;
+    CurrentSkinName := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
+    CD := TCopyDir.Create('data/scripts/' + CurrentSkinName, 'data/scripts/' + NewSkinName);
+    CD.PrintToTerminal := True;
+    CD.Start;
+    CD.Free;                                                       
+    CD := TCopyDir.Create('data/sprites/' + CurrentSkinName, 'data/sprites/' + NewSkinName);
+    CD.PrintToTerminal := True;
+    CD.Start;
+    CD.Free;  
+    MessageDlg('', 'Character cloned!', mtInformation, [mbOk], 0);
+    ComboBoxSkin.Items.Add(NewSkinName);
   end;
 end;
 

@@ -13,6 +13,7 @@
 {"hash":41831989,"name":"tformsettings.edityourname.text","sourcebytes":[69,100,105,116,89,111,117,114,78,97,109,101],"value":"EditYourName"},
 {"hash":242337042,"name":"tformsettings.labelerrormessage.caption","sourcebytes":[68,105,115,112,108,97,121,32,101,114,114,111,114,32,109,101,115,115,97,103,101,115,32,97,115,32,34,83,121,115,116,101,109,34],"value":"Display error messages as \"System\""},
 {"hash":127487347,"name":"tformsettings.labelenableitalicforusertext.caption","sourcebytes":[69,110,97,98,108,101,32,115,116,121,108,105,110,103,32,102,111,114,32,117,115,101,114,32,109,101,115,115,97,103,101,115],"value":"Enable styling for user messages"},
+{"hash":4863557,"name":"tformsettings.buttoncloneskin.caption","sourcebytes":[67,108,111,110,101],"value":"Clone"},
 {"hash":143059779,"name":"tformsettings.tabsheetgraphics.caption","sourcebytes":[71,114,97,112,104,105,99,115],"value":"Graphics"},
 {"hash":19283,"name":"tformsettings.labelfps.caption","sourcebytes":[70,80,83],"value":"FPS"},
 {"hash":142739385,"name":"tformsettings.labelimagequality.caption","sourcebytes":[73,109,97,103,101,32,81,117,97,108,105,116,121],"value":"Image Quality"},
