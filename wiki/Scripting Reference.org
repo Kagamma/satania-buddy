@@ -845,15 +845,15 @@ number)*
 *flag_global_get(flag: string): string*
 - Set a flag. Result stores in ~configs.json~.
 *flag_global_set(flag: string, value: string)*
-- Get a flag from ~configs.json~.
+- Get a flag from ~configs.json~. If no flag is found, the function return ~null~ instead.
 *flag_local_get(flag: string): string*
 - Set a flag. Result stores in ~scripts/flags.ini~.
 *flag_local_set(flag: string, value: string)*
-- Get a flag from ~scripts/flags.ini~.
+- Get a flag from ~scripts/flags.ini~. If no flag is found, the function return ~null~ instead.
 *get(flag: string): any*
 - Set a flag. Result stores in memory.
 *set(flag: string, value: any)*
-- Get a flag from memory.
+- Get a flag from memory. If no flag is found, the function return ~null~ instead.
 *scheme_load(scheme_name: string)*
 - Load an .evil scheme file in ~data/scripts/current_character~. This will also stop the current script.
 *scheme_default(): string*
