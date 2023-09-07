@@ -138,6 +138,7 @@ object FrameRemindersItem: TFrameRemindersItem
         'talk(s)'
         'sound_play("beep.ogg")'
       )
+      ScrollBars = ssAutoBoth
       TabOrder = 0
     end
   end
