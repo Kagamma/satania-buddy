@@ -41,7 +41,7 @@ uses
   mcdowell.net, mcdowell.numbers, utils.strings, utils.encdec, utils.coords,
   utils.threads, utils.files, mcdowell.smtp, utils.smartptr, Com.Talk,
   Com.Brokers, form.ask, utils.sprites, mcdowell.sketch,
-  form.tool.hexeditor, Mcdowell.RichText, Form.Bubble, Utils.Colors;
+  form.tool.hexeditor, Mcdowell.RichText, Form.Bubble, Utils.Colors, CopyDir;
 
 {$R *.res}
 

@@ -159,8 +159,8 @@ begin
   begin
     if self._preserveAttributes then
     begin
-      if FileSetAttrUTF8(self._SourceToTarget(aFile),
-        FileGetAttrUTF8(aFile)) <> -1 then
+      if FileSetAttr(self._SourceToTarget(aFile),
+        FileGetAttr(aFile)) <> -1 then
       begin
         self._AddToList(aFile, self._copyingDone);
       end;
@@ -195,7 +195,7 @@ end;
 
 procedure TCopyDir._CreateDir(aDir: String);
 begin
-  if ForceDirectoriesUTF8(aDir) then
+  if ForceDirectories(aDir) then
   begin
     self._AddToList(aDir, self._creatingDone);
   end else
@@ -239,7 +239,7 @@ function TCopyDir._CanCopy(aFile: String): Boolean;
 var
   __fileAttributes: LongInt;
 begin
-  __fileAttributes := FileGetAttrUTF8(aFile);
+  __fileAttributes := FileGetAttr(aFile);
 
   if (__fileAttributes and faReadOnly <> 0) and not self._copyReadOnly then
   begin
@@ -302,12 +302,12 @@ begin
   self._AddToLog('Initializing...');
 
   self._dirSource := aSourceDir;
-  if DirectoryExistsUTF8(self._dirSource) then
+  if DirectoryExists(self._dirSource) then
   begin
     self._AddToLog('Source: ' + self._dirSource + ' - exists!');
   end else
   begin
-    if ForceDirectoriesUTF8(self._dirSource) then
+    if ForceDirectories(self._dirSource) then
     begin
       self._AddToLog('Source: ' + self._dirSource + ' - doesn''t exist, ' +
         'created!');
@@ -319,12 +319,12 @@ begin
   end;
 
   self._dirTarget := aTargetDir;
-  if DirectoryExistsUTF8(self._dirTarget) then
+  if DirectoryExists(self._dirTarget) then
   begin
     self._AddToLog('Target: ' + self._dirTarget + ' - exists!');
   end else
   begin
-    if ForceDirectoriesUTF8(self._dirTarget) then
+    if ForceDirectories(self._dirTarget) then
     begin
       self._AddToLog('Target: ' + self._dirTarget + ' - doesn''t exist, ' +
         'created!');
