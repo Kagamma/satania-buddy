@@ -1,6 +1,3 @@
-/Note: This wiki entry is for development version therefore it may
-contains information that doesn't exist in released version/
-
 ** What is this?
 Evil script is a simple and lightweight scripting language, designed
 specially for satania-buddy. It's syntax is influenced by C, Pascal and

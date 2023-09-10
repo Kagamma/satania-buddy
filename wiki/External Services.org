@@ -1,6 +1,3 @@
-/Note: This wiki entry is for development version therefore it may
-contains information that doesn't exist in released version/
-
 ** Introduction
 
 External Services allows satania-buddy to send and receive messages to 3rd party services. External services can be added by creating new Evil Script in ~data/scripts/<character>/services~. These scripts can access chat messages via either ~chat_history_get()~, or ~chat_message()~. Some example scripts can be found in:
