@@ -493,6 +493,8 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Return map contains all keys from map a.
 *array_resize(a: map, size: number): map*
 - Resize a valid array.
+*array_to_map(arr: array): map*
+- Convert array arr to map. Note that arr itself will be converted.
 *length(a: map/string)*
 - Return length of string or map.
 *random(n: number): number*
