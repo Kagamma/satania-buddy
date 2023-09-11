@@ -1,7 +1,8 @@
 {"version":1,"strings":[
 {"hash":213582195,"name":"tformsettings.caption","sourcebytes":[83,101,116,116,105,110,103,115],"value":"Settings"},
 {"hash":77089212,"name":"tformsettings.buttoncancel.caption","sourcebytes":[67,97,110,99,101,108],"value":"Cancel"},
-{"hash":1371,"name":"tformsettings.buttonapply.caption","sourcebytes":[79,107],"value":"Ok"},
+{"hash":4749113,"name":"tformsettings.buttonapply.caption","sourcebytes":[65,112,112,108,121],"value":"Apply"},
+{"hash":1371,"name":"tformsettings.buttonok.caption","sourcebytes":[79,107],"value":"Ok"},
 {"hash":231000124,"name":"tformsettings.tabsheetgeneral.caption","sourcebytes":[71,101,110,101,114,97,108],"value":"General"},
 {"hash":45282830,"name":"tformsettings.labelsowrightmargin.caption","sourcebytes":[83,111,87,32,82,105,103,104,116,32,77,97,114,103,105,110],"value":"SoW Right Margin"},
 {"hash":157919653,"name":"tformsettings.labeldefaultevilscheme.caption","sourcebytes":[68,101,102,97,117,108,116,32,69,118,105,108,32,83,99,104,101,109,101],"value":"Default Evil Scheme"},

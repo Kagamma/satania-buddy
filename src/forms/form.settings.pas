@@ -35,6 +35,7 @@ type
   { TFormSettings }
 
   TFormSettings = class(TForm)
+    ButtonOk: TBitBtn;
     ButtonCloneSkin: TBitBtn;
     ButtonCancel: TBitBtn;
     ButtonChatBubbleFont: TSpeedButton;
@@ -153,6 +154,7 @@ type
     procedure ButtonChatWindowFontClick(Sender: TObject);
     procedure ButtonApplyClick(Sender: TObject);
     procedure ButtonCloneSkinClick(Sender: TObject);
+    procedure ButtonOkClick(Sender: TObject);
     procedure ComboBoxSTTBackendChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ListBoxSettingsSelectionChange(Sender: TObject; User: boolean);
@@ -160,7 +162,7 @@ type
     EditChatWindowFontSize: Integer;
     EditChatBubbleFontSize: Integer;
   public
-
+    procedure Apply;
   end;
 
 var
@@ -326,117 +328,121 @@ begin
   PageControl.TabIndex := ListboxSettings.ItemIndex;
 end;
 
-procedure TFormSettings.ButtonApplyClick(Sender: TObject);
+procedure TFormSettings.Apply;
 var
   IsSkinChanged: Boolean = False;
 begin
+  Save.Settings.Lewd := CheckBoxLewd.Checked;
+  Save.Settings.DeveloperMode := CheckBoxDeveloperMode.Checked;
+  Save.Settings.FPS := EditFPS.Value;
+  Save.Settings.ChatBubbleDelay := EditChatBubbleDelay.Value;
+  Save.Settings.SitOnWindowRightMargin := EditSoWRightMargin.Value;
+  Save.Settings.TextSpeed := EditTextSpeed.Value;
+  Save.Settings.BaseScaling := EditBaseScaling.Value;
+  Save.Settings.DefaultEvilScheme := EditDefaultEvilScheme.Text;
+  Save.Settings.ImageQuality := ComboBoxImageQuality.Items[ComboBoxImageQuality.ItemIndex];
+  Save.Settings.ChatWindowFont := EditChatWindowFont.Text;
+  Save.Settings.ChatWindowFontSize := EditChatWindowFontSize;
+  Save.Settings.ChatWindowColorBackground := ColorButtonChatWindowBackground.Color;
+  Save.Settings.ChatWindowColorUserName := ColorButtonChatWindowUserName.Color;
+  Save.Settings.ChatWindowColorCharacterName := ColorButtonChatWindowCharacterName.Color;
+  Save.Settings.ChatWindowColorSystemName := ColorButtonChatWindowSystemName.Color;
+  Save.Settings.ChatWindowColorNormalText := ColorButtonChatWindowNormalText.Color;
+  Save.Settings.ChatWindowColorItalicText := ColorButtonChatWindowItalicText.Color;
+  Save.Settings.ChatWindowColorCodeBlockText := ColorButtonChatWindowCodeBlockText.Color;
+  Save.Settings.FrameSkip := EditFrameSkip.Value;
+  Save.Settings.Rules := CheckBoxRules.Checked;
+  Save.Settings.ChatSpeechBalloon := CheckBoxChatSpeechBalloon.Checked;
+  Save.Settings.UserName := EditYourName.Text;
+  Save.Settings.SystemErrorMessage := CheckBoxErrorMessage.Checked;
+  Save.Settings.EnableItalicForUserText := CheckBoxEnableItalicForUserText.Checked;
+  // Clear sketch and workers if skin is changed
+  Save.Settings.ChatWindowClearType := CheckBoxChatWindowCleartype.Checked;
+  if Save.Settings.Skin <> ComboBoxSkin.Items[ComboBoxSkin.ItemIndex] then
+  begin
+    SataniaSketch.DeleteAll;
+    Satania.BackgroundScriptClearAll;
+    FormChat.ComboBoxService.ItemIndex := 0;
+    Save.Settings.Skin := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
+    IsSkinChanged := True;
+  end;
+  Save.Settings.EmailServer := EditEmailServer.Text;
+  Save.Settings.EmailPort := EditEmailPort.Value;
+  Save.Settings.EmailUsername := EditEmailUsername.Text;
+  Save.Settings.EmailFetchFrom := EditEmailFetchFrom.Text;
+
+  Save.Settings.EmailSMTPServer := EditEmailSMTPServer.Text;
+  Save.Settings.EmailSMTPPort := EditEmailSMTPPort.Value;
+  Save.Settings.EmailSMTPUsername := EditEmailSMTPUsername.Text;
+
+  Save.Settings.EmbeddedServerPort := EditEmbeddedServerPort.Value;
+  Save.Settings.EmbeddedServerEnable := CheckBoxEmbeddedServerEnable.Checked;
+
+  Save.Settings.ChatWindowFont := EditChatWindowFont.Text;
+  Save.Settings.ChatWindowFontSize := EditChatWindowFontSize;
+  Save.Settings.ChatWindowColorBackground := ColorButtonChatWindowBackground.ButtonColor;
+  Save.Settings.ChatWindowColorUserName := ColorButtonChatWindowUserName.ButtonColor;
+  Save.Settings.ChatWindowColorCharacterName := ColorButtonChatWindowCharacterName.ButtonColor;
+  Save.Settings.ChatWindowColorSystemName := ColorButtonChatWindowSystemName.ButtonColor;
+  Save.Settings.ChatWindowColorNormalText := ColorButtonChatWindowNormalText.ButtonColor;
+  Save.Settings.ChatWindowColorItalicText := ColorButtonChatWindowItalicText.ButtonColor;
+  Save.Settings.ChatWindowColorCodeBlockText := ColorButtonChatWindowCodeBlockText.ButtonColor;
+  Save.Settings.ChatWindowClearType := CheckBoxChatWindowCleartype.Checked;
+
+  Save.Settings.ChatBubbleFont := EditChatBubbleFont.Text;
+  Save.Settings.ChatBubbleFontSize := EditChatBubbleFontSize;
+  Save.Settings.ChatBubbleSizeX := EditChatBubbleSizeX.Value;
+  Save.Settings.ChatBubbleSizeY := EditChatBubbleSizeY.Value;
+  Save.Settings.ChatBubbleClearType := CheckBoxChatBubbleCleartype.Checked;
+
+  if EditEmailPassword.Text <> '' then
+    Save.Settings.EmailPassword := Encrypt(EditEmailPassword.Text)
+  else
+    Save.Settings.EmailPassword := '';
+  if EditEmailSMTPPassword.Text <> '' then
+    Save.Settings.EmailSMTPPassword := Encrypt(EditEmailSMTPPassword.Text)
+  else
+    Save.Settings.EmailSMTPPassword := '';
+
+  Save.Settings.EmailUseSSL := CheckBoxEmailUseSSL.Checked;
+  Save.Settings.EmailSMTPUseSSL := CheckBoxEmailSMTPUseSSL.Checked;
+  Save.SaveToFile('configs.json');
+  FormChat.LoadServiceList;
+  SataniaIMAP.Disconnect;
+  //
+  ApplicationProperties.LimitFPS := Save.Settings.FPS;
+  FormBubble.TypingSpeed := Save.Settings.TextSpeed;
+  Satania.SetImageQuality(Save.Settings.ImageQuality);
+  Satania.UpdateMeta(Satania.Script);
+  Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
+  Satania.SpriteAsSpine.AnimateSkipTicks := Save.Settings.FrameSkip;
+  Satania.SpriteAsX3D.AnimateSkipTicks := Save.Settings.FrameSkip;
+  Satania.UpdateMenuItems;
+
+  // Load local flag
+  Satania.LoadLocalFlags;
+  //
+  FormChat.ApplySettings;
+  FormBubble.ApplySettings;
+
+  if (ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex] <> Save.Settings.STTVoskModel)
+    or (ComboBoxSTTBackend.ItemIndex <> Save.Settings.STTBackend) then
+  begin
+    Save.Settings.STTBackend := ComboBoxSTTBackend.ItemIndex;
+    Save.Settings.STTVoskModel := ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex];
+    if Save.SpeechToText then
+      SataniaSpeechToText.Enable;
+  end;
+  if IsSkinChanged then
+  begin
+    FormChat.LoadChatHistoryFromFile;
+  end;
+end;
+
+procedure TFormSettings.ButtonApplyClick(Sender: TObject);
+begin
   try
-    Save.Settings.Lewd := CheckBoxLewd.Checked;
-    Save.Settings.DeveloperMode := CheckBoxDeveloperMode.Checked;
-    Save.Settings.FPS := EditFPS.Value;
-    Save.Settings.ChatBubbleDelay := EditChatBubbleDelay.Value;
-    Save.Settings.SitOnWindowRightMargin := EditSoWRightMargin.Value;
-    Save.Settings.TextSpeed := EditTextSpeed.Value;
-    Save.Settings.BaseScaling := EditBaseScaling.Value;
-    Save.Settings.DefaultEvilScheme := EditDefaultEvilScheme.Text;
-    Save.Settings.ImageQuality := ComboBoxImageQuality.Items[ComboBoxImageQuality.ItemIndex]; 
-    Save.Settings.ChatWindowFont := EditChatWindowFont.Text;
-    Save.Settings.ChatWindowFontSize := EditChatWindowFontSize;
-    Save.Settings.ChatWindowColorBackground := ColorButtonChatWindowBackground.Color;
-    Save.Settings.ChatWindowColorUserName := ColorButtonChatWindowUserName.Color;
-    Save.Settings.ChatWindowColorCharacterName := ColorButtonChatWindowCharacterName.Color;
-    Save.Settings.ChatWindowColorSystemName := ColorButtonChatWindowSystemName.Color;
-    Save.Settings.ChatWindowColorNormalText := ColorButtonChatWindowNormalText.Color;
-    Save.Settings.ChatWindowColorItalicText := ColorButtonChatWindowItalicText.Color;
-    Save.Settings.ChatWindowColorCodeBlockText := ColorButtonChatWindowCodeBlockText.Color;
-    Save.Settings.FrameSkip := EditFrameSkip.Value;
-    Save.Settings.Rules := CheckBoxRules.Checked;
-    Save.Settings.ChatSpeechBalloon := CheckBoxChatSpeechBalloon.Checked;
-    Save.Settings.UserName := EditYourName.Text;
-    Save.Settings.SystemErrorMessage := CheckBoxErrorMessage.Checked;
-    Save.Settings.EnableItalicForUserText := CheckBoxEnableItalicForUserText.Checked;
-    // Clear sketch and workers if skin is changed
-    Save.Settings.ChatWindowClearType := CheckBoxChatWindowCleartype.Checked;
-    if Save.Settings.Skin <> ComboBoxSkin.Items[ComboBoxSkin.ItemIndex] then
-    begin
-      SataniaSketch.DeleteAll;
-      Satania.BackgroundScriptClearAll;
-      FormChat.ComboBoxService.ItemIndex := 0;
-      Save.Settings.Skin := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
-      IsSkinChanged := True;
-    end;
-    Save.Settings.EmailServer := EditEmailServer.Text;
-    Save.Settings.EmailPort := EditEmailPort.Value;
-    Save.Settings.EmailUsername := EditEmailUsername.Text;
-    Save.Settings.EmailFetchFrom := EditEmailFetchFrom.Text;
-
-    Save.Settings.EmailSMTPServer := EditEmailSMTPServer.Text;
-    Save.Settings.EmailSMTPPort := EditEmailSMTPPort.Value;
-    Save.Settings.EmailSMTPUsername := EditEmailSMTPUsername.Text;
-
-    Save.Settings.EmbeddedServerPort := EditEmbeddedServerPort.Value;     
-    Save.Settings.EmbeddedServerEnable := CheckBoxEmbeddedServerEnable.Checked;
-
-    Save.Settings.ChatWindowFont := EditChatWindowFont.Text;
-    Save.Settings.ChatWindowFontSize := EditChatWindowFontSize;
-    Save.Settings.ChatWindowColorBackground := ColorButtonChatWindowBackground.ButtonColor;
-    Save.Settings.ChatWindowColorUserName := ColorButtonChatWindowUserName.ButtonColor;
-    Save.Settings.ChatWindowColorCharacterName := ColorButtonChatWindowCharacterName.ButtonColor;
-    Save.Settings.ChatWindowColorSystemName := ColorButtonChatWindowSystemName.ButtonColor;
-    Save.Settings.ChatWindowColorNormalText := ColorButtonChatWindowNormalText.ButtonColor;
-    Save.Settings.ChatWindowColorItalicText := ColorButtonChatWindowItalicText.ButtonColor;
-    Save.Settings.ChatWindowColorCodeBlockText := ColorButtonChatWindowCodeBlockText.ButtonColor;    
-    Save.Settings.ChatWindowClearType := CheckBoxChatWindowCleartype.Checked;
-
-    Save.Settings.ChatBubbleFont := EditChatBubbleFont.Text;
-    Save.Settings.ChatBubbleFontSize := EditChatBubbleFontSize;
-    Save.Settings.ChatBubbleSizeX := EditChatBubbleSizeX.Value;
-    Save.Settings.ChatBubbleSizeY := EditChatBubbleSizeY.Value;
-    Save.Settings.ChatBubbleClearType := CheckBoxChatBubbleCleartype.Checked;
-
-    if EditEmailPassword.Text <> '' then
-      Save.Settings.EmailPassword := Encrypt(EditEmailPassword.Text)
-    else
-      Save.Settings.EmailPassword := '';
-    if EditEmailSMTPPassword.Text <> '' then
-      Save.Settings.EmailSMTPPassword := Encrypt(EditEmailSMTPPassword.Text)
-    else
-      Save.Settings.EmailSMTPPassword := '';
-
-    Save.Settings.EmailUseSSL := CheckBoxEmailUseSSL.Checked;
-    Save.Settings.EmailSMTPUseSSL := CheckBoxEmailSMTPUseSSL.Checked;
-    Save.SaveToFile('configs.json');
-    FormChat.LoadServiceList;
-    SataniaIMAP.Disconnect;
-    //
-    ApplicationProperties.LimitFPS := Save.Settings.FPS;
-    FormBubble.TypingSpeed := Save.Settings.TextSpeed;
-    Satania.SetImageQuality(Save.Settings.ImageQuality);
-    Satania.UpdateMeta(Satania.Script);
-    Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
-    Satania.SpriteAsSpine.AnimateSkipTicks := Save.Settings.FrameSkip;
-    Satania.SpriteAsX3D.AnimateSkipTicks := Save.Settings.FrameSkip;
-    Satania.UpdateMenuItems;
-
-    // Load local flag
-    Satania.LoadLocalFlags;
-    //
-    FormChat.ApplySettings;
-    FormBubble.ApplySettings;
-
-    if (ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex] <> Save.Settings.STTVoskModel)
-      or (ComboBoxSTTBackend.ItemIndex <> Save.Settings.STTBackend) then
-    begin
-      Save.Settings.STTBackend := ComboBoxSTTBackend.ItemIndex;
-      Save.Settings.STTVoskModel := ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex];
-      if Save.SpeechToText then
-        SataniaSpeechToText.Enable;
-    end;
-    if IsSkinChanged then
-    begin
-      FormChat.LoadChatHistoryFromFile;
-    end;
-    Hide;
+    Self.Apply;
   except
     on E: Exception do
       Satania.Error(E.Message);
@@ -470,6 +476,17 @@ begin
     CD.Free;  
     MessageDlg('', 'Character cloned!', mtInformation, [mbOk], 0);
     ComboBoxSkin.Items.Add(NewSkinName);
+  end;
+end;
+
+procedure TFormSettings.ButtonOkClick(Sender: TObject);
+begin
+  try
+    Self.Apply;
+    Hide;
+  except
+    on E: Exception do
+      Satania.Error(E.Message);
   end;
 end;
 
