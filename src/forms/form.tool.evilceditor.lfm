@@ -121,7 +121,7 @@ object FormEvilCEditor: TFormEvilCEditor
       Style = tbsSeparator
     end
     object ToolButtonHelp: TToolButton
-      Left = 227
+      Left = 225
       Hint = 'Help'
       Top = 2
       Caption = 'Help'
@@ -161,13 +161,6 @@ object FormEvilCEditor: TFormEvilCEditor
       Height = 22
       Top = 2
       Caption = 'ToolButton3'
-      Style = tbsSeparator
-    end
-    object ToolButton4: TToolButton
-      Left = 219
-      Height = 22
-      Top = 2
-      Caption = 'ToolButton4'
       Style = tbsSeparator
     end
   end

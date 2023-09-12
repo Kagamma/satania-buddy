@@ -48,7 +48,6 @@ type
     ToolBar1: TToolBar;
     ToolButtonFind: TToolButton;
     ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
     ToolButtonHelp: TToolButton;
     ToolButton2: TToolButton;
     ToolButtonUndo: TToolButton;
