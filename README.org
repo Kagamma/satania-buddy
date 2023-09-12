@@ -7,7 +7,7 @@ Download page: https://kgm.itch.io/satania-buddy
 ***** Q: Overall system requirements?
 A:
 - CPU: Any decent x86_64 CPU should be able to run. I personally run it on an i7-6700HQ and it barely reach 1% CPU usage (around 2% - 3% with Speech Recognition enable).
-- RAM: The app consumes 100MB without Speech Recognition enable, and 300MB with Speech Recognition enable.
+- RAM: The app consumes 100MB without Speech Recognition enabled, and 300MB with Speech Recognition enabled.
 - GPU: Any decent intel iGPU with support for OpenGL 1.4 should be enough to run the app.
 
 ***** Q: Windows requirements?
@@ -15,8 +15,6 @@ A: Windows Vista or above with Aero enabled.
 
 ***** Q: Linux requirements?
 A: x11, qt5, qt5pas, freetype, openssl, openal, vorbis
-
-Optional dependencies: sensors
 
 You also need a compositor, or else the app will show black screen.
 
