@@ -151,8 +151,9 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonFind: TToolButton
       Left = 163
+      Hint = 'Find'
       Top = 2
-      Caption = 'About'
+      Caption = 'Find'
       ImageIndex = 26
       OnClick = ToolButtonFindClick
     end
@@ -165,6 +166,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonReplace: TToolButton
       Left = 186
+      Hint = 'Replace All'
       Top = 2
       Caption = 'Replace'
       ImageIndex = 27
