@@ -28,7 +28,8 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
   SynEdit, SynEditMarkupSpecialLine, SynCompletion,
   LCLTranslator, lclintf, Menus,
-  Mcdowell.EvilC, Types, LCLType, SynFacilHighlighter, SynFacilBasic;
+  Mcdowell.EvilC, Types, LCLType, SynFacilHighlighter, SynFacilBasic,
+  SynEditTypes;
 
 type
 
@@ -45,6 +46,9 @@ type
     StatusBar: TStatusBar;
     SynCompletion: TSynCompletion;
     ToolBar1: TToolBar;
+    ToolButtonFind: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
     ToolButtonHelp: TToolButton;
     ToolButton2: TToolButton;
     ToolButtonUndo: TToolButton;
@@ -71,6 +75,7 @@ type
     procedure SynCompletionBeforeExecute(ASender: TSynBaseCompletion;
       var ACurrentString: String; var APosition: Integer; var AnX,
       AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
+    procedure ToolButtonFindClick(Sender: TObject);
     procedure ToolButtonHelpClick(Sender: TObject);
     procedure ToolButtonNewClick(Sender: TObject);
     procedure ToolButtonOpenClick(Sender: TObject);
@@ -85,9 +90,11 @@ type
     Script: TEvilC;
     Highlighter: TSynFacilSyn;
     procedure GenerateAutoComplete(const ASource: String = '');
-    procedure LoadHighligher(const Ext: String);
+    procedure LoadHighligher(const Ext: String);                    
+    procedure FindNext;
   public
     ErrorPos: TPoint;
+    SearchText: String;
     WorkingFile: String;
     procedure LoadFromFile(const AFileName: String);
   end;
@@ -213,6 +220,23 @@ begin
   Self.GenerateAutoComplete(Editor.Lines.Text);
 end;
 
+procedure TFormEvilCEditor.ToolButtonFindClick(Sender: TObject);
+begin
+  SearchText := '';
+  if InputQuery('Find', 'Type a text to find', False, Self.SearchText) then
+  begin
+    Editor.SearchReplace(Self.SearchText, '', []);
+  end;
+end;
+
+procedure TFormEvilCEditor.FindNext;
+begin
+  if SearchText <> '' then
+  begin
+    Editor.SearchReplace(Self.SearchText, '', [ssoFindContinue]);
+  end;
+end;
+
 procedure TFormEvilCEditor.ToolButtonHelpClick(Sender: TObject);
 begin
   OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Scripting-Reference');
@@ -301,9 +325,17 @@ begin
   begin
     ToolButtonRunClick(Self);
   end else
-  if (Key = 83) and (Shift = [ssCtrl]) then
+  if (Key = VK_S) and (Shift = [ssCtrl]) then
   begin
     ToolButtonSaveClick(Self);
+  end else
+  if (Key = VK_F) and (Shift = [ssCtrl]) then
+  begin
+    Self.ToolButtonFindClick(Self);
+  end else
+  if Key = VK_F3 then
+  begin
+    Self.FindNext;
   end;
 end;
 

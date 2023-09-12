@@ -51,7 +51,6 @@ object FormEvilCEditor: TFormEvilCEditor
   OnDestroy = FormDestroy
   Position = poDefaultPosOnly
   ShowInTaskBar = stAlways
-  LCLVersion = '2.3.0.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
@@ -79,13 +78,13 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator2: TToolButton
       Left = 101
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator2'
       Style = tbsSeparator
     end
     object ToolButtonRun: TToolButton
-      Left = 163
+      Left = 194
       Hint = 'Run'
       Top = 2
       Caption = 'Run'
@@ -102,7 +101,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator1: TToolButton
       Left = 24
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator1'
       Style = tbsSeparator
@@ -116,13 +115,13 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator3: TToolButton
       Left = 186
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator3'
       Style = tbsSeparator
     end
     object ToolButtonHelp: TToolButton
-      Left = 194
+      Left = 227
       Hint = 'Help'
       Top = 2
       Caption = 'Help'
@@ -131,7 +130,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton2: TToolButton
       Left = 155
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButton2'
       Style = tbsSeparator
@@ -149,6 +148,27 @@ object FormEvilCEditor: TFormEvilCEditor
       Caption = 'Redo'
       ImageIndex = 12
       OnClick = ToolButtonRedoClick
+    end
+    object ToolButtonFind: TToolButton
+      Left = 163
+      Top = 2
+      Caption = 'About'
+      ImageIndex = 26
+      OnClick = ToolButtonFindClick
+    end
+    object ToolButton3: TToolButton
+      Left = 217
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton3'
+      Style = tbsSeparator
+    end
+    object ToolButton4: TToolButton
+      Left = 219
+      Height = 22
+      Top = 2
+      Caption = 'ToolButton4'
+      Style = tbsSeparator
     end
   end
   inline Editor: TSynEdit
