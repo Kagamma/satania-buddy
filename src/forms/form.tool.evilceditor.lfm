@@ -84,7 +84,7 @@ object FormEvilCEditor: TFormEvilCEditor
       Style = tbsSeparator
     end
     object ToolButtonRun: TToolButton
-      Left = 194
+      Left = 217
       Hint = 'Run'
       Top = 2
       Caption = 'Run'
@@ -114,14 +114,14 @@ object FormEvilCEditor: TFormEvilCEditor
       OnClick = ToolButtonSaveAsClick
     end
     object ToolButtonSeparator3: TToolButton
-      Left = 186
+      Left = 209
       Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator3'
       Style = tbsSeparator
     end
     object ToolButtonHelp: TToolButton
-      Left = 225
+      Left = 248
       Hint = 'Help'
       Top = 2
       Caption = 'Help'
@@ -157,11 +157,18 @@ object FormEvilCEditor: TFormEvilCEditor
       OnClick = ToolButtonFindClick
     end
     object ToolButton3: TToolButton
-      Left = 217
+      Left = 240
       Height = 22
       Top = 2
       Caption = 'ToolButton3'
       Style = tbsSeparator
+    end
+    object ToolButtonReplace: TToolButton
+      Left = 186
+      Top = 2
+      Caption = 'Replace'
+      ImageIndex = 27
+      OnClick = ToolButtonReplaceClick
     end
   end
   inline Editor: TSynEdit

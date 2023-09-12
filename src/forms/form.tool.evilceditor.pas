@@ -46,6 +46,7 @@ type
     StatusBar: TStatusBar;
     SynCompletion: TSynCompletion;
     ToolBar1: TToolBar;
+    ToolButtonReplace: TToolButton;
     ToolButtonFind: TToolButton;
     ToolButton3: TToolButton;
     ToolButtonHelp: TToolButton;
@@ -79,6 +80,7 @@ type
     procedure ToolButtonNewClick(Sender: TObject);
     procedure ToolButtonOpenClick(Sender: TObject);
     procedure ToolButtonRedoClick(Sender: TObject);
+    procedure ToolButtonReplaceClick(Sender: TObject);
     procedure ToolButtonRunClick(Sender: TObject);
     procedure ToolButtonSaveAsClick(Sender: TObject);
     procedure ToolButtonSaveClick(Sender: TObject);
@@ -222,7 +224,7 @@ end;
 procedure TFormEvilCEditor.ToolButtonFindClick(Sender: TObject);
 begin
   SearchText := '';
-  if InputQuery('Find', 'Type a text to find', False, Self.SearchText) then
+  if InputQuery('Find', 'Search string', False, Self.SearchText) then
   begin
     Editor.SearchReplace(Self.SearchText, '', []);
   end;
@@ -332,6 +334,10 @@ begin
   begin
     Self.ToolButtonFindClick(Self);
   end else
+  if (Key = VK_R) and (Shift = [ssCtrl]) then
+  begin
+    Self.ToolButtonReplaceClick(Self);
+  end else
   if Key = VK_F3 then
   begin
     Self.FindNext;
@@ -355,6 +361,19 @@ end;
 procedure TFormEvilCEditor.ToolButtonRedoClick(Sender: TObject);
 begin
   Editor.Redo;
+end;
+
+procedure TFormEvilCEditor.ToolButtonReplaceClick(Sender: TObject);
+var
+  ATexts: array of String;
+begin
+  SearchText := '';
+  SetLength(ATexts, 2);
+  if InputQuery('Replace All', ['Search string', 'Replace with'], ATexts) then
+  begin
+    SearchText := ATexts[0];
+    Editor.SearchReplace(ATexts[0], ATexts[1], [ssoEntireScope, ssoReplaceAll]);
+  end;
 end;
 
 procedure TFormEvilCEditor.ToolButtonRunClick(Sender: TObject);
