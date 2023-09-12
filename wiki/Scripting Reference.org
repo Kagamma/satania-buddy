@@ -826,7 +826,7 @@ number)*
 - Stop an animation.
 *sprite_animation_talk_set(loop, finish: string, random_script_files: map of strings)*
 -  Set default talking animations.
-- ~random_script_files~ is optional, which indicates which script to run when start talking
+- ~random_script_files~ is optional, which indicates which script to run when start talking. This is useful if you want your character to play different animations when start talking.
 *sprite_scale_set(scale: number)*
 - Scale the sprite.
 *sprite_visible_set(visible: boolean)*
