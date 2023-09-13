@@ -316,7 +316,7 @@ procedure TFormEvilCEditor.EditorChange(Sender: TObject);
 begin
   ErrorPos.Y := -1;
   if (WorkingFile <> '') and (Caption[1] <> '*') then
-    Caption := '*' + ExtractFileName(WorkingFile);
+    Caption := '*' + WorkingFile;
 end;
 
 procedure TFormEvilCEditor.EditorKeyDown(Sender: TObject; var Key: Word;
@@ -404,7 +404,7 @@ procedure TFormEvilCEditor.ToolButtonSaveAsClick(Sender: TObject);
 begin
   if SaveDialog.Execute then
   begin
-    Caption := ExtractFileName(SaveDialog.FileName);
+    Caption := SaveDialog.FileName;
     WorkingFile := SaveDialog.FileName;
     Editor.Lines.SaveToFile(WorkingFile);
     Self.ToolButtonSave.Enabled := True;
@@ -417,12 +417,12 @@ begin
   if WorkingFile <> '' then
   begin
     Editor.Lines.SaveToFile(WorkingFile);
-    Caption := ExtractFileName(WorkingFile);
+    Caption := WorkingFile;
     Editor.Modified := False;
   end else
   if SaveDialog.Execute then
   begin
-    Caption := ExtractFileName(SaveDialog.FileName);
+    Caption := SaveDialog.FileName;
     WorkingFile := SaveDialog.FileName;
     Editor.Lines.SaveToFile(WorkingFile);
     Editor.Modified := False;
@@ -431,7 +431,7 @@ end;
 
 procedure TFormEvilCEditor.OpenRules;
 begin
-  Caption := ExtractFileName('data/nn/chatbot/rules.json');
+  Caption := 'data/nn/chatbot/rules.json';
   WorkingFile := 'data/nn/chatbot/rules.json';
   Editor.Lines.LoadFromFile('data/nn/chatbot/rules.json');
   StatusBar.Panels[1].Text := '';
@@ -444,7 +444,7 @@ end;
 
 procedure TFormEvilCEditor.LoadFromFile(const AFileName: String);
 begin
-  Caption := ExtractFileName(AFileName);
+  Caption := AFileName;
   WorkingFile := AFileName;
   Editor.Lines.LoadFromFile(AFileName);
   StatusBar.Panels[1].Text := '';
