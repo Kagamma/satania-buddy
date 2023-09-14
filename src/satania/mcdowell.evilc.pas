@@ -5378,7 +5378,7 @@ var
                   end;
                 end;
               else
-                Error(Format('Unknown identify "%s"', [Token.Value]), Token);
+                Error(Format('Unknown identifier "%s"', [Token.Value]), Token);
             end;
           end;
       end;
