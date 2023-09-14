@@ -758,6 +758,9 @@ number, consts: map): string*
 *tool_evilc_editor(filename: string)*
 - Open a file with built-in EvilC editor.
 
+*tool_hex_editor(filename: string)*
+- Open a file with built-in hex editor.
+
 ** Memory management
 *mem_used(): number*
 - Return memory usage by script engine in bytes.
