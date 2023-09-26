@@ -2559,7 +2559,7 @@ procedure TSEGarbageCollector.Lock(const PValue: PSEValue);
 var
   Value: TSEGCValue;
 begin
-  if (PValue^.Kind <> sevkMap) and (PValue^.Kind <> sevkString) then
+  if (PValue^.Kind <> sevkMap) and (PValue^.Kind <> sevkString) and (PValue^.Kind <> sevkBuffer) then
     Exit;
   Value := Self.FValueList[PValue^.Ref];
   Value.Lock := True;
@@ -2570,7 +2570,7 @@ procedure TSEGarbageCollector.Unlock(const PValue: PSEValue);
 var
   Value: TSEGCValue;
 begin
-  if (PValue^.Kind <> sevkMap) and (PValue^.Kind <> sevkString) then
+  if (PValue^.Kind <> sevkMap) and (PValue^.Kind <> sevkString) and (PValue^.Kind <> sevkBuffer) then
     Exit;
   Value := Self.FValueList[PValue^.Ref];
   Value.Lock := False;
