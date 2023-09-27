@@ -188,8 +188,8 @@ type
   PPSEValue = ^PSEValue;
 
   TSEGCValue = record
-    Garbage: Boolean;
     Value: TSEValue;
+    Garbage: Boolean;
     Lock: Boolean;
   end;
   TSEGCValueList = specialize TList<TSEGCValue>;
