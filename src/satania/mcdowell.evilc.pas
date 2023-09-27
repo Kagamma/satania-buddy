@@ -5660,7 +5660,6 @@ var
       NextTokenExpected([tkBracketOpen]);
       NextTokenExpected([tkBracketClose]);
     end;
-    ArgCount := Max(0, ArgCount);
     if FuncNativeInfo <> nil then
     begin
       Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), Pointer(ArgCount)]);
