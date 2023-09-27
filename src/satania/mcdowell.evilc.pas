@@ -6464,6 +6464,14 @@ var
       tkYield:
         begin
           NextToken;
+          if PeekAtNextToken.Kind = tkBracketOpen then
+          begin
+            NextToken;
+            Token.Kind := tkEqual;
+            TokenList.Insert(Pos + 1, Token); // Insert equal token
+            ParseVarAssign('___result');
+            NextTokenExpected([tkBracketClose]);
+          end;
           Emit([Pointer(opYield)]);
         end;
       tkColon:
@@ -6591,13 +6599,15 @@ begin
   Self.IncludeList.Clear;
   Self.ScopeFunc.Clear;
   Self.ScopeStack.Clear;
-  Self.GlobalVarCount := 1;
+  Self.GlobalVarCount := 2;
   Self.VarList.Count := Self.GlobalVarCount; // Safeguard
   Ident.Kind := ikVariable;
   Ident.Addr := 0;
   Ident.Name := 'result';
   Ident.Local := 0;
   Self.VarList[0] := Ident;
+  Ident.Name := '___result';
+  Self.VarList[1] := Ident;
   ErrorLn := -1;
   ErrorCol := -1;
   FuncTraversal := 0;
