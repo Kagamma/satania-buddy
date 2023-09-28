@@ -5161,6 +5161,18 @@ var
                 SEValueNotEqual(V, V1, V2);
                 Emit([Pointer(opPushConst), V]);
               end;
+            opOperatorShiftLeft:
+              begin
+                Pop2;
+                SEValueShiftLeft(V, V1, V2);
+                Emit([Pointer(opPushConst), V]);
+              end;
+            opOperatorShiftRight:
+              begin
+                Pop2;
+                SEValueShiftRight(V, V1, V2);
+                Emit([Pointer(opPushConst), V]);
+              end;
             else
               begin
                 PushConstCount := 0;
