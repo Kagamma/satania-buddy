@@ -124,7 +124,7 @@ d['a'] = 5
 // 'd' is no longer a valid array
 #+end_example
 
-- /Strings are copy-of-write, while maps are passed by reference./
+- /Strings are copy-on-write, while maps are passed by reference./
 
 *** Statements
 
