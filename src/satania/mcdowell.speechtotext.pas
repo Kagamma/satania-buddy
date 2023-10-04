@@ -29,7 +29,7 @@ uses
   {$I mcdowell.speechtotext_windows.inc}
   {$undef unit_declare_interface}
   Classes, SysUtils,
-  vosk, voskthread, voskbassaudiosource;
+  vosk, SttThread, BassAudioSource;
 
 type
   TSataniaSpeechToText = class
@@ -137,6 +137,10 @@ begin
       FVoskThread.AudioSource := TBassAudioSource.Create(GetMicrophoneDeviceIdx);
       FVoskThread.Active := True;
     end;
+  end else
+  if Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_WHISPER then
+  begin
+
   end;
   exit(True);
 end;

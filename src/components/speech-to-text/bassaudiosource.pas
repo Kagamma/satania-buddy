@@ -18,14 +18,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 }
 
-unit voskbassaudiosource;
+unit BassAudioSource;
 
 {$mode ObjFPC}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, Dialogs, voskthread, bass;
+  Classes, SysUtils, Dialogs, SttThread, bass;
 
 type
 

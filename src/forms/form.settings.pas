@@ -62,6 +62,7 @@ type
     ComboBoxSkin: TComboBox;
     ComboBoxSTTBackend: TComboBox;
     ComboBoxImageQuality: TComboBox;
+    ComboBoxSTTWhisperModel: TComboBox;
     EditChatBubbleDelay: TSpinEdit;
     EditChatBubbleSizeX: TSpinEdit;
     EditChatBubbleSizeY: TSpinEdit;
@@ -88,6 +89,7 @@ type
     GroupBoxEmailIMAP: TGroupBox;
     GroupBoxEmailSMTP: TGroupBox;
     GroupBoxSTTVosk: TGroupBox;
+    GroupBoxSTTWhisper: TGroupBox;
     Label1: TLabel;
     Label4: TLabel;
     LabelChatbotServer4: TLabel;
@@ -123,6 +125,7 @@ type
     LabelChatWindowFont: TLabel;
     LabelChatWindowCleartype: TLabel;
     LabelRules: TLabel;
+    LabelSTTModel2: TLabel;
     LabelTextSpeed: TLabel;
     LabelYourName: TLabel;
     LabelSTTBackend: TLabel;
@@ -137,6 +140,7 @@ type
     LabelImageQuality: TLabel;
     ListBoxSettings: TListBox;
     PageControl: TPageControl;
+    Panel1: TPanel;
     PanelButtons: TPanel;
     PanelSettings: TPanel;
     ButtonChatWindowFont: TSpeedButton;
@@ -196,6 +200,7 @@ begin
   ListboxSettings.ItemIndex := 0;
   ComboBoxSTTBackend.Items.Clear;
   ComboBoxSTTBackend.Items.Add('Vosk');
+  ComboBoxSTTBackend.Items.Add('whisper.cpp');
   {$ifdef WINDOWS}
   ComboBoxSTTBackend.Items.Add('Microsoft Speech Object Library');
   {$endif}
@@ -276,6 +281,7 @@ begin
   EditEmailSMTPPort.Value := Save.Settings.EmailSMTPPort;
   EditEmailSMTPUsername.Text := Save.Settings.EmailSMTPUsername;
 
+  // Vosk loader
   ComboBoxSTTVoskModel.Clear;
   SL := TStringList.Create;
   FindAllDirectories(SL, 'data/nn/vosk', False);
@@ -286,6 +292,21 @@ begin
     if S = Save.Settings.STTVoskModel then
     begin
       ComboBoxSTTVoskModel.ItemIndex := ComboBoxSTTVoskModel.Items.Count - 1;
+    end;
+  end;
+  SL.Free;
+
+  // whisper loader
+  ComboBoxSTTWhisperModel.Clear;
+  SL := TStringList.Create;
+  FindAllFiles(SL, 'data/nn/whisper.cpp', '*.bin', False);
+  for I := 0 to SL.Count - 1 do
+  begin
+    S := ExtractFileName(SL[I]);
+    ComboBoxSTTWhisperModel.Items.Add(S);
+    if S = Save.Settings.STTWhisperModel then
+    begin
+      ComboBoxSTTWhisperModel.ItemIndex := ComboBoxSTTWhisperModel.Items.Count - 1;
     end;
   end;
   SL.Free;
@@ -492,10 +513,8 @@ end;
 
 procedure TFormSettings.ComboBoxSTTBackendChange(Sender: TObject);
 begin
-  if ComboBoxSTTBackend.ItemIndex <> SPEECH_RECOGNIZER_BACKEND_VOSK then
-    GroupBoxSTTVosk.Enabled := False
-  else
-    GroupBoxSTTVosk.Enabled := True;
+  GroupBoxSTTVosk.Visible := ComboBoxSTTBackend.ItemIndex = SPEECH_RECOGNIZER_BACKEND_VOSK;
+  GroupBoxSTTWhisper.Visible := ComboBoxSTTBackend.ItemIndex = SPEECH_RECOGNIZER_BACKEND_WHISPER;
 end;
 
 procedure TFormSettings.ButtonCancelClick(Sender: TObject);

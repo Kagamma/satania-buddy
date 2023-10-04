@@ -37,11 +37,11 @@ uses
   mcdowell.chatbot, mcdowell.chatbot.train, form.tool.evilceditor,
   mcdowell.imap, Mcdowell.SpeechToText, frame.reminders.item, form.reminders,
   form.Main, form.touch, mcdowell.sound, form.rules, frame.rules.item,
-  frame.rules.edititem, vosk, voskthread, voskbassaudiosource, mcdowell.chat,
-  mcdowell.net, mcdowell.numbers, utils.strings, utils.encdec, utils.coords,
-  utils.threads, utils.files, mcdowell.smtp, utils.smartptr, Com.Talk,
-  Com.Brokers, form.ask, utils.sprites, mcdowell.sketch,
-  form.tool.hexeditor, Mcdowell.RichText, Form.Bubble, Utils.Colors, CopyDir;
+  frame.rules.edititem, mcdowell.chat, mcdowell.net, mcdowell.numbers,
+  utils.strings, utils.encdec, utils.coords, utils.threads, utils.files,
+  mcdowell.smtp, utils.smartptr, Com.Talk, Com.Brokers, form.ask, utils.sprites,
+  mcdowell.sketch, form.tool.hexeditor, Mcdowell.RichText, Form.Bubble,
+  Utils.Colors, CopyDir, Vosk, BassAudioSource, SttThread, whisper;
 
 {$R *.res}
 

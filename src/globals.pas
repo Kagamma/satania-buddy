@@ -42,7 +42,8 @@ const
   PATH_VOSK = 'data/nn/vosk/';
   SECRET_KEY = 'satania_mcdowell';
   SPEECH_RECOGNIZER_BACKEND_VOSK = 0;
-  SPEECH_RECOGNIZER_BACKEND_SAPI = 1;
+  SPEECH_RECOGNIZER_BACKEND_WHISPER = 1;
+  SPEECH_RECOGNIZER_BACKEND_SAPI = 2;
   CHATMODE_SCRIPT = 1;
   CHATMODE_CHAT = 0;
   SETTINGS_VERSION = 1;
@@ -179,6 +180,7 @@ type
     FLastServiceUsed,
     FSkin: String;
     FSTTVoskModel: String;
+    FSTTWhisperModel: String;
     FSTTBackend: Integer;
     FChatWindowFont: String;
     FChatWindowFontSize: Integer;
@@ -222,7 +224,8 @@ type
     property Lewd: Boolean read FLewd write FLewd default False;
     property DeveloperMode: Boolean read FDeveloperMode write FDeveloperMode default False;
     property Skin: String read FSkin write FSkin;
-    property STTVoskModel: String read FSTTVoskModel write FSTTVoskModel;
+    property STTVoskModel: String read FSTTVoskModel write FSTTVoskModel; 
+    property STTWhisperModel: String read FSTTWhisperModel write FSTTWhisperModel;
     property STTBackend: Integer read FSTTBackend write FSTTBackend default 0;
     property UserName: String read FUserName write FUserName;
     property Rules: Boolean read FRules write FRules default False;
