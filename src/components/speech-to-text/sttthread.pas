@@ -251,6 +251,8 @@ end;
 destructor TWhisperThread.Destroy;
 begin
   IsRunning := False;
+  if Assigned(FAudioSource) then
+    FAudioSource.Free;
   if Self.FContext <> nil then
     whisper_free(Self.FContext);
   inherited;
@@ -260,6 +262,7 @@ procedure TWhisperThread.Init;
 begin
   Self.FContext := whisper_init_from_file(PChar(Self.ModelPath));
 
+  Self.FParams := whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
   Self.FParams := whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
   Self.FParams.n_threads := 4;
   Self.FParams.strategy := WHISPER_SAMPLING_GREEDY;
