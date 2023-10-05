@@ -35,11 +35,12 @@ type
   TSataniaSpeechToText = class
   protected
     FVoskThread: TVoskThread;
+    FWhisperThread: TWhisperThread;
     {$define unit_protected}
     {$I mcdowell.speechtotext_windows.inc}
     {$undef unit_protected}
-    procedure OnVoskStateChange(Sender: TObject; AState: TVoskState);
-    procedure OnVoskHypothesis(Sender: TObject; AScore: Integer; AHypothesis: String);
+    procedure OnSttStateChange(Sender: TObject; AState: TSttState);
+    procedure OnSttHypothesis(Sender: TObject; AScore: Integer; AHypothesis: String);
   public
     constructor Create;
     destructor Destroy; override;
@@ -65,7 +66,6 @@ uses
 constructor TSataniaSpeechToText.Create;
 begin
   inherited;
-  FVoskThread := nil;
 end;
 
 destructor TSataniaSpeechToText.Destroy;
@@ -74,15 +74,15 @@ begin
   inherited;
 end;
 
-procedure TSataniaSpeechToText.OnVoskStateChange(Sender: TObject;
-  AState: TVoskState);
+procedure TSataniaSpeechToText.OnSttStateChange(Sender: TObject;
+  AState: TSttState);
 begin
   case AState of
-    rsNotInitialized: ;
-    rsInitialized: Satania.Log('I''m listening.');
-    rsReady: ;
-    rsListening: ;
-    rsAnalyze:
+    sttNotInitialized: ;
+    sttInitialized: Satania.Log('I''m listening.');
+    sttReady: ;
+    sttListening: ;
+    sttAnalyze:
       begin
         //if not Satania.IsTalking then
         //  Satania.Talk('...');
@@ -90,7 +90,7 @@ begin
   end;
 end;
 
-procedure TSataniaSpeechToText.OnVoskHypothesis(Sender: TObject;
+procedure TSataniaSpeechToText.OnSttHypothesis(Sender: TObject;
   AScore: Integer; AHypothesis: String);
 begin
   if (AHypothesis <> 'huh') and FormBubble.FinishedTyping then
@@ -106,6 +106,11 @@ begin
   begin
     FVoskThread.Terminate;
     FVoskThread := nil;
+  end;      
+  if FWhisperThread <> nil then
+  begin
+    FWhisperThread.Terminate;
+    FWhisperThread := nil;
   end;
   {$ifdef WINDOWS}
   SpDisable;
@@ -126,13 +131,13 @@ begin
   begin
     FVoskThread := TVoskThread.Create;
 
-    FVoskThread.OnStateChange := @OnVoskStateChange;
-    FVoskThread.OnHypothesis := @OnVoskHypothesis;
+    FVoskThread.OnStateChange := @OnSttStateChange;
+    FVoskThread.OnHypothesis := @OnSttHypothesis;
 
     FVoskThread.ModelPath := PATH_VOSK + Save.Settings.STTVoskModel;
 
     FVoskThread.Init;
-    if FVoskThread.State = rsInitialized then
+    if FVoskThread.State = sttInitialized then
     begin
       FVoskThread.AudioSource := TBassAudioSource.Create(GetMicrophoneDeviceIdx);
       FVoskThread.Active := True;
@@ -140,7 +145,19 @@ begin
   end else
   if Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_WHISPER then
   begin
+    FWhisperThread := TWhisperThread.Create;
 
+    FWhisperThread.OnStateChange := @OnSttStateChange;
+    FWhisperThread.OnHypothesis := @OnSttHypothesis;
+
+    FWhisperThread.ModelPath := PATH_WHISPER + Save.Settings.STTWhisperModel;
+
+    FWhisperThread.Init;
+    if FVoskThread.State = sttInitialized then
+    begin
+      FWhisperThread.AudioSource := TBassAudioSource.Create(GetMicrophoneDeviceIdx);
+      FWhisperThread.Active := True;
+    end;
   end;
   exit(True);
 end;
@@ -148,7 +165,8 @@ end;
 function TSataniaSpeechToText.IsLoaded: Boolean;
 begin
   Result := True;
-  if Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_VOSK then
+  if (Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_VOSK) or
+     (Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_WHISPER) then
     Result := vosk.Lib <> 0;
 end;
 

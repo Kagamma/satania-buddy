@@ -39,7 +39,8 @@ const
   PATH_FONT = 'castle-data:/fonts/';
   PATH_SOUND = 'castle-data:/sounds/';
   PATH_CHAT_HISTORY = 'data/chat_history/';
-  PATH_VOSK = 'data/nn/vosk/';
+  PATH_VOSK = 'data/nn/vosk/';                
+  PATH_WHISPER = 'data/nn/whisper.cpp/';
   SECRET_KEY = 'satania_mcdowell';
   SPEECH_RECOGNIZER_BACKEND_VOSK = 0;
   SPEECH_RECOGNIZER_BACKEND_WHISPER = 1;
@@ -371,6 +372,7 @@ begin
   FSettings.FrameSkip := 0;
   FSettings.Lewd := False;
   FSettings.Skin := 'satania (bloomers)';
+  FSettings.STTWhisperModel := 'ggml-tiny.en-q5_1.bin';
   FSettings.STTVoskModel := 'english';
   FSettings.STTBackend := SPEECH_RECOGNIZER_BACKEND_VOSK;
   FSettings.FSitOnWindowRightMargin := 86;

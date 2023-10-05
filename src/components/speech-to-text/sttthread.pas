@@ -25,24 +25,24 @@ unit SttThread;
 interface
 
 uses
-  Classes, SysUtils, Vosk, JsonTools;
+  Classes, SysUtils, Vosk, whisper, JsonTools;
 
 type
-  TVoskState = (
-    rsNotInitialized, // Initial state
-    rsInitialized, // Indicates both decoder and audio device initialized successfully
-    rsReady, // Waiting for audio input
-    rsListening, // "In-speech"
-    rsAnalyze, // Recognizer is analyzing provided audio data
-    rsError // Error state, LastErrorMsg property stores the error message
+  TSttState = (
+    sttNotInitialized, // Initial state
+    sttInitialized, // Indicates both decoder and audio device initialized successfully
+    sttReady, // Waiting for audio input
+    sttListening, // "In-speech"
+    sttAnalyze, // Recognizer is analyzing provided audio data
+    sttError // Error state, LastErrorMsg property stores the error message
   );
 
 type
-  TOnVoskStateChange = procedure(Sender: TObject; AState: TVoskState) of object;
-  TOnVoskHypothesis = procedure(Sender: TObject; AScore: Integer; AHypothesis: String) of object;
+  TOnSttStateChange = procedure(Sender: TObject; AState: TSttState) of object;
+  TOnSttHypothesis = procedure(Sender: TObject; AScore: Integer; AHypothesis: String) of object;
 
 type
-  TVoskAudioSource = class
+  TSttAudioSource = class
   protected
     FReady: Boolean;
   public
@@ -51,34 +51,49 @@ type
   end;
 
 type
-  TVoskThread = class(TThread)
-  private            
-    FOnStateChange: TOnVoskStateChange;
-    FOnHypothesis: TOnVoskHypothesis;
-    FState: TVoskState;
+  TSttBaseThread = class(TThread)
+  protected
+    FOnStateChange: TOnSttStateChange;
+    FOnHypothesis: TOnSttHypothesis;
+    FState: TSttState;
     FActive: Boolean;
-    FAudioSource: TVoskAudioSource;
-    FModel: PVoskModel;
-    FRec: PVoskRecognizer;
+    FAudioSource: TSttAudioSource;
     FRecentHypothesis: String;
-    procedure SendHypothesis;   
-    procedure SendState;   
-    procedure SetState(S: TVoskState);
-    procedure SetAudioSource(AudioSource: TVoskAudioSource);
+    procedure SendHypothesis;
+    procedure SendState;
+    procedure SetState(S: TSttState);
+    procedure SetAudioSource(AudioSource: TSttAudioSource);
     procedure SetActive(V: Boolean);
   public
     ModelPath: String;
 
+    property Active: Boolean read FActive write SetActive;
+    property AudioSource: TSttAudioSource read FAudioSource write SetAudioSource;
+    property State: TSttState read FState write SetState;
+    property OnStateChange: TOnSttStateChange read FOnStateChange write FOnStateChange;
+    property OnHypothesis: TOnSttHypothesis read FOnHypothesis write FOnHypothesis;
+  end;
+
+  TVoskThread = class(TSttBaseThread)
+  protected
+    FModel: PVoskModel;
+    FRec: PVoskRecognizer;
+  public
     constructor Create;
     procedure Init;
     destructor Destroy; override;
     procedure Execute; override;
+  end;
 
-    property Active: Boolean read FActive write SetActive;
-    property AudioSource: TVoskAudioSource read FAudioSource write SetAudioSource;
-    property State: TVoskState read FState write SetState;
-    property OnStateChange: TOnVoskStateChange read FOnStateChange write FOnStateChange;
-    property OnHypothesis: TOnVoskHypothesis read FOnHypothesis write FOnHypothesis;
+  TWhisperThread = class(TSttBaseThread)
+  protected
+    FContext: Pwhisper_context;
+    FParams: Twhisper_full_params;
+  public
+    constructor Create;
+    procedure Init;
+    destructor Destroy; override; 
+    procedure Execute; override;
   end;
 
 implementation
@@ -86,17 +101,46 @@ implementation
 var
   IsRunning: Boolean = False;
 
-procedure TVoskThread.SendHypothesis;
+// ----- TSttBaseThread -----
+
+procedure TSttBaseThread.SetAudioSource(AudioSource: TSttAudioSource);
 begin
-  if Assigned(FOnHypothesis) then
-    OnHypothesis(Self, 0, FRecentHypothesis);
+  if Assigned(FAudioSource) then
+    FAudioSource.Free;
+  FAudioSource := AudioSource;
 end;
 
-procedure TVoskThread.SendState;
+procedure TSttBaseThread.SendHypothesis;
 begin
-  if Assigned(FOnStateChange) then
-    FOnStateChange(Self, FState);
+  if Assigned(Self.FOnHypothesis) then
+    OnHypothesis(Self, 0, Self.FRecentHypothesis);
 end;
+
+procedure TSttBaseThread.SendState;
+begin
+  if Assigned(Self.FOnStateChange) then
+    FOnStateChange(Self, Self.FState);
+end;
+
+procedure TSttBaseThread.SetState(S: TSttState);
+begin
+  if FState <> S then
+  begin
+    FState := S;
+    Synchronize(@SendState);
+  end;
+end;
+
+procedure TSttBaseThread.SetActive(V: Boolean);
+begin
+  if V and not FActive then
+  begin
+    FActive := V;
+    Start;
+  end;
+end;
+
+// ----- Vosk -----
 
 constructor TVoskThread.Create;
 begin
@@ -120,16 +164,7 @@ procedure TVoskThread.Init;
 begin
   FModel := vosk_model_new(PChar(ModelPath));
   FRec := vosk_recognizer_new(FModel, 16000);
-  State := rsInitialized;
-end;
-
-procedure TVoskThread.SetActive(V: Boolean);
-begin
-  if V and not FActive then
-  begin
-    FActive := V;
-    Start;
-  end;
+  State := sttInitialized;
 end;
 
 procedure TVoskThread.Execute;
@@ -176,17 +211,17 @@ begin
         if Text <> '' then
         begin
           FRecentHypothesis := Text;
-          if State <> rsAnalyze then
-            State := rsAnalyze;
+          if State <> sttAnalyze then
+            State := sttAnalyze;
         end else
         if (Text = '') and (FRecentHypothesis <> '') then
         begin
           Synchronize(@SendHypothesis);
           FRecentHypothesis := '';
-          State := rsReady;
+          State := sttReady;
         end else
         begin
-          State := rsListening;
+          State := sttListening;
         end;
         Json.Free;
       end else
@@ -195,7 +230,7 @@ begin
         begin
           Synchronize(@SendHypothesis);
           FRecentHypothesis := '';
-          State := rsReady;
+          State := sttReady;
         end;
       end;
     end;
@@ -203,19 +238,97 @@ begin
   end;
 end;
 
-procedure TVoskThread.SetAudioSource(AudioSource: TVoskAudioSource);
+
+// ----- Whisper -----
+
+
+constructor TWhisperThread.Create;
 begin
-  if Assigned(FAudioSource) then
-    FAudioSource.Free;
-  FAudioSource := AudioSource;
+  inherited Create(True);
+  FreeOnTerminate := True;
 end;
 
-procedure TVoskThread.SetState(S: TVoskState);
+destructor TWhisperThread.Destroy;
 begin
-  if FState <> S then
+  IsRunning := False;
+  if Self.FContext <> nil then
+    whisper_free(Self.FContext);
+  inherited;
+end; 
+
+procedure TWhisperThread.Init;
+begin
+  Self.FContext := whisper_init_from_file(PChar(Self.ModelPath));
+
+  Self.FParams := whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
+  Self.FParams.n_threads := 4;
+  Self.FParams.strategy := WHISPER_SAMPLING_GREEDY;
+  Self.FParams.print_realtime := false;
+  Self.FParams.print_progress := false;
+
+  State := sttInitialized;
+end;
+
+procedure TWhisperThread.Execute;
+var
+  Adbuf: array[0..1024*64-1] of SmallInt;
+  AdbufFloat: array[0..1024*64-1] of Single;
+  NFrames, I, NumSegments: Integer;
+  Text: String;
+begin
+  while IsRunning do
   begin
-    FState := S;
-    Synchronize(@SendState);
+    if Terminated then
+      Exit;
+    Sleep(256);
+  end;
+  IsRunning := True;
+  while not Terminated do
+  begin
+    if FActive then
+    begin
+      if Assigned(Self.FAudioSource) then
+        if Self.FAudioSource.Ready then
+          NFrames := Self.FAudioSource.GetData(@Adbuf[0], SizeOf(Adbuf));
+      if NFrames > 0 then
+      begin
+        for I := 0 to NFrames - 1 do
+          AdbufFloat[I] := Adbuf[I] / 32768;
+        whisper_full(Self.FContext, Self.FParams, @AdbufFloat[0], NFrames);
+        NumSegments := whisper_full_n_segments(Self.FContext);
+        Text := '';
+        for I := 0 to NumSegments - 1 do
+        begin
+          if Text <> '' then
+            Text := Text + ' ';
+          Text := Text + whisper_full_get_segment_text(Self.FContext, I);
+        end;
+        if Text <> '' then
+        begin
+          Self.FRecentHypothesis := Text;
+          if Self.State <> sttAnalyze then
+            Self.State := sttAnalyze;
+        end else
+        if (Text = '') and (Self.FRecentHypothesis <> '') then
+        begin
+          Synchronize(@SendHypothesis);
+          FRecentHypothesis := '';
+          Self.State := sttReady;
+        end else
+        begin
+          Self.State := sttListening;
+        end;
+      end else
+      begin
+        if (Self.FRecentHypothesis <> '') then
+        begin
+          Self.Synchronize(@Self.SendHypothesis);
+          Self.FRecentHypothesis := '';
+          Self.State := sttReady;
+        end;
+      end;
+    end;
+    Sleep(256);
   end;
 end;
 

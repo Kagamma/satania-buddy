@@ -31,7 +31,7 @@ type
 
   { TBassAudioSource }
 
-  TBassAudioSource = class(TVoskAudioSource)
+  TBassAudioSource = class(TSttAudioSource)
   private
     FBassInitialized: Boolean;
     FChan: HRECORD;

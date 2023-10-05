@@ -447,10 +447,12 @@ begin
   FormBubble.ApplySettings;
 
   if (ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex] <> Save.Settings.STTVoskModel)
+    or (ComboBoxSTTWhisperModel.Items[ComboBoxSTTWhisperModel.ItemIndex] <> Save.Settings.STTWhisperModel)
     or (ComboBoxSTTBackend.ItemIndex <> Save.Settings.STTBackend) then
   begin
     Save.Settings.STTBackend := ComboBoxSTTBackend.ItemIndex;
-    Save.Settings.STTVoskModel := ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex];
+    Save.Settings.STTVoskModel := ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex];     
+    Save.Settings.STTWhisperModel := ComboBoxSTTWhisperModel.Items[ComboBoxSTTWhisperModel.ItemIndex];
     if Save.SpeechToText then
       SataniaSpeechToText.Enable;
   end;

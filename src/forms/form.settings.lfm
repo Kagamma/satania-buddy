@@ -50,6 +50,7 @@ object FormSettings: TFormSettings
   OnShow = FormShow
   Position = poScreenCenter
   ShowInTaskBar = stAlways
+  LCLVersion = '3.99.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
