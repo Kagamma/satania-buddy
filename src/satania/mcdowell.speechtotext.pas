@@ -29,7 +29,7 @@ uses
   {$I mcdowell.speechtotext_windows.inc}
   {$undef unit_declare_interface}
   Classes, SysUtils,
-  vosk, SttThread, BassAudioSource;
+  vosk, whisper, SttThread, BassAudioSource;
 
 type
   TSataniaSpeechToText = class
@@ -46,7 +46,8 @@ type
     destructor Destroy; override;
     procedure Disable;
     function Enable: Boolean;
-    function IsLoaded: Boolean;
+    function IsVoskLoaded: Boolean;    
+    function IsWhisperLoaded: Boolean;
   end;
 
 var
@@ -119,7 +120,6 @@ end;
 
 function TSataniaSpeechToText.Enable: Boolean;
 begin
-  if not IsLoaded then exit(False);
   Disable;
   {$ifdef WINDOWS}
   if Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_SAPI then
@@ -127,7 +127,7 @@ begin
     SpEnable;
   end else
   {$endif}
-  if Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_VOSK then
+  if (Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_VOSK) and Self.IsVoskLoaded then
   begin
     FVoskThread := TVoskThread.Create;
 
@@ -143,7 +143,7 @@ begin
       FVoskThread.Active := True;
     end;
   end else
-  if Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_WHISPER then
+  if (Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_WHISPER) and Self.IsWhisperLoaded then
   begin
     FWhisperThread := TWhisperThread.Create;
 
@@ -153,7 +153,7 @@ begin
     FWhisperThread.ModelPath := PATH_WHISPER + Save.Settings.STTWhisperModel;
 
     FWhisperThread.Init;
-    if FVoskThread.State = sttInitialized then
+    if FWhisperThread.State = sttInitialized then
     begin
       FWhisperThread.AudioSource := TBassAudioSource.Create(GetMicrophoneDeviceIdx);
       FWhisperThread.Active := True;
@@ -162,12 +162,14 @@ begin
   exit(True);
 end;
 
-function TSataniaSpeechToText.IsLoaded: Boolean;
+function TSataniaSpeechToText.IsVoskLoaded: Boolean;
 begin
-  Result := True;
-  if (Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_VOSK) or
-     (Save.Settings.STTBackend = SPEECH_RECOGNIZER_BACKEND_WHISPER) then
-    Result := vosk.Lib <> 0;
+  Result := vosk.Lib <> 0;
+end;
+
+function TSataniaSpeechToText.IsWhisperLoaded: Boolean;
+begin
+  Result := whisper.Lib <> 0;
 end;
 
 initialization

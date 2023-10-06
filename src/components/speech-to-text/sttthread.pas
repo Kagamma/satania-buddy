@@ -88,7 +88,6 @@ type
   TWhisperThread = class(TSttBaseThread)
   protected
     FContext: Pwhisper_context;
-    FParams: Twhisper_full_params;
   public
     constructor Create;
     procedure Init;
@@ -97,6 +96,9 @@ type
   end;
 
 implementation
+
+uses
+  Math;
 
 var
   IsRunning: Boolean = False;
@@ -182,6 +184,7 @@ begin
     Sleep(256);
   end;
   IsRunning := True;
+  NFrames := 0;
   while not Terminated do
   begin
     if FActive then
@@ -262,22 +265,17 @@ procedure TWhisperThread.Init;
 begin
   Self.FContext := whisper_init_from_file(PChar(Self.ModelPath));
 
-  Self.FParams := whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
-  Self.FParams := whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
-  Self.FParams.n_threads := 4;
-  Self.FParams.strategy := WHISPER_SAMPLING_GREEDY;
-  Self.FParams.print_realtime := false;
-  Self.FParams.print_progress := false;
-
   State := sttInitialized;
 end;
 
 procedure TWhisperThread.Execute;
 var
-  Adbuf: array[0..1024*64-1] of SmallInt;
-  AdbufFloat: array[0..1024*64-1] of Single;
-  NFrames, I, NumSegments: Integer;
-  Text: String;
+  Adbuf: array[0..1024*64*4-1] of SmallInt;
+  AdbufFloat: array[0..1024*64*10-1] of Single;
+  AdbufFloatCount: Integer;
+  NFrames, I, NumSegments, Tmp: Integer;
+  Params: Twhisper_full_params;
+  Text, S: String;
 begin
   while IsRunning do
   begin
@@ -286,6 +284,8 @@ begin
     Sleep(256);
   end;
   IsRunning := True;
+  AdbufFloatCount := 0;
+  NFrames := 0;
   while not Terminated do
   begin
     if FActive then
@@ -295,27 +295,57 @@ begin
           NFrames := Self.FAudioSource.GetData(@Adbuf[0], SizeOf(Adbuf));
       if NFrames > 0 then
       begin
+        if AdbufFloatCount + NFrames >= Length(AdbufFloat) then
+        begin
+          AdbufFloatCount := 0;
+        end;
         for I := 0 to NFrames - 1 do
-          AdbufFloat[I] := Adbuf[I] / 32768;
-        whisper_full(Self.FContext, Self.FParams, @AdbufFloat[0], NFrames);
+          AdbufFloat[AdbufFloatCount + I] := Adbuf[I] / 64000;
+        AdbufFloatCount := AdbufFloatCount + NFrames;
+
+        Params := whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
+        Params.n_threads := 4;
+        Params.print_realtime := false;
+        Params.print_progress := false;
+        Params.temperature_inc := 0;
+        Params.prompt_n_tokens := 0;
+        Params.prompt_tokens := nil;
+
+        whisper_full(Self.FContext, Params, @AdbufFloat[0], AdbufFloatCount);
         NumSegments := whisper_full_n_segments(Self.FContext);
         Text := '';
         for I := 0 to NumSegments - 1 do
         begin
-          if Text <> '' then
-            Text := Text + ' ';
-          Text := Text + whisper_full_get_segment_text(Self.FContext, I);
+          S := Trim(whisper_full_get_segment_text(Self.FContext, I));
+          Text := Text + ' ';
+          if not (S[1] in ['(', '[', '<']) and not
+            (S[Length(S)] in [')', ']', '>']) and
+            (LowerCase(S) <> 'you') and
+            (S.IndexOf('♪') < 0) then
+            Text := Text + S;
         end;
+        Text := Trim(Text);
         if Text <> '' then
         begin
+          if Self.FRecentHypothesis = '' then
+          begin
+            Tmp := Min(AdbufFloatCount, NFrames + 2048);
+            AdbufFloatCount := AdbufFloatCount - Tmp;
+            for I := 0 to Tmp - 1 do
+              AdbufFloat[I] := AdbufFloat[AdbufFloatCount + I];
+            AdbufFloatCount := Tmp;
+          end;
+          Writeln('> whisper.cpp - Partial: ', Text);
           Self.FRecentHypothesis := Text;
           if Self.State <> sttAnalyze then
             Self.State := sttAnalyze;
         end else
         if (Text = '') and (Self.FRecentHypothesis <> '') then
         begin
+          Writeln('> whisper.cpp - Final: ', Self.FRecentHypothesis);
           Synchronize(@SendHypothesis);
           FRecentHypothesis := '';
+          AdbufFloatCount := 0;
           Self.State := sttReady;
         end else
         begin
@@ -325,13 +355,15 @@ begin
       begin
         if (Self.FRecentHypothesis <> '') then
         begin
+          Writeln('> whisper.cpp - Final: ', Self.FRecentHypothesis);
           Self.Synchronize(@Self.SendHypothesis);
           Self.FRecentHypothesis := '';
+          AdbufFloatCount := 0;
           Self.State := sttReady;
         end;
       end;
     end;
-    Sleep(256);
+    Sleep(1024);
   end;
 end;
 

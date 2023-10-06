@@ -77,7 +77,6 @@ begin
       Result := I;
       Break;
     end;
-
     Inc(I);
   end;
 end;
@@ -142,7 +141,7 @@ end;
 
 function TBassAudioSource.GetData(buffer: Pointer; nmax: Cardinal): Integer;
 begin
-  Result := Integer(BASS_ChannelGetData(FChan, buffer, nmax * SizeOf(Int16)));
+  Result := Integer(BASS_ChannelGetData(FChan, buffer, nmax * SizeOf(SmallInt)));
 
   if Result < 0 then
   begin

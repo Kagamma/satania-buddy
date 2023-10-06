@@ -207,8 +207,7 @@ begin
 
     MenuItemSitOnWindow.Checked := Save.SitOnWindow;
     MenuItemSilent.Checked := Save.Silent;
-    if SataniaSpeechToText.IsLoaded then
-      MenuItemSpeechRecognition.Checked := Save.SpeechToText;
+    MenuItemSpeechRecognition.Checked := Save.SpeechToText;
 
     {$if defined(WINDOWS)}
     TCastleControl.MainControl := CastleControl;
@@ -376,19 +375,15 @@ end;
 
 procedure TFormMain.MenuItemSpeechRecognitionClick(Sender: TObject);
 begin
-  if SataniaSpeechToText.IsLoaded then
-  begin
     Save.SpeechToText := not Save.SpeechToText;
-    MenuItemSpeechRecognition.Checked := Save.SpeechToText;
-    if Save.SpeechToText then
-      SataniaSpeechToText.Enable
-    else
-    begin
-      SataniaSpeechToText.Disable;
-      // Satania.Talk('Speech recognition disabled.');
-    end;
-  end else
-    Satania.Talk('You haven''t installed necessary speech library.');
+  MenuItemSpeechRecognition.Checked := Save.SpeechToText;
+  if Save.SpeechToText then
+    SataniaSpeechToText.Enable
+  else
+  begin
+    SataniaSpeechToText.Disable;
+    // Satania.Talk('Speech recognition disabled.');
+  end;
 end;
 
 procedure TFormMain.TimerMainLoopTimer(Sender: TObject);
