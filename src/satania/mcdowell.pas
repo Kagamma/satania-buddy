@@ -768,7 +768,7 @@ begin
       S := StringReplace(S, ExtractFileExt(S), '', [rfReplaceAll]);
       MenuItem := TMenuItem.Create(FormMain);
       MenuItem.Caption := S;
-      MenuItem.OnClick := @FormMain.DoExecuteScriptFromMenu;
+      MenuItem.OnClick := @FormMain.DoExecuteScriptFromMenuGlobal;
       FormMain.MenuItemActions.Add(MenuItem);
       MenuItems[I] := MenuItem;
     end;
@@ -788,7 +788,7 @@ begin
       S := StringReplace(S, ExtractFileExt(S), '', [rfReplaceAll]);
       MenuItem := TMenuItem.Create(FormMain);
       MenuItem.Caption := S;
-      MenuItem.OnClick := @FormMain.DoExecuteScriptFromMenu;
+      MenuItem.OnClick := @FormMain.DoExecuteScriptFromMenuLocal;
       FormMain.MenuItemActions.Add(MenuItem);
       MenuItems[Anchor + I] := MenuItem;
     end;

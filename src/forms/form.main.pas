@@ -146,7 +146,8 @@ type
     {$I form.main_windows.inc}
     {$I form.main_linux_x11.inc}
     {$undef unit_public}
-    procedure DoExecuteScriptFromMenu(Sender: TObject);
+    procedure DoExecuteScriptFromMenuGlobal(Sender: TObject);      
+    procedure DoExecuteScriptFromMenuLocal(Sender: TObject);
   end;
 
 {$define unit_declare_interface}
@@ -187,7 +188,12 @@ uses
 
 { TFormMain }
 
-procedure TFormMain.DoExecuteScriptFromMenu(Sender: TObject);
+procedure TFormMain.DoExecuteScriptFromMenuGlobal(Sender: TObject);
+begin
+  Satania.ActionFromFile('data/scripts/menu/' + (Sender as TMenuItem).Caption + '.evil');
+end;             
+
+procedure TFormMain.DoExecuteScriptFromMenuLocal(Sender: TObject);
 begin
   Satania.ActionFromFile('menu/' + (Sender as TMenuItem).Caption + '.evil');
 end;
