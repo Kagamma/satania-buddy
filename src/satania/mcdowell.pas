@@ -746,7 +746,7 @@ end;
 
 procedure TSatania.UpdateMenuItems;
 var
-  I: Integer;
+  I, Anchor: Integer;
   MenuItem: TMenuItem;
   ScriptFiles: TStringList;
   S: String;
@@ -759,8 +759,9 @@ begin
   ScriptFiles := TStringList.Create;
   ScriptFiles.Sorted := True;
   try
-    FindAllFiles(ScriptFiles, 'data/scripts/' + Save.Settings.Skin + '/menu', '*.evil', False);
-    SetLength(MenuItems, ScriptFiles.Count);
+    // Global
+    FindAllFiles(ScriptFiles, 'data/scripts/libs/menu', '*.evil', False);
+    SetLength(MenuItems, ScriptFiles.Count + 1);
     for I := 0 to ScriptFiles.Count - 1 do
     begin
       S := ExtractFileName(ScriptFiles[I]);
@@ -770,6 +771,26 @@ begin
       MenuItem.OnClick := @FormMain.DoExecuteScriptFromMenu;
       FormMain.MenuItemActions.Add(MenuItem);
       MenuItems[I] := MenuItem;
+    end;
+    // Separator
+    MenuItem := TMenuItem.Create(FormMain);
+    MenuItem.Caption := '-';
+    FormMain.MenuItemActions.Add(MenuItem);
+    MenuItems[Length(MenuItems) - 1] := MenuItem;
+    // Local
+    ScriptFiles.Clear;
+    FindAllFiles(ScriptFiles, 'data/scripts/' + Save.Settings.Skin + '/menu', '*.evil', False);
+    Anchor := Length(MenuItems);
+    SetLength(MenuItems, Anchor + ScriptFiles.Count);
+    for I := 0 to ScriptFiles.Count - 1 do
+    begin
+      S := ExtractFileName(ScriptFiles[I]);
+      S := StringReplace(S, ExtractFileExt(S), '', [rfReplaceAll]);
+      MenuItem := TMenuItem.Create(FormMain);
+      MenuItem.Caption := S;
+      MenuItem.OnClick := @FormMain.DoExecuteScriptFromMenu;
+      FormMain.MenuItemActions.Add(MenuItem);
+      MenuItems[Anchor + I] := MenuItem;
     end;
   finally
     ScriptFiles.Free;
