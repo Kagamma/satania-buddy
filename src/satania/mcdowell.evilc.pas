@@ -36,8 +36,13 @@ unit Mcdowell.EvilC;
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr
+  SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr,
+  base64
   {$ifdef SE_STRING_UTF8},LazUTF8{$endif}{$ifdef CPU64}, dynlibs{$endif};
+
+const
+  // Maximum memory in bytes before GC starts acting aggressive
+  SE_MEM_CEIL = 1024 * 1024 * 256;
 
 type
   TSENumber = Double;
@@ -661,6 +666,9 @@ type
     class function SEGCObjectCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGCUsed(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGCCollect(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+
+    class function SEBase64Encode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBase64Decode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   end;
 
   TDynlibMap = specialize TDictionary<String, TLibHandle>;
@@ -1644,6 +1652,16 @@ begin
   Result := SENull;
 end;
 
+class function TBuiltInFunction.SEBase64Encode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := EncodeStringBase64(Args[0]);
+end;
+
+class function TBuiltInFunction.SEBase64Decode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := DecodeStringBase64(Args[0]);
+end;
+
 function TSEOpcodeInfoList.Ptr(const P: Integer): PSEOpcodeInfo; inline;
 begin
   Result := @FItems[P];
@@ -2324,7 +2342,7 @@ begin
   Self.FValueAvailList := TSEGCValueAvailList.Create;;
   Self.FTicks := GetTickCount64;
   Self.FAllocatedMem := 0;
-  Self.CeilMem := 1024 * 1024 * 128;
+  Self.CeilMem := SE_MEM_CEIL;
 end;
 
 destructor TSEGarbageCollector.Destroy;
@@ -4103,6 +4121,8 @@ begin
   Self.RegisterFunc('mem_object_count', @TBuiltInFunction(nil).SEGCObjectCount, 0);
   Self.RegisterFunc('mem_used', @TBuiltInFunction(nil).SEGCUsed, 0);
   Self.RegisterFunc('mem_gc', @TBuiltInFunction(nil).SEGCCollect, 0);
+  Self.RegisterFunc('base64_encode', @TBuiltInFunction(nil).SEBase64Encode, 1);
+  Self.RegisterFunc('base64_decode', @TBuiltInFunction(nil).SEBase64Decode, 1);
   Self.AddDefaultConsts;
   Self.Source := '';
 end;

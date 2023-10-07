@@ -77,8 +77,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEReminderTodayGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEClipboardGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEClipboardToFile(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEFileRead(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEFileWrite(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEFileReadText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEFileReadBinary(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEFileWriteText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEFileWriteBinary(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileCopy(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -854,7 +856,7 @@ begin
   end;
 end;
 
-function TSatania.SEFileRead(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEFileReadText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   SL: TStrings;
 begin
@@ -867,7 +869,20 @@ begin
   end;
 end;
 
-function TSatania.SEFileWrite(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEFileReadBinary(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  FS: TFileStream;
+begin
+  FS := TFileStream.Create(Args[0], fmOpenRead);
+  try
+    GC.AllocBuffer(@Result, FS.Size);
+    FS.Read(Result.VarBuffer^.Ptr^, FS.Size);
+  finally
+    FS.Free;
+  end;
+end;
+
+function TSatania.SEFileWriteText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   SL: TStrings;
 begin
@@ -879,6 +894,18 @@ begin
     SL.SaveToFile(Args[0]);
   finally
     SL.Free;
+  end;
+end;
+
+function TSatania.SEFileWriteBinary(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  FS: TFileStream;
+begin
+  FS := TFileStream.Create(Args[0], fmCreate);
+  try
+    FS.Write(Args[1].VarBuffer^.Ptr^, Args[2]);
+  finally
+    FS.Free;
   end;
 end;
 

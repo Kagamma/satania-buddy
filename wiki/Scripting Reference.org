@@ -461,7 +461,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 
 *false: boolean*
 
-*name: string* (deprecated, use charname instead)
+*name: string* ~deprecated, use charname instead~
 
 *charname: string*
 - Get character's name
@@ -624,6 +624,12 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 *string_find_regex(s, regex: string): map*
 - Return map of matched string + matched location.
 
+** Base64
+*base64_encode(buf: buffer): string*
+- Encode a given string to base64 string.
+*base64_decode(s: string): buffer*
+- Decode a given base64 string back to original string.
+
 ** Datetime
 *ticks(): number*
 - Return system's ticks, in miliseconds.
@@ -659,9 +665,17 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 - Perform search for directories in certain paths. Return map of paths.
 *fs_directory_exists(path: string): boolean*.
 - Check if a directory is exists.
-*fs_file_read(filename: string): string*
+*fs_file_read_binary(filename: string): buffer*
+- Read content from file.
+*fs_file_write_binary(filename: string, buf: buffer)*
+- Write content to file. If the file is not exist then create a new file.
+*fs_file_read(filename: string): string* ~deprecated, use fs_file_read_text() instead~
+
+*fs_file_read_text(filename: string): string*
 - Read text from file.
-*fs_file_write(filename, text: string)*
+*fs_file_write(filename, text: string)* ~deprecated, use fs_file_write_text() instead~
+
+*fs_file_write_text(filename, text: string)*
 - Write text to file. If the file is not exist then create a new file.
 *fs_file_find_all(path, mask: string, is_subdir: boolean, attribute:
 number): map*

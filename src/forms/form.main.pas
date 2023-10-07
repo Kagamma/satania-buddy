@@ -431,6 +431,4 @@ begin
   MenuItemRules.Enabled := Save.Settings.Rules;
 end;
 
-initialization
-
 end.
