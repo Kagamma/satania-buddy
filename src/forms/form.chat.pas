@@ -279,7 +279,7 @@ end;
 
 procedure TFormChat.ButtonEditClick(Sender: TObject);
 begin
-  if not FRichText.IsStreaming then Exit;
+  if FRichText.IsStreaming then Exit;
   PageControl.PageIndex := 1;
   MemoEdit.Lines.Text := ChatHistory.ToEdit;
 end;
