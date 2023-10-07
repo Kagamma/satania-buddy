@@ -598,13 +598,21 @@ end;
 function TSatania.SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   HttpResponse: THttpResponseRec;
+  Buf: TSEValue;
+  Len: QWord;
 begin
   Result := SENull;
   try
     GC.AllocMap(@Result);
     HttpResponse := RunHttpResultList[Args[0].VarString^];
     SEMapSet(Result, 'status', HttpResponse.Status);
-    SEMapSet(Result, 'data', HttpResponse.Data);
+    if HttpResponse.IsBinary then
+    begin
+      Len := ByteLength(HttpResponse.Data);
+      GC.AllocBuffer(@Buf, Len);
+      Move(HttpResponse.Data[1], Buf.VarBuffer^.Base[1], Len);
+    end else
+      SEMapSet(Result, 'data', HttpResponse.Data);
     RunHttpResultList.Remove(Args[0].VarString^);
   except
   end;

@@ -725,7 +725,7 @@ number): map*
 *http_is_success(guid: string): boolean*
 - Check if url query (get, post, etc) is finished.
 *http_result_get(guid: string): map*
-- Get HTML result from url_fetch / url_upload. Result map contains status and data: /[ "status": number, data: string ]/
+- Get HTML result from url_fetch / url_upload. Result map contains status and data. Depends on ~Content-Type~, data can be either string or buffer: /[ "status": number, data: string | buffer ]/
 *http_query(data, xpath: string): map*
 - Extract data from HTML string.
 
