@@ -461,7 +461,9 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 
 *false: boolean*
 
-*name: string*
+*name: string* (deprecated, use charname instead)
+
+*charname: string*
 - Get character's name
 *username: string*
 - Get user's name

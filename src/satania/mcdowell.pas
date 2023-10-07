@@ -920,7 +920,10 @@ begin
     S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))
   end;
   if not IsNamed then
+  begin
+    S.ConstMap.AddOrSetValue('charname', Name);
     S.ConstMap.AddOrSetValue('name', Name);
+  end;
   S.ConstMap.AddOrSetValue('username', Save.Settings.UserName);
   S.ConstMap.AddOrSetValue('character', Save.Settings.Skin);
 end;

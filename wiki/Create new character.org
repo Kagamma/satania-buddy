@@ -27,7 +27,7 @@ sprites
 - ~meta.json~ is optional, it is mainly used to set up character's name, and other configurations needed to access within scripts. A basic ~meta.json~ looks like:
 #+begin_example
 {
-  "name": "You character's name"
+  "name": "You character's name. This can be accessed in script via charname constant"
 }
 #+end_example
 
