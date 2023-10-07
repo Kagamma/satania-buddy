@@ -4350,12 +4350,23 @@ begin
                 end;
               '\':
                 begin
-                  if PeekAtNextChar = 'n' then
+                  C := PeekAtNextChar;
+                  if C = 'n' then
                   begin
                     NextChar;
                     Token.Value := Token.Value + #10;
                   end else
-                  if PeekAtNextChar <> #0 then
+                  if C = 'r' then
+                  begin
+                    NextChar;
+                    Token.Value := Token.Value + #13;
+                  end else   
+                  if C = 't' then
+                  begin
+                    NextChar;
+                    Token.Value := Token.Value + #9;
+                  end else
+                  if C <> #0 then
                   begin
                     Token.Value := Token.Value + NextChar;
                   end;

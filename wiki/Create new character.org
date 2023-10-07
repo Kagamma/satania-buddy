@@ -24,7 +24,7 @@ sprites
     sprites.png
 #+end_example
 - ~main.evil~ is the main script. It will be executed when your character is loaded, and when your character finish executing another script.
-- ~meta.json~ is optional, it is mainly used to set up character's name, and other configurations needed to access within scripts. A basic ~meta.json~
+- ~meta.json~ is optional, it is mainly used to set up character's name, and other configurations needed to access within scripts. A basic ~meta.json~ looks like:
 #+begin_example
 {
   "name": "You character's name"
