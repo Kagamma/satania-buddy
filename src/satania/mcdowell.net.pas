@@ -65,6 +65,8 @@ var
   S: String;
   I: Integer;
   Response: TStringStream;
+  OwnedHeaders: Boolean = True;
+  Headers: TStrings = nil;
 begin
   try
     try
@@ -72,6 +74,8 @@ begin
       HTTP.RequestBody := TRawByteStringStream.Create(FormData.Text);
       HTTP.OnDataReceived := @Self.HandleDataReceived;
       case Method of
+        'HEAD':
+          TFPHTTPClient.Head(URL, Headers);
         'GET':
           HttpResponse.Data := HTTP.Get(URL);
         'POST':
@@ -102,13 +106,18 @@ begin
       end;
       HttpResponse.Status := HTTP.ResponseStatusCode;
       HttpResponse.IsBinary := False;
-      SetLength(HttpResponse.HeaderKeys, HTTP.ResponseHeaders.Count);    
-      SetLength(HttpResponse.HeaderValues, HTTP.ResponseHeaders.Count);
-      for I := 0 to HTTP.ResponseHeaders.Count - 1 do
+      if Headers = nil then
       begin
-        if LowerCase(HTTP.ResponseHeaders.Names[I]) = 'content-type' then
+        OwnedHeaders := False;
+        Headers := HTTP.ResponseHeaders;
+      end;
+      SetLength(HttpResponse.HeaderKeys, Headers.Count);
+      SetLength(HttpResponse.HeaderValues, Headers.Count);
+      for I := 0 to Headers.Count - 1 do
+      begin
+        if LowerCase(Headers.Names[I]) = 'content-type' then
         begin
-          S := LowerCase(HTTP.ResponseHeaders.Values[HTTP.ResponseHeaders.Names[I]]);
+          S := LowerCase(Headers.Values[Headers.Names[I]]);
           if S.IndexOf('image/') >= 0 then
           begin
             HttpResponse.IsBinary := True;
@@ -121,9 +130,11 @@ begin
             end;
           end;
         end;
-        HttpResponse.HeaderKeys[I] := HTTP.ResponseHeaders.Names[I];
-        HttpResponse.HeaderValues[I] := HTTP.ResponseHeaders.Values[HTTP.ResponseHeaders.Names[I]];
+        HttpResponse.HeaderKeys[I] := Headers.Names[I];
+        HttpResponse.HeaderValues[I] := Headers.Values[Headers.Names[I]];
       end;
+      if not OwnedHeaders then
+        Headers.Free;
       Synchronize(@SendToHer);
     except
       on E: Exception do

@@ -36,7 +36,7 @@ type
     IsRemoved: Boolean;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Update(const SecondsPassed: Single; var RemoveMe: TRemoveType);
+    procedure Update(const SecondsPassed: Single; var RemoveMe: TRemoveType); override;
   end;
 
   TSataniaSketch = class
