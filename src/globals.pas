@@ -62,8 +62,9 @@ type
   end;
 
   THttpResponseRec = record
+    IsBinary: Boolean;
     Status: Integer;
-    Data: String;
+    Data: RawByteString;
   end;
 
   TTrackRec = record

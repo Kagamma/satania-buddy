@@ -56,7 +56,7 @@ type
   end;
   Pwhisper_token_data = ^Twhisper_token_data;
 
-  Twhisper_model_loader_func_read = function(ctx: Pointer; output: Pointer; read_size: size_t): size_t; WHISPERCALL;
+  Twhisper_model_loader_func_read = function(ctx: Pointer; output: Pointer; read_size: ccsize_t): ccsize_t; WHISPERCALL;
   Twhisper_model_loader_func_eof = function(ctx: Pointer): cbool; WHISPERCALL;
   Twhisper_model_loader_func_close = procedure(ctx: Pointer); WHISPERCALL;
   Twhisper_model_loader = record
@@ -128,7 +128,7 @@ type
 
 var
   whisper_init_from_file: function(path_model: PChar): Pwhisper_context; WHISPERCALL;
-  whisper_init_from_buffer: function(buffer: Pointer; buffer_size: size_t): Pwhisper_context; WHISPERCALL;
+  whisper_init_from_buffer: function(buffer: Pointer; buffer_size: csize_t): Pwhisper_context; WHISPERCALL;
   whisper_init: function(loader: Pwhisper_model_loader): Pwhisper_context; WHISPERCALL;
 
   whisper_init_from_file_no_state: function(const path_model: PChar): Pwhisper_context; WHISPERCALL;
