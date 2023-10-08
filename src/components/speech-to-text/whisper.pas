@@ -56,7 +56,7 @@ type
   end;
   Pwhisper_token_data = ^Twhisper_token_data;
 
-  Twhisper_model_loader_func_read = function(ctx: Pointer; output: Pointer; read_size: ccsize_t): ccsize_t; WHISPERCALL;
+  Twhisper_model_loader_func_read = function(ctx: Pointer; output: Pointer; read_size: csize_t): csize_t; WHISPERCALL;
   Twhisper_model_loader_func_eof = function(ctx: Pointer): cbool; WHISPERCALL;
   Twhisper_model_loader_func_close = procedure(ctx: Pointer); WHISPERCALL;
   Twhisper_model_loader = record
