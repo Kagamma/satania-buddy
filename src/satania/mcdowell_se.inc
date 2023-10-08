@@ -500,7 +500,7 @@ begin
 end;
 
 function TSatania.SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-  function URLGet: TSEValue;
+  function URLGet(const Method: String): TSEValue;
   var
     Thread: TSataniaHttpGetThread;
     I: Integer;
@@ -510,6 +510,7 @@ function TSatania.SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TS
     Thread.FreeOnTerminate := True;
     Thread.URL := Args[1];
     Thread.Key := GUID;
+    Thread.Method := Method;
     if Args[2].Kind = sevkMap then
       for S in TSEValueMap(Args[2].VarMap).Keys do
       begin
@@ -559,7 +560,7 @@ begin
     'POST':
       Result := URLPost;
     else
-      Result := URLGet;
+      Result := URLGet(UpperCase(Args[0].VarString^));
   end;
 end;
 
@@ -598,12 +599,14 @@ end;
 function TSatania.SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   HttpResponse: THttpResponseRec;
-  Buf: TSEValue;
+  Buf, Headers: TSEValue;
   Len: QWord;
+  I: Integer;
 begin
   Result := SENull;
   try
     GC.AllocMap(@Result);
+    GC.AllocMap(@Headers);
     HttpResponse := RunHttpResultList[Args[0].VarString^];
     SEMapSet(Result, 'status', HttpResponse.Status);
     if HttpResponse.IsBinary then
@@ -613,6 +616,11 @@ begin
       Move(HttpResponse.Data[1], Buf.VarBuffer^.Base[1], Len);
     end else
       SEMapSet(Result, 'data', HttpResponse.Data);
+    for I := 0 to Length(HttpResponse.HeaderKeys) - 1 do
+    begin
+      SEMapSet(Headers, HttpResponse.HeaderKeys[I], HttpResponse.HeaderValues[I]);
+    end;
+    SEMapSet(Result, 'headers', Headers);
     RunHttpResultList.Remove(Args[0].VarString^);
   except
   end;
