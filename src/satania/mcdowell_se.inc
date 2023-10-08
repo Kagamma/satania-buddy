@@ -95,8 +95,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESketchLoadTexture(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESketchDrawTriangles(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESketchLoadFromText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchClear(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1175,62 +1174,9 @@ begin
   Result := SataniaSketch.CreateSketch(Args[0]);
 end;
 
-function TSatania.SESketchDrawTriangles(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-var
-  Triangles: TSataniaSketchDataArray;
-  I, V, C, ColorLen, TexCoordLen, VertexLen: Integer;
-  ColorValue: Cardinal;
-  Vertices, TexCoords, Colors: TSEValue;
+function TSatania.SESketchLoadFromText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Vertices := Args[1];
-  VertexLen := SESize(Vertices);
-  // Do not draw if vertex count <> color count, count = 0, or is not triangles
-  if (VertexLen = 0) or ((VertexLen mod 6) <> 0) then
-    Exit(0);
-
-  TexCoords := Args[2];
-  Colors := Args[3];
-  ColorLen := SESize(Colors) - 1;
-  TexCoordLen := SESize(TexCoords);
-
-  SetLength(Triangles, VertexLen);
-  V := 0;
-  C := 0;
-  for I := 0 to VertexLen div 2 - 1 do
-  begin
-    if C > ColorLen then
-      ColorValue := Round(SEMapGet(Colors, ColorLen).VarNumber)
-    else
-      ColorValue := Round(SEMapGet(Colors, C).VarNumber);
-    Triangles[I].Vertex := Vector2(
-      SEMapGet(Vertices, V).VarNumber,
-      SEMapGet(Vertices, V + 1).VarNumber
-    );
-    if (TexCoordLen > 0) and (TexCoordLen = VertexLen) then
-    Triangles[I].TexCoord := Vector2(
-      SEMapGet(TexCoords, V).VarNumber,
-      SEMapGet(TexCoords, V + 1).VarNumber
-    );
-    Triangles[I].Color := Vector4(
-      Byte(ColorValue) / 255,
-      Byte(ColorValue shr 8) / 255,
-      Byte(ColorValue shr 16) / 255,
-      Byte(ColorValue shr 24) / 255
-    );
-    Inc(V, 2);
-    Inc(C);
-  end;
-  SataniaSketch.DrawTriangles(Args[0], Triangles);
-  Exit(1);
-end;
-
-function TSatania.SESketchLoadTexture(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-begin
-  if Args[1] = SENull then
-    SataniaSketch.LoadTexture(Args[0], '')
-  else
-    SataniaSketch.LoadTexture(Args[0], Args[1]);
-  Exit(1);
+  Result := SataniaSketch.LoadFromText(Args[0], Args[1], Args[2]);
 end;
 
 function TSatania.SESketchExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

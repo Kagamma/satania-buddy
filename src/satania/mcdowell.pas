@@ -278,12 +278,11 @@ begin
   S.RegisterFunc('fs_directory_exists', @SEDirectoryExists, 1);
   S.RegisterFunc('json_parse', @SEJSONParse, 1);
   S.RegisterFunc('json_stringify', @SEJSONStringify, 1);
-  S.RegisterFunc('sketch_create', @SESketchCreate, 1);
-  S.RegisterFunc('sketch_render_triangles', @SESketchDrawTriangles, 4);
-  S.RegisterFunc('sketch_load_texture', @SESketchLoadTexture, 3);
-  S.RegisterFunc('sketch_exists', @SESketchExists, 1);
-  S.RegisterFunc('sketch_delete', @SESketchClear, 1);
-  S.RegisterFunc('sketch_delete_all', @SESketchClearAll, 0);
+  S.RegisterFunc('sprite_other_create', @SESketchCreate, 1);
+  S.RegisterFunc('sprite_other_render', @SESketchLoadFromText, 3);
+  S.RegisterFunc('sprite_other_exists', @SESketchExists, 1);
+  S.RegisterFunc('sprite_other_delete', @SESketchClear, 1);
+  S.RegisterFunc('sprite_other_delete_all', @SESketchClearAll, 0);
   S.RegisterFunc('worker_create', @SEWorkerCreate, -1);
   S.RegisterFunc('worker_exists', @SEWorkerExists, 1);
   S.RegisterFunc('worker_delete', @SEWorkerDelete, 1);
