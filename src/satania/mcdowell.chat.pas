@@ -179,7 +179,7 @@ end;
 procedure TSataniaExecThread.SendToHer;
 begin
   // Satania.Action('chat', ChatResponse);
-  RunList.Delete(RunList.IndexOf(RunName));
+  ThreadDict.Remove(RunName);
   RunProcessResultList.Add(RunName, ChatResponse);
 end;
 

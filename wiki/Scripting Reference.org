@@ -722,6 +722,8 @@ number): map*
 - Make a request to URL. Return guid.
 *http_upload(url: string, headers: map, data: string/map, field, file: string): string*
 - Upload a file to URL. Return guid.
+*http_progress_get(guid: string): map*
+- Get current progress of HTTP request. Result map contains position and length: /[ position: number, length: number ]/
 *http_is_success(guid: string): boolean*
 - Check if url query (get, post, etc) is finished.
 *http_result_get(guid: string): map*

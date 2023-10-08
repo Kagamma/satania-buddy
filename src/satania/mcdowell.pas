@@ -109,7 +109,8 @@ type
     procedure Chat(S: String);
     procedure Action(Typ, Message: String);
     procedure Worker(const AKey, AScript: String; const ATime: Single; const AArgs: TSEValue);
-    procedure WorkerDelete(const AKey: String);
+    procedure WorkerDelete(const AKey: String);      
+    procedure ActionFromFileGlobal(FileName: String; IsChecked: Boolean = True);
     procedure ActionFromFile(FileName: String; IsChecked: Boolean = True);
     procedure SetScale(Scale: Single);
     procedure ResetScript;
@@ -126,7 +127,7 @@ type
 
 var
   Satania: TSatania;
-  RunList: TStringList;
+  ThreadDict: TThreadDict;
   RunProcessResultList: TStringDict;
   RunProcessNonBlockResultList: TNonBlockProcessDict;
   RunHttpResultList: THttpResponseDict;
@@ -247,7 +248,8 @@ begin
   S.RegisterFunc('sound_play', @SESoundPlay, 1);
   S.RegisterFunc('http_open', @SEOpenURL, 1);
   S.RegisterFunc('http_fetch', @SEURLFetch, 4);
-  S.RegisterFunc('http_upload', @SEURLUpload, 5);
+  S.RegisterFunc('http_upload', @SEURLUpload, 5); 
+  S.RegisterFunc('http_progress_get', @SEURLGetProgress, 1);
   S.RegisterFunc('http_is_success', @SEURLIsSuccess, 1);
   S.RegisterFunc('http_result_get', @SEURLGetResult, 1);
   S.RegisterFunc('http_query', @SEURLProcess, 2);
@@ -521,6 +523,62 @@ begin
   end;
 end;
 
+procedure TSatania.ActionFromFileGlobal(FileName: String; IsChecked: Boolean = True);
+var
+  FS: TFileStream;
+  SS: TStringStream;
+  Path: String;
+  IsContainKey: Boolean = False;
+begin
+  SS := TStringStream.Create('');
+  try
+    try
+      if not IsChecked then
+      begin
+        if not FileExists(FileName) then
+        begin
+          Exit;
+        end;
+      end;
+      Path := FileName;
+      // Clear the cache in developer mode
+      if Save.Settings.DeveloperMode then
+        Self.CleanUpCache;
+      // We always load script in developer mode
+      IsContainKey := ScriptCacheMap.ContainsKey(Path);
+      if Save.Settings.DeveloperMode or (not IsContainKey) then
+      begin
+        FS := Download(Path) as TFileStream;
+        FS.Position := 0;
+        SS.CopyFrom(FS, FS.Size);
+        FreeAndNil(FS);
+        Action('script', SS.DataString);
+        // Parse the source beforehand to store backup
+        Self.Script.Lex;
+        Self.Script.Parse;
+        ScriptCacheMap.Add(Path, Self.Script.Backup);
+      end else
+      if IsContainKey then
+      begin
+        CSAction.Enter;
+        try
+          // Restore binaries from cache
+          ResetScript;
+          Self.Script.Restore(ScriptCacheMap[Path]);
+          IsAction := True;
+        finally
+          CSAction.Leave;
+        end;
+      end;
+    except
+      on E: Exception do
+        Error(E.Message);
+    end;
+  finally
+    FreeAndNil(SS);
+  end;
+end;
+
 procedure TSatania.Talk(S: String);
 begin
   CSTalk.Enter;
@@ -703,10 +761,7 @@ var
 begin
   ExecThread := TSataniaExecThread.Create(True);
   ExecThread.RunName := S;
-  I := RunList.IndexOf(ExecThread.RunName);
-  if I >= 0 then
-    RunList.Delete(I);
-  RunList.Add(ExecThread.RunName);
+  ThreadDict.AddOrSetValue(ExecThread.RunName, ExecThread);
   ExecThread.ChatSend := S;
   ExecThread.FreeOnTerminate := True;
   ExecThread.Start;
@@ -997,17 +1052,17 @@ initialization
     Save.LoadFromFile('configs.json');
 
   Satania := TSatania.Create;
-  RunList := TStringList.Create;
   RunHttpResultList := THttpResponseDict.Create;
   RunProcessResultList := TStringDict.Create;
   RunProcessNonBlockResultList := TNonBlockProcessDict.Create;
+  ThreadDict := TThreadDict.Create;
 
 finalization
   Save.SaveToFile('configs.json');
   FreeAndNil(Save);
   FreeAndNil(Satania);
-  FreeAndNil(RunList);
   FreeAndNil(RunProcessResultList);
+  ThreadDict.Free;
   FreeLeftoverProcesses;
   CSTalk.Free;
   CSAction.Free;

@@ -67,6 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEURLGetProgress(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLProcess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLEncode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -500,81 +501,41 @@ begin
 end;
 
 function TSatania.SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-  function URLGet(const Method: String): TSEValue;
-  var
-    Thread: TSataniaHttpGetThread;
-    I: Integer;
-    S: String;
-  begin
-    Thread := TSataniaHttpGetThread.Create(True);
-    Thread.FreeOnTerminate := True;
-    Thread.URL := Args[1];
-    Thread.Key := GUID;
-    Thread.Method := Method;
-    if Args[2].Kind = sevkMap then
-      for S in TSEValueMap(Args[2].VarMap).Keys do
-      begin
-        Thread.HTTP.AddHeader(S, SEMapGet(Args[2], S));
-      end;
-    case Args[3].Kind of
-      sevkMap:
-        Thread.FormData.Text := SEJSONStringify(VM, [Args[3]]);
-      sevkString:
-        Thread.FormData.Text := Args[3];
-    end;
-    Thread.Start;
-    RunList.Add(Thread.Key);
-    Result := Thread.Key;
-  end;
-
-  function URLPost: TSEValue;
-  var
-    Thread: TSataniaHttpPostThread;
-    Key: String;
-    I: Integer;
-    V: TSEValue;
-    S: String;
-  begin
-    Thread := TSataniaHttpPostThread.Create(True);
-    Thread.FreeOnTerminate := True;
-    Thread.URL := Args[1];
-    Thread.Key := GUID;
-    if Args[2].Kind = sevkMap then
-      for S in TSEValueMap(Args[2].VarMap).Keys do
-      begin
-        Thread.HTTP.AddHeader(S, SEMapGet(Args[2], S));
-      end;
-    case Args[3].Kind of
-      sevkMap:
-        Thread.FormData.Text := SEJSONStringify(VM, [Args[3]]);
-      sevkString:
-        Thread.FormData.Text := Args[3];
-    end;
-    Thread.Start;
-    RunList.Add(Thread.Key);
-    Result := Thread.Key;
-  end;
-
+var
+  Thread: TSataniaHttpThread;
+  I: Integer;
+  S: String;
 begin
-  case UpperCase(Args[0].VarString^) of
-    'POST':
-      Result := URLPost;
-    else
-      Result := URLGet(UpperCase(Args[0].VarString^));
+  Thread := TSataniaHttpThread.Create(True, GUID);
+  Thread.FreeOnTerminate := True;
+  Thread.URL := Args[1];
+  Thread.Method := UpperCase(Args[0].VarString^);
+  if Args[2].Kind = sevkMap then
+    for S in TSEValueMap(Args[2].VarMap).Keys do
+    begin
+      Thread.HTTP.AddHeader(S, SEMapGet(Args[2], S));
+    end;
+  case Args[3].Kind of
+    sevkMap:
+      Thread.FormData.Text := SEJSONStringify(VM, [Args[3]]);
+    sevkString:
+      Thread.FormData.Text := Args[3];
   end;
+  Thread.Start;
+  Result := Thread.Key;
 end;
 
 function TSatania.SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
-  Thread: TSataniaHttpPostThread;
+  Thread: TSataniaHttpThread;
   I, P: Integer;
   Key: String;
   V: TSEValue;
 begin
-  Thread := TSataniaHttpPostThread.Create(True);
+  Thread := TSataniaHttpThread.Create(True, GUID);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
-  Thread.Key := GUID;
+  Thread.Method := 'POST';
   case Args[2].Kind of
     sevkMap:
       Thread.FormData.Text := SEJSONStringify(VM, [Args[2]]);
@@ -584,16 +545,29 @@ begin
   Thread.FieldName := Args[3];
   Thread.FileName := Args[4];
   Thread.Start;
-  RunList.Add(Thread.Key);
   Result := Thread.Key;
 end;
 
 function TSatania.SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  if RunList.IndexOf(Args[0]) >= 0 then
+  if ThreadDict.ContainsKey(Args[0]) then
     Result := False
   else
     Result := True;
+end;
+
+function TSatania.SEURLGetProgress(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  HttpResponse: THttpResponseRec;
+  Thread: TSataniaHttpThread;
+begin
+  GC.AllocMap(@Result);
+  if ThreadDict.ContainsKey(Args[0]) then
+  begin
+    Thread := ThreadDict[Args[0]] as TSataniaHttpThread;
+    SEMapSet(Result, 'position', Thread.CurrentPos);
+    SEMapSet(Result, 'length', Thread.ContentLength);
+  end;
 end;
 
 function TSatania.SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -613,7 +587,8 @@ begin
     begin
       Len := ByteLength(HttpResponse.Data);
       GC.AllocBuffer(@Buf, Len);
-      Move(HttpResponse.Data[1], Buf.VarBuffer^.Base[1], Len);
+      Move(HttpResponse.Data[1], Buf.VarBuffer^.Base[1], Len); 
+      SEMapSet(Result, 'data', Buf);
     end else
       SEMapSet(Result, 'data', HttpResponse.Data);
     for I := 0 to Length(HttpResponse.HeaderKeys) - 1 do

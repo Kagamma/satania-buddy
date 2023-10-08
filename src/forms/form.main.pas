@@ -190,7 +190,7 @@ uses
 
 procedure TFormMain.DoExecuteScriptFromMenuGlobal(Sender: TObject);
 begin
-  Satania.ActionFromFile('data/scripts/menu/' + (Sender as TMenuItem).Caption + '.evil');
+  Satania.ActionFromFileGlobal('data/scripts/libs/menu/' + (Sender as TMenuItem).Caption + '.evil');
 end;             
 
 procedure TFormMain.DoExecuteScriptFromMenuLocal(Sender: TObject);

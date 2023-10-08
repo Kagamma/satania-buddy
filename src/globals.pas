@@ -64,6 +64,8 @@ type
   THttpResponseRec = record
     IsBinary: Boolean;
     Status: Integer;
+    HeaderKeys: array of String;
+    HeaderValues: array of String;
     Data: RawByteString;
   end;
 
@@ -84,6 +86,7 @@ type
   TNonBlockProcessDict = specialize TDictionary<String, TNonBlockProcessRec>;
   THttpResponseDict = specialize TDictionary<String, THttpResponseRec>;
   TStringArrayDict = specialize TDictionary<String, TStringDynArray>;
+  TThreadDict = specialize TDictionary<String, TThread>;
   TTrackDict = specialize TDictionary<String, TTrackRec>;
   TMailList = specialize TList<TMailRec>;
   TRuleDict = specialize TDictionary<String, TRuleRec>;
