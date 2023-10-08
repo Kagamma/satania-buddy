@@ -66,6 +66,7 @@ uses
 constructor TSataniaSketchItem.Create(AOwner: TComponent);
 begin
   inherited;
+  Self.ProcessEvents := True;
 end;
 
 destructor TSataniaSketchItem.Destroy;
@@ -75,6 +76,7 @@ end;
 
 procedure TSataniaSketchItem.Update(const SecondsPassed: Single; var RemoveMe: TRemoveType);
 begin
+  Self.Scale := Vector3(Globals.Save.Settings.BaseScaling, Globals.Save.Settings.BaseScaling, Globals.Save.Settings.BaseScaling);
   inherited;
   if not Self.Exists then
     Exit;
