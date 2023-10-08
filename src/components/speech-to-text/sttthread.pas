@@ -335,10 +335,20 @@ begin
               AdbufFloat[I] := AdbufFloat[AdbufFloatCount + I];
             AdbufFloatCount := Tmp;
           end;
-          Writeln('> whisper.cpp - Partial: ', Text);
-          Self.FRecentHypothesis := Text;
-          if Self.State <> sttAnalyze then
-            Self.State := sttAnalyze;
+          if (Self.FRecentHypothesis <> '') and (Text = Self.FRecentHypothesis) then
+          begin
+            Writeln('> whisper.cpp - Final: ', Self.FRecentHypothesis);
+            Synchronize(@SendHypothesis);
+            FRecentHypothesis := '';
+            AdbufFloatCount := 0;
+            Self.State := sttReady;
+          end else
+          begin 
+            Writeln('> whisper.cpp - Partial: ', Text);
+            Self.FRecentHypothesis := Text;
+            if Self.State <> sttAnalyze then
+              Self.State := sttAnalyze;
+          end;
         end else
         if (Text = '') and (Self.FRecentHypothesis <> '') then
         begin
