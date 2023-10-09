@@ -27,7 +27,7 @@ interface
 uses
   Classes, SysUtils,
   CastleVectors, CastleTransform, CastleScene, CastleGLShaders, CastleApplicationProperties,
-  CastleRenderContext, CastleGLImages,
+  CastleRenderContext, X3DNodes,
   globals, Utils.Encdec;
 
 type
@@ -108,19 +108,22 @@ end;
 
 function TSataniaSketch.LoadFromText(const AName, AText, AType: String): TSataniaSketchItem;
 var
-  SL: TStringList;
+  SS: TStringStream;
   S: String;
 begin
   Result := CreateSketch(AName);
-  SL := TStringList.Create;
+  SS := TStringStream.Create(AText);
   try
-    SL.Text := AText;
-    S := 'temp' + GUIDName + '.' + AType;
-    SL.SaveToFile('data/' + S);
-    Result.Load('castle-data:/' + S);
+    SS.Position := 0;
+    S := 'castle-data:/temp' + GUIDName + '.' + AType;
+    case LowerCase(AType) of
+      'x3d':
+        Result.Load(LoadX3DXmlInternal(SS, S), True);
+      'x3dv', 'wrl':
+        Result.Load(LoadX3DClassicInternal(SS, S), True);
+    end;
   finally
-    SL.Free;
-    DeleteFile('data/' + S);
+    SS.Free;
   end;
 end;
 

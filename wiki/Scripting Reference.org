@@ -855,14 +855,14 @@ number)*
 *sprite_visible_get(): boolean*
 - Get sprite visibility
 *sprite_other_create(name: string)*
-- Create a new sprite with name
+- Create a new sprite with name. Sprites created using this function can only be controlled by ~sprite_other_xxx()~ functions
 *sprite_other_render(name: string, source: string, format: string)*
-- Render sprite ~name~ with content from ~source~. If ~name~ doesn't exist yet, create one.
+- Render sprite ~name~ with content from ~source~. If ~name~ doesn't exist yet, create a new one.
 - ~format~ accepts the following formats:
   + wrl: source is WRL string
   + x3dv: source is X3D with classic encoding string
   + x3d: source is X3D string
-- Example display a 3D yellow cube with a point light source, rotating at character's feet, using x3dv:
+- Example display a 3D yellow cube with a point light source, rotating at character's feet, with x3dv format:
 
 #+begin_example
 sprite_other_render('progress',
