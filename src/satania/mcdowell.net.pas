@@ -47,11 +47,11 @@ end;
 
 constructor TSataniaHttpThread.Create(CreateSuspend: Boolean; AKey: String);
 begin
-  inherited Create(CreateSuspend);
   FormData := TStringList.Create;
   Self.HTTP := TFPHTTPClient.Create(nil);
   Self.Key := AKey;
   ThreadDict.AddOrSetValue(Self.Key, Self);
+  inherited Create(CreateSuspend);
 end;
 
 procedure TSataniaHttpThread.HandleDataReceived(Sender: TObject; const ContentLength, CurrentPos: Int64);
@@ -145,6 +145,11 @@ begin
       end;
     end;
   finally
+    // TODO: Dont know why, but it will cause exception if free at destructor
+    // So we free HTTP here
+    if HTTP.RequestBody <> nil then
+      HTTP.RequestBody.Free;
+    Self.HTTP.Free;
     Terminate;
   end;
 end;
@@ -152,9 +157,6 @@ end;
 destructor TSataniaHttpThread.Destroy;
 begin
   Self.FormData.Free;
-  if HTTP.RequestBody <> nil then
-    HTTP.RequestBody.Free;
-  Self.HTTP.Free;
   ThreadDict.Remove(Self.Key);
   inherited;
 end;
