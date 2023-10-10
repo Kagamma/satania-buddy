@@ -251,7 +251,7 @@ begin
   S.RegisterFunc('http_upload', @SEURLUpload, 5); 
   S.RegisterFunc('http_progress_get', @SEURLGetProgress, 1);
   S.RegisterFunc('http_is_success', @SEURLIsSuccess, 1);
-  S.RegisterFunc('http_result_get', @SEURLGetResult, 1);
+  S.RegisterFunc('http_result_get', @SEURLGetResult, -1);
   S.RegisterFunc('http_query', @SEURLProcess, 2);
   S.RegisterFunc('url_encode', @SEURLEncode, 1);
   S.RegisterFunc('url_decode', @SEURLDecode, 1);

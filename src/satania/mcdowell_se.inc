@@ -584,7 +584,7 @@ begin
     GC.AllocMap(@Headers);
     HttpResponse := RunHttpResultList[Args[0].VarString^];
     SEMapSet(Result, 'status', HttpResponse.Status);
-    if HttpResponse.IsBinary then
+    if (HttpResponse.IsBinary) or ((Length(Args) > 1) and (Args[1] = True)) then
     begin
       Len := Length(HttpResponse.Data);
       GC.AllocBuffer(@Buf, Len);
