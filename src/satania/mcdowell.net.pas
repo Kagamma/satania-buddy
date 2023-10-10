@@ -73,7 +73,6 @@ begin
       HTTP.AllowRedirect := True;
       HTTP.RequestBody := TRawByteStringStream.Create(FormData.Text);
       HTTP.OnDataReceived := @Self.HandleDataReceived;
-      Writeln(Method);
       case Method of
         'HEAD':
           begin
