@@ -73,9 +73,13 @@ begin
       HTTP.AllowRedirect := True;
       HTTP.RequestBody := TRawByteStringStream.Create(FormData.Text);
       HTTP.OnDataReceived := @Self.HandleDataReceived;
+      Writeln(Method);
       case Method of
         'HEAD':
-          TFPHTTPClient.Head(URL, Headers);
+          begin
+            Headers := TStringList.Create;
+            TFPHTTPClient.Head(URL, Headers);
+          end;
         'GET':
           HttpResponse.Data := HTTP.Get(URL);
         'POST':
