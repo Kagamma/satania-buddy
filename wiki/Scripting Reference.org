@@ -732,7 +732,7 @@ number): map*
 - Check if url query (get, post, etc) is finished.
 *http_result_get(guid: string, force_buffer: boolean): map*
 - Get HTML result from url_fetch / url_upload. Result map contains status, headers and data. Depends on ~Content-Type~, data can be either string or buffer: /[ status: number, headers: map, data: string | buffer ]/
-- ~force_buffer~ is optional. If it is true, then result data is always buffer.
+- ~force_buffer~ is optional. If it is set to ~true~, then result data is always buffer.
 *http_query(data, xpath: string): map*
 - Extract data from HTML string.
 

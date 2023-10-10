@@ -42,7 +42,7 @@ end;
 
 procedure TSataniaHttpThread.ResetToDefault;
 begin
-  Satania.TalkReset(ErrorMessage);
+  Writeln(ErrorMessage);
 end;
 
 constructor TSataniaHttpThread.Create(CreateSuspend: Boolean; AKey: String);
@@ -65,9 +65,9 @@ var
   S: String;
   I: Integer;
   Response: TStringStream;
-  OwnedHeaders: Boolean = True;
   SS: TRawByteStringStream;
 begin
+  HttpResponse.IsBinary := False;
   try
     try
       HTTP.AllowRedirect := True;
@@ -115,7 +115,6 @@ begin
           raise Exception.Create('Invalid request method');
       end;
       HttpResponse.Status := HTTP.ResponseStatusCode;
-      HttpResponse.IsBinary := False;
       SetLength(HttpResponse.HeaderKeys, HTTP.ResponseHeaders.Count);
       SetLength(HttpResponse.HeaderValues, HTTP.ResponseHeaders.Count);
       for I := 0 to HTTP.ResponseHeaders.Count - 1 do
@@ -143,7 +142,11 @@ begin
       on E: Exception do
       begin
         HttpResponse.Status:= HTTP.ResponseStatusCode;
+        if HttpResponse.Status = 0 then
+          HttpResponse.Status := $FFFF;
         ErrorMessage := E.Message;
+        HttpResponse.Data := ErrorMessage;
+        Synchronize(@SendToHer);
         Synchronize(@Self.ResetToDefault);
       end;
     end;
