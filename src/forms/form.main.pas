@@ -201,7 +201,8 @@ end;
 
 procedure TFormMain.HandleWarning(const Category, S: string);
 begin
-  Writeln(Category + ': ' + S);
+  if Category <> '' then
+    Writeln(Category + ': ' + S);
 end;
 
 procedure TFormMain.InitCommon;
