@@ -27,7 +27,7 @@ interface
 uses
   Classes, SysUtils,
   CastleVectors, CastleTransform, CastleScene, CastleGLShaders, CastleApplicationProperties,
-  CastleRenderContext, X3DNodes,
+  CastleRenderContext, X3DLoad,
   globals, Utils.Encdec;
 
 type
@@ -118,9 +118,9 @@ begin
     S := 'castle-data:/temp' + GUIDName + '.' + AType;
     case LowerCase(AType) of
       'x3d':
-        Result.Load(LoadX3DXmlInternal(SS, S), True);
+        Result.Load(LoadNode(SS, S, 'model/x3d+xml'), True);
       'x3dv', 'wrl':
-        Result.Load(LoadX3DClassicInternal(SS, S), True);
+        Result.Load(LoadNode(SS, S, 'model/x3d+vrml'), True);
     end;
   finally
     SS.Free;
