@@ -86,6 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEFileGetSize(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -932,6 +933,20 @@ begin
       SEMapSet(Result, I, SL[I]);
   finally
     SL.Free;
+  end;
+end;
+
+function TSatania.SEFileGetSize(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  F: File;
+begin
+  Result := 0;
+  if FileExists(Args[0].VarString^) then
+  begin
+    AssignFile(F, Args[0].VarString^);
+    Reset(F);
+    Result := FileSize(F);
+    CloseFile(F);
   end;
 end;
 

@@ -271,6 +271,7 @@ begin
   S.RegisterFunc('fs_file_write_text', @SEFileWriteText, 2);
   S.RegisterFunc('fs_file_write_binary', @SEFileWriteBinary, 3);
   S.RegisterFunc('fs_file_copy', @SEFileCopy, 2);
+  S.RegisterFunc('fs_file_size_get', @SEFileGetSize, 1);
   S.RegisterFunc('fs_file_find_all', @SEFileFindAll, 4);
   S.RegisterFunc('fs_directory_create', @SEDirectoryCreate, 1);
   S.RegisterFunc('fs_directory_delete', @SEDirectoryDelete, 1);
