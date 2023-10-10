@@ -4069,7 +4069,7 @@ begin
   Self.RegisterFunc('array_to_map', @TBuiltInFunction(nil).SEArrayToMap, 1);
   Self.RegisterFunc('sign', @TBuiltInFunction(nil).SESign, 1);
   Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, -1);
-  Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, 1);
+  Self.RegisterFunc('max', @TBuiltInFunction(nil).SEMax, -1);
   Self.RegisterFunc('range', @TBuiltInFunction(nil).SERange, -1);
   Self.RegisterFunc('pow', @TBuiltInFunction(nil).SEPow, 2);
   Self.RegisterFunc('string_empty', @TBuiltInFunction(nil).SEStringEmpty, 1);
