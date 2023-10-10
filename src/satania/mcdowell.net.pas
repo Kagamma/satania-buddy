@@ -66,7 +66,6 @@ var
   I: Integer;
   Response: TStringStream;
   OwnedHeaders: Boolean = True;
-  Headers: TStrings = nil;
 begin
   try
     try
@@ -75,10 +74,7 @@ begin
       HTTP.OnDataReceived := @Self.HandleDataReceived;
       case Method of
         'HEAD':
-          begin
-            Headers := TStringList.Create;
-            TFPHTTPClient.Head(URL, Headers);
-          end;
+          HTTP.HTTPMethod('HEAD', URL, nil, []);
         'GET':
           HttpResponse.Data := HTTP.Get(URL);
         'POST':
@@ -111,18 +107,13 @@ begin
       end;
       HttpResponse.Status := HTTP.ResponseStatusCode;
       HttpResponse.IsBinary := False;
-      if Headers = nil then
+      SetLength(HttpResponse.HeaderKeys, HTTP.ResponseHeaders.Count);
+      SetLength(HttpResponse.HeaderValues, HTTP.ResponseHeaders.Count);
+      for I := 0 to HTTP.ResponseHeaders.Count - 1 do
       begin
-        OwnedHeaders := False;
-        Headers := HTTP.ResponseHeaders;
-      end;
-      SetLength(HttpResponse.HeaderKeys, Headers.Count);
-      SetLength(HttpResponse.HeaderValues, Headers.Count);
-      for I := 0 to Headers.Count - 1 do
-      begin
-        if LowerCase(Headers.Names[I]) = 'content-type' then
+        if LowerCase(HTTP.ResponseHeaders.Names[I]) = 'content-type' then
         begin
-          S := LowerCase(Headers.Values[Headers.Names[I]]);
+          S := LowerCase(HTTP.ResponseHeaders.Values[HTTP.ResponseHeaders.Names[I]]);
           if S.IndexOf('image/') >= 0 then
           begin
             HttpResponse.IsBinary := True;
@@ -135,11 +126,9 @@ begin
             end;
           end;
         end;
-        HttpResponse.HeaderKeys[I] := Headers.Names[I];
-        HttpResponse.HeaderValues[I] := Headers.Values[Headers.Names[I]];
+        HttpResponse.HeaderKeys[I] := HTTP.ResponseHeaders.Names[I];
+        HttpResponse.HeaderValues[I] := HTTP.ResponseHeaders.Values[HTTP.ResponseHeaders.Names[I]];
       end;
-      if not OwnedHeaders then
-        Headers.Free;
       Synchronize(@SendToHer);
     except
       on E: Exception do
