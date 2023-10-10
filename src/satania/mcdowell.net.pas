@@ -126,7 +126,7 @@ begin
             end;
           end;
         end;
-        HttpResponse.HeaderKeys[I] := HTTP.ResponseHeaders.Names[I];
+        HttpResponse.HeaderKeys[I] := LowerCase(HTTP.ResponseHeaders.Names[I]);
         HttpResponse.HeaderValues[I] := HTTP.ResponseHeaders.Values[HTTP.ResponseHeaders.Names[I]];
       end;
       Synchronize(@SendToHer);
