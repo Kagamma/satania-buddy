@@ -107,6 +107,8 @@ begin
           HttpResponse.Data := HTTP.Patch(URL);
         'OPTIONS':
           HttpResponse.Data := HTTP.Options(URL);
+        else
+          raise Exception.Create('Invalid request method');
       end;
       HttpResponse.Status := HTTP.ResponseStatusCode;
       HttpResponse.IsBinary := False;
