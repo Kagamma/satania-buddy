@@ -85,6 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEFileCopy(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEFileRename(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileGetSize(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -924,6 +925,12 @@ end;
 function TSatania.SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   DeleteFile(Args[0].VarString^);
+  Result := SENull;
+end;
+
+function TSatania.SEFileRename(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  RenameFile(Args[0].VarString^, Args[1].VarString^);
   Result := SENull;
 end;
 
