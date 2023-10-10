@@ -2423,7 +2423,7 @@ begin
           begin
             if Value.Value.VarBuffer <> nil then
             begin
-              MS := ByteLength(Value.Value.VarBuffer^.Base);
+              MS := Length(Value.Value.VarBuffer^.Base);
               Self.FAllocatedMem := Self.FAllocatedMem - MS;
               Value.Value.VarBuffer^.Base := '';
               Dispose(Value.Value.VarBuffer);

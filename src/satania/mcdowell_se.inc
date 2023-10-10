@@ -585,9 +585,9 @@ begin
     SEMapSet(Result, 'status', HttpResponse.Status);
     if HttpResponse.IsBinary then
     begin
-      Len := ByteLength(HttpResponse.Data);
+      Len := Length(HttpResponse.Data);
       GC.AllocBuffer(@Buf, Len);
-      Move(HttpResponse.Data[1], Buf.VarBuffer^.Base[1], Len); 
+      Move(HttpResponse.Data[1], Buf.VarBuffer^.Base[1], Len);
       SEMapSet(Result, 'data', Buf);
     end else
       SEMapSet(Result, 'data', HttpResponse.Data);
@@ -598,6 +598,8 @@ begin
     SEMapSet(Result, 'headers', Headers);
     RunHttpResultList.Remove(Args[0].VarString^);
   except
+    on E: Exception do
+      Writeln(E.Message);
   end;
 end;
 
@@ -875,16 +877,17 @@ end;
 
 function TSatania.SEFileWriteText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
-  SL: TStrings;
+  FS: TFileStream;
 begin
-  SL := TStringList.Create;
+  if FileExists(Args[0].VarString^) then
+    FS := TFileStream.Create(Args[0], fmOpenWrite)
+  else
+    FS := TFileStream.Create(Args[0], fmCreate);
   try
-    if FileExists(Args[0].VarString^) then
-      SL.LoadFromFile(Args[0]);
-    SL.Text := SL.Text + Args[1];
-    SL.SaveToFile(Args[0]);
+    FS.Position := FS.Size;
+    FS.Write(Args[1].VarString^[1], ByteLength(Args[1].VarString^));
   finally
-    SL.Free;
+    FS.Free;
   end;
 end;
 
@@ -892,8 +895,12 @@ function TSatania.SEFileWriteBinary(const VM: TSEVM; const Args: array of TSEVal
 var
   FS: TFileStream;
 begin
-  FS := TFileStream.Create(Args[0], fmCreate);
+  if FileExists(Args[0].VarString^) then
+    FS := TFileStream.Create(Args[0], fmOpenWrite)
+  else
+    FS := TFileStream.Create(Args[0], fmCreate);
   try
+    FS.Position := FS.Size;
     FS.Write(Args[1].VarBuffer^.Ptr^, Args[2]);
   finally
     FS.Free;

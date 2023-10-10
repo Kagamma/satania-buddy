@@ -66,6 +66,7 @@ var
   I: Integer;
   Response: TStringStream;
   OwnedHeaders: Boolean = True;
+  SS: TRawByteStringStream;
 begin
   try
     try
@@ -76,7 +77,15 @@ begin
         'HEAD':
           HTTP.HTTPMethod('HEAD', URL, nil, []);
         'GET':
-          HttpResponse.Data := HTTP.Get(URL);
+          begin
+            SS := TRawByteStringStream.Create('');
+            try
+              HTTP.HTTPMethod('GET', URL, SS, []);
+              HttpResponse.Data := SS.DataString;
+            finally
+              SS.Free;
+            end;
+          end;
         'POST':
           begin
             if (FieldName <> '') and (FileName <> '') then
@@ -113,7 +122,7 @@ begin
       begin
         if LowerCase(HTTP.ResponseHeaders.Names[I]) = 'content-type' then
         begin
-          S := LowerCase(HTTP.ResponseHeaders.Values[HTTP.ResponseHeaders.Names[I]]);
+          S := Trim(LowerCase(HTTP.ResponseHeaders.Values[HTTP.ResponseHeaders.Names[I]]));
           if S.IndexOf('image/') >= 0 then
           begin
             HttpResponse.IsBinary := True;
