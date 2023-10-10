@@ -140,6 +140,7 @@ type
   private
     { private declarations }
     procedure InitCommon;
+    procedure HandleWarning(const Category, S: string);
   public
     Ticks: QWord;
     {$define unit_public}
@@ -198,6 +199,11 @@ begin
   Satania.ActionFromFile('menu/' + (Sender as TMenuItem).Caption + '.evil');
 end;
 
+procedure TFormMain.HandleWarning(const Category, S: string);
+begin
+  Writeln(Category + ': ' + S);
+end;
+
 procedure TFormMain.InitCommon;
 var
   StateMain: TStateMain;
@@ -233,6 +239,7 @@ begin
     {$endif}
 
     ApplicationProperties.LimitFPS := Save.Settings.FPS;
+    ApplicationProperties.OnWarning.Add(@HandleWarning);
     // OptimizeExtensiveTransformations := True;
     DynamicBatching := True;
     StateMain := TStateMain.Create(Self);
