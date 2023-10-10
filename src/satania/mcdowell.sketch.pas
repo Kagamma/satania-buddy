@@ -114,13 +114,18 @@ begin
   Result := CreateSketch(AName);
   SS := TStringStream.Create(AText);
   try
-    SS.Position := 0;
-    S := 'castle-data:/temp' + GUIDName + '.' + AType;
-    case LowerCase(AType) of
-      'x3d':
-        Result.Load(LoadNode(SS, S, 'model/x3d+xml'), True);
-      'x3dv', 'wrl':
-        Result.Load(LoadNode(SS, S, 'model/x3d+vrml'), True);
+    try
+      SS.Position := 0;
+      S := 'castle-data:/temp' + GUIDName + '.' + AType;
+      case LowerCase(AType) of
+        'x3d':
+          Result.Load(LoadNode(SS, S, 'model/x3d+xml'), True);
+        'x3dv', 'wrl':
+          Result.Load(LoadNode(SS, S, 'model/x3d+vrml'), True);
+      end;
+    except
+      on E: Exception do
+        Satania.Log(E.Message);
     end;
   finally
     SS.Free;
