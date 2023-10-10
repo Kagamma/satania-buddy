@@ -696,6 +696,8 @@ number): map*
 - Check if a file is exists.
 *fs_file_delete(filename: string)*
 - Delete a file.
+*fs_file_rename(oldname, newname: string)*
+- Rename a file.
 *fs_file_size_get(filename: string): number*
 - Returns size of file. If no file is found.
 

@@ -263,6 +263,7 @@ begin
   S.RegisterFunc('clipboard_get', @SEClipboardGet, 0);
   S.RegisterFunc('clipboard_to_file', @SEClipboardToFile, 1);
   S.RegisterFunc('fs_file_delete', @SEFileDelete, 1);
+  S.RegisterFunc('fs_file_rename', @SEFileRename, 2);
   S.RegisterFunc('fs_file_exists', @SEFileExists, 1); 
   S.RegisterFunc('fs_file_read', @SEFileReadText, 1);
   S.RegisterFunc('fs_file_read_text', @SEFileReadText, 1);
