@@ -1165,7 +1165,7 @@ begin
       {$else}
       Exit(Length(String(Args[0].VarString^)));
       {$endif}
-    sevkMap:
+    sevkMap, sevkBuffer:
       begin
         Exit(SESize(Args[0]));
       end;

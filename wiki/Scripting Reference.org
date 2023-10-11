@@ -498,7 +498,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 *array_to_map(arr: array): map*
 - Convert array arr to map. Note that arr itself will be converted.
 *length(a: map/string)*
-- Return length of string or map.
+- Return length of string, map or buffer.
 *random(n: number): number*
 - Return a random integer number range from 0 - (n-1)
 *rnd: number*
