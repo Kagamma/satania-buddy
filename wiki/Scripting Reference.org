@@ -9,10 +9,11 @@ talk('Hello, World!')
 #+end_example
 
 ** Libraries
-- Common libraries can be found in
+- Common libraries can be found in ~data/scripts/libs~
+- Character's specific libraries normally located in ~data/scripts/<character_directory_name>/libs~
 
 ** Language
-*** Include other scripts
+*** Include other scripts / libraries
 
 - The script engine will first look for scripts at the absolute path, and if no script is found there, it will search for scripts in the character's scripts directory.
 
@@ -612,7 +613,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 *string_delete(s: string, index, count: number): string*
 - Delete part of a string at index.
 *string_replace(s, old, new: string): string*
-- Replace all old with new.
+- Replace all ~old~ with ~new~ in string s.
 *string_uppercase(s: string): string*
 - Return uppercase string.
 *string_lowercase(s: string): string*
@@ -878,7 +879,7 @@ number)*
 - Example display a 3D yellow cube with a point light source, rotating at character's feet, using x3dv format:
 
 #+begin_example
-sprite_other_render('progress',
+sprite_other_render('3d cube',
   '#X3D V3.0 utf8
   PROFILE Interchange
 

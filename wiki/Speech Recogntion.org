@@ -1,0 +1,15 @@
+This page document various speech recognition backends supported (or used to support) by ~satania-buddy~.
+
+** Vosk
+- This is the default speech recognition backend. It is accurate, very fast, and consumes few resources.
+
+** whisper.cpp
+- An experimental speech recognition backend, based on [[https://github.com/ggerganov/whisper.cpp/][whisper.cpp]]. There're some disadvantages compared to ~Vosk~
+  + It does not support streaming mode, so real-time STT requires some tricks at satania-buddy's end. The current implementation is not really good and limit the maximum speech buffer to 8 seconds only.
+  + It requires a lot of processing power compared to ~Vosk~.
+
+** Microsoft Speech Object Library
+- A legacy speech recognition backend. Supports Windows only.
+
+** CMU Sphinx
+- An obsolete speech recognition backend, it was removed in favor of ~Vosk~.
