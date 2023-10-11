@@ -5,6 +5,9 @@
 *.dll
 *.so
 *.lps
+*#
+.#*
+*.evil
 satania-buddy*
 link*.res
 lib
