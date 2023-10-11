@@ -135,9 +135,11 @@ s_concat = 'a string ' + "another string"
 
 array_concat = [1, 2, 'pine'] + [5, 7]
 // Concat arrays. This only work correctly if both maps are valid array.
+// Result in [1, 2, 'pine', 5, 7]
 
-map_concat = ['a': 1] + ['b': 2, 'c': 3]
+map_concat = ['a': 1, b: 1] + ['b': 2, 'c': 3]
 // Concat maps. This only work correctly if both maps are not valid array.
+// Result in ['a': 1, 'b': 2, 'c': 3]
 
 and = a & b
 
