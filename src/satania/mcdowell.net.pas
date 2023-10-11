@@ -65,7 +65,7 @@ var
   S: String;
   I: Integer;
   Response: TStringStream;
-  SS: TRawByteStringStream;
+  SS: TMemoryStream;
 begin
   HttpResponse.IsBinary := False;
   try
@@ -76,12 +76,17 @@ begin
       case Method of
         'HEAD':
           HTTP.HTTPMethod('HEAD', URL, nil, []);
-        'GET':
+        'GET',
+        'PUT',
+        'DELETE',
+        'PATCH',
+        'OPTIONS':
           begin
-            SS := TRawByteStringStream.Create('');
+            SS := TMemoryStream.Create;
             try
-              HTTP.HTTPMethod('GET', URL, SS, []);
-              HttpResponse.Data := SS.DataString;
+              HTTP.HTTPMethod(Method, URL, SS, []);
+              SetLength(HttpResponse.Data, SS.Size);
+              Move(SS.Memory^, HttpResponse.Data[1], SS.Size);
             finally
               SS.Free;
             end;
@@ -103,14 +108,6 @@ begin
               HttpResponse.Data := HTTP.Post(URL);
             end;
           end;
-        'PUT':
-          HttpResponse.Data := HTTP.Put(URL);
-        'DELETE':
-          HttpResponse.Data := HTTP.Delete(URL);
-        'PATCH':
-          HttpResponse.Data := HTTP.Patch(URL);
-        'OPTIONS':
-          HttpResponse.Data := HTTP.Options(URL);
         else
           raise Exception.Create('Invalid request method');
       end;

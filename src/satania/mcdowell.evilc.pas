@@ -784,10 +784,6 @@ begin
         else
           Result := TSEValueMap(Value.VarMap).Count;
       end;
-    sevkBuffer:
-      begin
-        Result := Length(Value.VarBuffer^.Base);
-      end;
     else
       Result := Value.Size;
   end;
@@ -901,7 +897,7 @@ begin
   case Args[0].Kind of
     sevkBuffer:
       begin
-        Result := Length(Args[0].VarBuffer^.Base);
+        Result := Args[0].Size;
       end;
     else
       Result := 0;
