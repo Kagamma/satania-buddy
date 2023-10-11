@@ -38,6 +38,7 @@ uses
 type
   TSataniaBackgroundScript = record
     Script: TEvilC;
+    IsPersistent: Boolean;
     Interval,
     LastTimestamp: QWord;
   end;
@@ -286,6 +287,7 @@ begin
   S.RegisterFunc('sprite_other_delete', @SESketchClear, 1);
   S.RegisterFunc('sprite_other_delete_all', @SESketchClearAll, 0);
   S.RegisterFunc('worker_create', @SEWorkerCreate, -1);
+  S.RegisterFunc('worker_persistent_set', @SEWorkerExists, 2);
   S.RegisterFunc('worker_exists', @SEWorkerExists, 1);
   S.RegisterFunc('worker_delete', @SEWorkerDelete, 1);
   S.RegisterFunc('tool_evilc_editor', @SEToolEvilCEditor, 1);
@@ -1020,7 +1022,8 @@ var
 begin
   for Key in Self.BackgroundScriptDict.Keys do
   begin
-    BackgroundScriptDict[Key].Script.Free;
+    if not BackgroundScriptDict[Key].IsPersistent then
+      BackgroundScriptDict[Key].Script.Free;
   end;
   BackgroundScriptDict.Clear;
 end;

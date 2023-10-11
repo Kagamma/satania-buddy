@@ -102,6 +102,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SESketchClear(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEWorkerCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEWorkerSetPersistent(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -952,7 +953,7 @@ end;
 
 function TSatania.SEFileGetSize(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
-  F: File;
+  F: File of Byte;
 begin
   Result := 0;
   if FileExists(Args[0].VarString^) then
@@ -1236,6 +1237,7 @@ begin
     Self.BackgroundScriptDict[Key].Script.Free;
     Self.BackgroundScriptDict.Remove(Key);
   end;
+  Item.IsPersistent := False;
   Item.Script := TEvilC.Create;
   Self.RegisterFuncs(Item.Script, True);
   Self.UpdateMeta(Item.Script);
@@ -1252,6 +1254,11 @@ begin
   end;
   Self.BackgroundScriptDict.AddOrSetValue(Key, Item);
   Result := Key;
+end;
+
+function TSatania.SEWorkerSetPersistent(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Self.BackgroundScriptDict[Self.BackgroundScriptDict.ContainsKey(Args[0])].IsPersistent := Args[1];
 end;
 
 function TSatania.SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
