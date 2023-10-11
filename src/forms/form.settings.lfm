@@ -50,7 +50,6 @@ object FormSettings: TFormSettings
   OnShow = FormShow
   Position = poScreenCenter
   ShowInTaskBar = stAlways
-  LCLVersion = '3.99.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -905,7 +904,7 @@ object FormSettings: TFormSettings
           Width = 635
           Align = alTop
           BorderSpacing.Left = 64
-          Caption = 'whisper.cpp'
+          Caption = 'whisper.cpp (experimental)'
           ClientHeight = 68
           ClientWidth = 631
           TabOrder = 2
@@ -923,6 +922,29 @@ object FormSettings: TFormSettings
             Width = 400
             ItemHeight = 15
             ReadOnly = True
+            TabOrder = 0
+          end
+        end
+        object Panel2: TPanel
+          Left = 0
+          Height = 50
+          Top = 232
+          Width = 699
+          Align = alTop
+          BevelOuter = bvNone
+          ClientHeight = 50
+          ClientWidth = 699
+          TabOrder = 3
+          object ButtonSpeechRecognitionHelp: TBitBtn
+            Left = 472
+            Height = 24
+            Top = 9
+            Width = 120
+            BorderSpacing.Around = 8
+            Caption = 'Help'
+            Images = FormMain.ImageList
+            ImageIndex = 16
+            OnClick = ButtonSpeechRecognitionHelpClick
             TabOrder = 0
           end
         end

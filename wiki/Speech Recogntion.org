@@ -1,4 +1,4 @@
-This page document various speech recognition backends supported (or used to support) by ~satania-buddy~.
+This page documents various speech recognition backends supported (or previously supported) by ~satania-buddy~.
 
 ** Vosk
 - This is the default speech recognition backend. It is accurate, very fast, and consumes few resources.

@@ -1257,8 +1257,12 @@ begin
 end;
 
 function TSatania.SEWorkerSetPersistent(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Item: TSataniaBackgroundScript;
 begin
-  Self.BackgroundScriptDict[Self.BackgroundScriptDict.ContainsKey(Args[0])].IsPersistent := Args[1];
+  Item := Self.BackgroundScriptDict[Args[0]];
+  Item.IsPersistent := Args[1];
+  Self.BackgroundScriptDict[Args[0]] := Item;
 end;
 
 function TSatania.SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

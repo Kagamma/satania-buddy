@@ -28,7 +28,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
   FileUtil, CopyDir,
   ExtCtrls, Buttons, Spin, MaskEdit, Menus, CastleApplicationProperties,
-  Types, LCLTranslator, IniFiles;
+  Types, LCLTranslator, IniFiles, LCLIntf;
 
 type
 
@@ -40,6 +40,7 @@ type
     ButtonCancel: TBitBtn;
     ButtonChatBubbleFont: TSpeedButton;
     ButtonApply: TBitBtn;
+    ButtonSpeechRecognitionHelp: TBitBtn;
     CheckBoxChatSpeechBalloon: TCheckBox;
     CheckBoxChatBubbleCleartype: TCheckBox;
     CheckBoxErrorMessage: TCheckBox;
@@ -141,6 +142,7 @@ type
     ListBoxSettings: TListBox;
     PageControl: TPageControl;
     Panel1: TPanel;
+    Panel2: TPanel;
     PanelButtons: TPanel;
     PanelSettings: TPanel;
     ButtonChatWindowFont: TSpeedButton;
@@ -159,6 +161,7 @@ type
     procedure ButtonApplyClick(Sender: TObject);
     procedure ButtonCloneSkinClick(Sender: TObject);
     procedure ButtonOkClick(Sender: TObject);
+    procedure ButtonSpeechRecognitionHelpClick(Sender: TObject);
     procedure ComboBoxSTTBackendChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ListBoxSettingsSelectionChange(Sender: TObject; User: boolean);
@@ -511,6 +514,11 @@ begin
     on E: Exception do
       Satania.Error(E.Message);
   end;
+end;
+
+procedure TFormSettings.ButtonSpeechRecognitionHelpClick(Sender: TObject);
+begin
+  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Speech-Recognition');
 end;
 
 procedure TFormSettings.ComboBoxSTTBackendChange(Sender: TObject);
