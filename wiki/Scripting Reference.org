@@ -8,6 +8,9 @@ Lua.
 talk('Hello, World!')
 #+end_example
 
+** Libraries
+- Common libraries can be found in
+
 ** Language
 *** Include other scripts
 
@@ -533,7 +536,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 
 ** Buffers
 *buffer_create(size: number): buffer*
-- Create a new buffer. The result is a pointer point to the start of allocated memory.
+- Create a new buffer. The result is a pointer points to the start of allocated memory.
 *buffer_length(buffer: buffer): number*
 - Return length of a buffer.
 *buffer_u8_get(buffer: buffer): number*
@@ -670,7 +673,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 *fs_file_read_binary(filename: string): buffer*
 - Read content from file.
 *fs_file_write_binary(filename: string, buf: buffer)*
-- Write content to file. If the file is not exist then create a new file.
+- Write content at the end file. If the file is not exist then a new file is created.
 *fs_file_read(filename: string): string* ~deprecated, use fs_file_read_text() instead~
 
 *fs_file_read_text(filename: string): string*
@@ -678,7 +681,7 @@ By default, ~import~ supports ~Microsoft x64 calling convention~ on Windows, and
 *fs_file_write(filename, text: string)* ~deprecated, use fs_file_write_text() instead~
 
 *fs_file_write_text(filename, text: string)*
-- Write text to file. If the file is not exist then create a new file.
+- Write text at the end of file. If the file is not exist then a new file is created.
 *fs_file_find_all(path, mask: string, is_subdir: boolean, attribute:
 number): map*
 - Perform search for files in certain paths. Return map of paths.
@@ -695,13 +698,13 @@ number): map*
 - Copy src to dst, override if dst exists. Return true if success.
 
 *fs_file_exists(filename: string): boolean*
-- Check if a file is exists.
+- Check if a file exists.
 *fs_file_delete(filename: string)*
 - Delete a file.
 *fs_file_rename(oldname, newname: string)*
 - Rename a file.
 *fs_file_size_get(filename: string): number*
-- Returns size of file. If no file is found.
+- Returns size of file.
 
 ** Clipboard
 *clipboard_get(): string*
@@ -756,7 +759,7 @@ number): map*
 
 ** JSON
 *json_parse(json: string): map*
-- Parse a JSON string to map.
+- Convert a JSON string to map.
   + json = json_parse('{ "a": 5, "b": 2, "c": { "d": "a text", "e": ["another text", 2] } }') will return a map, which can be accessed for values for example: =json.c.e[0] // another text=
 
 *json_stringify(map: map): string*
@@ -768,12 +771,15 @@ number): map*
 *worker_create(worker_name: string, evil_script: string, interval:
 number, consts: map): string*
 - Create a new worker. Unlike main script, workers will automatically delete itself once its done executing.
+- Unless the worker is marked as persistent, workers will be deleted if user changes character.
   + ~worker_name~: Name of worker.
   + ~evil_script~: The script that will be executed by worker.
   + ~interval~: Optional. Measure in seconds. This tells how frequent this worker run. By default this value is 0.
   + ~consts~: Optional. Map of constant values that will be passed to worker.
   + ~Return~: Worker name.
 
+*worker_persistent_set(worker_name: string, persistent: boolean)*
+- Set worker's persistent flag.
 *worker_exists(worker_name: string): boolean*
 - Check if a worker exists.
 *worker_delete(worker_name: string)*
@@ -853,7 +859,7 @@ number)*
 *sprite_animation_stop(animation_name: string)*
 - Stop an animation.
 *sprite_animation_talk_set(loop, finish: string, random_script_files: map of strings)*
--  Set default talking animations.
+- Set default talking animations.
 - ~random_script_files~ is optional, which indicates which script to run when start talking. This is useful if you want your character to play different animations when start talking.
 *sprite_scale_set(scale: number)*
 - Scale the sprite.
@@ -864,12 +870,12 @@ number)*
 *sprite_other_create(name: string)*
 - Create a new sprite with name. Sprites created using this function can only be controlled by ~sprite_other_xxx()~ functions
 *sprite_other_render(name: string, source: string, format: string)*
-- Render sprite ~name~ with content from ~source~. If ~name~ doesn't exist yet, create a new one.
+- Render sprite ~name~ with content from ~source~. If ~name~ doesn't exist, create a new one.
 - ~format~ accepts the following formats:
-  + wrl: source is WRL string
-  + x3dv: source is X3D with classic encoding string
-  + x3d: source is X3D string
-- Example display a 3D yellow cube with a point light source, rotating at character's feet, with x3dv format:
+  + x3dv: Source is X3D with classic encoding string
+  + wrl: Same as x3dv
+  + x3d: Source is X3D eith XML encoding string
+- Example display a 3D yellow cube with a point light source, rotating at character's feet, using x3dv format:
 
 #+begin_example
 sprite_other_render('progress',
@@ -914,7 +920,7 @@ sprite_other_render('progress',
 #+end_example
 
 *sprite_other_delete(name: string)*
-- Delete other sprite ~name~
+- Delete other sprite with ~name~
 *sprite_other_delete_all()*
 - Delete all other sprites
 *is_sow(): boolean*
@@ -956,7 +962,7 @@ sprite_other_render('progress',
 - If no chat message is found, an empty string will be returned.
 
 *chat_history_get(): array*
-- Return array of chat message: { name: string, message: string, timestamp: string }
+- Return array of chat message. Each item has the following format: { name: string, message: string, timestamp: string }
 
 ** About Evil script compiler
 - The compiler itself is a one-pass compiler. It follows Niklaus Wirth's design, completely skips AST generation and generates binary directly.
