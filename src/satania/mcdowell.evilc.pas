@@ -127,7 +127,7 @@ type
   );
   PSECommonString = ^String;
   TSEBuffer = record
-    Base: RawByteString;
+    Base: TBytes;
     Ptr: Pointer;
   end;
   PSEBuffer = ^TSEBuffer;
@@ -1033,8 +1033,8 @@ end;
 
 class function TBuiltInFunction.SEStringToBuffer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  GC.AllocBuffer(@Result, 1);
-  Result.VarBuffer^.Base := Args[0].VarString^;
+  GC.AllocBuffer(@Result, ByteLength(Args[0].VarString^));
+  Move(Args[0].VarString^[1], Result.VarBuffer^.Base[0], ByteLength(Args[0].VarString^));
   Result.VarBuffer^.Ptr := PChar(Result.VarBuffer^.Base);
 end;
 
@@ -2547,7 +2547,7 @@ begin
   PValue^.Kind := sevkBuffer;
   New(PValue^.VarBuffer);
   SetLength(PValue^.VarBuffer^.Base, Size);
-  PValue^.VarBuffer^.Ptr := PChar(PValue^.VarBuffer^.Base);
+  PValue^.VarBuffer^.Ptr := @PValue^.VarBuffer^.Base[0];
   PValue^.Size := Size;
   Self.FAllocatedMem := Self.FAllocatedMem + Size;
   Self.AddToList(PValue);
