@@ -58,13 +58,14 @@ type
     procedure SendToHer;
   public
     IsShowProcess: Boolean;
-    KeyName : String;
+    Key     : String;
     RunName : String;
     StdIn   : RawByteString;
     Info    : TNonBlockProcessRec;
     Process : TProcess;
-    constructor Create(CreateSuspended: Boolean; const Key: String);
+    constructor Create(CreateSuspended: Boolean; const AKey: String);
     procedure Execute; override;
+    destructor Destroy; override;
   end;
 
 implementation
@@ -197,18 +198,19 @@ begin
   Terminate;
 end;
 
-constructor TSataniaExecNonBlockThread.Create(CreateSuspended: Boolean; const Key: String);
+constructor TSataniaExecNonBlockThread.Create(CreateSuspended: Boolean; const AKey: String);
 begin
   inherited Create(FreeOnTerminate);
   Info.IsActive := True;
   Info.Thread := Self;
-  KeyName := Key;
-  RunProcessNonBlockResultList.AddOrSetValue(KeyName, Info);
+  Self.Key := AKey;
+  RunProcessNonBlockResultList.AddOrSetValue(Key, Info);
+  ThreadDict.AddOrSetValue(AKey, Self);
 end;
 
 procedure TSataniaExecNonBlockThread.SendToHer;
 begin
-  RunProcessNonBlockResultList.AddOrSetValue(KeyName, Info);
+  RunProcessNonBlockResultList.AddOrSetValue(Key, Info);
 end;
 
 procedure TSataniaExecNonBlockThread.Execute;
@@ -270,7 +272,7 @@ begin
         ReadFromPipes;
         WriteToPipes;
         Synchronize(@SendToHer);
-        Yield;
+        Sleep(100);
       end;
       ReadFromPipes;
       Info.IsActive := False;
@@ -282,6 +284,12 @@ begin
     Commands.Free;
   end;
   Terminate;
+end;
+
+destructor TSataniaExecNonBlockThread.Destroy;
+begin
+  ThreadDict.Remove(Self.Key);
+  inherited;
 end;
 
 end.

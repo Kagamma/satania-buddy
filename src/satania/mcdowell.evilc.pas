@@ -1391,9 +1391,9 @@ class function TBuiltInFunction.SEStringConcat(const VM: TSEVM; const Args: arra
 begin
   Result := Args[0];
   // Since we mess with GC, manually update mem used
-  GC.AllocatedMem := GC.AllocatedMem - ByteLength(Args[1].VarString^);
+  GC.AllocatedMem := GC.AllocatedMem - Length(Args[1].VarString^);
   Result.VarString^ := Args[1].VarString^ + Args[2].VarString^;
-  GC.AllocatedMem := GC.AllocatedMem + ByteLength(Args[1].VarString^);
+  GC.AllocatedMem := GC.AllocatedMem + Length(Args[1].VarString^);
 end;
 
 class function TBuiltInFunction.SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -2413,7 +2413,7 @@ begin
           begin
             if Value.Value.VarString <> nil then
             begin
-              MS := ByteLength(Value.Value.VarString^);
+              MS := Length(Value.Value.VarString^);
               Self.FAllocatedMem := Self.FAllocatedMem - MS;
               // Value.Value.VarString^ := '';
               Dispose(Value.Value.VarString);
@@ -2567,7 +2567,7 @@ begin
   New(PValue^.VarString);
   PValue^.VarString^ := S;
   PValue^.Size := Length(S);
-  Self.FAllocatedMem := Self.FAllocatedMem + ByteLength(PValue^.VarString^);
+  Self.FAllocatedMem := Self.FAllocatedMem + Length(PValue^.VarString^);
   Self.AddToList(PValue);
 end;
 

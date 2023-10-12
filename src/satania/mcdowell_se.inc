@@ -213,7 +213,7 @@ begin
   T.Info.IsActive := True;
   T.RunName := Args[0];
   T.IsShowProcess := Args[1];
-  Result := T.KeyName;
+  Result := T.Key;
 end;
 
 function TSatania.SEProcessPipeGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
