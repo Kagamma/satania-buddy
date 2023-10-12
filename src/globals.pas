@@ -476,7 +476,7 @@ begin
 end;
 
 initialization
-  SetCurrentDir('s:\spaces\AISpace\satania-buddy');
+  //SetCurrentDir('s:\spaces\AISpace\satania-buddy');
   OwnedWindowHandleList := TQWordList.Create;
 
 finalization
