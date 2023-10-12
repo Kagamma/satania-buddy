@@ -883,7 +883,7 @@ begin
     FS := TFileStream.Create(Args[0], fmCreate);
   try
     FS.Position := FS.Size;
-    FS.Write(Args[1].VarString^[1], ByteLength(Args[1].VarString^));
+    FS.Write(Args[1].VarString^[1], Length(Args[1].VarString^));
   finally
     FS.Free;
   end;

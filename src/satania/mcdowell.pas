@@ -388,8 +388,8 @@ procedure TSatania.LoadLocalFlags;
 var
   IniFilePath: String;
 begin
-  if IniFilePath <> nil then
-    FreeAndNil(IniFilePath);
+  if LocalFlagIni <> nil then
+    FreeAndNil(LocalFlagIni);
   IniFilePath := PATH_SCRIPTS_RAW + Save.Settings.Skin +  '/flags.ini';
   LocalFlagIni := TIniFile.Create(IniFilePath);
 end;
