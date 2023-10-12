@@ -530,9 +530,6 @@ end;
 function TSatania.SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   Thread: TSataniaHttpThread;
-  I, P: Integer;
-  Key: String;
-  V: TSEValue;
 begin
   Thread := TSataniaHttpThread.Create(True, GUID);
   Thread.FreeOnTerminate := True;
@@ -560,7 +557,6 @@ end;
 
 function TSatania.SEURLGetProgress(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
-  HttpResponse: THttpResponseRec;
   Thread: TSataniaHttpThread;
 begin
   GC.AllocMap(@Result);
