@@ -928,9 +928,9 @@ object FormSettings: TFormSettings
         object Panel2: TPanel
           Left = 0
           Height = 50
-          Top = 232
+          Top = 468
           Width = 699
-          Align = alTop
+          Align = alBottom
           BevelOuter = bvNone
           ClientHeight = 50
           ClientWidth = 699
@@ -939,7 +939,7 @@ object FormSettings: TFormSettings
             Left = 472
             Height = 24
             Top = 9
-            Width = 120
+            Width = 107
             BorderSpacing.Around = 8
             Caption = 'Help'
             Images = FormMain.ImageList
