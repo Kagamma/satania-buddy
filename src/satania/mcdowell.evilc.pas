@@ -198,13 +198,13 @@ type
     Lock: Boolean;
   end;
   TSEGCValueList = specialize TList<TSEGCValue>;
-  TSEGCValueAvailList = specialize TList<Integer>;
+  TSEGCValueAvailStack = specialize TStack<Integer>;
 
   TSEGarbageCollector = class
   private
     FAllocatedMem: Int64;
     FValueList: TSEGCValueList;
-    FValueAvailList: TSEGCValueAvailList;
+    FValueAvailStack: TSEGCValueAvailStack;
     FTicks: QWord;
     procedure Sweep;
   public
@@ -784,6 +784,10 @@ begin
         else
           Result := TSEValueMap(Value.VarMap).Count;
       end;
+    sevkBuffer:
+      begin
+        Result := Length(Value.VarBuffer^.Base);
+      end;
     else
       Result := Value.Size;
   end;
@@ -897,7 +901,7 @@ begin
   case Args[0].Kind of
     sevkBuffer:
       begin
-        Result := Args[0].Size;
+        Result := Length(Args[0].VarBuffer^.Base);
       end;
     else
       Result := 0;
@@ -2335,7 +2339,8 @@ begin
   Self.FValueList := TSEGCValueList.Create;
   Self.FValueList.Capacity := 65536;
   Self.FValueList.Add(Ref0);
-  Self.FValueAvailList := TSEGCValueAvailList.Create;;
+  Self.FValueAvailStack := TSEGCValueAvailStack.Create;
+  Self.FValueAvailStack.Capacity := 65536;
   Self.FTicks := GetTickCount64;
   Self.FAllocatedMem := 0;
   Self.CeilMem := SE_MEM_CEIL;
@@ -2354,7 +2359,7 @@ begin
   end;
   Self.Sweep;
   Self.FValueList.Free;
-  Self.FValueAvailList.Free;
+  Self.FValueAvailStack.Free;
   inherited;
 end;
 
@@ -2362,7 +2367,7 @@ procedure TSEGarbageCollector.AddToList(const PValue: PSEValue); inline;
 var
   Value: TSEGCValue;
 begin
-  if Self.FValueAvailList.Count = 0 then
+  if Self.FValueAvailStack.Count = 0 then
   begin
     PValue^.Ref := Self.FValueList.Count;
     Value.Value := PValue^;
@@ -2370,11 +2375,10 @@ begin
     Self.FValueList.Add(Value);
   end else
   begin
-    PValue^.Ref := Self.FValueAvailList[Self.FValueAvailList.Count - 1];
+    PValue^.Ref := Self.FValueAvailStack.Pop;
     Value.Value := PValue^;
     Value.Lock := False;
     Self.FValueList[PValue^.Ref] := Value;
-    Self.FValueAvailList.Delete(Self.FValueAvailList.Count - 1);
   end;
 end;
 
@@ -2390,7 +2394,7 @@ end;
 procedure TSEGarbageCollector.Sweep; inline;
 var
   Value: TSEGCValue;
-  I, J, MS: Integer;
+  I, MS: Integer;
 begin
   for I := Self.FValueList.Count - 1 downto 1 do
   begin
@@ -2411,7 +2415,7 @@ begin
             begin
               MS := ByteLength(Value.Value.VarString^);
               Self.FAllocatedMem := Self.FAllocatedMem - MS;
-              Value.Value.VarString^ := '';
+              // Value.Value.VarString^ := '';
               Dispose(Value.Value.VarString);
             end;
           end;
@@ -2421,14 +2425,14 @@ begin
             begin
               MS := Length(Value.Value.VarBuffer^.Base);
               Self.FAllocatedMem := Self.FAllocatedMem - MS;
-              Value.Value.VarBuffer^.Base := '';
+              // Value.Value.VarBuffer^.Base := '';
               Dispose(Value.Value.VarBuffer);
             end;
           end;
       end;
       Value.Value.Kind := sevkNumber;
       Self.FValueList[I] := Value;
-      Self.FValueAvailList.Add(I);
+      Self.FValueAvailStack.Push(I);
     end;
   end;
 end;
@@ -2441,7 +2445,7 @@ procedure TSEGarbageCollector.GC;
     Key: String;
     I: Integer;
   begin
-    if (PValue^.Kind <> sevkMap) and (PValue^.Kind <> sevkString) then
+    if (PValue^.Kind <> sevkMap) and (PValue^.Kind <> sevkString) and (PValue^.Kind <> sevkBuffer) then
       Exit;
     Value := Self.FValueList[PValue^.Ref];
     if not Value.Garbage then
@@ -2550,8 +2554,6 @@ begin
 end;
 
 procedure TSEGarbageCollector.AllocMap(const PValue: PSEValue);
-var
-  Len: Integer;
 begin
   PValue^.Kind := sevkMap;
   PValue^.VarMap := TSEValueMap.Create;
