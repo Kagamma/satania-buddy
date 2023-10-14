@@ -57,6 +57,7 @@ type
   protected
     procedure SendToHer;
   public
+    IsForcedQuit : Boolean;
     IsShowProcess: Boolean;
     Key     : String;
     RunName : String;
@@ -204,7 +205,7 @@ begin
   Info.IsActive := True;
   Info.Thread := Self;
   Self.Key := AKey;
-  RunProcessNonBlockResultList.AddOrSetValue(Key, Info);
+  RunProcessNonBlockResultList.AddOrSetValue(AKey, Info);
   ThreadDict.AddOrSetValue(AKey, Self);
 end;
 
@@ -267,19 +268,21 @@ begin
         Process.Parameters.Add(Commands[I]);
       end;
       Process.Execute;
-      while Process.Running do
+      while Process.Running and not Self.IsForcedQuit do
       begin
         ReadFromPipes;
         WriteToPipes;
         Synchronize(@SendToHer);
-        Sleep(100);
+        Yield;
       end;
       ReadFromPipes;
-      Info.IsActive := False;
-      Info.Process := nil;
-      Synchronize(@SendToHer);
+      if Process.Running and Self.IsForcedQuit then
+        Process.Terminate(0);
     end;
   finally
+    Info.IsActive := False;
+    Info.Process := nil;
+    Synchronize(@SendToHer);
     Process.Free;
     Commands.Free;
   end;

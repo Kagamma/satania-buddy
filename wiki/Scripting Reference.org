@@ -719,7 +719,9 @@ number): map*
 *process_pipe_get(guid: string): map*
 - Return process's status and stdout / stderr pipes: /[ "running": boolean, "output": null / string ]/
 *process_pipe_set(guid, s: string)*
-- Write s to process's stdin pipe
+- Write s to process's stdin pipe.
+*process_terminate(guid: string)*
+- Terminate process.
 
 ** HTTP requests
 *url_encode(s: string): string*

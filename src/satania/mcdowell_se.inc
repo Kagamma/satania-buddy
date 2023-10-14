@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEProcessRun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEProcessPipeGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEProcessPipeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEProcessTerminate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsAnimationPlaying(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStopAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStopAllAnimations(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -214,6 +215,17 @@ begin
   T.RunName := Args[0];
   T.IsShowProcess := Args[1];
   Result := T.Key;
+end;
+
+function TSatania.SEProcessTerminate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  Thread: TSataniaExecNonBlockThread;
+begin
+  if ThreadDict.ContainsKey(Args[0].VarString^) then
+  begin
+    Thread := ThreadDict[Args[0].VarString^] as TSataniaExecNonBlockThread;
+    Thread.IsForcedQuit := True;
+  end;
 end;
 
 function TSatania.SEProcessPipeGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
