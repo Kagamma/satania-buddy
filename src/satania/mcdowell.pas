@@ -720,6 +720,7 @@ begin
         if (GetTickCount64 > BackgroundScript.LastTimestamp + BackgroundScript.Interval) then
         begin
           BackgroundScript.LastTimestamp := GetTickCount64;
+          Self.BackgroundScriptDict[Key] := BackgroundScript;
           try
             BackgroundScript.Script.Exec;
           except
