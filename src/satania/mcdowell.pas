@@ -1048,7 +1048,11 @@ begin
     end;
   end;
   FreeAndNil(RunProcessNonBlockResultList);
-end;
+end; 
+
+var
+  Key: String;
+  Thread: TThread;
 
 initialization
   CSAction := TCriticalSection.Create;
@@ -1068,6 +1072,13 @@ finalization
   FreeAndNil(Save);
   FreeAndNil(Satania);
   FreeAndNil(RunProcessResultList);
+  for Key in ThreadDict.Keys do
+  begin
+    Thread := ThreadDict[Key];
+    if Thread is TSataniaExecNonBlockThread then
+      ExecuteProcess(FindDefaultExecutablePath('taskkill'), '-f -im ' + ExtractFileName(TSataniaExecNonBlockThread(Thread).ExeName), []);
+  end;
+  Sleep(1000);
   ThreadDict.Free;
   FreeLeftoverProcesses;
   CSTalk.Free;

@@ -61,6 +61,7 @@ type
     IsShowProcess: Boolean;
     Key     : String;
     RunName : String;
+    ExeName : String;
     StdIn   : RawByteString;
     Info    : TNonBlockProcessRec;
     Process : TProcess;
@@ -257,12 +258,13 @@ begin
     if (Length(S) > 0) then
     begin
       CommandToList(S, Commands);
+      Self.ExeName := Commands[0];
       if IsShowProcess then
         Process.ShowWindow := swoShowDefault
       else
         Process.ShowWindow := swoHIDE;
       Process.Options := Process.Options + [poUsePipes, poStderrToOutPut];
-      Process.Executable := FindDefaultExecutablePath(Commands[0]);
+      Process.Executable := FindDefaultExecutablePath(Self.ExeName);
       for I := 1 to Commands.Count - 1 do
       begin
         Process.Parameters.Add(Commands[I]);
@@ -273,17 +275,18 @@ begin
         ReadFromPipes;
         WriteToPipes;
         Synchronize(@SendToHer);
-        Yield;
+        Sleep(100);
       end;
       ReadFromPipes;
+      Writeln();
       if Process.Running and Self.IsForcedQuit then
+      begin
         Process.Terminate(0);
+      end;
     end;
   finally
     Info.IsActive := False;
-    Info.Process := nil;
     Synchronize(@SendToHer);
-    Process.Free;
     Commands.Free;
   end;
   Terminate;
@@ -291,6 +294,11 @@ end;
 
 destructor TSataniaExecNonBlockThread.Destroy;
 begin
+  if Process.Active then
+  begin
+    Process.Terminate(0);
+  end;   
+  Process.Free;
   ThreadDict.Remove(Self.Key);
   inherited;
 end;
