@@ -253,6 +253,7 @@ begin
       SEMapSet(Result, 'running', Info.IsActive);
       if Info.StdOut <> '' then
         SEMapSet(Result, 'output', Info.StdOut);
+      SEMapSet(Result, 'process_id', Info.Process.ProcessID);
       if Info.IsActive then
       begin
         // Flush cache
