@@ -162,7 +162,7 @@ begin
         end;
       '(':
         begin
-          if IsEmote and (Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') and (PeekAtPrevChar in [' ', #10, #13, #9]) then
+          if IsEmote and (Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') and (PeekAtPrevChar in [#0, ' ', #10, #13, #9]) then
           begin
             Self.FState := rtsThink;
             Token.Kind := rtkState;
@@ -183,7 +183,7 @@ begin
         end;
       '[':
         begin
-          if IsEmote and (Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') and (PeekAtPrevChar in [' ', #10, #13, #9]) then
+          if IsEmote and (Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') and (PeekAtPrevChar in [#0, ' ', #10, #13, #9]) then
           begin
             Self.FState := rtsThink;
             Token.Kind := rtkState;
@@ -204,7 +204,7 @@ begin
         end;
       '*':
         begin
-          if IsEmote and (((Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') and (PeekAtPrevChar in [' ', #10, #13, #9])) or (Self.FState = rtsThink)) then
+          if IsEmote and (((Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') and (PeekAtPrevChar in [#0, ' ', #10, #13, #9])) or (Self.FState = rtsThink)) then
           begin
             if Self.FState = rtsNormal then
               Self.FState := rtsThink
