@@ -104,6 +104,16 @@ var
   Col: Integer = 1;
   Pos: Integer = 0;
 
+  function PeekAtPrevChar(const Ind: Integer = 1): Char; inline;
+  var
+    P: Integer;
+  begin
+    P := Pos - Ind;
+    if P < 1 then
+      Exit(#0);
+    Exit(Self.Source[P]);
+  end;
+
   function PeekAtNextChar(const Ind: Integer = 1): Char; inline;
   var
     P: Integer;
@@ -152,7 +162,7 @@ begin
         end;
       '(':
         begin
-          if IsEmote and (Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') then
+          if IsEmote and (Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') and (PeekAtPrevChar in [' ', #10, #13, #9]) then
           begin
             Self.FState := rtsThink;
             Token.Kind := rtkState;
@@ -173,7 +183,7 @@ begin
         end;
       '[':
         begin
-          if IsEmote and (Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') then
+          if IsEmote and (Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') and (PeekAtPrevChar in [' ', #10, #13, #9]) then
           begin
             Self.FState := rtsThink;
             Token.Kind := rtkState;
@@ -194,7 +204,7 @@ begin
         end;
       '*':
         begin
-          if IsEmote and (((Self.FState = rtsNormal) and (PeekAtNextChar <> ' ')) or (Self.FState = rtsThink)) then
+          if IsEmote and (((Self.FState = rtsNormal) and (PeekAtNextChar <> ' ') and (PeekAtPrevChar in [' ', #10, #13, #9])) or (Self.FState = rtsThink)) then
           begin
             if Self.FState = rtsNormal then
               Self.FState := rtsThink
