@@ -717,7 +717,7 @@ number): map*
 *process_run(process: string, show_window: boolean): string*
 - Run a process by name. Return process guid.
 *process_pipe_get(guid: string): map*
-- Return process's status and stdout / stderr pipes: /[ "running": boolean, "output": null / string ]/
+- Return process's actuao id, status and stdout / stderr pipes: /[ "process_id": number, "running": boolean, "output": null / string ]/
 *process_pipe_set(guid, s: string)*
 - Write s to process's stdin pipe.
 *process_terminate(guid: string)*
