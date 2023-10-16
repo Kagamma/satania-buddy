@@ -972,7 +972,7 @@ object FormSettings: TFormSettings
           Height = 75
           Top = 70
           Width = 424
-          Caption = 'Enable Developer Mode disable the following optimizations:'#13#10'- Sprite caching. Sprites will be reloaded everytime sprite_load() is called.'#13#10'- Byecode caching. Scripts will be recompiled everytime the app changes scripts.'#13#10#13#10'Additionally, assertions is enabled for non-worker scripts.'
+          Caption = 'Enable Developer Mode disable the following optimizations:'#13#10'- Sprite caching. Sprites will be reloaded everytime sprite_load() is called.'#13#10'- Byecode caching. Scripts will be recompiled everytime the app changes scripts.'#13#10#13#10'Additionally, assertions is enabled for all scripts.'
         end
       end
     end

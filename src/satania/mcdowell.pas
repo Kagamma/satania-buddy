@@ -725,6 +725,7 @@ begin
           BackgroundScript.LastTimestamp := GetTickCount64;
           Self.BackgroundScriptDict[Key] := BackgroundScript;
           try
+            BackgroundScript.Script.OptimizeAsserts := not Save.Settings.DeveloperMode;
             BackgroundScript.Script.Exec;
           except
             // Make sure runtime doesnt get blocked when an error occurs in background script
