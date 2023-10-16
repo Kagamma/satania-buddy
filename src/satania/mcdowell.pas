@@ -502,6 +502,7 @@ begin
         FreeAndNil(FS);
         Action('script', SS.DataString);
         // Parse the source beforehand to store backup
+        Self.Script.OptimizeAsserts := not Save.Settings.DeveloperMode;
         Self.Script.Lex;
         Self.Script.Parse;
         ScriptCacheMap.Add(Path, Self.Script.Backup);
@@ -558,6 +559,7 @@ begin
         FreeAndNil(FS);
         Action('script', SS.DataString);
         // Parse the source beforehand to store backup
+        Self.Script.OptimizeAsserts := not Save.Settings.DeveloperMode;
         Self.Script.Lex;
         Self.Script.Parse;
         ScriptCacheMap.Add(Path, Self.Script.Backup);

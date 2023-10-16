@@ -36,16 +36,19 @@ type
   { TFormEvilCEditor }
 
   TFormEvilCEditor = class(TForm)
+    MenuItemEnableAssertions: TMenuItem;
     MenuItemEditorCut: TMenuItem;
     MenuItemEditorCopy: TMenuItem;
     MenuItemEditorPaste: TMenuItem;
     OpenDialog: TOpenDialog;
+    PopupMenuCompilerFlags: TPopupMenu;
     PopupMenuEditor: TPopupMenu;
     SaveDialog: TSaveDialog;
     Editor: TSynEdit;
     StatusBar: TStatusBar;
     SynCompletion: TSynCompletion;
     ToolBar1: TToolBar;
+    ToolButtonCompilerFlags: TToolButton;
     ToolButtonReplace: TToolButton;
     ToolButtonFind: TToolButton;
     ToolButton3: TToolButton;
@@ -72,6 +75,7 @@ type
     procedure MenuItemEditorCopyClick(Sender: TObject);
     procedure MenuItemEditorCutClick(Sender: TObject);
     procedure MenuItemEditorPasteClick(Sender: TObject);
+    procedure MenuItemEnableAssertionsClick(Sender: TObject);
     procedure SynCompletionBeforeExecute(ASender: TSynBaseCompletion;
       var ACurrentString: String; var APosition: Integer; var AnX,
       AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
@@ -94,6 +98,7 @@ type
     procedure LoadHighligher(const Ext: String);                    
     procedure FindNext;
   public
+    EnbaleAssertions: Boolean;
     ErrorPos: TPoint;
     SearchText: String;
     WorkingFile: String;
@@ -211,6 +216,12 @@ end;
 procedure TFormEvilCEditor.MenuItemEditorPasteClick(Sender: TObject);
 begin
   Editor.PasteFromClipboard;
+end;
+
+procedure TFormEvilCEditor.MenuItemEnableAssertionsClick(Sender: TObject);
+begin
+  Self.EnbaleAssertions := not Self.EnbaleAssertions;
+  Self.MenuItemEnableAssertions.Checked := Self.EnbaleAssertions;
 end;
 
 procedure TFormEvilCEditor.SynCompletionBeforeExecute(
@@ -384,6 +395,7 @@ begin
   Satania.Action('script', Editor.Lines.Text);
   try
     StatusBar.Panels[1].Text := '';
+    Satania.Script.OptimizeAsserts := not Self.EnbaleAssertions;
     Satania.Script.Exec; // Force to execute the script immediately
   except
     on E: Exception do

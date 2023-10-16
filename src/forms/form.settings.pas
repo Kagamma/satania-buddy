@@ -358,6 +358,8 @@ var
 begin
   Save.Settings.Lewd := CheckBoxLewd.Checked;
   Save.Settings.DeveloperMode := CheckBoxDeveloperMode.Checked;
+  if Save.Settings.DeveloperMode then
+    Satania.CleanUpCache;
   Save.Settings.FPS := EditFPS.Value;
   Save.Settings.ChatBubbleDelay := EditChatBubbleDelay.Value;
   Save.Settings.SitOnWindowRightMargin := EditSoWRightMargin.Value;

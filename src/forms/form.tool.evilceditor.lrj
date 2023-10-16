@@ -23,9 +23,11 @@
 {"hash":160486419,"name":"tformevilceditor.toolbutton3.caption","sourcebytes":[84,111,111,108,66,117,116,116,111,110,51],"value":"ToolButton3"},
 {"hash":131039500,"name":"tformevilceditor.toolbuttonreplace.hint","sourcebytes":[82,101,112,108,97,99,101,32,65,108,108],"value":"Replace All"},
 {"hash":147269573,"name":"tformevilceditor.toolbuttonreplace.caption","sourcebytes":[82,101,112,108,97,99,101],"value":"Replace"},
+{"hash":230267875,"name":"tformevilceditor.toolbuttoncompilerflags.caption","sourcebytes":[84,111,111,108,66,117,116,116,111,110,67,111,109,112,105,108,101,114,70,108,97,103,115],"value":"ToolButtonCompilerFlags"},
 {"hash":97534741,"name":"tformevilceditor.opendialog.title","sourcebytes":[79,112,101,110,32,69,118,105,108,32,83,99,104,101,109,101],"value":"Open Evil Scheme"},
 {"hash":47234325,"name":"tformevilceditor.savedialog.title","sourcebytes":[83,97,118,101,32,69,118,105,108,32,83,99,104,101,109,101],"value":"Save Evil Scheme"},
 {"hash":19140,"name":"tformevilceditor.menuitemeditorcut.caption","sourcebytes":[67,117,116],"value":"Cut"},
 {"hash":304761,"name":"tformevilceditor.menuitemeditorcopy.caption","sourcebytes":[67,111,112,121],"value":"Copy"},
-{"hash":5671589,"name":"tformevilceditor.menuitemeditorpaste.caption","sourcebytes":[80,97,115,116,101],"value":"Paste"}
+{"hash":5671589,"name":"tformevilceditor.menuitemeditorpaste.caption","sourcebytes":[80,97,115,116,101],"value":"Paste"},
+{"hash":245516627,"name":"tformevilceditor.menuitemenableassertions.caption","sourcebytes":[69,110,97,98,108,101,32,65,115,115,101,114,116,105,111,110,115],"value":"Enable Assertions"}
 ]}

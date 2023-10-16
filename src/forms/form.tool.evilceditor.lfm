@@ -172,6 +172,14 @@ object FormEvilCEditor: TFormEvilCEditor
       ImageIndex = 27
       OnClick = ToolButtonReplaceClick
     end
+    object ToolButtonCompilerFlags: TToolButton
+      Left = 271
+      Top = 2
+      Caption = 'ToolButtonCompilerFlags'
+      DropdownMenu = PopupMenuCompilerFlags
+      ImageIndex = 24
+      PopupMenu = PopupMenuCompilerFlags
+    end
   end
   inline Editor: TSynEdit
     Left = 0
@@ -712,7 +720,7 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   object PopupMenuEditor: TPopupMenu
     Left = 344
-    Top = 147
+    Top = 64
     object MenuItemEditorCut: TMenuItem
       Caption = 'Cut'
       OnClick = MenuItemEditorCutClick
@@ -744,5 +752,13 @@ object FormEvilCEditor: TFormEvilCEditor
     ToggleReplaceWhole = False
     Left = 456
     Top = 64
+  end
+  object PopupMenuCompilerFlags: TPopupMenu
+    Left = 344
+    Top = 129
+    object MenuItemEnableAssertions: TMenuItem
+      Caption = 'Enable Assertions'
+      OnClick = MenuItemEnableAssertionsClick
+    end
   end
 end
