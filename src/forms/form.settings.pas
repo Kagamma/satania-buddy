@@ -193,9 +193,8 @@ uses
 
 procedure TFormSettings.FormShow(Sender: TObject);
 var
-  I, J, Tmp: Integer;
-  L: TStringDynArray;
-  S, S2: String;
+  I, J: Integer;
+  S: String;
   SL, SL2: TStringList;
 begin
   PageControl.TabIndex := 0;

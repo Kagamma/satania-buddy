@@ -2037,8 +2037,6 @@ operator := (V: TSEValue) R: Pointer; inline;
 begin
   R := V.VarPointer;
 end;
-var
-  I, Len: Integer;
 
 operator + (V1: TSEValue; V2: TSENumber) R: TSEValue; inline;
 begin
@@ -6205,7 +6203,8 @@ var
     StartCaseBlock,
     EndCaseBlock,
     JumpNextBlock,
-    EndBlock: Integer;
+    EndBlock,
+    I: Integer;
   begin
     Token.Kind := tkIdent;
     Token.Value := '___s' + Self.InternalIdent;

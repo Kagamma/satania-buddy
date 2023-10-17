@@ -55,7 +55,9 @@ type
 
   TSataniaExecNonBlockThread = class(TThread)
   protected
+    TmpStdOut: String;
     procedure SendToHer;
+    procedure SendStdOutToHer;
   public
     IsForcedQuit : Boolean;
     IsShowProcess: Boolean;
@@ -133,9 +135,7 @@ end;
 
 procedure TSataniaChatThread.Execute;
 var
-  S, JsonString: String;
-  JsonObject: TJSONObject;
-  Client: TFPHTTPClient;
+  S: String;
 
   procedure PerformCustomScriptRequest;
   begin
@@ -215,6 +215,11 @@ begin
   RunProcessNonBlockResultList.AddOrSetValue(Key, Info);
 end;
 
+procedure TSataniaExecNonBlockThread.SendStdOutToHer;
+begin
+  Info.StdOut := Info.StdOut + Self.TmpStdOut;
+end;
+
 procedure TSataniaExecNonBlockThread.Execute;
 const
   READ_BYTES = 16384;
@@ -233,7 +238,8 @@ var
     if BytesRead > 0 then
     begin
       SetString(S, @Buffer[0], BytesRead);
-      Info.StdOut := Info.StdOut + S;
+      TmpStdOut := S;
+      Synchronize(@Self.SendStdOutToHer);
     end;
   end;
 

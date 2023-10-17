@@ -344,9 +344,6 @@ procedure TFormChat.InsertLog(const LogName, Msg: String; Time: String = '');
 var
   H, M, SS, MS: Word;
   TB: TKMemoTextBlock;
-  MsgSplit: TStringDynArray;
-  CodeMode: Boolean = False;
-  I: Integer;
   CH: TChatHistoryRec;
   IsLog: Boolean = False;
 begin
