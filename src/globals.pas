@@ -34,10 +34,10 @@ uses
 
 const
   PATH_SCRIPTS_RAW = 'data/scripts/';
-  PATH_SCRIPTS = 'castle-data:/scripts/';
-  PATH_SPRITES = 'castle-data:/sprites/';
-  PATH_FONT = 'castle-data:/fonts/';
-  PATH_SOUND = 'castle-data:/sounds/';
+  PATH_SCRIPTS = 's-data:/scripts/';
+  PATH_SPRITES = 's-data:/sprites/';
+  PATH_FONT = 's-data:/fonts/';
+  PATH_SOUND = 's-data:/sounds/';
   PATH_CHAT_HISTORY = 'data/chat_history/';
   PATH_VOSK = 'data/nn/vosk/';                
   PATH_WHISPER = 'data/nn/whisper.cpp/';
@@ -481,7 +481,9 @@ begin
 end;
 
 initialization
-  CreateDir(GetAppConfigDir(True));
+  CreateDir(GetAppConfigDir(True));     
+  CreateDir(GetAppConfigDir(True) + 'data');
+  CreateDir(GetAppConfigDir(True) + PATH_CHAT_HISTORY);
   OwnedWindowHandleList := TQWordList.Create;
 
 finalization

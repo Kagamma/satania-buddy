@@ -279,7 +279,8 @@ begin
   S.RegisterFunc('fs_directory_create', @SEDirectoryCreate, 1);
   S.RegisterFunc('fs_directory_delete', @SEDirectoryDelete, 1);
   S.RegisterFunc('fs_directory_find_all', @SEDirectoryFindAll, 2);
-  S.RegisterFunc('fs_directory_exists', @SEDirectoryExists, 1);
+  S.RegisterFunc('fs_directory_exists', @SEDirectoryExists, 1);     
+  S.RegisterFunc('fs_directory_config_get', @SEDirectoryGetConfig, 0);
   S.RegisterFunc('json_parse', @SEJSONParse, 1);
   S.RegisterFunc('json_stringify', @SEJSONStringify, 1);
   S.RegisterFunc('sprite_other_create', @SESketchCreate, 1);
@@ -484,7 +485,8 @@ begin
     try
       if not IsChecked then
       begin
-        if not FileExists('data/scripts/' + Save.Settings.Skin + '/' + FileName) then
+        if (not FileExists('data/scripts/' + Save.Settings.Skin + '/' + FileName)) and
+           (not FileExists(GetAppConfigDir(True) + 'data/scripts/' + Save.Settings.Skin + '/' + FileName)) then
         begin
           Exit;
         end;

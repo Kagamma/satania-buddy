@@ -40,12 +40,11 @@ type
 implementation
 
 uses
-  Globals, Mcdowell;
+  Globals, Mcdowell, Mcdowell.Data;
 
 constructor TSataniaChatHistory.Create;
 begin
   inherited;
-  CreateDir(PATH_CHAT_HISTORY);
   Self.ChatHistoryList := TChatHistoryList.Create;
 end;
 

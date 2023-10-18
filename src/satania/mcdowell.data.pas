@@ -13,7 +13,28 @@ type
     class function Write(const Url: String): TStream;
   end;
 
+function GetPhysFilePath(S: String): String;     
+function GetPhysDirPath(S: String): String;
+
 implementation
+
+function GetPhysFilePath(S: String): String;
+begin
+  if not FileExists(S) then
+  begin
+    S := GetAppConfigDir(True) + S;
+  end;
+  Result := S;
+end;               
+
+function GetPhysDirPath(S: String): String;
+begin
+  if not DirectoryExists(S) then
+  begin
+    S := GetAppConfigDir(True) + S;
+  end;
+  Result := S;
+end;
 
 class function TSataniaDataClass.Read(const Url: String; out MimeType: String): TStream;
 var

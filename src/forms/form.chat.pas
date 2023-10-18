@@ -110,6 +110,7 @@ uses
   form.tool.evilceditor,
   Form.Bubble,
   Utils.Colors,
+  Mcdowell.Data,
   Mcdowell;
 
 { TFormChat }
@@ -148,7 +149,7 @@ var
 begin
   MemoChatLog.Blocks.Clear;
   MemoChatLog.Blocks.LockUpdate;
-  ChatHistory.LoadFromFile(PATH_CHAT_HISTORY + Save.Settings.Skin + '.txt');
+  ChatHistory.LoadFromFile(GetAppConfigDir(True) + PATH_CHAT_HISTORY + Save.Settings.Skin + '.txt');
   FIsWriteToHistoryLog := False;
   for I := 0 to Self.ChatHistory.List.Count - 1 do
   begin
@@ -192,7 +193,7 @@ begin
   ComboBoxService.ItemIndex := 0;
 
   SL := TStringList.Create;
-  FindAllFiles(SL, 'data/scripts/' + Save.Settings.Skin + '/services', '*.evil', False);
+  FindAllFiles(SL, GetPhysDirPath('data/scripts/' + Save.Settings.Skin + '/services'), '*.evil', False);
   for I := 0 to SL.Count - 1 do
   begin
     S := ExtractFileName(SL[I]);
@@ -294,7 +295,7 @@ begin
   begin
     Frm := TFormEvilCEditor.Create(nil);
     DockMaster.MakeDockable(Frm);
-    Frm.LoadFromFile('data/scripts/' + Save.Settings.Skin + '/services/' + Self.ComboBoxService.Items[I]);
+    Frm.LoadFromFile(GetPhysFilePath('data/scripts/' + Save.Settings.Skin + '/services/' + Self.ComboBoxService.Items[I]));
   end;
 end;
 

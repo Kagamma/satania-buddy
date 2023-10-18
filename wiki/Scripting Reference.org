@@ -680,6 +680,8 @@ You can enable assertions globally in Settings, or locally in script editor.
 - Perform search for directories in certain paths. Return map of paths.
 *fs_directory_exists(path: string): boolean*.
 - Check if a directory is exists.
+*fs_directory_config_get(): string*
+- Return satania-buddy's config directory path.
 *fs_file_read_binary(filename: string): buffer*
 - Read content from file.
 *fs_file_write_binary(filename: string, buf: buffer)*

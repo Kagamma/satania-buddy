@@ -79,6 +79,7 @@ uses
   mcdowell,
   mcdowell.chatbot,
   Form.chat,
+  Mcdowell.Data,
   Mcdowell.EvilC;
 
 procedure TSataniaChatThread.RemoveTyping;
@@ -115,7 +116,7 @@ begin
   begin
     SL := TStringList.Create;
     try
-      SL.LoadFromFile('data/scripts/' + Save.Settings.Skin + '/services/' + FormChat.ComboBoxService.Items[FormChat.ComboBoxService.ItemIndex]);
+      SL.LoadFromFile(GetPhysFilePath('data/scripts/' + Save.Settings.Skin + '/services/' + FormChat.ComboBoxService.Items[FormChat.ComboBoxService.ItemIndex]));
       if WorkerScriptType = 0 then
       begin
         GC.AllocMap(@V);
@@ -152,11 +153,12 @@ begin
     begin
       ChatType := 'chat';
     end else
-    if URIFileExists(PATH_SCRIPTS + Save.Settings.Skin + '/' + S) then
+    // TODO: It's broken
+    {if URIFileExists(PATH_SCRIPTS + Save.Settings.Skin + '/' + S) then
     begin
       ChatType := '';
       Satania.ActionFromFile(S);
-    end else
+    end else}
     begin
       // Rules or not
       if Save.Settings.Rules then
