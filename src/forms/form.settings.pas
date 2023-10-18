@@ -246,7 +246,9 @@ begin
   SL := TStringList.Create;
   SL2 := TStringList.Create;
   FindAllDirectories(SL, 'data/sprites', False);
+  FindAllDirectories(SL, GetAppConfigDir(True) + 'data/sprites', False);
   FindAllDirectories(SL2, 'data/scripts', False);
+  FindAllDirectories(SL2, GetAppConfigDir(True) + 'data/scripts', False);
   for I := 0 to SL.Count - 1 do
   begin
     SL[I] := ExtractFileName(SL[I]);
@@ -493,11 +495,11 @@ begin
       end;
     end;
     CurrentSkinName := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
-    CD := TCopyDir.Create('data/scripts/' + CurrentSkinName, 'data/scripts/' + NewSkinName);
+    CD := TCopyDir.Create('data/scripts/' + CurrentSkinName, GetAppConfigDir(True) + 'data/scripts/' + NewSkinName);
     CD.PrintToTerminal := True;
     CD.Start;
     CD.Free;                                                       
-    CD := TCopyDir.Create('data/sprites/' + CurrentSkinName, 'data/sprites/' + NewSkinName);
+    CD := TCopyDir.Create('data/sprites/' + CurrentSkinName, GetAppConfigDir(True) + 'data/sprites/' + NewSkinName);
     CD.PrintToTerminal := True;
     CD.Start;
     CD.Free;  
