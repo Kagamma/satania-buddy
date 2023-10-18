@@ -267,8 +267,8 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure SaveToFile(const FileName: String);
-    procedure LoadFromFile(const FileName: String);
+    procedure SaveToFile(FileName: String);
+    procedure LoadFromFile(FileName: String);
     function SEGetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SESetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   published
@@ -406,12 +406,13 @@ begin
   inherited;
 end;
 
-procedure TSave.SaveToFile(const FileName: String);
+procedure TSave.SaveToFile(FileName: String);
 var
   FS: TFileStream;
   Streamer: TJSONStreamer;
   SS: TStringStream;
 begin
+  FileName := GetAppConfigDir(True) + FileName;
   FS := TFileStream.Create(FileName, fmCreate);
   Streamer := TJSONStreamer.Create(nil);
   try
@@ -429,14 +430,18 @@ begin
   end;
 end;
 
-procedure TSave.LoadFromFile(const FileName: String);
+procedure TSave.LoadFromFile(FileName: String);
 var
   FS: TFileStream;
   DeStreamer: TJSONDeStreamer;
   SS: TStringStream;
 begin
   if not FileExists(FileName) then
-    Exit;
+  begin
+    FileName := GetAppConfigDir(True) + FileName;
+    if not FileExists(FileName) then
+      Exit;
+  end;
   FS := TFileStream.Create(FileName, fmOpenRead);
   SS := TStringStream.Create('');
   DeStreamer := TJSONDeStreamer.Create(nil);
@@ -476,7 +481,7 @@ begin
 end;
 
 initialization
-  //SetCurrentDir('s:\spaces\AISpace\satania-buddy');
+  CreateDir(GetAppConfigDir(True));
   OwnedWindowHandleList := TQWordList.Create;
 
 finalization
