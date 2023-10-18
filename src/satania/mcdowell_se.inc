@@ -93,6 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEDirectoryGetConfig(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1013,6 +1014,11 @@ end;
 function TSatania.SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := DirectoryExists(Args[0].VarString^);
+end;
+
+function TSatania.SEDirectoryGetConfig(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := GetAppConfigDir(True);
 end;
 
 function TSatania.SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
