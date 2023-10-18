@@ -33,7 +33,8 @@ uses
   CastleSceneCore, CastleScene,
   CastleVectors, {$ifdef WINDOWS}CastleControl,{$else}OpenGLContext,{$endif} CastleWindow,
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, Menus,
-  LCLType, StdCtrls, PopupNotifier, Globals, HtmlView, LCLintf,
+  LCLType, StdCtrls, PopupNotifier, Globals, HtmlView, LCLintf, CastleDownload,
+  CastleFilesUtils,
   Mcdowell, LCLTranslator, AnchorDocking;
 
 type
@@ -180,6 +181,7 @@ uses
   Mcdowell.chatbot,
   Mcdowell.chatbot.train,
   mcdowell.speechtotext,
+  Mcdowell.Data,
   State.Main;
 
 {$define unit_implmentation}
@@ -241,6 +243,9 @@ begin
 
     ApplicationProperties.LimitFPS := Save.Settings.FPS;
     ApplicationProperties.OnWarning.Add(@HandleWarning);
+
+    RegisterUrlProtocol('s-data', @TSataniaDataClass(nil).Read, @TSataniaDataClass(nil).Write);
+    ApplicationDataOverride := 's-data:/';
     // OptimizeExtensiveTransformations := True;
     DynamicBatching := True;
     StateMain := TStateMain.Create(Self);

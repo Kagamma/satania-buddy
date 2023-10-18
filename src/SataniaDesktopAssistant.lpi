@@ -392,6 +392,11 @@
         <Filename Value="components/speech-to-text/whisper.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="satania/mcdowell.data.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Mcdowell.Data"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

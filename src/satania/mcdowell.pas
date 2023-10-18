@@ -437,7 +437,8 @@ begin
   CSAction.Enter;
   try
     Self.Script.IncludePathList.Clear;
-    Self.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
+    Self.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');  
+    Self.Script.IncludePathList.Add(GetAppConfigDir(True) + 'data/scripts/' + Save.Settings.Skin + '/');
     case Typ of
       'chat':
         Talk(Message);

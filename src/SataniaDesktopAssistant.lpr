@@ -41,7 +41,8 @@ uses
   utils.strings, utils.encdec, utils.coords, utils.threads, utils.files,
   mcdowell.smtp, utils.smartptr, Com.Talk, Com.Brokers, form.ask, utils.sprites,
   mcdowell.sketch, form.tool.hexeditor, Mcdowell.RichText, Form.Bubble,
-  Utils.Colors, CopyDir, Vosk, BassAudioSource, SttThread, whisper;
+  Utils.Colors, CopyDir, Vosk, BassAudioSource, SttThread, whisper,
+  Mcdowell.Data;
 
 {$R *.res}
 

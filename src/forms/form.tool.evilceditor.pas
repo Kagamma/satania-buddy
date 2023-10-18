@@ -131,6 +131,7 @@ begin
     try
       Self.Script.IncludePathList.Clear;
       Self.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
+      Self.Script.IncludePathList.Add(GetAppConfigDir(True) + 'data/scripts/' + Save.Settings.Skin + '/');
       Self.Script.Source := ASource;
       Self.Script.Lex;
       Self.Script.Parse;

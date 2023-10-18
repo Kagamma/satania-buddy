@@ -1256,6 +1256,8 @@ begin
   end;
   Item.IsPersistent := False;
   Item.Script := TEvilC.Create;
+  Item.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
+  Item.Script.IncludePathList.Add(GetAppConfigDir(True) + 'data/scripts/' + Save.Settings.Skin + '/');
   Self.RegisterFuncs(Item.Script, True);
   Self.UpdateMeta(Item.Script);
   Item.Script.Source := Args[1];
