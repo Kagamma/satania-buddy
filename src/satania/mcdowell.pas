@@ -1061,8 +1061,7 @@ initialization
   CSAction := TCriticalSection.Create;
   CSTalk := TCriticalSection.Create;
   Save := TSave.Create;
-  if FileExists('configs.json') then
-    Save.LoadFromFile('configs.json');
+  Save.LoadFromFile('configs.json');
 
   Satania := TSatania.Create;
   RunHttpResultList := THttpResponseDict.Create;
