@@ -484,7 +484,7 @@ var
   I: Integer;
   CD: TCopyDir;
 begin
-  if InputQuery('Clone to new character', 'Character''s directory name:', False, NewSkinName) then
+  if InputQuery('Clone to new character, locate in "' + GetAppConfigDir(True) + '"', 'Character''s directory name:', False, NewSkinName) then
   begin
     for I := 0 to ComboBoxSkin.Items.Count - 1 do
     begin

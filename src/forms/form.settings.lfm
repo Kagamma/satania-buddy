@@ -50,7 +50,6 @@ object FormSettings: TFormSettings
   OnShow = FormShow
   Position = poScreenCenter
   ShowInTaskBar = stAlways
-  LCLVersion = '3.99.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -114,9 +113,9 @@ object FormSettings: TFormSettings
       Height = 546
       Top = 1
       Width = 707
-      ActivePage = TabSheetOptimization
+      ActivePage = TabSheetGeneral
       Align = alClient
-      TabIndex = 7
+      TabIndex = 0
       TabOrder = 0
       object TabSheetGeneral: TTabSheet
         Caption = 'General'
