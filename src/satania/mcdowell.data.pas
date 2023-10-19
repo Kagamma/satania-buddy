@@ -19,12 +19,12 @@ function GetOSLocalDir: String;
 
 implementation
 
-function GetOSLocalDir: String;
+function GetOSLocalDir: String; inline;
 begin
-  {$ifdef LINUX}
-  Result := '~/.config/satania-buddy/';
-  {$else}
+  {$ifdef WINDOWS}
   Result := GetAppConfigDir(True);
+  {$else}
+  Result := GetUserDir + '.config/satania-buddy/';
   {$endif}
 end;
 
