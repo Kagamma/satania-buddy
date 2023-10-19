@@ -200,7 +200,7 @@ object FormEvilCEditor: TFormEvilCEditor
     TabOrder = 1
     OnKeyDown = EditorKeyDown
     Gutter.Color = 1644825
-    Gutter.Width = 57
+    Gutter.Width = 61
     Gutter.MouseActions = <>
     RightGutter.Width = 0
     RightGutter.MouseActions = <>
@@ -660,7 +660,7 @@ object FormEvilCEditor: TFormEvilCEditor
         MouseActions = <>
       end
       object SynGutterLineNumber: TSynGutterLineNumber
-        Width = 17
+        Width = 21
         MouseActions = <>
         MarkupInfo.Background = 1644825
         MarkupInfo.Foreground = clGray

@@ -159,6 +159,7 @@ uses
   mcdowell.smtp,
   mcdowell.sketch,
   mcdowell.chat.history,
+  Mcdowell.Data,
   com.Brokers;
 
 {$define unit_implementation}
@@ -439,7 +440,7 @@ begin
   try
     Self.Script.IncludePathList.Clear;
     Self.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');  
-    Self.Script.IncludePathList.Add(GetAppConfigDir(True) + 'data/scripts/' + Save.Settings.Skin + '/');
+    Self.Script.IncludePathList.Add(GetOSLocalDir + 'data/scripts/' + Save.Settings.Skin + '/');
     case Typ of
       'chat':
         Talk(Message);
@@ -486,7 +487,7 @@ begin
       if not IsChecked then
       begin
         if (not FileExists('data/scripts/' + Save.Settings.Skin + '/' + FileName)) and
-           (not FileExists(GetAppConfigDir(True) + 'data/scripts/' + Save.Settings.Skin + '/' + FileName)) then
+           (not FileExists(GetOSLocalDir + 'data/scripts/' + Save.Settings.Skin + '/' + FileName)) then
         begin
           Exit;
         end;

@@ -15,14 +15,24 @@ type
 
 function GetPhysFilePath(S: String): String;     
 function GetPhysDirPath(S: String): String;
+function GetOSLocalDir: String;
 
 implementation
+
+function GetOSLocalDir: String;
+begin
+  {$ifdef LINUX}
+  Result := '~/.config/satania-buddy/';
+  {$else}
+  Result := GetAppConfigDir(True);
+  {$endif}
+end;
 
 function GetPhysFilePath(S: String): String;
 begin
   if not FileExists(S) then
   begin
-    S := GetAppConfigDir(True) + S;
+    S := GetOSLocalDir + S;
   end;
   Result := S;
 end;               
@@ -31,7 +41,7 @@ function GetPhysDirPath(S: String): String;
 begin
   if not DirectoryExists(S) then
   begin
-    S := GetAppConfigDir(True) + S;
+    S := GetOSLocalDir + S;
   end;
   Result := S;
 end;
@@ -46,7 +56,7 @@ begin
   PhysicalUrl := 'data/' + RealUrl;
   if not FileExists(PhysicalUrl) then
   begin
-    PhysicalUrl := GetAppConfigDir(True) + PhysicalUrl;
+    PhysicalUrl := GetOSLocalDir + PhysicalUrl;
     if not FileExists(PhysicalUrl) then
       raise Exception(Format('File "%s" not found!', [PhysicalUrl]));
   end;

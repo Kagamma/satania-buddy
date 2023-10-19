@@ -293,7 +293,8 @@ var
 
 implementation
 
-uses
+uses  
+  Mcdowell.Data,
   Mcdowell;
 
 procedure DumpExceptionCallStack(E: Exception);
@@ -412,7 +413,7 @@ var
   Streamer: TJSONStreamer;
   SS: TStringStream;
 begin
-  FileName := GetAppConfigDir(True) + FileName;
+  FileName := GetOSLocalDir + FileName;
   FS := TFileStream.Create(FileName, fmCreate);
   Streamer := TJSONStreamer.Create(nil);
   try
@@ -438,7 +439,7 @@ var
 begin
   if not FileExists(FileName) then
   begin
-    FileName := GetAppConfigDir(True) + FileName;
+    FileName := GetOSLocalDir + FileName;
     if not FileExists(FileName) then
       Exit;
   end;
@@ -481,9 +482,9 @@ begin
 end;
 
 initialization
-  CreateDir(GetAppConfigDir(True));     
-  CreateDir(GetAppConfigDir(True) + 'data');
-  CreateDir(GetAppConfigDir(True) + PATH_CHAT_HISTORY);
+  CreateDir(GetOSLocalDir);
+  CreateDir(GetOSLocalDir + 'data');
+  CreateDir(GetOSLocalDir + PATH_CHAT_HISTORY);
   OwnedWindowHandleList := TQWordList.Create;
 
 finalization

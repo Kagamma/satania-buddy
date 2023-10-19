@@ -149,7 +149,7 @@ var
 begin
   MemoChatLog.Blocks.Clear;
   MemoChatLog.Blocks.LockUpdate;
-  ChatHistory.LoadFromFile(GetAppConfigDir(True) + PATH_CHAT_HISTORY + Save.Settings.Skin + '.txt');
+  ChatHistory.LoadFromFile(GetOSLocalDir + PATH_CHAT_HISTORY + Save.Settings.Skin + '.txt');
   FIsWriteToHistoryLog := False;
   for I := 0 to Self.ChatHistory.List.Count - 1 do
   begin

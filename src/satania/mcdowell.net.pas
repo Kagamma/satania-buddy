@@ -65,7 +65,7 @@ var
   S: String;
   I: Integer;
   Response: TStringStream;
-  SS: TStringStream;
+  SS: TRawByteStringStream;
 begin
   HttpResponse.IsBinary := False;
   try
@@ -82,10 +82,10 @@ begin
         'PATCH',
         'OPTIONS':
           begin
-            SS := TStringStream.Create('');
+            SS := TRawByteStringStream.Create('');
             try
               HTTP.HTTPMethod(Method, URL, SS, []);
-              HttpResponse.Data := SS.AnsiDataString;
+              HttpResponse.Data := SS.DataString;
             finally
               SS.Free;
             end;

@@ -1018,7 +1018,7 @@ end;
 
 function TSatania.SEDirectoryGetConfig(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := GetAppConfigDir(True);
+  Result := GetOSLocalDir;
 end;
 
 function TSatania.SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1263,7 +1263,7 @@ begin
   Item.IsPersistent := False;
   Item.Script := TEvilC.Create;
   Item.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
-  Item.Script.IncludePathList.Add(GetAppConfigDir(True) + 'data/scripts/' + Save.Settings.Skin + '/');
+  Item.Script.IncludePathList.Add(GetOSLocalDir + 'data/scripts/' + Save.Settings.Skin + '/');
   Self.RegisterFuncs(Item.Script, True);
   Self.UpdateMeta(Item.Script);
   Item.Script.Source := Args[1];

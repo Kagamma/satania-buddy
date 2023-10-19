@@ -184,7 +184,8 @@ uses
   Utils.Strings,
   form.bubble,
   Mcdowell.smtp,
-  Mcdowell.sketch,
+  Mcdowell.sketch,         
+  Mcdowell.Data,
   Form.chat,
   com.Brokers,
   Utils.Encdec;
@@ -246,9 +247,9 @@ begin
   SL := TStringList.Create;
   SL2 := TStringList.Create;
   FindAllDirectories(SL, 'data/sprites', False);
-  FindAllDirectories(SL, GetAppConfigDir(True) + 'data/sprites', False);
+  FindAllDirectories(SL, GetOSLocalDir + 'data/sprites', False);
   FindAllDirectories(SL2, 'data/scripts', False);
-  FindAllDirectories(SL2, GetAppConfigDir(True) + 'data/scripts', False);
+  FindAllDirectories(SL2, GetOSLocalDir + 'data/scripts', False);
   for I := 0 to SL.Count - 1 do
   begin
     SL[I] := ExtractFileName(SL[I]);
@@ -484,7 +485,7 @@ var
   I: Integer;
   CD: TCopyDir;
 begin
-  if InputQuery('Clone to new character, locate in "' + GetAppConfigDir(True) + '"', 'Character''s directory name:', False, NewSkinName) then
+  if InputQuery('Clone to new character, locate in "' + GetOSLocalDir + '"', 'Character''s directory name:', False, NewSkinName) then
   begin
     for I := 0 to ComboBoxSkin.Items.Count - 1 do
     begin
@@ -495,11 +496,11 @@ begin
       end;
     end;
     CurrentSkinName := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
-    CD := TCopyDir.Create('data/scripts/' + CurrentSkinName, GetAppConfigDir(True) + 'data/scripts/' + NewSkinName);
+    CD := TCopyDir.Create('data/scripts/' + CurrentSkinName, GetOSLocalDir + 'data/scripts/' + NewSkinName);
     CD.PrintToTerminal := True;
     CD.Start;
     CD.Free;                                                       
-    CD := TCopyDir.Create('data/sprites/' + CurrentSkinName, GetAppConfigDir(True) + 'data/sprites/' + NewSkinName);
+    CD := TCopyDir.Create('data/sprites/' + CurrentSkinName, GetOSLocalDir + 'data/sprites/' + NewSkinName);
     CD.PrintToTerminal := True;
     CD.Start;
     CD.Free;  

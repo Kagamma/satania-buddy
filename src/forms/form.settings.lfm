@@ -50,6 +50,7 @@ object FormSettings: TFormSettings
   OnShow = FormShow
   Position = poScreenCenter
   ShowInTaskBar = stAlways
+  LCLVersion = '3.99.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -119,8 +120,8 @@ object FormSettings: TFormSettings
       TabOrder = 0
       object TabSheetGeneral: TTabSheet
         Caption = 'General'
-        ClientHeight = 518
-        ClientWidth = 699
+        ClientHeight = 507
+        ClientWidth = 697
         object LabelSoWRightMargin: TLabel
           Left = 24
           Height = 15
@@ -260,8 +261,8 @@ object FormSettings: TFormSettings
       end
       object TabSheetGraphics: TTabSheet
         Caption = 'Graphics'
-        ClientHeight = 518
-        ClientWidth = 699
+        ClientHeight = 507
+        ClientWidth = 697
         object EditFPS: TSpinEdit
           Left = 192
           Height = 23
@@ -339,8 +340,8 @@ object FormSettings: TFormSettings
       end
       object TabSheetChatBubble: TTabSheet
         Caption = 'Speech Balloon'
-        ClientHeight = 518
-        ClientWidth = 699
+        ClientHeight = 507
+        ClientWidth = 697
         object LabelChatBubbleDelay: TLabel
           Left = 24
           Height = 15
@@ -456,8 +457,8 @@ object FormSettings: TFormSettings
       end
       object TabSheetChatWindow: TTabSheet
         Caption = 'Chat Window'
-        ClientHeight = 518
-        ClientWidth = 699
+        ClientHeight = 507
+        ClientWidth = 697
         object LabelChatWindowFont: TLabel
           Left = 24
           Height = 15
@@ -610,8 +611,8 @@ object FormSettings: TFormSettings
       end
       object TabSheetEmbeddedServer: TTabSheet
         Caption = 'Embedded Server'
-        ClientHeight = 518
-        ClientWidth = 699
+        ClientHeight = 507
+        ClientWidth = 697
         object EditEmbeddedServerPort: TSpinEdit
           Left = 192
           Height = 23
@@ -652,8 +653,8 @@ object FormSettings: TFormSettings
       end
       object TabSheetIMAP: TTabSheet
         Caption = 'Email'
-        ClientHeight = 518
-        ClientWidth = 699
+        ClientHeight = 507
+        ClientWidth = 697
         object GroupBoxEmailIMAP: TGroupBox
           Left = 24
           Height = 224
@@ -661,7 +662,7 @@ object FormSettings: TFormSettings
           Width = 594
           Caption = 'IMAP'
           ClientHeight = 204
-          ClientWidth = 590
+          ClientWidth = 592
           TabOrder = 0
           object LabelEmailServer: TLabel
             Left = 24
@@ -759,7 +760,7 @@ object FormSettings: TFormSettings
           Width = 594
           Caption = 'SMTP'
           ClientHeight = 178
-          ClientWidth = 590
+          ClientWidth = 592
           TabOrder = 1
           object LabelEmailSmtpServer: TLabel
             Left = 24
@@ -839,8 +840,8 @@ object FormSettings: TFormSettings
       end
       object TabSheetSpeechRecognition: TTabSheet
         Caption = 'Speech Recognition'
-        ClientHeight = 518
-        ClientWidth = 699
+        ClientHeight = 507
+        ClientWidth = 697
         object GroupBoxSTTVosk: TGroupBox
           Left = 64
           Height = 88
@@ -850,7 +851,7 @@ object FormSettings: TFormSettings
           BorderSpacing.Left = 64
           Caption = 'Vosk'
           ClientHeight = 68
-          ClientWidth = 631
+          ClientWidth = 633
           TabOrder = 0
           object LabelSTTModel1: TLabel
             Left = 24
@@ -906,7 +907,7 @@ object FormSettings: TFormSettings
           BorderSpacing.Left = 64
           Caption = 'whisper.cpp (experimental)'
           ClientHeight = 68
-          ClientWidth = 631
+          ClientWidth = 633
           TabOrder = 2
           object LabelSTTModel2: TLabel
             Left = 24
@@ -951,8 +952,8 @@ object FormSettings: TFormSettings
       end
       object TabSheetOptimization: TTabSheet
         Caption = 'Developer'
-        ClientHeight = 518
-        ClientWidth = 699
+        ClientHeight = 507
+        ClientWidth = 697
         object LabelDeveloperMode: TLabel
           Left = 25
           Height = 15
