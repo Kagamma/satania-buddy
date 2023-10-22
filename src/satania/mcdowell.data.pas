@@ -22,7 +22,7 @@ implementation
 function GetOSLocalDir: String; inline;
 begin
   {$ifdef WINDOWS}
-  Result := GetAppConfigDir(True);
+  Result := GetUserDir + 'AppData\Local\satania-buddy\';
   {$else}
   Result := GetUserDir + '.config/satania-buddy/';
   {$endif}
