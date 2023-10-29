@@ -28,7 +28,7 @@ uses
   Classes, SysUtils, Generics.Collections, Controls,
   Forms, Menus, FileUtil, simpleinternet,
   fpjson, jsonparser, Process, LCLType, Types, LCLIntf, Graphics, syncobjs,
-  CastleScene, CastleControls, CastleUIControls, CastleTypingLabel, CastleDownload,
+  CastleScene, CastleControls, CastleUIControls, CastleDownload,
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,
   CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts,
   CastleSceneCore, CastleSpine, CastleSpineMixer, strutils,
