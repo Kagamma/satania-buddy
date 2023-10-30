@@ -50,7 +50,6 @@ object FormSettings: TFormSettings
   OnShow = FormShow
   Position = poScreenCenter
   ShowInTaskBar = stAlways
-  LCLVersion = '3.99.0.0'
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -120,8 +119,8 @@ object FormSettings: TFormSettings
       TabOrder = 0
       object TabSheetGeneral: TTabSheet
         Caption = 'General'
-        ClientHeight = 507
-        ClientWidth = 697
+        ClientHeight = 518
+        ClientWidth = 699
         object LabelSoWRightMargin: TLabel
           Left = 24
           Height = 15
@@ -261,8 +260,8 @@ object FormSettings: TFormSettings
       end
       object TabSheetGraphics: TTabSheet
         Caption = 'Graphics'
-        ClientHeight = 507
-        ClientWidth = 697
+        ClientHeight = 518
+        ClientWidth = 699
         object EditFPS: TSpinEdit
           Left = 192
           Height = 23
@@ -340,8 +339,8 @@ object FormSettings: TFormSettings
       end
       object TabSheetChatBubble: TTabSheet
         Caption = 'Speech Balloon'
-        ClientHeight = 507
-        ClientWidth = 697
+        ClientHeight = 518
+        ClientWidth = 699
         object LabelChatBubbleDelay: TLabel
           Left = 24
           Height = 15
@@ -457,162 +456,172 @@ object FormSettings: TFormSettings
       end
       object TabSheetChatWindow: TTabSheet
         Caption = 'Chat Window'
-        ClientHeight = 507
-        ClientWidth = 697
-        object LabelChatWindowFont: TLabel
-          Left = 24
-          Height = 15
-          Top = 16
-          Width = 24
-          Caption = 'Font'
-        end
-        object EditChatWindowFont: TEdit
-          Left = 192
-          Height = 23
-          Top = 16
-          Width = 400
+        ClientHeight = 518
+        ClientWidth = 699
+        object PanelChatWindow: TPanel
+          Left = 0
+          Height = 518
+          Top = 0
+          Width = 699
+          Align = alClient
+          ClientHeight = 518
+          ClientWidth = 699
           TabOrder = 0
-        end
-        object ButtonChatWindowFont: TSpeedButton
-          Left = 592
-          Height = 22
-          Top = 17
-          Width = 23
-          Images = FormMain.ImageList
-          ImageIndex = 0
-          OnClick = ButtonChatWindowFontClick
-        end
-        object ColorButtonChatWindowCharacterName: TColorButton
-          Left = 192
-          Height = 25
-          Top = 112
-          Width = 75
-          BorderWidth = 2
-          ButtonColorSize = 16
-          ButtonColor = clBlack
-        end
-        object LabelChatWindowColorCharacterName: TLabel
-          Left = 24
-          Height = 15
-          Top = 112
-          Width = 118
-          Caption = 'Character Name Color'
-        end
-        object LabelChatWindowColorUserName: TLabel
-          Left = 24
-          Height = 15
-          Top = 144
-          Width = 90
-          Caption = 'User Name Color'
-        end
-        object ColorButtonChatWindowUserName: TColorButton
-          Left = 192
-          Height = 25
-          Top = 144
-          Width = 75
-          BorderWidth = 2
-          ButtonColorSize = 16
-          ButtonColor = clBlack
-        end
-        object LabelChatWindowColorSystemName: TLabel
-          Left = 24
-          Height = 15
-          Top = 176
-          Width = 105
-          Caption = 'System Name Color'
-        end
-        object ColorButtonChatWindowSystemName: TColorButton
-          Left = 192
-          Height = 25
-          Top = 176
-          Width = 75
-          BorderWidth = 2
-          ButtonColorSize = 16
-          ButtonColor = clBlack
-        end
-        object LabelChatWindowColorBackground: TLabel
-          Left = 24
-          Height = 15
-          Top = 80
-          Width = 96
-          Caption = 'Background Color'
-        end
-        object ColorButtonChatWindowBackground: TColorButton
-          Left = 192
-          Height = 25
-          Top = 80
-          Width = 75
-          BorderWidth = 2
-          ButtonColorSize = 16
-          ButtonColor = clBlack
-        end
-        object LabelChatWindowColorNormalText: TLabel
-          Left = 24
-          Height = 15
-          Top = 208
-          Width = 96
-          Caption = 'Normal Text Color'
-        end
-        object ColorButtonChatWindowNormalText: TColorButton
-          Left = 192
-          Height = 25
-          Top = 208
-          Width = 75
-          BorderWidth = 2
-          ButtonColorSize = 16
-          ButtonColor = clBlack
-        end
-        object LabelChatWindowColorItalicText: TLabel
-          Left = 24
-          Height = 15
-          Top = 240
-          Width = 81
-          Caption = 'Italic Text Color'
-        end
-        object ColorButtonChatWindowItalicText: TColorButton
-          Left = 192
-          Height = 25
-          Top = 240
-          Width = 75
-          BorderWidth = 2
-          ButtonColorSize = 16
-          ButtonColor = clBlack
-        end
-        object LabelChatWindowColorCodeBlockText: TLabel
-          Left = 24
-          Height = 15
-          Top = 272
-          Width = 116
-          Caption = 'Code Block Text Color'
-        end
-        object ColorButtonChatWindowCodeBlockText: TColorButton
-          Left = 192
-          Height = 25
-          Top = 272
-          Width = 75
-          BorderWidth = 2
-          ButtonColorSize = 16
-          ButtonColor = clBlack
-        end
-        object LabelChatWindowCleartype: TLabel
-          Left = 24
-          Height = 15
-          Top = 48
-          Width = 51
-          Caption = 'ClearType'
-        end
-        object CheckBoxChatWindowCleartype: TCheckBox
-          Left = 192
-          Height = 17
-          Top = 48
-          Width = 18
-          TabOrder = 1
+          object LabelChatWindowFont: TLabel
+            Left = 24
+            Height = 15
+            Top = 16
+            Width = 24
+            Caption = 'Font'
+          end
+          object EditChatWindowFont: TEdit
+            Left = 192
+            Height = 23
+            Top = 16
+            Width = 400
+            TabOrder = 0
+          end
+          object ButtonChatWindowFont: TSpeedButton
+            Left = 592
+            Height = 22
+            Top = 17
+            Width = 23
+            Images = FormMain.ImageList
+            ImageIndex = 0
+            OnClick = ButtonChatWindowFontClick
+          end
+          object ColorButtonChatWindowCharacterName: TColorButton
+            Left = 192
+            Height = 25
+            Top = 112
+            Width = 75
+            BorderWidth = 2
+            ButtonColorSize = 16
+            ButtonColor = clBlack
+          end
+          object LabelChatWindowColorCharacterName: TLabel
+            Left = 24
+            Height = 15
+            Top = 112
+            Width = 118
+            Caption = 'Character Name Color'
+          end
+          object LabelChatWindowColorUserName: TLabel
+            Left = 24
+            Height = 15
+            Top = 144
+            Width = 90
+            Caption = 'User Name Color'
+          end
+          object ColorButtonChatWindowUserName: TColorButton
+            Left = 192
+            Height = 25
+            Top = 144
+            Width = 75
+            BorderWidth = 2
+            ButtonColorSize = 16
+            ButtonColor = clBlack
+          end
+          object LabelChatWindowColorSystemName: TLabel
+            Left = 24
+            Height = 15
+            Top = 176
+            Width = 105
+            Caption = 'System Name Color'
+          end
+          object ColorButtonChatWindowSystemName: TColorButton
+            Left = 192
+            Height = 25
+            Top = 176
+            Width = 75
+            BorderWidth = 2
+            ButtonColorSize = 16
+            ButtonColor = clBlack
+          end
+          object LabelChatWindowColorBackground: TLabel
+            Left = 24
+            Height = 15
+            Top = 80
+            Width = 96
+            Caption = 'Background Color'
+          end
+          object ColorButtonChatWindowBackground: TColorButton
+            Left = 192
+            Height = 25
+            Top = 80
+            Width = 75
+            BorderWidth = 2
+            ButtonColorSize = 16
+            ButtonColor = clBlack
+          end
+          object LabelChatWindowColorNormalText: TLabel
+            Left = 24
+            Height = 15
+            Top = 208
+            Width = 96
+            Caption = 'Normal Text Color'
+          end
+          object ColorButtonChatWindowNormalText: TColorButton
+            Left = 192
+            Height = 25
+            Top = 208
+            Width = 75
+            BorderWidth = 2
+            ButtonColorSize = 16
+            ButtonColor = clBlack
+          end
+          object LabelChatWindowColorItalicText: TLabel
+            Left = 24
+            Height = 15
+            Top = 240
+            Width = 81
+            Caption = 'Italic Text Color'
+          end
+          object ColorButtonChatWindowItalicText: TColorButton
+            Left = 192
+            Height = 25
+            Top = 240
+            Width = 75
+            BorderWidth = 2
+            ButtonColorSize = 16
+            ButtonColor = clBlack
+          end
+          object LabelChatWindowColorCodeBlockText: TLabel
+            Left = 24
+            Height = 15
+            Top = 272
+            Width = 116
+            Caption = 'Code Block Text Color'
+          end
+          object ColorButtonChatWindowCodeBlockText: TColorButton
+            Left = 192
+            Height = 25
+            Top = 272
+            Width = 75
+            BorderWidth = 2
+            ButtonColorSize = 16
+            ButtonColor = clBlack
+          end
+          object LabelChatWindowCleartype: TLabel
+            Left = 24
+            Height = 15
+            Top = 48
+            Width = 51
+            Caption = 'ClearType'
+          end
+          object CheckBoxChatWindowCleartype: TCheckBox
+            Left = 192
+            Height = 17
+            Top = 48
+            Width = 18
+            TabOrder = 1
+          end
         end
       end
       object TabSheetEmbeddedServer: TTabSheet
         Caption = 'Embedded Server'
-        ClientHeight = 507
-        ClientWidth = 697
+        ClientHeight = 518
+        ClientWidth = 699
         object EditEmbeddedServerPort: TSpinEdit
           Left = 192
           Height = 23
@@ -653,8 +662,8 @@ object FormSettings: TFormSettings
       end
       object TabSheetIMAP: TTabSheet
         Caption = 'Email'
-        ClientHeight = 507
-        ClientWidth = 697
+        ClientHeight = 518
+        ClientWidth = 699
         object GroupBoxEmailIMAP: TGroupBox
           Left = 24
           Height = 224
@@ -662,7 +671,7 @@ object FormSettings: TFormSettings
           Width = 594
           Caption = 'IMAP'
           ClientHeight = 204
-          ClientWidth = 592
+          ClientWidth = 590
           TabOrder = 0
           object LabelEmailServer: TLabel
             Left = 24
@@ -760,7 +769,7 @@ object FormSettings: TFormSettings
           Width = 594
           Caption = 'SMTP'
           ClientHeight = 178
-          ClientWidth = 592
+          ClientWidth = 590
           TabOrder = 1
           object LabelEmailSmtpServer: TLabel
             Left = 24
@@ -840,8 +849,8 @@ object FormSettings: TFormSettings
       end
       object TabSheetSpeechRecognition: TTabSheet
         Caption = 'Speech Recognition'
-        ClientHeight = 507
-        ClientWidth = 697
+        ClientHeight = 518
+        ClientWidth = 699
         object GroupBoxSTTVosk: TGroupBox
           Left = 64
           Height = 88
@@ -851,7 +860,7 @@ object FormSettings: TFormSettings
           BorderSpacing.Left = 64
           Caption = 'Vosk'
           ClientHeight = 68
-          ClientWidth = 633
+          ClientWidth = 631
           TabOrder = 0
           object LabelSTTModel1: TLabel
             Left = 24
@@ -907,7 +916,7 @@ object FormSettings: TFormSettings
           BorderSpacing.Left = 64
           Caption = 'whisper.cpp (experimental)'
           ClientHeight = 68
-          ClientWidth = 633
+          ClientWidth = 631
           TabOrder = 2
           object LabelSTTModel2: TLabel
             Left = 24
@@ -952,8 +961,8 @@ object FormSettings: TFormSettings
       end
       object TabSheetOptimization: TTabSheet
         Caption = 'Developer'
-        ClientHeight = 507
-        ClientWidth = 697
+        ClientHeight = 518
+        ClientWidth = 699
         object LabelDeveloperMode: TLabel
           Left = 25
           Height = 15

@@ -49,7 +49,6 @@ object FormChat: TFormChat
   OnShow = FormShow
   Position = poDefault
   ShowInTaskBar = stAlways
-  LCLVersion = '3.99.0.0'
   object PageControl: TPageControl
     Left = 0
     Height = 509
@@ -305,6 +304,11 @@ object FormChat: TFormChat
       Caption = 'Clear chat history'
       ImageIndex = 15
       OnClick = ButtonClearClick
+    end
+    object MenuItemShowWebUI: TMenuItem
+      Caption = 'Show chat via WebUI'
+      ImageIndex = 29
+      OnClick = MenuItemShowWebUIClick
     end
   end
 end

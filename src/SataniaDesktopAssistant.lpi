@@ -51,6 +51,9 @@
             </Options>
           </Linking>
           <Other>
+            <ConfigFile>
+              <WriteConfigFilePath Value="$(ProjOutDir)/fpclaz.cfg"/>
+            </ConfigFile>
             <CustomOptions Value="-dCASTLE_SLIM_NODES"/>
           </Other>
         </CompilerOptions>
@@ -394,6 +397,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Mcdowell.Data"/>
       </Unit>
+      <Unit>
+        <Filename Value="forms/form.chat_webui.inc"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Unit1"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -421,6 +429,9 @@
       </Debugging>
     </Linking>
     <Other>
+      <ConfigFile>
+        <WriteConfigFilePath Value="$(ProjOutDir)/fpclaz.cfg"/>
+      </ConfigFile>
       <CustomOptions Value="-dCASTLE_SLIM_NODES"/>
     </Other>
   </CompilerOptions>

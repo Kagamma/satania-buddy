@@ -31,7 +31,8 @@ type
     procedure LoadFromFile(const HistoryName: String);
     procedure SaveLastestMessage;
     procedure Clear;
-    function ToEdit: String;
+    function ToEdit: String;       
+    function ToJSONString(const Start: Integer): String;
     procedure FromEdit(Source: String);
 
     property List: TChatHistoryList read ChatHistoryList;
@@ -40,7 +41,7 @@ type
 implementation
 
 uses
-  Globals, Mcdowell, Mcdowell.Data;
+  Globals, Mcdowell, Mcdowell.Data, fpjson;
 
 constructor TSataniaChatHistory.Create;
 begin
@@ -133,6 +134,38 @@ begin
     Result := Result + CH.Message;
   end;
   Result := Trim(Result);
+end;
+
+function TSataniaChatHistory.ToJSONString(const Start: Integer): String;
+var
+  CH: TChatHistoryRec;
+  I: Integer;
+begin
+  if ChatHistoryList.Count = 0 then
+    Exit('[]');
+  Result := '[';
+  for I := Start to ChatHistoryList.Count - 1 do
+  begin
+    CH := ChatHistoryList[I];
+    Result := Result + '{';
+    case CH.SenderType of
+      cseSatania:
+        begin
+          Result := Result + '"name":"' + StringToJSONString(Satania.Name) + '",';
+        end;
+      cseUser:
+        Result := Result + '"name":"' + StringToJSONString(Save.Settings.UserName) + '",';
+      else
+        begin
+          Result := Result + '},';
+          Continue;
+        end;
+    end;             
+    Result := Result + '"kind":' + IntToStr(Integer(CH.SenderType)) + ',';
+    Result := Result + '"message":"' + StringToJSONString(CH.Message) + '"';
+    Result := Result + '},';
+  end;
+  Result[Length(Result)] := ']';
 end;
 
 procedure TSataniaChatHistory.FromEdit(Source: String);

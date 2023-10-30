@@ -12,5 +12,6 @@
 {"hash":6655509,"name":"tformchat.labeleditmode.caption","sourcebytes":[69,100,105,116,32,77,111,100,101],"value":"Edit Mode"},
 {"hash":179187383,"name":"tformchat.menuitemstopgenerating.caption","sourcebytes":[83,116,111,112,32,103,101,110,101,114,97,116,105,110,103],"value":"Stop generating"},
 {"hash":165650585,"name":"tformchat.menuitemeditmode.caption","sourcebytes":[69,100,105,116,32,99,104,97,116,32,104,105,115,116,111,114,121],"value":"Edit chat history"},
-{"hash":221685945,"name":"tformchat.menuitemclearhistory.caption","sourcebytes":[67,108,101,97,114,32,99,104,97,116,32,104,105,115,116,111,114,121],"value":"Clear chat history"}
+{"hash":221685945,"name":"tformchat.menuitemclearhistory.caption","sourcebytes":[67,108,101,97,114,32,99,104,97,116,32,104,105,115,116,111,114,121],"value":"Clear chat history"},
+{"hash":70081961,"name":"tformchat.menuitemshowwebui.caption","sourcebytes":[83,104,111,119,32,99,104,97,116,32,118,105,97,32,87,101,98,85,73],"value":"Show chat via WebUI"}
 ]}

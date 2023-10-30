@@ -28,7 +28,8 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ExtCtrls, Process, CastleControls, CastleUIControls, CastleURIUtils,
   LCLTranslator, ComCtrls, Menus, kmemo, Types, StrUtils, Generics.Collections,
-  kgraphics, FileUtil, Mcdowell.RichText, Mcdowell.Chat.History, AnchorDocking;
+  kgraphics, FileUtil, Mcdowell.RichText, Mcdowell.Chat.History, AnchorDocking,
+  WebUI;
 
 type
   { TFormChat }
@@ -44,6 +45,7 @@ type
     LabelEditMode: TLabel;
     MemoEdit: TMemo;
     MemoChatLog: TKMemo;
+    MenuItemShowWebUI: TMenuItem;
     MenuItemStopGenerating: TMenuItem;
     MenuItemClearHistory: TMenuItem;
     MenuItemEditMode: TMenuItem;
@@ -75,6 +77,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MenuItemShowWebUIClick(Sender: TObject);
     procedure MenuItemStopGeneratingClick(Sender: TObject);
   private
     FRichText: TSataniaRichText;
@@ -82,6 +85,7 @@ type
     FIsWriteToHistoryLog: Boolean;
     procedure ScrollToBottom;
   public
+    WebUIHandle: QWord;
     Typing: TKMemoTextBlock;
     ChatHistory: TSataniaChatHistory;
     procedure EnableStreaming;
@@ -114,6 +118,8 @@ uses
   Mcdowell;
 
 { TFormChat }
+
+{$I form.chat_webui.inc}
 
 procedure TFormChat.EnableStreaming;
 begin
@@ -212,6 +218,19 @@ begin
   // Load list of services
   LoadServiceList;
   Self.ButtonOpenService.Enabled := Self.ComboBoxService.ItemIndex > 0;
+end;
+
+procedure TFormChat.MenuItemShowWebUIClick(Sender: TObject);
+var
+  SL: TStrings;
+begin
+  if WebUIHandle <> 0 then
+    webui_close(WebUIHandle);
+  WebUIHandle := webui_new_window;
+  webui_set_root_folder(WebUIHandle, 'data/webui');
+  webui_bind(WebUIHandle, 'chat_history_get', @WebUI_ChatHistoryGet);  
+  webui_bind(WebUIHandle, 'skin_get', @WebUI_SkinGet);
+  webui_show(WebUIHandle, 'chat/index.html');
 end;
 
 procedure TFormChat.MenuItemStopGeneratingClick(Sender: TObject);
