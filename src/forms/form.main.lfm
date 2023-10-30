@@ -2,11 +2,11 @@ object FormMain: TFormMain
   Left = -8
   Height = 1100
   Top = -8
-  Width = 875
+  Width = 891
   BorderStyle = bsNone
   Caption = 'FormMain'
   ClientHeight = 1061
-  ClientWidth = 875
+  ClientWidth = 891
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -21,7 +21,7 @@ object FormMain: TFormMain
     Left = 0
     Height = 1061
     Top = 0
-    Width = 875
+    Width = 891
     Align = alClient
     AlphaBits = 8
     Options = []
@@ -1369,6 +1369,11 @@ object FormMain: TFormMain
       Caption = 'Chat'
       ImageIndex = 18
       OnClick = MenuItemChatWithHerClick
+    end
+    object MenuItemChatWebUI: TMenuItem
+      Caption = 'Chat (WebUI)'
+      ImageIndex = 29
+      OnClick = MenuItemChatWebUIClick
     end
     object MenuItemSpeechRecognition: TMenuItem
       Caption = 'Speech Recognition'

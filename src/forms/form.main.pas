@@ -77,6 +77,7 @@ type
     CastleControl: TCastleControl;
     ImageList: TImageList;
     MenuItem1: TMenuItem;
+    MenuItemChatWebUI: TMenuItem;
     MenuItemConsole: TMenuItem;
     MenuItemHelpExternalServices: TMenuItem;
     MenuItemMemoryUsage: TMenuItem;
@@ -116,6 +117,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure MenuItemAboutClick(Sender: TObject);
     procedure MenuItemAlarmsAndRemindersClick(Sender: TObject);
+    procedure MenuItemChatWebUIClick(Sender: TObject);
     procedure MenuItemChatWithHerClick(Sender: TObject);
     procedure MenuItemConsoleClick(Sender: TObject);
     procedure MenuItemEditorClick(Sender: TObject);
@@ -280,6 +282,11 @@ end;
 procedure TFormMain.MenuItemAlarmsAndRemindersClick(Sender: TObject);
 begin
   FormReminders.Show;
+end;
+
+procedure TFormMain.MenuItemChatWebUIClick(Sender: TObject);
+begin
+  FormChat.MenuItemShowWebUIClick(Sender);
 end;
 
 procedure TFormMain.MenuItemChatWithHerClick(Sender: TObject);
