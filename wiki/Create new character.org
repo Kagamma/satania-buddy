@@ -22,6 +22,7 @@ sprites
   template
     sprites.plist
     sprites.png
+    avatar.png
 #+end_example
 - ~main.evil~ is the main script. It will be executed when your character is loaded, and when your character finish executing another script.
 - ~meta.json~ is optional, it is mainly used to set up character's name, and other configurations needed to access within scripts. A basic ~meta.json~ looks like:
@@ -44,6 +45,8 @@ These scripts are optional and no need for the app to work.
 Any scripts in ~services~ will be shown on chat window's service dropdown. The purpose of service script is to handle chat messages, often by sending them to another 3rd party backends like ~ChatGPT~ or ~koboldcpp~. These scripts are completely optional.
 
 ~sprites.plist~ and ~sprites.png~ are character's spritesheet in Cocos2D format.
+
+~avatar.png~ is character's avatar, used by the WebUI version of chat window.
 
 ** Supported sprite data formats
 ~satania-buddy~ uses [[https://castle-engine.io/][Castle Game Engine]] (CGE) as rendering engine, thus it can use all CGE's [[https://castle-engine.io/creating_data_model_formats.php][supported formats]]. In particular you can:

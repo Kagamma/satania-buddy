@@ -18,6 +18,7 @@ type
     SenderType: TChatSenderEnum;
     Time,
     Message: String;
+    GUID: String;
   end;
   TChatHistoryList = specialize TList<TChatHistoryRec>;
 
@@ -41,7 +42,7 @@ type
 implementation
 
 uses
-  Globals, Mcdowell, Mcdowell.Data, fpjson;
+  Globals, Mcdowell, Mcdowell.Data, fpjson, Utils.Encdec;
 
 constructor TSataniaChatHistory.Create;
 begin
@@ -79,6 +80,7 @@ begin
       Readln(F, Integer(CH.SenderType));
       Readln(F, CH.Message);
       CH.Message := StringReplace(CH.Message, '\n', #10, [rfReplaceAll]);
+      CH.GUID := GUID;
       Self.ChatHistoryList.Add(CH);
     end;
   except
@@ -147,20 +149,17 @@ begin
   for I := Start to ChatHistoryList.Count - 1 do
   begin
     CH := ChatHistoryList[I];
-    Result := Result + '{';
     case CH.SenderType of
       cseSatania:
-        begin
-          Result := Result + '"name":"' + StringToJSONString(Satania.Name) + '",';
-        end;
+        Result := Result + '{"name":"' + StringToJSONString(Satania.Name) + '",';
       cseUser:
-        Result := Result + '"name":"' + StringToJSONString(Save.Settings.UserName) + '",';
+        Result := Result + '{"name":"' + StringToJSONString(Save.Settings.UserName) + '",';
       else
         begin
-          Result := Result + '},';
           Continue;
         end;
-    end;             
+    end;                                                       
+    Result := Result + '"guid":"' + CH.GUID + '",';
     Result := Result + '"kind":' + IntToStr(Integer(CH.SenderType)) + ',';
     Result := Result + '"message":"' + StringToJSONString(CH.Message) + '"';
     Result := Result + '},';
@@ -198,6 +197,7 @@ begin
       CH.Message := Trim(CH.Message);
       if CH.Message <> '' then
       begin
+        CH.GUID := GUID;
         ChatHistoryList.Add(CH);
         SaveLastestMessage;
         CH.Message := '';
@@ -214,7 +214,8 @@ begin
     CH.Message := CH.Message + Buffer;
     CH.Message := Trim(CH.Message);
     if CH.Message <> '' then
-    begin
+    begin              
+      CH.GUID := GUID;
       ChatHistoryList.Add(CH);
       SaveLastestMessage;
     end;

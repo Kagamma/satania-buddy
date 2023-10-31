@@ -88,6 +88,7 @@ type
     WebUIHandle: QWord;
     Typing: TKMemoTextBlock;
     ChatHistory: TSataniaChatHistory;
+    procedure Send;
     procedure EnableStreaming;
     procedure DisableStreaming;
     procedure Streaming(const S: String);
@@ -114,12 +115,25 @@ uses
   form.tool.evilceditor,
   Form.Bubble,
   Utils.Colors,
+  Utils.Encdec,
   Mcdowell.Data,
   Mcdowell;
 
 { TFormChat }
 
 {$I form.chat_webui.inc}
+
+procedure TFormChat.Send;
+var
+  S: String;
+begin
+  FormBubble.FinishedTyping := True;
+  FormBubble.DisableStreaming;
+  S := Trim(FormChat.EditChat.Lines.Text);
+  Satania.Log(Save.Settings.UserName, S);
+  Satania.Chat(S);
+  EditChat.Lines.Clear;
+end;
 
 procedure TFormChat.EnableStreaming;
 begin
@@ -229,7 +243,10 @@ begin
   WebUIHandle := webui_new_window;
   webui_set_root_folder(WebUIHandle, 'data/webui');
   webui_bind(WebUIHandle, 'chat_history_get', @WebUI_ChatHistoryGet);  
-  webui_bind(WebUIHandle, 'skin_get', @WebUI_SkinGet);
+  webui_bind(WebUIHandle, 'character_skin_get', @WebUI_CharacterSkinGet);
+  webui_bind(WebUIHandle, 'chat_is_streaming', @WebUI_ChatIsStreaming);          
+  webui_bind(WebUIHandle, 'chat_send', @WebUI_ChatSend);
+  webui_bind(WebUIHandle, 'character_name_get', @WebUI_CharacterNameGet);
   webui_show(WebUIHandle, 'chat/index.html');
 end;
 
@@ -246,18 +263,11 @@ end;
 
 procedure TFormChat.EditChatKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
-var
-  S: String;
 begin
   Self.CalcHeights;
   if (Key = 13) and not (Shift = [ssShift]) and (FormChat.EditChat.Lines.Text<>'') then
   begin
-    FormBubble.FinishedTyping := True;
-    FormBubble.DisableStreaming;
-    S := Trim(FormChat.EditChat.Lines.Text);
-    Satania.Log(Save.Settings.UserName, S);
-    Satania.Chat(S);
-    EditChat.Lines.Clear;
+    Send;
   end;
   if Key = 27 then
   begin
@@ -424,7 +434,8 @@ begin
     if (FRichText.IsStreaming) and (FStreamingPartCount > 0) then
     begin
       CH := ChatHistory.List[ChatHistory.List.Count - 1];
-      CH.Message := Msg;
+      CH.Message := Msg;   
+      CH.GUID := GUID;
       ChatHistory.List[ChatHistory.List.Count - 1] := CH;
     end;
   end;

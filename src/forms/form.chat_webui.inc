@@ -1,12 +1,28 @@
 var
   WebUIHandle: QWord;
 
-procedure WebUI_SkinGet(E: PWebUIEvent);
+procedure WebUI_CharacterSkinGet(E: PWebUIEvent);
 begin
   webui_return_string(E, PChar(Save.Settings.Skin));
+end;
+
+procedure WebUI_CharacterNameGet(E: PWebUIEvent);
+begin
+  webui_return_string(E, PChar(Satania.Name));
 end;
 
 procedure WebUI_ChatHistoryGet(E: PWebUIEvent);
 begin
   webui_return_string(E, PChar(FormChat.ChatHistory.ToJSONString(0)));
+end;
+
+procedure WebUI_ChatIsStreaming(E: PWebUIEvent);
+begin
+  webui_return_bool(E, FormChat.RichText.IsStreaming);
+end;
+
+procedure WebUI_ChatSend(E: PWebUIEvent);
+begin
+  FormChat.EditChat.Lines.Text := webui_get_string(E);
+  FormChat.Send;
 end;
