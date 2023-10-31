@@ -164,7 +164,10 @@ begin
     Result := Result + '"message":"' + StringToJSONString(CH.Message) + '"';
     Result := Result + '},';
   end;
-  Result[Length(Result)] := ']';
+  if Result = '[' then
+    Result := '[]'
+  else
+    Result[Length(Result)] := ']';
 end;
 
 procedure TSataniaChatHistory.FromEdit(Source: String);
