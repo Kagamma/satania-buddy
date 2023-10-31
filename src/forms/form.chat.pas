@@ -429,6 +429,7 @@ begin
     begin
       CH.Time := Time;
       CH.Message := Msg;
+      CH.GUID := GUID;
       ChatHistory.List.Add(CH);
     end;
     if (FRichText.IsStreaming) and (FStreamingPartCount > 0) then
