@@ -100,6 +100,7 @@ type
     procedure LoadChatHistoryFromFile;
     procedure ApplySettings;              
     procedure ShowWebUI;
+    procedure StopGenerating;
     property RichText: TSataniaRichText read FRichText;
   end;
 
@@ -242,13 +243,7 @@ end;
 
 procedure TFormChat.MenuItemStopGeneratingClick(Sender: TObject);
 begin
-  // Stop worker script
-  Satania.WorkerDelete('___worker');
-  // Restore state
-  DisableStreaming;
-  FormBubble.DisableStreaming;
-  //
-  MenuItemStopGenerating.Enabled := False;
+  Self.StopGenerating;
 end;
 
 procedure TFormChat.EditChatKeyDown(Sender: TObject; var Key: Word;
@@ -508,11 +503,23 @@ begin
   end;
   //
   webui_bind(WebUIHandle, 'chat_history_get', @WebUI_ChatHistoryGet);
-  webui_bind(WebUIHandle, 'character_skin_get', @WebUI_CharacterSkinGet);
   webui_bind(WebUIHandle, 'chat_is_streaming', @WebUI_ChatIsStreaming);
   webui_bind(WebUIHandle, 'chat_send', @WebUI_ChatSend);
+  webui_bind(WebUIHandle, 'chat_stop_generating', @WebUI_ChatStopGenerating);
+  webui_bind(WebUIHandle, 'character_skin_get', @WebUI_CharacterSkinGet);
   webui_bind(WebUIHandle, 'character_name_get', @WebUI_CharacterNameGet);
   webui_show(WebUIHandle, 'chat/index.html');
+end;
+
+procedure TFormChat.StopGenerating;
+begin
+  // Stop worker script
+  Satania.WorkerDelete('___worker');
+  // Restore state
+  DisableStreaming;
+  FormBubble.DisableStreaming;
+  //
+  MenuItemStopGenerating.Enabled := False;
 end;
 
 end.

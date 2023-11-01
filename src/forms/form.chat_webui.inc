@@ -26,3 +26,8 @@ begin
   FormChat.EditChat.Lines.Text := webui_get_string(E);
   FormChat.Send;
 end;
+
+procedure WebUI_ChatStopGenerating(E: PWebUIEvent);
+begin
+  FormChat.StopGenerating;
+end;
