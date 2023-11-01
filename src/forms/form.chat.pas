@@ -236,12 +236,28 @@ end;
 
 procedure TFormChat.MenuItemShowWebUIClick(Sender: TObject);
 var
-  SL: TStrings;
+  RootPath,
+  AvatarPath: String;
 begin
   if WebUIHandle <> 0 then
     webui_close(WebUIHandle);
   WebUIHandle := webui_new_window;
-  webui_set_root_folder(WebUIHandle, 'data/webui');
+  // Try to set root at user config dir if exists
+  RootPath := GetOSLocalDir + 'webui';
+  if not DirectoryExists(RootPath) then
+    RootPath := 'data/webui';
+  webui_set_root_folder(WebUIHandle, PChar(RootPath));
+  // Prepare avatar
+  AvatarPath := GetOSLocalDir + 'sprites/' + Save.Settings.Skin + '/avatar.png';
+  if not FileExists(AvatarPath) then
+    AvatarPath := 'data/sprites/' + Save.Settings.Skin + '/avatar.png';
+  if FileExists(RootPath + '/chat/avatar_1.png') then
+    DeleteFile(RootPath + '/chat/avatar_1.png');
+  if FileExists(AvatarPath) then
+  begin
+    CopyFile(AvatarPath, RootPath + '/chat/avatar_1.png');
+  end;
+  //
   webui_bind(WebUIHandle, 'chat_history_get', @WebUI_ChatHistoryGet);  
   webui_bind(WebUIHandle, 'character_skin_get', @WebUI_CharacterSkinGet);
   webui_bind(WebUIHandle, 'chat_is_streaming', @WebUI_ChatIsStreaming);          

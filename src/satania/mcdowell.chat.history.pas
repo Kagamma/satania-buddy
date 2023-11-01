@@ -154,6 +154,8 @@ begin
         Result := Result + '{"name":"' + StringToJSONString(Satania.Name) + '",';
       cseUser:
         Result := Result + '{"name":"' + StringToJSONString(Save.Settings.UserName) + '",';
+      cseSystem:
+        Result := Result + '{"name":"System",';
       else
         begin
           Continue;
