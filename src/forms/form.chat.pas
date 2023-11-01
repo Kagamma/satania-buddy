@@ -98,7 +98,8 @@ type
     procedure RemoveTyping;
     procedure LoadServiceList;
     procedure LoadChatHistoryFromFile;
-    procedure ApplySettings;
+    procedure ApplySettings;              
+    procedure ShowWebUI;
     property RichText: TSataniaRichText read FRichText;
   end;
 
@@ -235,35 +236,8 @@ begin
 end;
 
 procedure TFormChat.MenuItemShowWebUIClick(Sender: TObject);
-var
-  RootPath,
-  AvatarPath: String;
 begin
-  if WebUIHandle <> 0 then
-    webui_close(WebUIHandle);
-  WebUIHandle := webui_new_window;
-  // Try to set root at user config dir if exists
-  RootPath := GetOSLocalDir + 'webui';
-  if not DirectoryExists(RootPath) then
-    RootPath := 'data/webui';
-  webui_set_root_folder(WebUIHandle, PChar(RootPath));
-  // Prepare avatar
-  AvatarPath := GetOSLocalDir + 'sprites/' + Save.Settings.Skin + '/avatar.png';
-  if not FileExists(AvatarPath) then
-    AvatarPath := 'data/sprites/' + Save.Settings.Skin + '/avatar.png';
-  if FileExists(RootPath + '/chat/avatar_1.png') then
-    DeleteFile(RootPath + '/chat/avatar_1.png');
-  if FileExists(AvatarPath) then
-  begin
-    CopyFile(AvatarPath, RootPath + '/chat/avatar_1.png');
-  end;
-  //
-  webui_bind(WebUIHandle, 'chat_history_get', @WebUI_ChatHistoryGet);  
-  webui_bind(WebUIHandle, 'character_skin_get', @WebUI_CharacterSkinGet);
-  webui_bind(WebUIHandle, 'chat_is_streaming', @WebUI_ChatIsStreaming);          
-  webui_bind(WebUIHandle, 'chat_send', @WebUI_ChatSend);
-  webui_bind(WebUIHandle, 'character_name_get', @WebUI_CharacterNameGet);
-  webui_show(WebUIHandle, 'chat/index.html');
+  Self.ShowWebUI;
 end;
 
 procedure TFormChat.MenuItemStopGeneratingClick(Sender: TObject);
@@ -507,6 +481,38 @@ begin
   //LabelEditMode.Font.Color := Save.Settings.ChatWindowColorNormalText;
   //Self.Color := Save.Settings.ChatWindowColorBackground;
   LoadChatHistoryFromFile;
+end;
+
+procedure TFormChat.ShowWebUI;
+var
+  RootPath,
+  AvatarPath: String;
+begin
+  if WebUIHandle <> 0 then
+    webui_close(WebUIHandle);
+  WebUIHandle := webui_new_window;
+  // Try to set root at user config dir if exists
+  RootPath := GetOSLocalDir + 'webui';
+  if not DirectoryExists(RootPath) then
+    RootPath := 'data/webui';
+  webui_set_root_folder(WebUIHandle, PChar(RootPath));
+  // Prepare avatar
+  AvatarPath := GetOSLocalDir + 'sprites/' + Save.Settings.Skin + '/avatar.png';
+  if not FileExists(AvatarPath) then
+    AvatarPath := 'data/sprites/' + Save.Settings.Skin + '/avatar.png';
+  if FileExists(RootPath + '/chat/avatar_1.png') then
+    DeleteFile(RootPath + '/chat/avatar_1.png');
+  if FileExists(AvatarPath) then
+  begin
+    CopyFile(AvatarPath, RootPath + '/chat/avatar_1.png');
+  end;
+  //
+  webui_bind(WebUIHandle, 'chat_history_get', @WebUI_ChatHistoryGet);
+  webui_bind(WebUIHandle, 'character_skin_get', @WebUI_CharacterSkinGet);
+  webui_bind(WebUIHandle, 'chat_is_streaming', @WebUI_ChatIsStreaming);
+  webui_bind(WebUIHandle, 'chat_send', @WebUI_ChatSend);
+  webui_bind(WebUIHandle, 'character_name_get', @WebUI_CharacterNameGet);
+  webui_show(WebUIHandle, 'chat/index.html');
 end;
 
 end.

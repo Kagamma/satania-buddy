@@ -257,6 +257,20 @@ object FormSettings: TFormSettings
           OnClick = ButtonCloneSkinClick
           TabOrder = 8
         end
+        object LabelDefaultChatWindow: TLabel
+          Left = 24
+          Height = 15
+          Top = 304
+          Width = 217
+          Caption = 'Set Chat (WebUI) as default Chat window'
+        end
+        object CheckBoxDefaultChatWindow: TCheckBox
+          Left = 295
+          Height = 17
+          Top = 304
+          Width = 18
+          TabOrder = 9
+        end
       end
       object TabSheetGraphics: TTabSheet
         Caption = 'Graphics'
@@ -982,7 +996,7 @@ object FormSettings: TFormSettings
           Height = 75
           Top = 70
           Width = 424
-          Caption = 'Enable Developer Mode disable the following optimizations:'#13#10'- Sprite caching. Sprites will be reloaded everytime sprite_load() is called.'#13#10'- Byecode caching. Scripts will be recompiled everytime the app changes scripts.'#13#10#13#10'Additionally, assertions is enabled for all scripts.'
+          Caption = 'Enable Developer Mode disable the following optimizations:'#13#10'- Sprite caching. Sprites will be reloaded everytime sprite_load() is called.'#13#10'- Byecode caching. Scripts will be recompiled everytime the app changes scripts.'#13#10#13#10'Additionally, assertions is enabled for every scripts.'
         end
       end
     end

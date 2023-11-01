@@ -100,7 +100,10 @@ end;
 
 procedure TFormTouch.FormDblClick(Sender: TObject);
 begin
-  FormChat.Show;
+  if not Save.Settings.TouchPanelOpenChatWebUI then
+    FormChat.Show
+  else
+    FormChat.ShowWebUI;
 end;
 
 procedure TFormTouch.FormDropFiles(Sender: TObject;

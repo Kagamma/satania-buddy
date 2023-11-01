@@ -286,7 +286,7 @@ end;
 
 procedure TFormMain.MenuItemChatWebUIClick(Sender: TObject);
 begin
-  FormChat.MenuItemShowWebUIClick(Sender);
+  FormChat.ShowWebUI;
 end;
 
 procedure TFormMain.MenuItemChatWithHerClick(Sender: TObject);

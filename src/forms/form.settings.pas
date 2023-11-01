@@ -43,6 +43,7 @@ type
     ButtonSpeechRecognitionHelp: TBitBtn;
     CheckBoxChatSpeechBalloon: TCheckBox;
     CheckBoxChatBubbleCleartype: TCheckBox;
+    CheckBoxDefaultChatWindow: TCheckBox;
     CheckBoxErrorMessage: TCheckBox;
     CheckBoxEmailUseSSL: TCheckBox;
     CheckBoxEmailSmtpUseSSL: TCheckBox;
@@ -106,6 +107,7 @@ type
     LabelChatWindowColorNormalText: TLabel;
     LabelChatWindowColorItalicText: TLabel;
     LabelChatWindowColorCodeBlockText: TLabel;
+    LabelDefaultChatWindow: TLabel;
     LabelErrorMessage: TLabel;
     LabelEmbeddedServiceNotice: TLabel;
     LabelDeveloperMode: TLabel;
@@ -144,6 +146,7 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     PanelButtons: TPanel;
+    PanelChatWindow: TPanel;
     PanelSettings: TPanel;
     ButtonChatWindowFont: TSpeedButton;
     Splitter1: TSplitter;
@@ -241,7 +244,8 @@ begin
   EditChatBubbleFontSize := Save.Settings.ChatBubbleFontSize;
   EditChatBubbleSizeX.Value := Save.Settings.ChatBubbleSizeX;
   EditChatBubbleSizeY.Value := Save.Settings.ChatBubbleSizeY;
-  CheckBoxChatBubbleCleartype.Checked := Save.Settings.ChatBubbleClearType;
+  CheckBoxChatBubbleCleartype.Checked := Save.Settings.ChatBubbleClearType;          
+  CheckBoxDefaultChatWindow.Checked := Save.Settings.TouchPanelOpenChatWebUI;
 
   ComboBoxSkin.Items.Clear;
   SL := TStringList.Create;
@@ -422,6 +426,7 @@ begin
   Save.Settings.ChatBubbleSizeX := EditChatBubbleSizeX.Value;
   Save.Settings.ChatBubbleSizeY := EditChatBubbleSizeY.Value;
   Save.Settings.ChatBubbleClearType := CheckBoxChatBubbleCleartype.Checked;
+  Save.Settings.TouchPanelOpenChatWebUI := CheckBoxDefaultChatWindow.Checked;
 
   if EditEmailPassword.Text <> '' then
     Save.Settings.EmailPassword := Encrypt(EditEmailPassword.Text)

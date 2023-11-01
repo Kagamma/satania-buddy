@@ -17,7 +17,7 @@ object FormTouch: TFormTouch
   OnShow = FormShow
   PopupMenu = FormMain.TrayMenu
   ShowInTaskBar = stNever
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '3.99.0.0'
   object Timer: TTimer
     OnTimer = TimerTimer
     Left = 4

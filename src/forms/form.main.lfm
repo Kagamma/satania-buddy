@@ -1,12 +1,12 @@
 object FormMain: TFormMain
   Left = -8
-  Height = 1100
+  Height = 1017
   Top = -8
-  Width = 891
+  Width = 1920
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 1061
-  ClientWidth = 891
+  ClientHeight = 1017
+  ClientWidth = 1920
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -14,14 +14,15 @@ object FormMain: TFormMain
   PopupMenu = TrayMenu
   Position = poDefault
   ShowInTaskBar = stNever
+  LCLVersion = '3.99.0.0'
   Scaled = False
   Visible = True
   WindowState = wsMaximized
   object CastleControl: TCastleControl
     Left = 0
-    Height = 1061
+    Height = 1017
     Top = 0
-    Width = 891
+    Width = 1920
     Align = alClient
     AlphaBits = 8
     Options = []
@@ -1369,11 +1370,6 @@ object FormMain: TFormMain
       Caption = 'Chat'
       ImageIndex = 18
       OnClick = MenuItemChatWithHerClick
-    end
-    object MenuItemChatWebUI: TMenuItem
-      Caption = 'Chat (WebUI)'
-      ImageIndex = 29
-      OnClick = MenuItemChatWebUIClick
     end
     object MenuItemSpeechRecognition: TMenuItem
       Caption = 'Speech Recognition'
