@@ -96,7 +96,7 @@ type
     procedure CalcHeights;
     procedure InsertTyping;
     procedure RemoveTyping;
-    procedure LoadServiceList;
+    function LoadServiceList: String;
     procedure LoadChatHistoryFromFile;
     procedure ApplySettings;              
     procedure ShowWebUI;
@@ -194,7 +194,6 @@ begin
   ChatHistory := TSataniaChatHistory.Create;
   FRichText := TSataniaRichText.Create;
   LoadServiceList;
-  LoadChatHistoryFromFile;
   FIsWriteToHistoryLog := True;
   ApplySettings;
 end;
@@ -205,12 +204,13 @@ begin
   ChatHistory.Free;
 end;
 
-procedure TFormChat.LoadServiceList;
+function TFormChat.LoadServiceList: String;
 var
   SL: TStringList;
   I : Integer;
   S : String;
 begin
+  Result := '';
   PageControl.PageIndex := 0;
   ComboBoxService.Clear;
   ComboBoxService.Items.Add('None');
@@ -224,6 +224,7 @@ begin
     ComboBoxService.Items.Add(S);
     if S.IndexOf(Save.Settings.LastServiceUsed) >= 0 then
       ComboBoxService.ItemIndex := I + 1;
+    Result := Result + S + ';';
   end;
   SL.Free;
 end;
@@ -327,7 +328,8 @@ end;
 
 procedure TFormChat.ComboBoxServiceChange(Sender: TObject);
 begin
-  EditChat.SetFocus;
+  if Self.Visible then
+    EditChat.SetFocus;
   if Self.ComboBoxService.ItemIndex > 0 then
   begin
     Self.ButtonOpenService.Enabled := True;
@@ -507,7 +509,11 @@ begin
   webui_bind(WebUIHandle, 'chat_history_save', @WebUI_ChatHistorySave);
   webui_bind(WebUIHandle, 'chat_is_streaming', @WebUI_ChatIsStreaming);
   webui_bind(WebUIHandle, 'chat_send', @WebUI_ChatSend);
-  webui_bind(WebUIHandle, 'chat_stop_generating', @WebUI_ChatStopGenerating);
+  webui_bind(WebUIHandle, 'chat_stop_generating', @WebUI_ChatStopGenerating); 
+  webui_bind(WebUIHandle, 'chat_service_get', @WebUI_ChatServiceGet);
+  webui_bind(WebUIHandle, 'chat_service_set', @WebUI_ChatServiceSet);
+  webui_bind(WebUIHandle, 'chat_service_list_get', @WebUI_ChatServiceGetList);    
+  webui_bind(WebUIHandle, 'chat_service_edit', @WebUI_ChatServiceEdit);
   webui_bind(WebUIHandle, 'character_skin_get', @WebUI_CharacterSkinGet);
   webui_bind(WebUIHandle, 'character_name_get', @WebUI_CharacterNameGet);
   webui_show(WebUIHandle, 'chat/index.html');

@@ -46,3 +46,24 @@ procedure WebUI_ChatHistorySave(E: PWebUIEvent);
 begin
   FormChat.SaveHistory(webui_get_string(E));
 end;
+
+procedure WebUI_ChatServiceSet(E: PWebUIEvent);
+begin
+  FormChat.ComboBoxService.ItemIndex := StrToInt(webui_get_string(E));
+  FormChat.ComboBoxServiceChange(nil);
+end;
+
+procedure WebUI_ChatServiceGet(E: PWebUIEvent);
+begin
+  webui_return_string(E, PChar(IntToStr(FormChat.ComboBoxService.ItemIndex)));
+end;
+
+procedure WebUI_ChatServiceGetList(E: PWebUIEvent);
+begin
+  webui_return_string(E, PChar(FormChat.LoadServiceList));
+end;
+
+procedure WebUI_ChatServiceEdit(E: PWebUIEvent);
+begin
+  FormChat.ButtonOpenServiceClick(nil);
+end;
