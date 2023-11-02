@@ -16,6 +16,11 @@ begin
   webui_return_string(E, PChar(FormChat.ChatHistory.ToJSONString(0)));
 end;
 
+procedure WebUI_ChatHistoryGetPlainText(E: PWebUIEvent);
+begin
+  webui_return_string(E, PChar(FormChat.ChatHistory.ToEdit));
+end;
+
 procedure WebUI_ChatIsStreaming(E: PWebUIEvent);
 begin
   webui_return_bool(E, FormChat.RichText.IsStreaming);
@@ -30,4 +35,14 @@ end;
 procedure WebUI_ChatStopGenerating(E: PWebUIEvent);
 begin
   FormChat.StopGenerating;
+end;
+
+procedure WebUI_ChatHistoryClear(E: PWebUIEvent);
+begin
+  FormChat.ClearHistory;
+end;
+
+procedure WebUI_ChatHistorySave(E: PWebUIEvent);
+begin
+  FormChat.SaveHistory(webui_get_string(E));
 end;

@@ -101,6 +101,8 @@ type
     procedure ApplySettings;              
     procedure ShowWebUI;
     procedure StopGenerating;
+    procedure SaveHistory(const HistoryText: String);
+    procedure ClearHistory;
     property RichText: TSataniaRichText read FRichText;
   end;
 
@@ -274,17 +276,14 @@ begin
   begin
     if MessageDlg('', 'Clear chat history?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
-      MemoChatLog.Blocks.Clear;
-      ChatHistory.Clear;
+      Self.ClearHistory;
     end;
   end;
 end;
 
 procedure TFormChat.ButtonEditSaveClick(Sender: TObject);
 begin
-  PageControl.PageIndex := 0;
-  ChatHistory.FromEdit(StringReplace(MemoEdit.Lines.Text, #13, '', [rfReplaceAll]));
-  LoadChatHistoryFromFile;
+  Self.SaveHistory(Self.MemoEdit.Lines.Text);
 end;
 
 procedure TFormChat.ButtonEditCancelClick(Sender: TObject);
@@ -502,7 +501,10 @@ begin
     CopyFile(AvatarPath, RootPath + '/chat/avatar_1.png');
   end;
   //
-  webui_bind(WebUIHandle, 'chat_history_get', @WebUI_ChatHistoryGet);
+  webui_bind(WebUIHandle, 'chat_history_get', @WebUI_ChatHistoryGet);  
+  webui_bind(WebUIHandle, 'chat_history_plaintext_get', @WebUI_ChatHistoryGetPlainText);
+  webui_bind(WebUIHandle, 'chat_history_clear', @WebUI_ChatHistoryClear);
+  webui_bind(WebUIHandle, 'chat_history_save', @WebUI_ChatHistorySave);
   webui_bind(WebUIHandle, 'chat_is_streaming', @WebUI_ChatIsStreaming);
   webui_bind(WebUIHandle, 'chat_send', @WebUI_ChatSend);
   webui_bind(WebUIHandle, 'chat_stop_generating', @WebUI_ChatStopGenerating);
@@ -520,6 +522,19 @@ begin
   FormBubble.DisableStreaming;
   //
   MenuItemStopGenerating.Enabled := False;
+end;
+
+procedure TFormChat.SaveHistory(const HistoryText: String);
+begin
+  PageControl.PageIndex := 0;
+  ChatHistory.FromEdit(StringReplace(HistoryText, #13, '', [rfReplaceAll]));
+  LoadChatHistoryFromFile;
+end;
+
+procedure TFormChat.ClearHistory;
+begin
+  MemoChatLog.Blocks.Clear;
+  ChatHistory.Clear;
 end;
 
 end.
