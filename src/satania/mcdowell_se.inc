@@ -90,7 +90,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEFileFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileGetSize(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
     function SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEDirectoryLocalGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -982,11 +981,6 @@ begin
     Result := FileSize(F);
     CloseFile(F);
   end;
-end;
-
-function TSatania.SEDirectoryLocalGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-begin
-  Result := GetOSLocalDir;
 end;
 
 function TSatania.SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
