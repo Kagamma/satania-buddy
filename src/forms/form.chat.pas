@@ -480,43 +480,8 @@ begin
 end;
 
 procedure TFormChat.ShowWebUI;
-var
-  RootPath,
-  AvatarPath: String;
 begin
-  if WebUIHandle <> 0 then
-    webui_close(WebUIHandle);
-  WebUIHandle := webui_new_window;
-  // Try to set root at user config dir if exists
-  RootPath := GetOSLocalDir + 'webui';
-  if not DirectoryExists(RootPath) then
-    RootPath := 'data/webui';
-  webui_set_root_folder(WebUIHandle, PChar(RootPath));
-  // Prepare avatar
-  AvatarPath := GetOSLocalDir + 'sprites/' + Save.Settings.Skin + '/avatar.png';
-  if not FileExists(AvatarPath) then
-    AvatarPath := 'data/sprites/' + Save.Settings.Skin + '/avatar.png';
-  if FileExists(RootPath + '/chat/avatar_1.png') then
-    DeleteFile(RootPath + '/chat/avatar_1.png');
-  if FileExists(AvatarPath) then
-  begin
-    CopyFile(AvatarPath, RootPath + '/chat/avatar_1.png');
-  end;
-  //
-  webui_bind(WebUIHandle, 'chat_history_get', @WebUI_ChatHistoryGet);  
-  webui_bind(WebUIHandle, 'chat_history_plaintext_get', @WebUI_ChatHistoryGetPlainText);
-  webui_bind(WebUIHandle, 'chat_history_clear', @WebUI_ChatHistoryClear);
-  webui_bind(WebUIHandle, 'chat_history_save', @WebUI_ChatHistorySave);
-  webui_bind(WebUIHandle, 'chat_is_streaming', @WebUI_ChatIsStreaming);
-  webui_bind(WebUIHandle, 'chat_send', @WebUI_ChatSend);
-  webui_bind(WebUIHandle, 'chat_stop_generating', @WebUI_ChatStopGenerating); 
-  webui_bind(WebUIHandle, 'chat_service_get', @WebUI_ChatServiceGet);
-  webui_bind(WebUIHandle, 'chat_service_set', @WebUI_ChatServiceSet);
-  webui_bind(WebUIHandle, 'chat_service_list_get', @WebUI_ChatServiceGetList);    
-  webui_bind(WebUIHandle, 'chat_service_edit', @WebUI_ChatServiceEdit);
-  webui_bind(WebUIHandle, 'character_skin_get', @WebUI_CharacterSkinGet);
-  webui_bind(WebUIHandle, 'character_name_get', @WebUI_CharacterNameGet);
-  webui_show(WebUIHandle, 'chat/index.html');
+  WebUI_ShowWebUI;
 end;
 
 procedure TFormChat.StopGenerating;
