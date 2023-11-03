@@ -28,7 +28,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
   SynEdit, SynEditMarkupSpecialLine, SynCompletion,
   LCLTranslator, lclintf, Menus,
-  Mcdowell.EvilC, Types, LCLType, SynFacilHighlighter, SynFacilBasic,
+  Mcdowell.EvilC, Types, LCLType, ExtCtrls, SynFacilHighlighter, SynFacilBasic,
   SynEditTypes;
 
 type

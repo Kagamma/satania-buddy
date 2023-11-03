@@ -415,6 +415,8 @@ var
   Streamer: TJSONStreamer;
   SS: TStringStream;
 begin
+  if FileExists(FileName) then
+    DeleteFile(FileName);
   FileName := GetOSLocalDir + FileName;
   FS := TFileStream.Create(FileName, fmCreate);
   Streamer := TJSONStreamer.Create(nil);
