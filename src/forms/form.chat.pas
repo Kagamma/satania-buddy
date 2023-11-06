@@ -363,6 +363,10 @@ var
   CH: TChatHistoryRec;
   IsLog: Boolean = False;
 begin
+  if Msg = '/blank' then
+  begin
+    Exit;
+  end;
   DecodeTime(Now, H, M, SS, MS);
   if Time = '' then
   begin

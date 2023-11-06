@@ -135,7 +135,7 @@ begin
   FormChat.ClearHistory;
 end;
 
-procedure WebUI_ChatHistorySave(E: PWebUIEvent);
+procedure WebUI_ChatHistorySavePlainText(E: PWebUIEvent);
 begin
   FormChat.SaveHistory(webui_get_string(E));
 end;
@@ -204,7 +204,7 @@ begin
   webui_bind(WebUIHandle, 'chat_history_get', @WebUI_ChatHistoryGet);
   webui_bind(WebUIHandle, 'chat_history_plaintext_get', @WebUI_ChatHistoryGetPlainText);
   webui_bind(WebUIHandle, 'chat_history_clear', @WebUI_ChatHistoryClear);
-  webui_bind(WebUIHandle, 'chat_history_save', @WebUI_ChatHistorySave);
+  webui_bind(WebUIHandle, 'chat_history_plaintext_save', @WebUI_ChatHistorySavePlainText);
   webui_bind(WebUIHandle, 'chat_is_streaming', @WebUI_ChatIsStreaming);
   webui_bind(WebUIHandle, 'chat_send', @WebUI_ChatSend);
   webui_bind(WebUIHandle, 'chat_stop_generating', @WebUI_ChatStopGenerating);

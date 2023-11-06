@@ -686,6 +686,8 @@ procedure TSatania.Chat(S: String);
 var
   ChatThread: TSataniaChatThread;
 begin
+  if S = '/blank' then
+    S := '';
   if ChatMode = CHATMODE_CHAT then
   begin
     ChatThread := TSataniaChatThread.Create(True);

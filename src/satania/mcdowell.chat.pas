@@ -146,7 +146,7 @@ var
 begin
   ChatResponse := '';
   S := ChatSend;
-  if (Length(S) > 0) and (S[1] <> '>') then
+  if not ((Length(S) > 0) and (S[1] = '>')) then
   begin
     ChatResponse := Satania.Expression(S);
     if ChatResponse <> '' then
