@@ -173,7 +173,7 @@ var
 begin
   MemoChatLog.Blocks.Clear;
   MemoChatLog.Blocks.LockUpdate;
-  ChatHistory.LoadFromFile(GetOSLocalDir + PATH_CHAT_HISTORY + Save.Settings.Skin + '.txt');
+  ChatHistory.LoadFromFile(GetOSLocalDir + PATH_CHAT_HISTORY + Save.Settings.Skin + ' - ' + Save.Settings.LastServiceUsed + '.txt');
   FIsWriteToHistoryLog := False;
   for I := 0 to Self.ChatHistory.List.Count - 1 do
   begin
@@ -340,6 +340,7 @@ begin
     Save.Settings.LastServiceUsed := 'None';
   end;
   Save.SaveToFile('configs.json');
+  Self.LoadChatHistoryFromFile;
 end;
 
 procedure TFormChat.ScrollToBottom;
