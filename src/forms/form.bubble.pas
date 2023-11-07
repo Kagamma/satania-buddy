@@ -194,6 +194,10 @@ end;
 
 procedure TFormBubble.FormCreate(Sender: TObject);
 begin
+  {$ifndef WINDOWS}
+  Self.Enabled := False;       
+  Self.KMemo.Enabled := False;
+  {$endif}
   Self.FRichText := TSataniaRichText.Create;
   Self.FRichText.IsStreaming := True;
   Self.FRichText.IsPerformance := False;
