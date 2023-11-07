@@ -87,10 +87,12 @@ begin
         Self.Width := Save.Settings.ChatBubbleSizeX;
       if Self.Height = 1 then
         Self.Height := Save.Settings.ChatBubbleSizeY;
+      AlphaBlendValue := 255;
     end else
     begin
       Self.Width := 1;
-      Self.Height := 1;
+      Self.Height := 1; 
+      AlphaBlendValue := 1;
     end;
   Self.FVisibleViaSize := B;
 end;
@@ -205,6 +207,8 @@ begin
   Self.TypingSpeed := Save.Settings.TextSpeed;
   Self.Width := 1;
   Self.Height := 1;
+  AlphaBlend := True;
+  AlphaBlendValue := 1;
   ApplySettings;
 end;
 
