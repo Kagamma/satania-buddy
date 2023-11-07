@@ -20,12 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 unit Form.Bubble;
 
-{$mode ObjFPC}{$H+}
+{$I configs.inc}
 
 interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, kmemo,
+{$ifdef LINUX_X11}
+  X, Xlib, xatom, qt5, qtwidgets,
+{$endif}
   Mcdowell.RichText;
 
 type
@@ -38,7 +41,6 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
   private
     FRichText: TSataniaRichText;
@@ -81,14 +83,14 @@ begin
   if Self.FVisibleViaSize <> B then
     if B then
     begin
-      if Self.Width = 0 then
+      if Self.Width = 1 then
         Self.Width := Save.Settings.ChatBubbleSizeX;
-      if Self.Height = 0 then
+      if Self.Height = 1 then
         Self.Height := Save.Settings.ChatBubbleSizeY;
     end else
     begin
-      Self.Width := 0;
-      Self.Height := 0;
+      Self.Width := 1;
+      Self.Height := 1;
     end;
   Self.FVisibleViaSize := B;
 end;
@@ -186,25 +188,23 @@ begin
     ScrollToBottom;
     Self.Timer.Interval := 1000 div Self.FTypingSpeed;
   end;
-  {$ifdef LINUX}
-  if (Self.KMemo.Focused) and (FormChat <> nil) and FormChat.Visible then
-    FormChat.EditChat.SetFocus;
-  {$endif}
 end;
 
 procedure TFormBubble.FormCreate(Sender: TObject);
 begin
-  {$ifndef WINDOWS}
+  {$ifdef LINUX_X11}
   Self.Enabled := False;       
   Self.KMemo.Enabled := False;
+  TQtWidget(TQtMainWindow(Handle).Widget).setFocusPolicy(QtNoFocus);
+  // TQtWidget(TQtMainWindow(Handle).Widget).setAttribute(QtWA_ShowWithoutActivating);
   {$endif}
   Self.FRichText := TSataniaRichText.Create;
   Self.FRichText.IsStreaming := True;
   Self.FRichText.IsPerformance := False;
   AddFormToIgnoreHandleList(Self);
   Self.TypingSpeed := Save.Settings.TextSpeed;
-  Self.Width := 0;
-  Self.Height := 0;
+  Self.Width := 1;
+  Self.Height := 1;
   ApplySettings;
 end;
 
@@ -216,12 +216,6 @@ end;
 procedure TFormBubble.FormDestroy(Sender: TObject);
 begin
   Self.FRichText.Free;
-end;
-
-procedure TFormBubble.FormShow(Sender: TObject);
-begin
-  if (FormChat <> nil) and FormChat.Visible then
-    FormChat.MemoChatLog.SetFocus;
 end;
 
 procedure TFormBubble.ApplySettings;

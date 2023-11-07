@@ -5,14 +5,13 @@ object FormBubble: TFormBubble
   Width = 400
   BorderIcons = []
   BorderStyle = bsNone
-  Caption = 'FormBubble'
   ClientHeight = 200
   ClientWidth = 400
   FormStyle = fsSystemStayOnTop
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnShow = FormShow
+  LCLVersion = '3.99.0.0'
   Visible = True
   object KMemo: TKMemo
     Left = 0
