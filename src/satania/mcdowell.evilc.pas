@@ -4160,7 +4160,7 @@ begin
   Self.RegisterFunc('base64_encode', @TBuiltInFunction(nil).SEBase64Encode, 1);
   Self.RegisterFunc('base64_decode', @TBuiltInFunction(nil).SEBase64Decode, 1);  
   Self.RegisterFunc('assert', @TBuiltInFunction(nil).SEAssert, 2);
-  Self.RegisterFunc('char', @TBuiltInFunction(nil).SEChar, 1);         
+  Self.RegisterFunc('chr', @TBuiltInFunction(nil).SEChar, 1);
   Self.RegisterFunc('ord', @TBuiltInFunction(nil).SEOrd, 1);
   Self.AddDefaultConsts;
   Self.Source := '';

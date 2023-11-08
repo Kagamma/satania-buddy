@@ -544,7 +544,7 @@ You can enable assertions globally in Settings, or locally in script editor.
 
 *max(...): number*
 
-*char(number): string*
+*chr(number): string*
 - Typecast a number (0..255) to equivalent char value.
 *ord(string): number*
 - Typecast a char to equivalent number value.
