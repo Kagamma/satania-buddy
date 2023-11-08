@@ -203,9 +203,11 @@ type
     FChatWindowClearType: Boolean;       
     FChatBubbleClearType: Boolean;
     FTouchPanelOpenChatWebUI: Boolean;
+    FChatWebUIPort: Word;
   published
     property Version: Cardinal read FVersion write FVersion;
-    property EmbeddedServerPort: Word read FEmbeddedServerPort write FEmbeddedServerPort default 8666;  
+    property EmbeddedServerPort: Word read FEmbeddedServerPort write FEmbeddedServerPort default 8666;      
+    property ChatWebUIPort: Word read FChatWebUIPort write FChatWebUIPort default 36663;
     property EmbeddedServerEnable: Boolean read FEmbeddedServerEnable write FEmbeddedServerEnable default False;
     property TextSpeed: Integer read FTextSpeed write FTextSpeed;
     property SitOnWindowRightMargin: Integer read FSitOnWindowRightMargin write FSitOnWindowRightMargin;
@@ -402,6 +404,7 @@ begin
   FSettings.FChatWindowColorCodeBlockText := $071330;
   FSettings.FChatWindowFontSize := 11;
   FSettings.FChatBubbleFontSize := 11;
+  FSettings.ChatWebUIPort := 36663;
 end;
 
 destructor TSave.Destroy;

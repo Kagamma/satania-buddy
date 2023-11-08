@@ -201,7 +201,7 @@ begin
     CopyFile(AvatarPath, RootPath + '/chat/avatar_1.png');
   end;
   //
-  webui_set_port(WebUIHandle, 36663);
+  webui_set_port(WebUIHandle, Save.Settings.ChatWebUIPort);
   webui_bind(WebUIHandle, 'chat_history_get', @WebUI_ChatHistoryGet);
   webui_bind(WebUIHandle, 'chat_history_plaintext_get', @WebUI_ChatHistoryGetPlainText);
   webui_bind(WebUIHandle, 'chat_history_clear', @WebUI_ChatHistoryClear);
