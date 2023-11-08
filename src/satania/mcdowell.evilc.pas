@@ -678,7 +678,9 @@ type
     class function SEGCObjectCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGCUsed(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGCCollect(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEAssert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEAssert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+    class function SEChar(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEOrd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 
     class function SEBase64Encode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBase64Decode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1669,6 +1671,16 @@ class function TBuiltInFunction.SEAssert(const VM: TSEVM; const Args: array of T
 begin
   if Args[0] = False then
     raise EAssertionFailed.Create(Args[1]);
+end;     
+
+class function TBuiltInFunction.SEChar(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := Char(Floor(Args[0]));
+end;
+
+class function TBuiltInFunction.SEOrd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := Byte(Args[0].VarString^[1]);
 end;
 
 class function TBuiltInFunction.SEBase64Encode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -4148,6 +4160,8 @@ begin
   Self.RegisterFunc('base64_encode', @TBuiltInFunction(nil).SEBase64Encode, 1);
   Self.RegisterFunc('base64_decode', @TBuiltInFunction(nil).SEBase64Decode, 1);  
   Self.RegisterFunc('assert', @TBuiltInFunction(nil).SEAssert, 2);
+  Self.RegisterFunc('char', @TBuiltInFunction(nil).SEChar, 1);         
+  Self.RegisterFunc('ord', @TBuiltInFunction(nil).SEOrd, 1);
   Self.AddDefaultConsts;
   Self.Source := '';
 end;

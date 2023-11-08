@@ -544,6 +544,11 @@ You can enable assertions globally in Settings, or locally in script editor.
 
 *max(...): number*
 
+*char(number): string*
+- Typecast a number (0..255) to equivalent char value.
+*ord(string): number*
+- Typecast a char to equivalent number value.
+
 ** Buffers
 *buffer_create(size: number): buffer*
 - Create a new buffer. The result is a pointer points to the start of allocated memory.
