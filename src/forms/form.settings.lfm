@@ -113,24 +113,24 @@ object FormSettings: TFormSettings
       Height = 546
       Top = 1
       Width = 707
-      ActivePage = TabSheetSpeechRecognition
+      ActivePage = TabSheetGeneral
       Align = alClient
-      TabIndex = 6
+      TabIndex = 0
       TabOrder = 0
       object TabSheetGeneral: TTabSheet
         Caption = 'General'
-        ClientHeight = 510
-        ClientWidth = 703
+        ClientHeight = 518
+        ClientWidth = 699
         object LabelSoWRightMargin: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 48
-          Width = 130
+          Width = 96
           Caption = 'SoW Right Margin'
         end
         object EditSoWRightMargin: TSpinEdit
           Left = 192
-          Height = 28
+          Height = 23
           Top = 48
           Width = 98
           MaxValue = 10000
@@ -139,7 +139,7 @@ object FormSettings: TFormSettings
         end
         object EditDefaultEvilScheme: TEdit
           Left = 192
-          Height = 27
+          Height = 23
           Top = 80
           Width = 400
           Enabled = False
@@ -147,72 +147,72 @@ object FormSettings: TFormSettings
         end
         object LabelDefaultEvilScheme: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 80
-          Width = 144
+          Width = 104
           Caption = 'Default Evil Scheme'
         end
         object LabelLewd: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 16
-          Width = 79
+          Width = 55
           Caption = 'Fanservice'
         end
         object CheckBoxLewd: TCheckBox
           Left = 192
-          Height = 15
+          Height = 17
           Top = 16
-          Width = 14
+          Width = 18
           TabOrder = 2
         end
         object LabelFontSkin: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 112
-          Width = 72
+          Width = 51
           Caption = 'Character'
         end
         object ComboBoxSkin: TComboBox
           Left = 192
-          Height = 27
+          Height = 23
           Top = 112
           Width = 304
-          ItemHeight = 19
+          ItemHeight = 15
           ReadOnly = True
           TabOrder = 3
         end
         object CheckBoxRules: TCheckBox
           Left = 192
-          Height = 15
+          Height = 17
           Top = 152
-          Width = 14
+          Width = 18
           TabOrder = 4
         end
         object LabelRules: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 152
-          Width = 41
+          Width = 28
           Caption = 'Rules'
         end
         object Label4: TLabel
           Left = 224
-          Height = 37
+          Height = 30
           Top = 152
-          Width = 352
+          Width = 257
           Caption = '*Consider disable this if you use external services'#10'like ChatGPT, KoboldAI or similar'
         end
         object LabelYourName: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 208
-          Width = 80
+          Width = 59
           Caption = 'Your Name'
         end
         object EditYourName: TEdit
           Left = 192
-          Height = 27
+          Height = 23
           Top = 208
           Width = 400
           TabOrder = 5
@@ -220,35 +220,35 @@ object FormSettings: TFormSettings
         end
         object LabelErrorMessage: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 248
-          Width = 259
+          Width = 185
           Caption = 'Display error messages as "System"'
         end
         object CheckBoxErrorMessage: TCheckBox
           Left = 344
-          Height = 15
+          Height = 17
           Top = 248
-          Width = 14
+          Width = 18
           TabOrder = 6
         end
         object LabelEnableItalicForUserText: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 276
-          Width = 236
+          Width = 170
           Caption = 'Enable styling for user messages'
         end
         object CheckBoxEnableItalicForUserText: TCheckBox
           Left = 344
-          Height = 15
+          Height = 17
           Top = 276
-          Width = 14
+          Width = 18
           TabOrder = 7
         end
         object ButtonCloneSkin: TBitBtn
           Left = 496
-          Height = 27
+          Height = 23
           Top = 112
           Width = 96
           Caption = 'Clone'
@@ -259,26 +259,26 @@ object FormSettings: TFormSettings
         end
         object LabelDefaultChatWindow: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 304
-          Width = 296
+          Width = 217
           Caption = 'Set Chat (WebUI) as default Chat window'
         end
         object CheckBoxDefaultChatWindow: TCheckBox
           Left = 344
-          Height = 15
+          Height = 17
           Top = 304
-          Width = 14
+          Width = 18
           TabOrder = 9
         end
       end
       object TabSheetGraphics: TTabSheet
         Caption = 'Graphics'
-        ClientHeight = 510
-        ClientWidth = 703
+        ClientHeight = 518
+        ClientWidth = 699
         object EditFPS: TSpinEdit
           Left = 192
-          Height = 28
+          Height = 23
           Top = 16
           Width = 98
           MaxValue = 60
@@ -288,24 +288,24 @@ object FormSettings: TFormSettings
         end
         object LabelFPS: TLabel
           Left = 23
-          Height = 19
+          Height = 15
           Top = 16
-          Width = 32
+          Width = 19
           Caption = 'FPS'
         end
         object LabelImageQuality: TLabel
           Left = 23
-          Height = 19
+          Height = 15
           Top = 48
-          Width = 99
+          Width = 74
           Caption = 'Image Quality'
         end
         object ComboBoxImageQuality: TComboBox
           Left = 192
-          Height = 27
+          Height = 23
           Top = 48
           Width = 194
-          ItemHeight = 19
+          ItemHeight = 15
           ItemIndex = 1
           Items.Strings = (
             'Nearest'
@@ -318,14 +318,14 @@ object FormSettings: TFormSettings
         end
         object LabelBaseScaling: TLabel
           Left = 23
-          Height = 19
+          Height = 15
           Top = 80
-          Width = 94
+          Width = 65
           Caption = 'Base Scaling'
         end
         object EditBaseScaling: TFloatSpinEdit
           Left = 192
-          Height = 28
+          Height = 23
           Top = 80
           Width = 98
           Increment = 0.01
@@ -336,7 +336,7 @@ object FormSettings: TFormSettings
         end
         object EditFrameSkip: TSpinEdit
           Left = 192
-          Height = 28
+          Height = 23
           Top = 112
           Width = 98
           MaxValue = 1000
@@ -345,26 +345,26 @@ object FormSettings: TFormSettings
         end
         object LabelFrameSkip: TLabel
           Left = 23
-          Height = 19
+          Height = 15
           Top = 112
-          Width = 82
+          Width = 58
           Caption = 'Frame Skip'
         end
       end
       object TabSheetChatBubble: TTabSheet
         Caption = 'Speech Balloon'
-        ClientHeight = 510
-        ClientWidth = 703
+        ClientHeight = 518
+        ClientWidth = 699
         object LabelChatBubbleDelay: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 80
-          Width = 211
+          Width = 152
           Caption = 'Speech Balloon Delay (msec)'
         end
         object EditChatBubbleDelay: TSpinEdit
           Left = 248
-          Height = 28
+          Height = 23
           Top = 80
           Width = 98
           MaxValue = 100000
@@ -374,28 +374,28 @@ object FormSettings: TFormSettings
         end
         object CheckBoxChatSpeechBalloon: TCheckBox
           Left = 24
-          Height = 15
+          Height = 17
           Top = 184
-          Width = 14
+          Width = 18
           TabOrder = 1
         end
         object LabelChatSpeechBalloon: TLabel
           Left = 56
-          Height = 19
+          Height = 15
           Top = 184
-          Width = 344
+          Width = 256
           Caption = 'Disable speech balloon if chat window is opened'
         end
         object LabelTextSpeed: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 112
-          Width = 156
+          Width = 112
           Caption = 'Text Speed (char/sec)'
         end
         object EditTextSpeed: TSpinEdit
           Left = 248
-          Height = 28
+          Height = 23
           Top = 112
           Width = 98
           MaxValue = 100000
@@ -405,14 +405,14 @@ object FormSettings: TFormSettings
         end
         object LabelChatBubbleFont: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 16
-          Width = 33
+          Width = 24
           Caption = 'Font'
         end
         object EditChatBubbleFont: TEdit
           Left = 248
-          Height = 27
+          Height = 23
           Top = 16
           Width = 344
           TabOrder = 3
@@ -428,14 +428,14 @@ object FormSettings: TFormSettings
         end
         object LabelChatBubbleSize: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 144
-          Width = 148
+          Width = 104
           Caption = 'Speech Balloon Size'
         end
         object EditChatBubbleSizeX: TSpinEdit
           Left = 248
-          Height = 28
+          Height = 23
           Top = 144
           Width = 98
           MaxValue = 100000
@@ -445,7 +445,7 @@ object FormSettings: TFormSettings
         end
         object EditChatBubbleSizeY: TSpinEdit
           Left = 360
-          Height = 28
+          Height = 23
           Top = 144
           Width = 98
           MaxValue = 100000
@@ -455,42 +455,42 @@ object FormSettings: TFormSettings
         end
         object LabelChatBubbleCleartype: TLabel
           Left = 24
-          Height = 19
+          Height = 15
           Top = 48
-          Width = 73
+          Width = 51
           Caption = 'ClearType'
         end
         object CheckBoxChatBubbleCleartype: TCheckBox
           Left = 248
-          Height = 15
+          Height = 17
           Top = 48
-          Width = 14
+          Width = 18
           TabOrder = 6
         end
       end
       object TabSheetChatWindow: TTabSheet
         Caption = 'Chat Window'
-        ClientHeight = 510
-        ClientWidth = 703
+        ClientHeight = 518
+        ClientWidth = 699
         object PanelChatWindow: TPanel
           Left = 0
-          Height = 510
+          Height = 518
           Top = 0
-          Width = 703
+          Width = 699
           Align = alClient
-          ClientHeight = 510
-          ClientWidth = 703
+          ClientHeight = 518
+          ClientWidth = 699
           TabOrder = 0
           object LabelChatWindowFont: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 16
-            Width = 33
+            Width = 24
             Caption = 'Font'
           end
           object EditChatWindowFont: TEdit
             Left = 192
-            Height = 27
+            Height = 23
             Top = 16
             Width = 400
             TabOrder = 0
@@ -515,16 +515,16 @@ object FormSettings: TFormSettings
           end
           object LabelChatWindowColorCharacterName: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 112
-            Width = 161
+            Width = 118
             Caption = 'Character Name Color'
           end
           object LabelChatWindowColorUserName: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 144
-            Width = 125
+            Width = 90
             Caption = 'User Name Color'
           end
           object ColorButtonChatWindowUserName: TColorButton
@@ -538,9 +538,9 @@ object FormSettings: TFormSettings
           end
           object LabelChatWindowColorSystemName: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 176
-            Width = 145
+            Width = 105
             Caption = 'System Name Color'
           end
           object ColorButtonChatWindowSystemName: TColorButton
@@ -554,9 +554,9 @@ object FormSettings: TFormSettings
           end
           object LabelChatWindowColorBackground: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 80
-            Width = 129
+            Width = 96
             Caption = 'Background Color'
           end
           object ColorButtonChatWindowBackground: TColorButton
@@ -570,9 +570,9 @@ object FormSettings: TFormSettings
           end
           object LabelChatWindowColorNormalText: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 208
-            Width = 129
+            Width = 96
             Caption = 'Normal Text Color'
           end
           object ColorButtonChatWindowNormalText: TColorButton
@@ -586,9 +586,9 @@ object FormSettings: TFormSettings
           end
           object LabelChatWindowColorItalicText: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 240
-            Width = 110
+            Width = 81
             Caption = 'Italic Text Color'
           end
           object ColorButtonChatWindowItalicText: TColorButton
@@ -602,9 +602,9 @@ object FormSettings: TFormSettings
           end
           object LabelChatWindowColorCodeBlockText: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 272
-            Width = 159
+            Width = 116
             Caption = 'Code Block Text Color'
           end
           object ColorButtonChatWindowCodeBlockText: TColorButton
@@ -618,27 +618,27 @@ object FormSettings: TFormSettings
           end
           object LabelChatWindowCleartype: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 48
-            Width = 73
+            Width = 51
             Caption = 'ClearType'
           end
           object CheckBoxChatWindowCleartype: TCheckBox
             Left = 192
-            Height = 15
+            Height = 17
             Top = 48
-            Width = 14
+            Width = 18
             TabOrder = 1
           end
         end
       end
       object TabSheetEmbeddedServer: TTabSheet
         Caption = 'Embedded Server'
-        ClientHeight = 510
-        ClientWidth = 703
+        ClientHeight = 518
+        ClientWidth = 699
         object EditEmbeddedServerPort: TSpinEdit
           Left = 192
-          Height = 28
+          Height = 23
           Top = 48
           Width = 98
           MaxValue = 65535
@@ -647,70 +647,70 @@ object FormSettings: TFormSettings
         end
         object LabelEmbeddedServerPort: TLabel
           Left = 23
-          Height = 19
+          Height = 15
           Top = 48
-          Width = 31
+          Width = 22
           Caption = 'Port'
         end
         object LabelEmbeddedServiceNotice: TLabel
           Left = 23
-          Height = 19
+          Height = 15
           Top = 88
-          Width = 427
+          Width = 315
           Caption = '*Restart satania-buddy is required for changes to take effect'
         end
         object LabelEmbeddedServerEnable: TLabel
           Left = 23
-          Height = 19
+          Height = 15
           Top = 16
-          Width = 50
+          Width = 35
           Caption = 'Enable'
         end
         object CheckBoxEmbeddedServerEnable: TCheckBox
           Left = 192
-          Height = 15
+          Height = 17
           Top = 16
-          Width = 14
+          Width = 18
           TabOrder = 1
         end
       end
       object TabSheetIMAP: TTabSheet
         Caption = 'Email'
-        ClientHeight = 510
-        ClientWidth = 703
+        ClientHeight = 518
+        ClientWidth = 699
         object GroupBoxEmailIMAP: TGroupBox
           Left = 24
           Height = 224
           Top = 16
           Width = 594
           Caption = 'IMAP'
-          ClientHeight = 196
-          ClientWidth = 588
+          ClientHeight = 204
+          ClientWidth = 590
           TabOrder = 0
           object LabelEmailServer: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 16
-            Width = 49
+            Width = 32
             Caption = 'Server'
           end
           object EditEmailServer: TEdit
             Left = 189
-            Height = 27
+            Height = 23
             Top = 16
             Width = 376
             TabOrder = 0
           end
           object LabelEmailPort: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 48
-            Width = 31
+            Width = 22
             Caption = 'Port'
           end
           object EditEmailPort: TSpinEdit
             Left = 189
-            Height = 28
+            Height = 23
             Top = 48
             Width = 98
             MaxValue = 65535
@@ -719,28 +719,28 @@ object FormSettings: TFormSettings
           end
           object LabelEmailUsername: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 80
-            Width = 74
+            Width = 53
             Caption = 'Username'
           end
           object EditEmailUsername: TEdit
             Left = 189
-            Height = 27
+            Height = 23
             Top = 80
             Width = 376
             TabOrder = 2
           end
           object LabelEmailPassword: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 112
-            Width = 71
+            Width = 50
             Caption = 'Password'
           end
           object EditEmailPassword: TEdit
             Left = 189
-            Height = 27
+            Height = 23
             Top = 112
             Width = 376
             EchoMode = emPassword
@@ -749,30 +749,30 @@ object FormSettings: TFormSettings
           end
           object LabelFetchFrom: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 144
-            Width = 82
+            Width = 60
             Caption = 'Fetch From'
           end
           object EditEmailFetchFrom: TEdit
             Left = 189
-            Height = 27
+            Height = 23
             Top = 144
             Width = 376
             TabOrder = 4
           end
           object LabelEmailUseSSL: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 176
-            Width = 64
+            Width = 40
             Caption = 'Use SSL'
           end
           object CheckBoxEmailUseSSL: TCheckBox
             Left = 189
-            Height = 15
+            Height = 17
             Top = 176
-            Width = 14
+            Width = 18
             TabOrder = 5
           end
         end
@@ -782,33 +782,33 @@ object FormSettings: TFormSettings
           Top = 250
           Width = 594
           Caption = 'SMTP'
-          ClientHeight = 170
-          ClientWidth = 588
+          ClientHeight = 178
+          ClientWidth = 590
           TabOrder = 1
           object LabelEmailSmtpServer: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 16
-            Width = 49
+            Width = 32
             Caption = 'Server'
           end
           object EditEmailSmtpServer: TEdit
             Left = 189
-            Height = 27
+            Height = 23
             Top = 16
             Width = 376
             TabOrder = 0
           end
           object LabelEmailSmtpPort: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 48
-            Width = 31
+            Width = 22
             Caption = 'Port'
           end
           object EditEmailSmtpPort: TSpinEdit
             Left = 189
-            Height = 28
+            Height = 23
             Top = 48
             Width = 98
             MaxValue = 65535
@@ -817,28 +817,28 @@ object FormSettings: TFormSettings
           end
           object LabelEmailSmtpUsername: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 80
-            Width = 74
+            Width = 53
             Caption = 'Username'
           end
           object EditEmailSmtpUsername: TEdit
             Left = 189
-            Height = 27
+            Height = 23
             Top = 80
             Width = 376
             TabOrder = 2
           end
           object LabelEmailSmtpPassword: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 112
-            Width = 71
+            Width = 50
             Caption = 'Password'
           end
           object EditEmailSmtpPassword: TEdit
             Left = 189
-            Height = 27
+            Height = 23
             Top = 112
             Width = 376
             EchoMode = emPassword
@@ -847,48 +847,48 @@ object FormSettings: TFormSettings
           end
           object LabelEmailSmtpUseSSL: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 144
-            Width = 64
+            Width = 40
             Caption = 'Use SSL'
           end
           object CheckBoxEmailSmtpUseSSL: TCheckBox
             Left = 189
-            Height = 15
+            Height = 17
             Top = 144
-            Width = 14
+            Width = 18
             TabOrder = 4
           end
         end
       end
       object TabSheetSpeechRecognition: TTabSheet
         Caption = 'Speech Recognition'
-        ClientHeight = 510
-        ClientWidth = 703
+        ClientHeight = 518
+        ClientWidth = 699
         object GroupBoxSTTVosk: TGroupBox
           Left = 64
           Height = 88
           Top = 56
-          Width = 639
+          Width = 635
           Align = alTop
           BorderSpacing.Left = 64
           Caption = 'Vosk'
-          ClientHeight = 60
-          ClientWidth = 633
+          ClientHeight = 68
+          ClientWidth = 631
           TabOrder = 0
           object LabelSTTModel1: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 16
-            Width = 44
+            Width = 34
             Caption = 'Model'
           end
           object ComboBoxSTTVoskModel: TComboBox
             Left = 126
-            Height = 27
+            Height = 23
             Top = 16
             Width = 400
-            ItemHeight = 19
+            ItemHeight = 15
             ReadOnly = True
             TabOrder = 0
           end
@@ -897,25 +897,25 @@ object FormSettings: TFormSettings
           Left = 0
           Height = 56
           Top = 0
-          Width = 703
+          Width = 699
           Align = alTop
           BevelOuter = bvNone
           ClientHeight = 56
-          ClientWidth = 703
+          ClientWidth = 699
           TabOrder = 1
           object LabelSTTBackend: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 16
-            Width = 63
+            Width = 45
             Caption = 'Backend'
           end
           object ComboBoxSTTBackend: TComboBox
             Left = 192
-            Height = 27
+            Height = 23
             Top = 16
             Width = 400
-            ItemHeight = 19
+            ItemHeight = 15
             OnChange = ComboBoxSTTBackendChange
             ReadOnly = True
             TabOrder = 0
@@ -925,26 +925,26 @@ object FormSettings: TFormSettings
           Left = 64
           Height = 88
           Top = 144
-          Width = 639
+          Width = 635
           Align = alTop
           BorderSpacing.Left = 64
           Caption = 'whisper.cpp (experimental)'
-          ClientHeight = 60
-          ClientWidth = 633
+          ClientHeight = 68
+          ClientWidth = 631
           TabOrder = 2
           object LabelSTTModel2: TLabel
             Left = 24
-            Height = 19
+            Height = 15
             Top = 16
-            Width = 44
+            Width = 34
             Caption = 'Model'
           end
           object ComboBoxSTTWhisperModel: TComboBox
             Left = 126
-            Height = 27
+            Height = 23
             Top = 16
             Width = 400
-            ItemHeight = 19
+            ItemHeight = 15
             ReadOnly = True
             TabOrder = 0
           end
@@ -952,12 +952,12 @@ object FormSettings: TFormSettings
         object Panel2: TPanel
           Left = 0
           Height = 50
-          Top = 460
-          Width = 703
+          Top = 468
+          Width = 699
           Align = alBottom
           BevelOuter = bvNone
           ClientHeight = 50
-          ClientWidth = 703
+          ClientWidth = 699
           TabOrder = 3
           object ButtonSpeechRecognitionHelp: TBitBtn
             Left = 472
@@ -975,27 +975,27 @@ object FormSettings: TFormSettings
       end
       object TabSheetOptimization: TTabSheet
         Caption = 'Developer'
-        ClientHeight = 510
-        ClientWidth = 703
+        ClientHeight = 518
+        ClientWidth = 699
         object LabelDeveloperMode: TLabel
           Left = 25
-          Height = 19
+          Height = 15
           Top = 16
-          Width = 118
+          Width = 87
           Caption = 'Developer Mode'
         end
         object CheckBoxDeveloperMode: TCheckBox
           Left = 192
-          Height = 15
+          Height = 17
           Top = 16
-          Width = 14
+          Width = 18
           TabOrder = 0
         end
         object Label1: TLabel
           Left = 26
-          Height = 91
+          Height = 75
           Top = 70
-          Width = 573
+          Width = 424
           Caption = 'Enable Developer Mode disable the following optimizations:'#13#10'- Sprite caching. Sprites will be reloaded everytime sprite_load() is called.'#13#10'- Byecode caching. Scripts will be recompiled everytime the app changes scripts.'#13#10#13#10'Additionally, assertions is enabled for every scripts.'
         end
       end
@@ -1016,7 +1016,7 @@ object FormSettings: TFormSettings
         'Speech Recognition'
         'Developer'
       )
-      ItemHeight = 19
+      ItemHeight = 15
       OnSelectionChange = ListBoxSettingsSelectionChange
       TabOrder = 1
     end
@@ -1029,9 +1029,9 @@ object FormSettings: TFormSettings
   end
   object LabelChatbotServer4: TLabel
     Left = 23
-    Height = 19
+    Height = 15
     Top = 16
-    Width = 79
+    Width = 54
     Caption = 'Secret Key'
   end
   object FontDialog: TFontDialog
