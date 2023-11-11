@@ -133,7 +133,7 @@ object FrameRemindersItem: TFrameRemindersItem
       Align = alClient
       Lines.Strings = (
         '// Code that will be executed'
-        's ="It''s time!"'
+        's = "It''s time!"'
         'notify(s)'
         'talk(s)'
         'sound_play("beep.ogg")'

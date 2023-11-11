@@ -1675,7 +1675,7 @@ end;
 
 class function TBuiltInFunction.SEChar(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := Char(Floor(Args[0]));
+  Result := Char(Floor(Args[0].VarNumber));
 end;
 
 class function TBuiltInFunction.SEOrd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
