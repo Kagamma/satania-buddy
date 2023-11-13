@@ -353,6 +353,7 @@ begin
     begin
       TCastleScene(Sprite).URL := PATH_SPRITES + 'template/sprites.plist';
       Error(E.Message);
+      DumpExceptionCallStack(E);
     end;
   end else
   begin
@@ -525,7 +526,10 @@ begin
       end;
     except
       on E: Exception do
+      begin
         Error(E.Message);
+        DumpExceptionCallStack(E);
+      end;
     end;
   finally
     FreeAndNil(SS);
@@ -582,7 +586,10 @@ begin
       end;
     except
       on E: Exception do
+      begin
         Error(E.Message);
+        DumpExceptionCallStack(E);
+      end;
     end;
   finally
     FreeAndNil(SS);

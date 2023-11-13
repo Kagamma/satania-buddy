@@ -480,7 +480,10 @@ begin
     Self.Apply;
   except
     on E: Exception do
+    begin
       Satania.Error(E.Message);
+      DumpExceptionCallStack(E);
+    end;
   end;
 end;
 
@@ -521,7 +524,10 @@ begin
     Hide;
   except
     on E: Exception do
+    begin
       Satania.Error(E.Message);
+      DumpExceptionCallStack(E);
+    end;
   end;
 end;
 

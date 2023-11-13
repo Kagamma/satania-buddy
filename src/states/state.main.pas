@@ -94,7 +94,10 @@ begin
     Sprite.AnimateSkipTicks := Save.Settings.FrameSkip;
   except
     on E: Exception do
+    begin
       Satania.Error(E.Message);
+      DumpExceptionCallStack(E);
+    end;
   end;
 end;
 

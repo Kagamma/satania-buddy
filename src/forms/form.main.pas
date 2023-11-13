@@ -30,7 +30,7 @@ uses
   {$I form.main_linux_x11.inc}
   {$undef unit_declare_uses}
   CastleApplicationProperties, CastleUIControls, CastleUIState, FileUtil,
-  CastleSceneCore, CastleScene,
+  CastleSceneCore, CastleScene, CastleLog,
   CastleVectors, {$ifdef WINDOWS}CastleControl,{$else}OpenGLContext,{$endif} CastleWindow,
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, Menus,
   LCLType, StdCtrls, PopupNotifier, Globals, HtmlView, LCLintf, CastleDownload,
@@ -217,6 +217,7 @@ var
 begin
   if UtilActiveWindow = nil then
   begin
+    InitializeLog;
     Ticks := GetTickCount64;
     UtilActiveWindow := TUtilActiveWindow.Create;
     Satania.Form := Self;

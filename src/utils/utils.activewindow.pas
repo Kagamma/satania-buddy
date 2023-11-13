@@ -91,7 +91,10 @@ begin
     end;
   except
     on E: Exception do
+    begin
+      DumpExceptionCallStack(E);
       Satania.Error(E.Message);
+    end;
   end;
   //if IsWindowChanged then
   //  Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);

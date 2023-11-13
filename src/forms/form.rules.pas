@@ -140,7 +140,10 @@ begin
       IsSaved := True;
     except
       on E: Exception do
+      begin
         Satania.Error(E.Message);
+        DumpExceptionCallStack(E);
+      end;
     end;
   finally
     FreeAndNil(JSONArray);

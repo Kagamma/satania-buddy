@@ -288,7 +288,10 @@ begin
       Train;
     except
       on E: Exception do
+      begin
         Satania.Error(E.Message);
+        DumpExceptionCallStack(E);
+      end;
     end;
   finally
     Cleanup;

@@ -125,7 +125,10 @@ begin
       end;
     except
       on E: Exception do
+      begin
         Satania.Log(E.Message);
+        DumpExceptionCallStack(E);
+      end;
     end;
   finally
     SS.Free;
