@@ -859,7 +859,7 @@ begin
     MenuItems[Length(MenuItems) - 1] := MenuItem;
     // Local
     ScriptFiles.Clear;
-    FindAllFiles(ScriptFiles, 'data/scripts/' + Save.Settings.Skin + '/menu', '*.evil', False);
+    FindAllFiles(ScriptFiles, GetPhysDirPath('data/scripts/' + Save.Settings.Skin + '/menu'), '*.evil', False);
     Anchor := Length(MenuItems);
     SetLength(MenuItems, Anchor + ScriptFiles.Count);
     for I := 0 to ScriptFiles.Count - 1 do
@@ -1020,11 +1020,8 @@ begin
   begin
     S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))
   end;
-  if not IsNamed then
-  begin
-    S.ConstMap.AddOrSetValue('charname', Name);
-    S.ConstMap.AddOrSetValue('name', Name);
-  end;
+  S.ConstMap.AddOrSetValue('charname', Name);
+  S.ConstMap.AddOrSetValue('name', Name);
   S.ConstMap.AddOrSetValue('username', Save.Settings.UserName);
   S.ConstMap.AddOrSetValue('character', Save.Settings.Skin);
 end;

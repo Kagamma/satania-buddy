@@ -190,6 +190,7 @@ uses
   Mcdowell.sketch,         
   Mcdowell.Data,
   Form.chat,
+  Form.Touch,
   com.Brokers,
   Utils.Encdec;
 
@@ -397,6 +398,7 @@ begin
     FormChat.ComboBoxService.ItemIndex := 0;
     Save.Settings.Skin := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
     IsSkinChanged := True;
+    FormTouch.TimerBlinking.Enabled := True;
   end;
   Save.Settings.EmailServer := EditEmailServer.Text;
   Save.Settings.EmailPort := EditEmailPort.Value;

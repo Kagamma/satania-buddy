@@ -38,6 +38,7 @@ type
 
   TFormTouch = class(TForm)
     Timer: TTimer;
+    TimerBlinking: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormDblClick(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
@@ -47,8 +48,12 @@ type
     procedure FormMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure FormShow(Sender: TObject);
+    procedure TimerBlinkingStartTimer(Sender: TObject);
+    procedure TimerBlinkingStopTimer(Sender: TObject);
+    procedure TimerBlinkingTimer(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
   private
+    BlinkCount: Integer;
     OldMousePosX, OldMousePosY, LastVirtualDesktop: Integer;
     IsMouseDown: Boolean;
   public
@@ -175,6 +180,28 @@ procedure TFormTouch.FormShow(Sender: TObject);
 begin
   // QWidget_setWindowFlags(TQtMainWindow(Handle).Widget, QtTool);
   // QWidget_setWindowFlags(TQtMainWindow(Handle).Widget, QtWindowStaysOnTopHint);
+end;
+
+procedure TFormTouch.TimerBlinkingStartTimer(Sender: TObject);
+begin
+  BlinkCount := 12;
+end;
+
+procedure TFormTouch.TimerBlinkingStopTimer(Sender: TObject);
+begin
+  BlinkCount := 0;
+  AlphaBlendValue := 1;
+end;
+
+procedure TFormTouch.TimerBlinkingTimer(Sender: TObject);
+begin
+  Dec(BlinkCount);
+  if AlphaBlendValue = 1 then
+    AlphaBlendValue := 255
+  else
+    AlphaBlendValue := 1;
+  if BlinkCount <= 0 then
+    TimerBlinking.Enabled := False;
 end;
 
 
