@@ -985,7 +985,7 @@ end;
 
 function TSatania.SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  CreateDir(Args[0].VarString^);
+  ForceDirectories(Args[0].VarString^);
   Result := SENull;
 end;
 
