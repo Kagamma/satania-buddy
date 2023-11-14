@@ -986,7 +986,7 @@ begin
   S.ConstMap.AddOrSetValue('FA_SYMLINK', faSymLink);
   S.ConstMap.AddOrSetValue('FA_SYSFILE', faSysFile);
   S.ConstMap.AddOrSetValue('FA_ANYFILE', faAnyFile);
-  MetaPath := 'data/scripts/' + Save.Settings.Skin + '/meta.json';
+  MetaPath := GetPhysFilePath('data/scripts/' + Save.Settings.Skin + '/meta.json');
   Name := 'Satania';
   if FileExists(MetaPath) then
   begin

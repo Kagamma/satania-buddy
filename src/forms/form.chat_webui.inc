@@ -168,14 +168,12 @@ begin
     webui_close(WebUIHandle);
   WebUIHandle := webui_new_window;
   // Try to set root at user config dir if exists
-  RootPath := GetOSLocalDir + 'webui';
+  RootPath := GetOSLocalDir + 'data/webui';
   if not DirectoryExists(RootPath) then
     RootPath := 'data/webui';
   webui_set_root_folder(WebUIHandle, PChar(RootPath));
   // Prepare avatar
-  AvatarPath := GetOSLocalDir + 'sprites/' + Save.Settings.Skin + '/avatar.png';
-  if not FileExists(AvatarPath) then
-    AvatarPath := 'data/sprites/' + Save.Settings.Skin + '/avatar.png';
+  AvatarPath := GetPhysFilePath('data/sprites/' + Save.Settings.Skin + '/avatar.png');
   if FileExists(RootPath + '/chat/avatar_1.png') then
     DeleteFile(RootPath + '/chat/avatar_1.png');
   if FileExists(AvatarPath) then
