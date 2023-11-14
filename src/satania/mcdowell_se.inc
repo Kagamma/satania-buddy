@@ -1109,7 +1109,9 @@ function TSatania.SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): T
 
 var
   Json: TJsonNode;
+  ErrorStr: String = '';
 begin
+  Result := SENull;
   Json := TJsonNode.Create;
   try
     try
@@ -1121,12 +1123,13 @@ begin
     except
       on E: Exception do
       begin
-        Result := SENull;
-        Writeln(E.Message);
+        ErrorStr := E.Message;
       end;
     end;
   finally
-    JSON.Free;
+    Json.Free;
+    if ErrorStr <> '' then
+      raise Exception.Create(ErrorStr);
   end;
 end;
 
