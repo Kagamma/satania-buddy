@@ -237,6 +237,7 @@ begin
   // Load list of services
   LoadServiceList;
   Self.ButtonOpenService.Enabled := Self.ComboBoxService.ItemIndex > 0;
+  Self.Caption := 'Chat with ' + Satania.Name + '!';
 end;
 
 procedure TFormChat.MenuItemShowWebUIClick(Sender: TObject);
