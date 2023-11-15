@@ -689,7 +689,7 @@ You can enable assertions globally in Settings, or locally in script editor.
 - Return satania-buddy's config directory path.
 *fs_file_read_binary(filename: string): buffer*
 - Read content from file.
-*fs_file_write_binary(filename: string, buf: buffer)*
+*fs_file_write_binary(filename: string, buf: buffer, buf_size: number)*
 - Write content at the end file. If the file is not exist then a new file is created.
 *fs_file_read(filename: string): string* ~deprecated, use fs_file_read_text() instead~
 
