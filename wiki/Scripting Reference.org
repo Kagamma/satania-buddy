@@ -951,17 +951,17 @@ sprite_other_render('3d cube',
 *is_speech_to_text(): boolean*
 - Return true if Speech Recognition is turned on.
 *flag_global_get(flag: string): string*
-- Set a flag. Result stores in ~configs.json~.
-*flag_global_set(flag: string, value: string)*
 - Get a flag from ~configs.json~. If no flag is found, the function return ~null~ instead.
+*flag_global_set(flag: string, value: string)*
+- Set a flag. Result stores in ~configs.json~.
 *flag_local_get(flag: string): string*
-- Set a flag. Result stores in ~scripts/flags.ini~.
-*flag_local_set(flag: string, value: string)*
 - Get a flag from ~scripts/flags.ini~. If no flag is found, the function return ~null~ instead.
+*flag_local_set(flag: string, value: string)*
+- Set a flag. Result stores in ~scripts/flags.ini~.
 *get(flag: string): any*
-- Set a flag. Result stores in memory.
-*set(flag: string, value: any)*
 - Get a flag from memory. If no flag is found, the function return ~null~ instead.
+*set(flag: string, value: any)*
+- Set a flag. Result stores in memory.
 *scheme_load(scheme_name: string)*
 - Load an .evil scheme file in ~data/scripts/current_character~. This will also stop the current script.
 *scheme_default(): string*

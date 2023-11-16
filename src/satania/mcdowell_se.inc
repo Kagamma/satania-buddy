@@ -1215,8 +1215,14 @@ begin
 end;
 
 function TSatania.SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  S: String;
 begin
-  Result := LocalFlagIni.ReadString('Flags', Args[0], '');
+  S := LocalFlagIni.ReadString('Flags', Args[0], '☙❥');
+  if S = '☙❥' then
+    Result := SENull
+  else
+    Result := S;
 end;
 
 function TSatania.SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
