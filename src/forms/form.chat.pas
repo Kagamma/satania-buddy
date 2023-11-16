@@ -529,10 +529,7 @@ var
   SL: TStrings;
   Value: TSEValue;
 begin
-  Writeln('LoadGreeting');
   Path := GetPhysFilePath('data/scripts/' + Save.Settings.Skin + '/services/' + Save.Settings.LastServiceUsed);
-  Writeln('Path: ', Path);
-  Writeln('FileExists: ', FileExists(Path));
   if not FileExists(Path) then
     Exit;
   Script := Satania.CreateEvilC;
