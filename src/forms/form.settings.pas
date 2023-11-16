@@ -497,6 +497,11 @@ var
 begin
   if InputQuery('Clone to new character, locate in "' + GetOSLocalDir + '"', 'Character''s directory name:', False, NewSkinName) then
   begin
+    if NewSkinName = '' then
+    begin
+      MessageDlg('', 'Character''s name is empty!', mtError, [mbOk], 0);
+      Exit;
+    end;
     for I := 0 to ComboBoxSkin.Items.Count - 1 do
     begin
       if NewSkinName = ComboBoxSkin.Items[I] then
@@ -506,11 +511,11 @@ begin
       end;
     end;
     CurrentSkinName := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
-    CD := TCopyDir.Create('data/scripts/' + CurrentSkinName, GetOSLocalDir + 'data/scripts/' + NewSkinName);
+    CD := TCopyDir.Create(GetPhysDirPath('data/scripts/' + CurrentSkinName), GetOSLocalDir + 'data/scripts/' + NewSkinName);
     CD.PrintToTerminal := True;
     CD.Start;
-    CD.Free;                                                       
-    CD := TCopyDir.Create('data/sprites/' + CurrentSkinName, GetOSLocalDir + 'data/sprites/' + NewSkinName);
+    CD.Free;
+    CD := TCopyDir.Create(GetPhysDirPath('data/sprites/' + CurrentSkinName), GetOSLocalDir + 'data/sprites/' + NewSkinName);
     CD.PrintToTerminal := True;
     CD.Start;
     CD.Free;  
