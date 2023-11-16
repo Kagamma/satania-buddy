@@ -61,5 +61,5 @@ begin
   Application.CreateForm(TFormAsk, FormAsk);
   Application.CreateForm(TFormHexEditor, FormHexEditor);
   Application.Run;
-end.
+ end.
 

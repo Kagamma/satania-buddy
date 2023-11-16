@@ -123,7 +123,8 @@ type
     procedure UpdateReminders;
     procedure UpdateMeta(const S: TEvilC);
     procedure CleanUpCache;
-    procedure BackgroundScriptClearAll;
+    procedure BackgroundScriptClearAll;       
+    function CreateEvilC(const IsSafe: Boolean = False): TEvilC;
   end;
 
 var
@@ -1041,6 +1042,13 @@ begin
       BackgroundScriptDict[Key].Script.Free;
   end;
   BackgroundScriptDict.Clear;
+end;
+
+function TSatania.CreateEvilC(const IsSafe: Boolean = False): TEvilC;
+begin
+  Result := TEvilC.Create;
+  Self.RegisterFuncs(Result, IsSafe);
+  Self.UpdateMeta(Result);
 end;
 
 procedure FreeLeftoverProcesses;

@@ -276,9 +276,7 @@ end;
 procedure TFormEvilCEditor.FormCreate(Sender: TObject);
 begin
   ErrorPos.Y := -1;
-  Self.Script := TEvilC.Create;
-  Satania.RegisterFuncs(Self.Script);
-  Satania.UpdateMeta(Self.Script);
+  Self.Script := Satania.CreateEvilC;
   ToolButtonNewClick(Sender);
   {$ifdef WINDOWS}
   //Editor.Font.Name := 'Consolas';

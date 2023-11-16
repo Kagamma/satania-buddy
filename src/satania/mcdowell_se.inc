@@ -1264,11 +1264,9 @@ begin
     Self.BackgroundScriptDict.Remove(Key);
   end;
   Item.IsPersistent := False;
-  Item.Script := TEvilC.Create;
+  Item.Script := Self.CreateEvilC(True);
   Item.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
   Item.Script.IncludePathList.Add(GetOSLocalDir + 'data/scripts/' + Save.Settings.Skin + '/');
-  Self.RegisterFuncs(Item.Script, True);
-  Self.UpdateMeta(Item.Script);
   Item.Script.Source := Args[1];
   if Length(Args) >= 3 then
     Item.Interval := Round(Args[2].VarNumber * 1000)

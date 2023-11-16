@@ -51,6 +51,7 @@ object FormEvilCEditor: TFormEvilCEditor
   OnDestroy = FormDestroy
   Position = poDefaultPosOnly
   ShowInTaskBar = stAlways
+  LCLVersion = '3.99.0.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
@@ -78,7 +79,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator2: TToolButton
       Left = 101
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator2'
       Style = tbsSeparator
@@ -101,7 +102,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator1: TToolButton
       Left = 24
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator1'
       Style = tbsSeparator
@@ -115,7 +116,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator3: TToolButton
       Left = 209
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator3'
       Style = tbsSeparator
@@ -130,7 +131,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton2: TToolButton
       Left = 155
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButton2'
       Style = tbsSeparator
@@ -159,7 +160,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton3: TToolButton
       Left = 263
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButton3'
       Style = tbsSeparator

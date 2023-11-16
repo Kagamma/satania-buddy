@@ -102,7 +102,8 @@ type
     procedure ShowWebUI;
     procedure StopGenerating;
     procedure SaveHistory(const HistoryText: String);
-    procedure ClearHistory;
+    procedure ClearHistory;                            
+    procedure LoadGreeting;
     property RichText: TSataniaRichText read FRichText;
   end;
 
@@ -121,6 +122,7 @@ uses
   Utils.Colors,
   Utils.Encdec,
   Mcdowell.Data,
+  Mcdowell.EvilC,
   Mcdowell;
 
 { TFormChat }
@@ -175,6 +177,11 @@ begin
   MemoChatLog.Blocks.LockUpdate;
   ChatHistory.LoadFromFile(GetOSLocalDir + PATH_CHAT_HISTORY + Save.Settings.Skin + ' - ' + Save.Settings.LastServiceUsed + '.txt');
   FIsWriteToHistoryLog := False;
+  if Self.ChatHistory.List.Count = 0 then
+  begin
+    // There's no chat history... Shall we try to get the greeting if available?
+    LoadGreeting;
+  end else
   for I := 0 to Self.ChatHistory.List.Count - 1 do
   begin
     CH := Self.ChatHistory.List[I];
@@ -512,6 +519,43 @@ procedure TFormChat.ClearHistory;
 begin
   MemoChatLog.Blocks.Clear;
   ChatHistory.Clear;
+  LoadChatHistoryFromFile;
+end;
+
+procedure TFormChat.LoadGreeting;
+var
+  Path: String;
+  Script: TEvilC;
+  SL: TStrings;
+  Value: TSEValue;
+begin
+  Writeln('LoadGreeting');
+  Path := GetPhysFilePath('data/scripts/' + Save.Settings.Skin + '/services/' + Save.Settings.LastServiceUsed);
+  Writeln('Path: ', Path);
+  Writeln('FileExists: ', FileExists(Path));
+  if not FileExists(Path) then
+    Exit;
+  Script := Satania.CreateEvilC;
+  SL := TStringList.Create;
+  try
+    try
+      SL.LoadFromFile(Path);
+      Script.Source := 'chat_message = ""' + SL.Text;
+      Value := Script.ExecFuncOnly('_greeting', []);
+      if Value.Kind = sevkString then
+      begin
+        SaveHistory(Value);
+      end;
+    except
+      on E: Exception do
+      begin
+        DumpExceptionCallStack(E);
+      end;
+    end;
+  finally
+    Script.Free;
+    SL.Free;
+  end;
 end;
 
 end.
