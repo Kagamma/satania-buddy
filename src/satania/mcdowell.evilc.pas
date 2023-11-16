@@ -512,6 +512,7 @@ type
     procedure Parse;
     procedure Reset;
     function Exec: TSEValue;
+    function ExecFuncOnly(const Name: String; const Args: array of TSEValue): TSEValue;
     procedure RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);
     procedure RegisterFuncWithSElf(const Name: String; const Func: TSEFuncWithSelf; const ArgCount: Integer);
     function RegisterScriptFunc(const Name: String; const ArgCount: Integer): PSEFuncScriptInfo;
@@ -6729,6 +6730,41 @@ begin
   end;
   Self.VM.Exec;
   Exit(Self.VM.Stack[0])
+end;
+
+function TEvilC.ExecFuncOnly(const Name: String; const Args: array of TSEValue): TSEValue;
+var
+  I: Integer;
+  Stack: PSEValue;
+begin
+  if not Self.IsLex then
+    Self.Lex;
+  if not Self.IsParsed then
+  begin
+    Self.Parse;
+  end;
+  Self.VM.Reset;
+  Self.VM.IsDone := False;
+  for I := 0 to Self.FuncScriptList.Count - 1 do
+  begin
+    if Name = Self.FuncScriptList[I].Name then
+    begin
+      Self.VM.BinaryPtr := Self.FuncScriptList[I].BinaryPos;
+      Break;
+    end;
+  end;
+  if Self.VM.BinaryPtr <> 0 then
+  begin
+    Stack := Self.VM.StackPtr;
+    Self.VM.StackPtr := Self.VM.StackPtr + Length(Args);
+    for I := 0 to Length(Args) - 1 do
+    begin
+      Stack[I] := Args[I];
+    end;
+    Self.VM.Exec;
+    Exit(Stack[-1]);
+  end else
+    Exit(SENull);
 end;
 
 procedure TEvilC.RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);
