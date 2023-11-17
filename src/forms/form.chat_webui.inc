@@ -159,6 +159,63 @@ begin
   WaitForThreadTerminate(Thread.ThreadID, 5000);
 end;
 
+procedure WebUI_ChatServiceGetType(E: PWebUIEvent);
+var
+  Path: String;
+  Script: TEvilC;
+  SL: TStrings;
+  Value: TSEValue;
+begin
+  Path := GetPhysFilePath('data/scripts/' + Save.Settings.Skin + '/services/' + Save.Settings.LastServiceUsed);
+  if not FileExists(Path) then
+    Exit;
+  Script := Satania.CreateEvilC;
+  SL := TStringList.Create;
+  try
+    try
+      SL.LoadFromFile(Path);
+      Script.Source := 'chat_message = ""' + SL.Text;
+      Value := Script.ExecFuncOnly('_service', []);
+      if Value <> SENull then
+      begin
+        webui_return_string(E, PChar(Value.VarString^));
+      end;
+    except
+      on E: Exception do
+      begin
+        DumpExceptionCallStack(E);
+      end;
+    end;
+  finally
+    Script.Free;
+    SL.Free;
+  end;
+end;
+
+procedure WebUI_ChatServiceGetKoboldcppSetting(E: PWebUIEvent);
+var
+  S: String;
+begin
+  S := Satania.LocalFlagIni.ReadString('Flags', Save.Settings.LastServiceUsed, '☙❥');
+  if S = '☙❥' then
+    webui_return_string(E, '')
+  else
+    webui_return_string(E, PChar(S));
+end;
+
+procedure WebUI_ChatServiceSetKoboldcppSettingProc(S: String);
+begin
+  Satania.LocalFlagIni.WriteString('Flags', Save.Settings.LastServiceUsed, S);
+end;
+procedure WebUI_ChatServiceSetKoboldcppSetting(E: PWebUIEvent);
+var
+  Thread: TWebUIToNativeUIThread;
+begin
+  Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceSetKoboldcppSettingProc, webui_get_string(E));
+  Thread.Start;
+  WaitForThreadTerminate(Thread.ThreadID, 5000);
+end;
+
 procedure WebUI_ShowWebUI;
 var
   RootPath,
@@ -193,6 +250,9 @@ begin
   webui_bind(WebUIHandle, 'chat_service_set', @WebUI_ChatServiceSet);
   webui_bind(WebUIHandle, 'chat_service_list_get', @WebUI_ChatServiceGetList);
   webui_bind(WebUIHandle, 'chat_service_edit', @WebUI_ChatServiceEdit);
+  webui_bind(WebUIHandle, 'chat_service_type_get', @WebUI_ChatServiceGetType);
+  webui_bind(WebUIHandle, 'chat_service_settings_koboldcpp_get', @WebUI_ChatServiceGetKoboldcppSetting);
+  webui_bind(WebUIHandle, 'chat_service_settings_koboldcpp_set', @WebUI_ChatServiceSetKoboldcppSetting);
   webui_bind(WebUIHandle, 'character_skin_get', @WebUI_CharacterSkinGet);
   webui_bind(WebUIHandle, 'character_name_get', @WebUI_CharacterNameGet);
   webui_set_icon(WebUIHandle, WEBUI_CHATICON, 'image/svg+xml');
