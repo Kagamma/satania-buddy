@@ -395,9 +395,8 @@ var
 begin
   if LocalFlagIni <> nil then
     FreeAndNil(LocalFlagIni);
-  IniFilePath := PATH_SCRIPTS_RAW + Save.Settings.Skin +  '/flags.ini';
-  if not DirectoryExists(PATH_SCRIPTS_RAW + Save.Settings.Skin) then
-    IniFilePath := GetPhysFilePath(IniFilePath);
+  ForceDirectories(GetOSLocalDir + PATH_SCRIPTS_RAW + Save.Settings.Skin);
+  IniFilePath := GetOSLocalDir + PATH_SCRIPTS_RAW + Save.Settings.Skin +  '/flags.ini';
   LocalFlagIni := TIniFile.Create(IniFilePath);
 end;
 

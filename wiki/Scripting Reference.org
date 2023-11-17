@@ -59,8 +59,8 @@ Operator                                        Precedence
  !, sign "-"                                     1
  *, /                                            2
  +, subtract "-"                                 3
- equal "=", !=, <, <=, >, >=, &, |, ~, pow "^"   4
- <<, >>                                          5
+ bitshift <<, >>                                 4
+ equal "=", !=, <, <=, >, >=, &, |, ~, pow "^"   5
  assign "=", +=, -=, *=, /=                      6
 
 #+end_example
