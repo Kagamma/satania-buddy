@@ -28,7 +28,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
   FileUtil, CopyDir,
   ExtCtrls, Buttons, Spin, MaskEdit, Menus, CastleApplicationProperties,
-  Types, LCLTranslator, IniFiles, LCLIntf;
+  Types, LCLTranslator, IniFiles, LCLIntf, WebUI;
 
 type
 
@@ -473,6 +473,7 @@ begin
   if IsSkinChanged then
   begin
     FormChat.LoadChatHistoryFromFile;
+    webui_close(WebUIHandle);
   end;
 end;
 

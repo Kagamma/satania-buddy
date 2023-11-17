@@ -38,9 +38,6 @@ type
     destructor Destroy; override;
     procedure Execute; override;
   end;
-
-var
-  WebUIHandle: QWord;
         
 procedure TWebUIToNativeUIThread.Update;
 begin

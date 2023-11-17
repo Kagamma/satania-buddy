@@ -109,6 +109,7 @@ type
 
 var
   FormChat: TFormChat;
+  WebUIHandle: QWord;
 
 implementation
 
