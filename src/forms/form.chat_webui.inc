@@ -200,17 +200,9 @@ begin
     webui_return_string(E, PChar(S));
 end;
 
-procedure WebUI_ChatServiceSetKoboldcppSettingProc(S: String);
-begin
-  Satania.LocalFlagIni.WriteString('Flags', Save.Settings.LastServiceUsed, S);
-end;
 procedure WebUI_ChatServiceSetKoboldcppSetting(E: PWebUIEvent);
-var
-  Thread: TWebUIToNativeUIThread;
 begin
-  Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceSetKoboldcppSettingProc, webui_get_string(E));
-  Thread.Start;
-  WaitForThreadTerminate(Thread.ThreadID, 5000);
+  Satania.LocalFlagIni.WriteString('Flags', Save.Settings.LastServiceUsed, webui_get_string(E));
 end;
 
 procedure WebUI_ShowWebUI;
