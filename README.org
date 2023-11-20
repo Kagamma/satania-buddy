@@ -1,7 +1,17 @@
 ** satania-buddy
-Virtual Desktop Assistant in the form of Satania.
+Open source virtual desktop assistant / LLM frontend in the form of Satanichia Kurumizawa McDowell, developed using Free Pascal and Castle Game Engine.
 
 Download page: https://kgm.itch.io/satania-buddy
+
+** Current features:
+- AI backend integration: ChatGPT, KoboldCPP, Oobabooga, WolframAlpha.
+- Customizable commands, based on a simple rule-based chat system.
+- Alarms & Reminders.
+- Speech recognizing.
+- Check for emails via IMAP protocol.
+- Easy to add new characters.
+- Easy to mod. Pretty much all actions are scriptable via it's own scripting language (refer to as Evil Scheme).
+- Low resource consuming, makes it suitable as an actual desktop assistant that can be available all the time.
 
 ** Q & A
 ***** Q: Overall system requirements?
