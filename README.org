@@ -1,5 +1,5 @@
 ** satania-buddy
-Virtual Desktop Assistant in the form of Satania.
+Open source virtual desktop assistant / LLM frontend in the form of Satanichia Kurumizawa McDowell, developed using Free Pascal and Castle Game Engine.
 
 Download page: https://kgm.itch.io/satania-buddy
 
