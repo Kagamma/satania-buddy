@@ -6746,7 +6746,18 @@ begin
   begin
     Self.Parse;
   end;
-  Self.VM.Reset;
+  Self.VM.CodePtr := 0;
+  Self.VM.BinaryPtr := 0;
+  Self.VM.IsPaused := False;
+  Self.VM.IsDone := False;
+  Self.VM.IsDone := False;
+  Self.VM.WaitTime := 0;
+  Self.VM.FramePtr := @Self.VM.Frame[0];
+  Self.VM.StackPtr := @Self.VM.Stack[0];
+  Self.VM.StackPtr := Self.VM.StackPtr + Self.GlobalVarCount + 64;
+  Self.VM.FramePtr^.Stack := Self.VM.StackPtr;
+  Self.VM.TrapPtr := @Self.VM.Trap[0];
+  Dec(Self.VM.TrapPtr);
   for I := 0 to Self.FuncScriptList.Count - 1 do
   begin
     if Name = Self.FuncScriptList[I].Name then
