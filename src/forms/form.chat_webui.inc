@@ -160,18 +160,15 @@ procedure WebUI_ChatServiceGetType(E: PWebUIEvent);
 var
   Path: String;
   Script: TEvilC;
-  SL: TStrings;
   Value: TSEValue;
 begin
   Path := GetPhysFilePath('data/scripts/' + Save.Settings.Skin + '/services/' + Save.Settings.LastServiceUsed);
   if not FileExists(Path) then
     Exit;
   Script := Satania.CreateEvilC;
-  SL := TStringList.Create;
   try
     try
-      SL.LoadFromFile(Path);
-      Script.Source := 'chat_message = ""' + SL.Text;
+      Script.Source := 'chat_message = ""' + ReadFileAsString(Path);
       Value := Script.ExecFuncOnly('_service', []);
       if Value <> SENull then
       begin
@@ -185,7 +182,6 @@ begin
     end;
   finally
     Script.Free;
-    SL.Free;
   end;
 end;
 

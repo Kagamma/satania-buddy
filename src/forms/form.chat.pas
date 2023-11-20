@@ -122,6 +122,7 @@ uses
   Form.Bubble,
   Utils.Colors,
   Utils.Encdec,
+  Utils.Files,
   Mcdowell.Data,
   Mcdowell.EvilC,
   Mcdowell;

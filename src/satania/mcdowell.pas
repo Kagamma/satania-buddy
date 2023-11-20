@@ -144,6 +144,7 @@ uses
   Utils.Strings,
   Utils.Threads,
   utils.sprites,
+  Utils.Files,
   form.reminders,
   form.chat,
   form.touch,
@@ -971,7 +972,7 @@ end;
 procedure TSatania.UpdateMeta(const S: TEvilC);
 var
   Json, N: TJsonNode;
-  SL: TStrings;
+  JsonString: String;
   MetaPath: String;
   IsNamed: Boolean = False;
   I: Integer;
@@ -992,32 +993,27 @@ begin
   Name := 'Satania';
   if FileExists(MetaPath) then
   begin
-    SL := TStringList.Create;
-    try
-      SL.LoadFromFile(MetaPath);
-      Json := TJsonNode.Create;
-      Json.TryParse(SL.Text);
-      // We search for name
-      for I := 0 to Json.Count - 1 do
+    Json := TJsonNode.Create;
+    ReadFileAsString(MetaPath, JsonString);
+    Json.TryParse(JsonString);
+    // We search for name
+    for I := 0 to Json.Count - 1 do
+    begin
+      // Stop once we found name
+      N := Json.Child(I);
+      if N.Name = 'name' then
       begin
-        // Stop once we found name
-        N := Json.Child(I);
-        if N.Name = 'name' then
-        begin
-          IsNamed := True;
-          Name := N.AsString;
-          Break;
-        end;
+        IsNamed := True;
+        Name := N.AsString;
+        Break;
       end;
-      Json.Free;
-      // Create a new meta constant and map meta data there
-      if SL.Text = '' then
-        S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))
-      else
-        S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, [SL.Text]));
-    finally
-      SL.Free;
     end;
+    Json.Free;
+    // Create a new meta constant and map meta data there
+    if JsonString = '' then
+      S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))
+    else
+      S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, [JsonString]));
   end else
   begin
     S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))

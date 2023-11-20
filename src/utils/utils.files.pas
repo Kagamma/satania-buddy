@@ -28,6 +28,8 @@ uses
   Classes, SysUtils, Types, StrUtils;
 
 function LookForFileInPath(const Name: String): String;
+function ReadFileAsString(const Name: String): String; overload;
+procedure ReadFileAsString(const Name: String; var Str: String); overload;
 
 implementation      
 
@@ -57,6 +59,44 @@ begin
     end;
   end;
   Exit(Name);
+end;
+
+function ReadFileAsString(const Name: String): String;
+var
+  MS: TMemoryStream;
+begin
+  if not FileExists(Name) then
+    Exit;
+  MS := TMemoryStream.Create;
+  try
+    MS.LoadFromFile(Name);
+    if MS.Size > 0 then
+    begin
+      SetLength(Result, MS.Size div SizeOf(Char));
+      MS.ReadBuffer(Pointer(Result)^, MS.Size div SizeOf(Char));
+    end;
+  finally
+    MS.Free;
+  end;
+end;
+
+procedure ReadFileAsString(const Name: String; var Str: String);
+var
+  MS: TMemoryStream;
+begin
+  if not FileExists(Name) then
+    Exit;
+  MS := TMemoryStream.Create;
+  try
+    MS.LoadFromFile(Name);
+    if MS.Size > 0 then
+    begin
+      SetLength(Str, MS.Size div SizeOf(Char));
+      MS.ReadBuffer(Pointer(Str)^, MS.Size div SizeOf(Char));
+    end;
+  finally
+    MS.Free;
+  end;
 end;
 
 end.

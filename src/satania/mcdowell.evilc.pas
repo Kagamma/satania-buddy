@@ -714,6 +714,25 @@ begin
   Result := FloatToStr(X, FS);
 end;
 
+procedure ReadFileAsString(const Name: String; var Str: String);
+var
+  MS: TMemoryStream;
+begin
+  if not FileExists(Name) then
+    Exit;
+  MS := TMemoryStream.Create;
+  try
+    MS.LoadFromFile(Name);
+    if MS.Size > 0 then
+    begin
+      SetLength(Str, MS.Size div SizeOf(Char));
+      MS.ReadBuffer(Pointer(Str)^, MS.Size div SizeOf(Char));
+    end;
+  finally
+    MS.Free;
+  end;
+end;
+
 function GetOS: String; inline;
 begin
   {$if defined(WINDOWS)}
@@ -4275,7 +4294,6 @@ var
 var
   IsLoopDone: Boolean;
   PrevQuote: Char;
-  SL: TStrings;
   BackupSource: String;
   IsPathFound: Boolean;
   S,
@@ -4668,16 +4686,10 @@ begin
                 if Self.IncludeList.IndexOf(Path) < 0 then
                 begin
                   BackupSource := Source;
-                  SL := TStringList.Create;
-                  try
-                    Self.CurrentFileList.Add(Path);
-                    SL.LoadFromFile(Path);
-                    FSource := SL.Text;
-                    Self.Lex(True);
-                    Self.CurrentFileList.Pop;
-                  finally
-                    SL.Free;
-                  end;
+                  Self.CurrentFileList.Add(Path);
+                  ReadFileAsString(Path, FSource);
+                  Self.Lex(True);
+                  Self.CurrentFileList.Pop;
                   FSource := BackupSource;
                   Self.IncludeList.Add(Path);
                 end;

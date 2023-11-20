@@ -870,16 +870,8 @@ begin
 end;
 
 function TSatania.SEFileReadText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-var
-  SL: TStrings;
 begin
-  SL := TStringList.Create;
-  try
-    SL.LoadFromFile(Args[0]);
-    Result := SL.Text;
-  finally
-    SL.Free;
-  end;
+  Result := ReadFileAsString(Args[0]);
 end;
 
 function TSatania.SEFileReadBinary(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
