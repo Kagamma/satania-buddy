@@ -72,6 +72,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure MenuItemEditorCopyClick(Sender: TObject);
     procedure MenuItemEditorCutClick(Sender: TObject);
     procedure MenuItemEditorPasteClick(Sender: TObject);
@@ -291,6 +292,11 @@ end;
 procedure TFormEvilCEditor.FormDestroy(Sender: TObject);
 begin
   Self.Script.Free;
+end;
+
+procedure TFormEvilCEditor.FormShow(Sender: TObject);
+begin
+  BringToFront;
 end;
 
 procedure TFormEvilCEditor.EditorSpecialLineColors(Sender: TObject;

@@ -9,7 +9,7 @@ object FormHexEditor: TFormHexEditor
   OnShow = FormShow
   Position = poScreenCenter
   ShowInTaskBar = stAlways
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '3.99.0.0'
   object HexEditor: TKHexEditor
     Left = 0
     Height = 506

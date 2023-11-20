@@ -68,6 +68,7 @@ end;
 procedure TFormHexEditor.FormShow(Sender: TObject);
 begin
   Self.ToolButtonSave.Enabled := Self.WorkingFile <> '';
+  BringToFront;
 end;
 
 procedure TFormHexEditor.ToolButtonSaveAsClick(Sender: TObject);

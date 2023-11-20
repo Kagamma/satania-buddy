@@ -49,6 +49,7 @@ object FormEvilCEditor: TFormEvilCEditor
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   Position = poDefaultPosOnly
   ShowInTaskBar = stAlways
   LCLVersion = '3.99.0.0'
