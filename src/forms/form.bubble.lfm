@@ -11,6 +11,7 @@ object FormBubble: TFormBubble
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnShow = FormShow
   LCLVersion = '3.99.0.0'
   Visible = True
   object KMemo: TKMemo

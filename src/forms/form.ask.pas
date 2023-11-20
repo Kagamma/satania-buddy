@@ -92,6 +92,7 @@ begin
   AskText.Hide;
   IsPositionUpdated := 0;
   Timer.Enabled := True;
+  BringToFront;
 end;
 
 procedure TFormAsk.PanelPaint(Sender: TObject);

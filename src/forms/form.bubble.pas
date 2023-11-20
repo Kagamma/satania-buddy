@@ -41,6 +41,7 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
   private
     FRichText: TSataniaRichText;
@@ -220,6 +221,11 @@ end;
 procedure TFormBubble.FormDestroy(Sender: TObject);
 begin
   Self.FRichText.Free;
+end;
+
+procedure TFormBubble.FormShow(Sender: TObject);
+begin
+  BringToFront;
 end;
 
 procedure TFormBubble.ApplySettings;

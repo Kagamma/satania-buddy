@@ -40,18 +40,9 @@ begin
     if Data^ <> LastVirtualDesktop then
     begin
       LastVirtualDesktop := Data^;
-      Hide;
-      Show;
-      if FormAsk.Visible then
-      begin
-        FormAsk.Hide;
-        FormAsk.Show;
-      end;
-      if FormBubble.VisibleViaSize then
-      begin
-        FormBubble.Hide;
-        FormBubble.Show;
-      end;
+      BringToFront;
+      FormAsk.BringToFront;
+      FormBubble.BringToFront;
     end;
     XFree(Data);
   end;

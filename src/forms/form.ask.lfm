@@ -12,7 +12,7 @@ object FormAsk: TFormAsk
   OnCreate = FormCreate
   OnShow = FormShow
   ShowInTaskBar = stNever
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '3.99.0.0'
   object Panel: TPanel
     Left = 0
     Height = 148
