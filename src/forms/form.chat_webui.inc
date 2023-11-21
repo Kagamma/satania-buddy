@@ -185,7 +185,7 @@ begin
   end;
 end;
 
-procedure WebUI_ChatServiceGetKoboldcppSetting(E: PWebUIEvent);
+procedure WebUI_ChatServiceGetSetting(E: PWebUIEvent);
 var
   S: String;
 begin
@@ -196,7 +196,7 @@ begin
     webui_return_string(E, PChar(S));
 end;
 
-procedure WebUI_ChatServiceSetKoboldcppSetting(E: PWebUIEvent);
+procedure WebUI_ChatServiceSetSetting(E: PWebUIEvent);
 begin
   Satania.LocalFlagIni.WriteString('Flags', Save.Settings.LastServiceUsed, webui_get_string(E));
 end;
@@ -236,8 +236,8 @@ begin
   webui_bind(WebUIHandle, 'chat_service_list_get', @WebUI_ChatServiceGetList);
   webui_bind(WebUIHandle, 'chat_service_edit', @WebUI_ChatServiceEdit);
   webui_bind(WebUIHandle, 'chat_service_type_get', @WebUI_ChatServiceGetType);
-  webui_bind(WebUIHandle, 'chat_service_settings_koboldcpp_get', @WebUI_ChatServiceGetKoboldcppSetting);
-  webui_bind(WebUIHandle, 'chat_service_settings_koboldcpp_set', @WebUI_ChatServiceSetKoboldcppSetting);
+  webui_bind(WebUIHandle, 'chat_service_settings_get', @WebUI_ChatServiceGetSetting);
+  webui_bind(WebUIHandle, 'chat_service_settings_set', @WebUI_ChatServiceSetSetting);
   webui_bind(WebUIHandle, 'character_skin_get', @WebUI_CharacterSkinGet);
   webui_bind(WebUIHandle, 'character_name_get', @WebUI_CharacterNameGet);
   webui_set_icon(WebUIHandle, WEBUI_CHATICON, 'image/svg+xml');
