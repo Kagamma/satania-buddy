@@ -528,7 +528,10 @@ type
   end;
 
 function SEValueToText(const Value: TSEValue; const IsRoot: Boolean = True): String;
-function SESize(constref Value: TSEValue): Cardinal; inline;
+function SESize(constref Value: TSEValue): Cardinal; inline; 
+procedure SEMapDelete(constref V: TSEValue; constref I: Integer); inline; overload;
+procedure SEMapDelete(constref V: TSEValue; constref S: String); inline; overload;
+procedure SEMapDelete(constref V, I: TSEValue); inline; overload;
 function SEMapGet(constref V: TSEValue; constref I: Integer): TSEValue; inline; overload;
 function SEMapGet(constref V: TSEValue; constref S: String): TSEValue; inline; overload;
 function SEMapGet(constref V, I: TSEValue): TSEValue; inline; overload;
@@ -631,7 +634,7 @@ type
     class function SEWait(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SELength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEMapDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEMapKeyDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMapKeysGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEArrayResize(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEArrayToMap(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -828,6 +831,34 @@ begin
       end;
     else
       Result := Value.Size;
+  end;
+end;
+
+procedure SEMapDelete(constref V: TSEValue; constref I: Integer); inline; overload;
+begin
+  TSEValueMap(V.VarMap).Del2(IntToStr(I));
+end;
+
+procedure SEMapDelete(constref V: TSEValue; constref S: String); inline; overload;
+begin
+  TSEValueMap(V.VarMap).Del2(S);
+end;
+
+procedure SEMapDelete(constref V, I: TSEValue); inline; overload;
+var
+  S: String;
+begin
+  case I.Kind of
+    sevkString:
+      begin
+        S := I.VarString^;
+        TSEValueMap(V.VarMap).Del2(S);
+      end;
+    sevkNumber, sevkBoolean:
+      begin
+        S := IntToStr(Round(I.VarNumber));
+        TSEValueMap(V.VarMap).Del2(S);
+      end;
   end;
 end;
 
@@ -1224,33 +1255,10 @@ begin
   end;
 end;
 
-class function TBuiltInFunction.SEMapDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-var
-  Key: String;
-  I, J: Integer;
+class function TBuiltInFunction.SEMapKeyDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  GC.AllocMap(@Result);
-  if SEMapIsValidArray(Args[0]) then
-  begin
-    J := 0;
-    for I := 0 to TSEValueMap(Args[0].VarMap).List.Count - 1 do
-    begin
-      if I <> Args[1] then
-      begin
-        SEMapSet(Result, J, SEMapGet(Args[0], I));
-        Inc(J);
-      end;
-    end;
-  end else
-  begin
-    for Key in TSEValueMap(Args[0].VarMap).Keys do
-    begin
-      if Key <> Args[1] then
-      begin
-        SEMapSet(Result, Key, SEMapGet(Args[0], Key));
-      end;
-    end;
-  end;
+  Result := Args[0];
+  SEMapDelete(Result, Args[1]);
 end;
 
 class function TBuiltInFunction.SEMapKeysGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -4122,7 +4130,7 @@ begin
   Self.RegisterFunc('length', @TBuiltInFunction(nil).SELength, 1);
   Self.RegisterFunc('map_create', @TBuiltInFunction(nil).SEMapCreate, -1);
   Self.RegisterFunc('___map_create', @TBuiltInFunction(nil).SEMapCreate, -1);
-  Self.RegisterFunc('map_delete', @TBuiltInFunction(nil).SEMapDelete, 2);
+  Self.RegisterFunc('map_key_delete', @TBuiltInFunction(nil).SEMapKeyDelete, 2);
   Self.RegisterFunc('map_keys_get', @TBuiltInFunction(nil).SEMapKeysGet, 1);
   Self.RegisterFunc('array_resize', @TBuiltInFunction(nil).SEArrayResize, 2);          
   Self.RegisterFunc('array_to_map', @TBuiltInFunction(nil).SEArrayToMap, 1);

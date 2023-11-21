@@ -504,7 +504,7 @@ You can enable assertions globally in Settings, or locally in script editor.
 - Wait in seconds. This won't block the main process.
 *map_create(): map*
 - Create a new map. This function is comparable to [] syntax.
-*map_delete(a: map, key: number/string): map*
+*map_key_delete(a: map, key: number/string): map*
 - Delete map elements.
 *map_keys_get(a: map): map*
 - Return map contains all keys from map a.
