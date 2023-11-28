@@ -33,7 +33,7 @@ uses
   CastleTransform, CastleRenderOptions, CastleViewport, CastleFonts,
   CastleSceneCore, CastleSpine, CastleSpineMixer, strutils,
   CastleBehaviors, Clipbrd, fphttpclient, LazUTF8, IniFiles, JsonTools,
-  Mcdowell.EvilC, Mcdowell.Chat, Globals, AnchorDocking;
+  Mcdowell.EvilC, Mcdowell.Chat, Globals, AnchorDocking, webui;
 
 type
   TSataniaBackgroundScript = record
@@ -90,6 +90,7 @@ type
     procedure RegisterFuncs(const S: TEvilC; const IsSafe: Boolean = False);
     procedure SetPosition(X, Y: Integer);
     procedure DefaultPosition;
+    procedure SwitchCharacter(S: String);
     procedure LoadModel(S: String);
     procedure LoadLocalFlags;
     procedure TakeLocalBoundingBoxSnapshot;
@@ -303,6 +304,28 @@ procedure TSatania.SetPosition(X, Y: Integer);
 begin
   SpriteAsX3D.Translation := Vector3(X, ScreenHeight - Y, 0);
   SpriteAsSpine.Translation := Vector3(X, ScreenHeight - Y, 0);
+end;
+
+procedure TSatania.SwitchCharacter(S: String);
+begin
+  SataniaSketch.DeleteAll;
+  Self.BackgroundScriptClearAll;
+  FormChat.ComboBoxService.ItemIndex := 0;
+  Save.Settings.Skin := S;
+  (FormTouch as TFormTouch).TimerBlinking.Enabled := True;
+  FormChat.LoadChatHistoryFromFile;
+  webui_close(WebUIHandle);
+  //
+  Self.UpdateMeta(Self.Script);
+  Self.ActionFromFile(Save.Settings.DefaultEvilScheme);
+  Self.SpriteAsSpine.AnimateSkipTicks := Save.Settings.FrameSkip;
+  Self.SpriteAsX3D.AnimateSkipTicks := Save.Settings.FrameSkip;
+  Self.UpdateMenuItems;
+  // Load local flag
+  Self.LoadLocalFlags;
+  //
+  FormChat.ApplySettings;
+  FormBubble.ApplySettings;
 end;
 
 procedure TSatania.DefaultPosition;

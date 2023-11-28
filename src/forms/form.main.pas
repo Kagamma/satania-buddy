@@ -151,6 +151,7 @@ type
     {$undef unit_public}
     procedure DoExecuteScriptFromMenuGlobal(Sender: TObject);      
     procedure DoExecuteScriptFromMenuLocal(Sender: TObject);
+    procedure DoSwitchCharacterFromMenu(Sender: TObject);
   end;
 
 {$define unit_declare_interface}
@@ -200,6 +201,14 @@ end;
 procedure TFormMain.DoExecuteScriptFromMenuLocal(Sender: TObject);
 begin
   Satania.ActionFromFile('menu/' + (Sender as TMenuItem).Caption + '.evil');
+end;
+
+procedure TFormMain.DoSwitchCharacterFromMenu(Sender: TObject);
+var
+  CharName: String;
+begin
+  CharName := (Sender as TMenuItem).Caption;
+  Satania.SwitchCharacter(CharName);
 end;
 
 procedure TFormMain.HandleWarning(const Category, S: string);
@@ -442,9 +451,34 @@ begin
 end;
 
 procedure TFormMain.TrayMenuPopup(Sender: TObject);
+var
+  I: Integer;
+  Characters: TStringList;
+  MenuItem: TMenuItem;
 begin
   MenuItemRules.Enabled := Save.Settings.Rules;
   Satania.UpdateMenuItems;
+  for I := Self.MenuItemCharacters.Count - 1 downto 0 do
+  begin
+    Self.MenuItemCharacters[I].Free;
+  end;
+  Characters := TStringList.Create;
+  Characters.Sorted := True;
+  try
+    FindAllDirectories(Characters, 'data/sprites', False);
+    FindAllDirectories(Characters, GetOSLocalDir + 'data/sprites', False);
+    for I := 0 to Characters.Count - 1 do
+    begin
+      MenuItem := TMenuItem.Create(Self);
+      MenuItem.Caption := ExtractFileName(Characters[I]);
+      if MenuItem.Caption = Save.Settings.Skin then
+        MenuItem.Checked := True;
+      MenuItem.OnClick := @Self.DoSwitchCharacterFromMenu;
+      Self.MenuItemCharacters.Add(MenuItem);
+    end;
+  finally
+    Characters.Free;
+  end;
 end;
 
 end.

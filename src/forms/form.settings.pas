@@ -391,15 +391,6 @@ begin
   Save.Settings.EnableItalicForUserText := CheckBoxEnableItalicForUserText.Checked;
   // Clear sketch and workers if skin is changed
   Save.Settings.ChatWindowClearType := CheckBoxChatWindowCleartype.Checked;
-  if Save.Settings.Skin <> ComboBoxSkin.Items[ComboBoxSkin.ItemIndex] then
-  begin
-    SataniaSketch.DeleteAll;
-    Satania.BackgroundScriptClearAll;
-    FormChat.ComboBoxService.ItemIndex := 0;
-    Save.Settings.Skin := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
-    IsSkinChanged := True;
-    FormTouch.TimerBlinking.Enabled := True;
-  end;
   Save.Settings.EmailServer := EditEmailServer.Text;
   Save.Settings.EmailPort := EditEmailPort.Value;
   Save.Settings.EmailUsername := EditEmailUsername.Text;
@@ -441,6 +432,11 @@ begin
 
   Save.Settings.EmailUseSSL := CheckBoxEmailUseSSL.Checked;
   Save.Settings.EmailSMTPUseSSL := CheckBoxEmailSMTPUseSSL.Checked;
+  if Save.Settings.Skin <> ComboBoxSkin.Items[ComboBoxSkin.ItemIndex] then
+  begin
+    Satania.SwitchCharacter(ComboBoxSkin.Items[ComboBoxSkin.ItemIndex]);
+    IsSkinChanged := True;
+  end;
   Save.SaveToFile('configs.json');
   FormChat.LoadServiceList;
   SataniaIMAP.Disconnect;
@@ -448,17 +444,6 @@ begin
   ApplicationProperties.LimitFPS := Save.Settings.FPS;
   FormBubble.TypingSpeed := Save.Settings.TextSpeed;
   Satania.SetImageQuality(Save.Settings.ImageQuality);
-  Satania.UpdateMeta(Satania.Script);
-  Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
-  Satania.SpriteAsSpine.AnimateSkipTicks := Save.Settings.FrameSkip;
-  Satania.SpriteAsX3D.AnimateSkipTicks := Save.Settings.FrameSkip;
-  Satania.UpdateMenuItems;
-
-  // Load local flag
-  Satania.LoadLocalFlags;
-  //
-  FormChat.ApplySettings;
-  FormBubble.ApplySettings;
 
   if (ComboBoxSTTVoskModel.Items[ComboBoxSTTVoskModel.ItemIndex] <> Save.Settings.STTVoskModel)
     or (ComboBoxSTTWhisperModel.Items[ComboBoxSTTWhisperModel.ItemIndex] <> Save.Settings.STTWhisperModel)
@@ -469,11 +454,6 @@ begin
     Save.Settings.STTWhisperModel := ComboBoxSTTWhisperModel.Items[ComboBoxSTTWhisperModel.ItemIndex];
     if Save.SpeechToText then
       SataniaSpeechToText.Enable;
-  end;
-  if IsSkinChanged then
-  begin
-    FormChat.LoadChatHistoryFromFile;
-    webui_close(WebUIHandle);
   end;
 end;
 
@@ -567,6 +547,8 @@ begin
 end;
 
 procedure TFormSettings.ButtonChatWindowFontClick(Sender: TObject);
+var
+  ScriptFiles: TStringList;
 begin
   FontDialog.Font.Name := EditChatWindowFont.Text;
   FontDialog.Font.Size := EditChatWindowFontSize;
@@ -575,6 +557,7 @@ begin
     EditChatWindowFont.Text := FontDialog.Font.Name;
     EditChatWindowFontSize := FontDialog.Font.Size;
   end;
+  FindAllFiles(ScriptFiles, 'data/scripts/libs/menu', '*.evil', False);
 end;
 
 end.
