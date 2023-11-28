@@ -77,6 +77,7 @@ type
     CastleControl: TCastleControl;
     ImageList: TImageList;
     MenuItem1: TMenuItem;
+    MenuItemCharacters: TMenuItem;
     MenuItemChatWebUI: TMenuItem;
     MenuItemConsole: TMenuItem;
     MenuItemHelpExternalServices: TMenuItem;
@@ -93,7 +94,6 @@ type
     MenuItemScriptingAPIs: TMenuItem;
     MenuItemSpeechRecognition: TMenuItem;
     MenuItemSilent: TMenuItem;
-    MenuItemRefreshMenu: TMenuItem;
     MenuItemEditor: TMenuItem;
     MenuItemActions: TMenuItem;
     MenuItemHideShow: TMenuItem;
@@ -129,7 +129,6 @@ type
     procedure MenuItemHideShowClick(Sender: TObject);
     procedure MenuItemMemoryUsageClick(Sender: TObject);
     procedure MenuItemQuitClick(Sender: TObject);
-    procedure MenuItemRefreshMenuClick(Sender: TObject);
     procedure MenuItemRulesClick(Sender: TObject);
     procedure MenuItemScriptingAPIsClick(Sender: TObject);
     procedure MenuItemSettingsClick(Sender: TObject);
@@ -362,11 +361,6 @@ begin
   Application.Terminate;
 end;
 
-procedure TFormMain.MenuItemRefreshMenuClick(Sender: TObject);
-begin
-  Satania.UpdateMenuItems;
-end;
-
 procedure TFormMain.MenuItemRulesClick(Sender: TObject);
 begin
   FormRules.Show;
@@ -450,6 +444,7 @@ end;
 procedure TFormMain.TrayMenuPopup(Sender: TObject);
 begin
   MenuItemRules.Enabled := Save.Settings.Rules;
+  Satania.UpdateMenuItems;
 end;
 
 end.

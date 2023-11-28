@@ -2,11 +2,11 @@ object FormMain: TFormMain
   Left = -8
   Height = 1100
   Top = -8
-  Width = 1984
+  Width = 2000
   BorderStyle = bsNone
   Caption = 'FormMain'
   ClientHeight = 1061
-  ClientWidth = 1984
+  ClientWidth = 2000
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -21,7 +21,7 @@ object FormMain: TFormMain
     Left = 0
     Height = 1061
     Top = 0
-    Width = 1984
+    Width = 2000
     Align = alClient
     AlphaBits = 8
     Options = []
@@ -485,11 +485,6 @@ object FormMain: TFormMain
         ImageIndex = 22
         OnClick = MenuItemEditorClick
       end
-      object MenuItemRefreshMenu: TMenuItem
-        Caption = 'Refresh Scripts Menu'
-        ImageIndex = 23
-        OnClick = MenuItemRefreshMenuClick
-      end
       object Separator1: TMenuItem
         Caption = '-'
       end
@@ -517,6 +512,9 @@ object FormMain: TFormMain
       Caption = 'Console'
       ImageIndex = 21
       OnClick = MenuItemConsoleClick
+    end
+    object MenuItemCharacters: TMenuItem
+      Caption = 'Characters'
     end
     object MenuItemSettings: TMenuItem
       Caption = 'Settings'
