@@ -1094,8 +1094,12 @@ end;
 var
   Key: String;
   Thread: TThread;
+  SEGlobal: TSEValue;
 
 initialization
+  GC.AllocMap(@SEGlobal);
+  ScriptVarMap.AddOrSetValue('global', SEGlobal);
+
   CSAction := TCriticalSection.Create;
   CSTalk := TCriticalSection.Create;
   Save := TSave.Create;
