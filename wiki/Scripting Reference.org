@@ -963,6 +963,7 @@ sprite_other_render('3d cube',
 - Set a flag. Result stores in ~scripts/flags.ini~.
 *get(flag: string): any*
 - Get a flag from memory. If no flag is found, the function return ~null~ instead.
+- The data retrieve from flag is not mutable.
 - You can you this function, combined with set(), to exchange data between multiple scripts.
 - A predefined flag ~global~ is available by default. This flag, which is a map, can be used as a common way to exchange data.
 *set(flag: string, value: any)*
