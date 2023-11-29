@@ -27,7 +27,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, kmemo,
 {$ifdef LINUX_X11}
-  X, Xlib, xatom, qt5, qtwidgets,
+  X, Xlib, xatom, sataniaqt, qtwidgets,
 {$endif}
   Mcdowell.RichText;
 

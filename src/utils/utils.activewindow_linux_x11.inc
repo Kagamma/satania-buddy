@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {$if defined(LINUX_X11)}
 
 {$ifdef unit_declare_interface}
-  X, Xlib, glx, qt5, qtwidgets,
+  X, Xlib, glx, sataniaqt, qtwidgets,
 {$endif unit_declare_interface}
 
 {$ifdef unit_public}
