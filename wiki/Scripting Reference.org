@@ -981,7 +981,7 @@ global.value = 'This is a string'
 
 #+begin_example
 set('new_flag', 'Data')
-// 'new_flag' can now be retrieved from different scripts, by calling get('new_flag')
+// 'new_flag' can now be retrieved from other scripts, by calling get('new_flag')
 #+end_example
 
 *scheme_load(scheme_name: string)*
