@@ -964,11 +964,26 @@ sprite_other_render('3d cube',
 *get(flag: string): any*
 - Get a flag from memory. If no flag is found, the function return ~null~ instead.
 - The data retrieve from flag is not mutable.
-- You can you this function, combined with set(), to exchange data between multiple scripts.
+- You can use this function, combined with set(), to exchange data between multiple scripts.
 - A predefined flag ~global~ is available by default. This flag, which is a map, can be used as a common way to exchange data.
+- Example:
+
+#+begin_example
+global = get('global') // Retrieve global flag
+global.value = 'This is a string'
+// No need to call set() to set the global flag back, as get() is not mutable.
+#+end_example
+
 *set(flag: string, value: any)*
 - Set a flag. Result stores in memory.
-- You can you this function, combined with get(), to exchange data between multiple scripts.
+- You can use this function, combined with get(), to exchange data between multiple scripts.
+- Example:
+
+#+begin_example
+set('new_flag', 'Data')
+// 'new_flag' can now be retrieved from different scripts, by calling get('new_flag')
+#+end_example
+
 *scheme_load(scheme_name: string)*
 - Load an .evil scheme file in ~data/scripts/current_character~. This will also stop the current script.
 *scheme_default(): string*
