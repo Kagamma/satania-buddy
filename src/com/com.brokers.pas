@@ -25,10 +25,10 @@ unit Com.Brokers;
 interface
 
 uses
-  Classes, SysUtils, BrookFCLHttpAppBroker, BrookUtils, BrookApplication;
+  Classes, SysUtils, fphttpapp;
 
 type
-  TBrookThread = class(TThread)
+  TWebAppThread = class(TThread)
   public
     constructor Create;
     destructor Destroy; override;
@@ -38,7 +38,7 @@ type
 procedure EmbeddedServerStart;
 
 var
-  BrookThread: TBrookThread;
+  WebAppThread: TWebAppThread;
 
 implementation
 
@@ -48,22 +48,23 @@ uses
 
 procedure EmbeddedServerStart;
 begin
-  BrookSettings.Port := Save.Settings.EmbeddedServerPort;
-  TBrookHTTPApplication(BrookApp.Instance).Threaded := False;
-  BrookThread := TBrookThread.Create;
-  BrookThread.Start;
+  Application.Port := Save.Settings.EmbeddedServerPort;
+  Application.Threaded := False;
+  Application.Initialize;
+  WebAppThread := TWebAppThread.Create;
+  WebAppThread.Start;
 end;
 
-constructor TBrookThread.Create;
+constructor TWebAppThread.Create;
 begin
   inherited Create(False);
   FreeOnTerminate := true;
 end;
 
-procedure TBrookThread.Execute;
+procedure TWebAppThread.Execute;
 begin
   try
-    BrookApp.Run;
+    Application.Run;
   except
     on E: Exception do
     begin
@@ -73,18 +74,18 @@ begin
   end;
 end;
 
-destructor TBrookThread.Destroy;
+destructor TWebAppThread.Destroy;
 begin
-  BrookApp.Terminate;
+  Application.Terminate;
   inherited;
 end;
 
 initialization
-  BrookThread := nil;
+  WebAppThread := nil;
 
 finalization
-  if BrookThread <> nil then
-    BrookThread.Terminate;
+  if WebAppThread <> nil then
+    WebAppThread.Terminate;
 
 end.
 

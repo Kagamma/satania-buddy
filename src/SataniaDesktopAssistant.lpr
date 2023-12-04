@@ -39,7 +39,8 @@ uses
   form.Main, form.touch, mcdowell.sound, form.rules, frame.rules.item,
   frame.rules.edititem, mcdowell.chat, mcdowell.net, mcdowell.numbers,
   utils.strings, utils.encdec, utils.coords, utils.threads, utils.files,
-  mcdowell.smtp, utils.smartptr, Com.Talk, Com.Brokers, form.ask, utils.sprites,
+  mcdowell.smtp, utils.smartptr, 
+Com.WebApp, Com.Brokers, form.ask, utils.sprites,
   mcdowell.sketch, form.tool.hexeditor, Mcdowell.RichText, Form.Bubble,
   Utils.Colors, CopyDir, Vosk, BassAudioSource, SttThread, whisper,
   Mcdowell.Data;

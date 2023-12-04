@@ -10,6 +10,7 @@ rm -rf src/components/HtmlViewer
 rm -rf src/components/spine-runtimes
 rm -rf src/components/cge-spine-mixer
 rm -rf src/components/SynFacilSyn
+rm -rf src/components/brookfreepascal
 
 git clone --depth 1 https://github.com/Kagamma/satania-buddy-data.git data
 cd src/components
@@ -22,7 +23,6 @@ cd neural-api
 git apply ../patches/neural-api.patch
 cd ..
 svn checkout https://svn.code.sf.net/p/synalist/code/trunk synalist
-git clone --depth 1 https://github.com/risoflora/brookfreepascal.git
 git clone --depth 1 https://github.com/Kagamma/internettools.git
 git clone --depth 1 https://github.com/kryslt/KControls.git
 git clone --depth 1 https://github.com/Kagamma/JsonTools.git

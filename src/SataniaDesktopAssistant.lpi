@@ -30,7 +30,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);components/neural-api/neural;components/internettools;components/brookfreepascal/includes"/>
-            <OtherUnitFiles Value="forms;utils;satania;states;components;components/neural-api/neural;components/synalist;components/typing-label/typinglabel;frames;components/internettools/internet;components/internettools/data;components/activex;components/csscontrols;components/spine-runtimes/src;com;components/brookfreepascal/core;components/brookfreepascal/brokers;components/cge-spine-mixer/src;components/JsonTools;components/SynFacilSyn;components/speech-to-text;components/pascal-webui/src"/>
+            <OtherUnitFiles Value="forms;utils;satania;states;components;components/neural-api/neural;components/synalist;components/typing-label/typinglabel;frames;components/internettools/internet;components/internettools/data;components/activex;components/csscontrols;components/spine-runtimes/src;com;components/cge-spine-mixer/src;components/JsonTools;components/SynFacilSyn;components/speech-to-text;components/pascal-webui/src"/>
             <UnitOutputDirectory Value="../lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -51,6 +51,9 @@
             </Options>
           </Linking>
           <Other>
+            <ConfigFile>
+              <WriteConfigFilePath Value="$(ProjOutDir)/fpclaz.cfg"/>
+            </ConfigFile>
             <CustomOptions Value="-dCASTLE_SLIM_NODES"/>
           </Other>
         </CompilerOptions>
@@ -332,9 +335,9 @@
         <UnitName Value="Com.Brokers"/>
       </Unit>
       <Unit>
-        <Filename Value="com/com.talk.pas"/>
+        <Filename Value="com/com.webapp.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Com.Talk"/>
+        <UnitName Value="Com.WebApp"/>
       </Unit>
       <Unit>
         <Filename Value="satania/mcdowell.sketch.pas"/>
@@ -407,7 +410,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);components/neural-api/neural;components/internettools;components/brookfreepascal/includes"/>
-      <OtherUnitFiles Value="forms;utils;satania;states;components;components/neural-api/neural;components/synalist;frames;components/internettools/internet;components/internettools/data;components/activex;components/csscontrols;components/spine-runtimes/src;com;components/brookfreepascal/core;components/brookfreepascal/brokers;components/cge-spine-mixer/src;components/JsonTools;components/SynFacilSyn;components/speech-to-text;components/pascal-webui/src"/>
+      <OtherUnitFiles Value="forms;utils;satania;states;components;components/neural-api/neural;components/synalist;frames;components/internettools/internet;components/internettools/data;components/activex;components/csscontrols;components/spine-runtimes/src;com;components/cge-spine-mixer/src;components/JsonTools;components/SynFacilSyn;components/speech-to-text;components/pascal-webui/src"/>
       <UnitOutputDirectory Value="../lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
@@ -425,6 +428,9 @@
       </Debugging>
     </Linking>
     <Other>
+      <ConfigFile>
+        <WriteConfigFilePath Value="$(ProjOutDir)/fpclaz.cfg"/>
+      </ConfigFile>
       <CustomOptions Value="-dCASTLE_SLIM_NODES
 -dCASTLE_NO_FORCE_DEDICATED_GPU"/>
     </Other>
