@@ -1,3 +1,46 @@
+{
+
+satania-buddy
+Copyright (C) 2022-2023 kagamma
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+}
+
+{$ifdef unit_declare_interface}
+type
+  TWebUIToNativeUIProc = procedure(S: String);
+
+  // Use it when we want to update native ui from webui
+  TWebUIToNativeUIThread = class(TThread)
+  protected
+    FProc: TWebUIToNativeUIProc;
+    FS: String;
+    procedure Update;
+  public
+    constructor Create(Proc: TWebUIToNativeUIProc; S: String);
+    destructor Destroy; override;
+    procedure Execute; override;
+  end;
+
+procedure WebUI_ChatSendProc(S: String);
+procedure WebUI_ChatServiceEditProc(S: String);
+procedure WebUI_ChatServiceSetProc(S: String);
+function WebUI_ChatServiceGetTypeProc: String;
+{$endif unit_declare_interface}
+
+{$ifdef unit_implmentation}
 const WEBUI_CHATICON =
 '<?xml version="1.0" encoding="iso-8859-1"?>'+
 '<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->'+
@@ -23,21 +66,6 @@ const WEBUI_CHATICON =
 '		"/>'+
 '</g>'+
 '</svg>';
-
-type
-  TWebUIToNativeUIProc = procedure(S: String);
-
-  // Use it when we want to update native ui from webui
-  TWebUIToNativeUIThread = class(TThread)
-  protected
-    FProc: TWebUIToNativeUIProc;
-    FS: String;
-    procedure Update;
-  public
-    constructor Create(Proc: TWebUIToNativeUIProc; S: String);
-    destructor Destroy; override;
-    procedure Execute; override;
-  end;
         
 procedure TWebUIToNativeUIThread.Update;
 begin
@@ -156,7 +184,7 @@ begin
   WaitForThreadTerminate(Thread.ThreadID, 5000);
 end;
 
-procedure WebUI_ChatServiceGetType(E: PWebUIEvent);
+function WebUI_ChatServiceGetTypeProc: String;
 var
   Path: String;
   Script: TEvilC;
@@ -172,7 +200,7 @@ begin
       Value := Script.ExecFuncOnly('_service', []);
       if Value <> SENull then
       begin
-        webui_return_string(E, PChar(Value.VarString^));
+        Result := Value.VarString^;
       end;
     except
       on E: Exception do
@@ -183,6 +211,10 @@ begin
   finally
     Script.Free;
   end;
+end;
+procedure WebUI_ChatServiceGetType(E: PWebUIEvent);
+begin
+  webui_return_string(E, PChar(WebUI_ChatServiceGetTypeProc));
 end;
 
 procedure WebUI_ChatServiceGetSetting(E: PWebUIEvent);
@@ -243,3 +275,4 @@ begin
   webui_set_icon(WebUIHandle, WEBUI_CHATICON, 'image/svg+xml');
   webui_show(WebUIHandle, 'chat/index.html');
 end;
+{$endif}

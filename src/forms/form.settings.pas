@@ -109,6 +109,7 @@ type
     LabelChatWindowColorItalicText: TLabel;
     LabelChatWindowColorCodeBlockText: TLabel;
     LabelDefaultChatWindow: TLabel;
+    LabelEmbeddedServiceNotice1: TLabel;
     LabelErrorMessage: TLabel;
     LabelEmbeddedServiceNotice: TLabel;
     LabelDeveloperMode: TLabel;

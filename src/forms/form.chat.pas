@@ -107,6 +107,10 @@ type
     property RichText: TSataniaRichText read FRichText;
   end;
 
+{$define unit_declare_interface}
+{$I form.chat_webui.inc}
+{$undef unit_declare_interface}
+
 var
   FormChat: TFormChat;
   WebUIHandle: QWord;
@@ -129,7 +133,9 @@ uses
 
 { TFormChat }
 
+{$define unit_implmentation}
 {$I form.chat_webui.inc}
+{$undef unit_implmentation}
 
 procedure TFormChat.Send;
 var

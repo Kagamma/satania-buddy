@@ -113,9 +113,9 @@ object FormSettings: TFormSettings
       Height = 546
       Top = 1
       Width = 707
-      ActivePage = TabSheetGeneral
+      ActivePage = TabSheetEmbeddedServer
       Align = alClient
-      TabIndex = 0
+      TabIndex = 4
       TabOrder = 0
       object TabSheetGeneral: TTabSheet
         Caption = 'General'
@@ -666,10 +666,10 @@ object FormSettings: TFormSettings
         end
         object LabelEmbeddedServiceNotice: TLabel
           Left = 23
-          Height = 15
+          Height = 45
           Top = 88
-          Width = 315
-          Caption = '*Restart satania-buddy is required for changes to take effect'
+          Width = 388
+          Caption = '*Enable this will allows to access chat (WebUI) directly from web browsers'#13#10'*The URL is ''http://localhost:<port number>'''#13#10'*Restart satania-buddy is required for changes to take effect'
         end
         object LabelEmbeddedServerEnable: TLabel
           Left = 23
@@ -684,6 +684,12 @@ object FormSettings: TFormSettings
           Top = 16
           Width = 18
           TabOrder = 1
+        end
+        object LabelEmbeddedServiceNotice1: TLabel
+          Left = 23
+          Height = 1
+          Top = 116
+          Width = 1
         end
       end
       object TabSheetIMAP: TTabSheet

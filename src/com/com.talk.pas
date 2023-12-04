@@ -28,22 +28,6 @@ uses
   Classes, SysUtils, Globals,
   BrookAction;
 
-type
-  TWebUIAction = class(TBrookAction)
-  public
-    procedure Get; override;
-  end;
-
-  THistoryAction = class(TBrookAction)
-  public
-    procedure Get; override;
-  end;
-
-  TChatAction = class(TBrookAction)
-  public
-    procedure Post; override;
-  end;
-
 implementation
 
 uses
@@ -52,23 +36,115 @@ uses
   mcdowell.chat.history,
   Mcdowell;
 
-procedure TWebUIAction.Get;
+type
+  TWebUIDefaultAction = class(TBrookAction)
+  public
+    procedure Get; override;
+  end;
+
+  TWebUI_ChatHistory = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_ChatHistoryPlainText = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_ChatHistoryClear = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;            
+
+  TWebUI_ChatHistorySavePlainText = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_ChatIsStreaming = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_ChatSend = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_ChatStopGenerating = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_ChatServiceGet = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_ChatServiceSet = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_ChatServiceGetList = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_ChatServiceEdit = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_ChatServiceGetType = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_ChatServiceGetSetting = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_ChatServiceSetSetting = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_CharacterSkinGet = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+  TWebUI_CharacterNameGet = class(TBrookAction)
+  public
+    procedure Post; override;
+  end;
+
+procedure TWebUIDefaultAction.Get;
 var
   FS: TFileStream;
   Path: String = 'data/webui';
 begin
   if Self.HttpRequest.URI = '/' then
-    Path := Path + '/index.html'
+    Path := Path + '/chat/index.html'
   else
     Path := Path + Self.HttpRequest.URI;
+  Path := Path.Split('?')[0];
   if FileExists(Path) then
   begin
     FS := TFileStream.Create(Path, fmOpenRead);
-    try
-      Write(FS);
-    finally
-      FS.Free;
+    case LowerCase(ExtractFileExt(Path)) of
+      '.png':
+        HttpResponse.ContentType := 'image/png';
+      '.woff':
+        HttpResponse.ContentType := 'application/x-font-woff';
+      '.css':
+        HttpResponse.ContentType := 'text/css';
     end;
+    Self.HttpResponse.ContentStream := FS;
+    Self.HttpResponse.FreeContentStream := True;
   end else
   begin
     HttpResponse.SetStatus(404);
@@ -76,80 +152,122 @@ begin
   end;
 end;
 
-procedure THistoryAction.Get;
-var
-  N,
-  Json: TJsonNode;
-  I: Integer;
-  CH: TChatHistoryRec;
+procedure TWebUI_ChatHistory.Post;
 begin
-  Json := TJsonNode.Create;
-  try
-    for I := 0 to FormChat.ChatHistory.List.Count - 1 do
-    begin
-      CH := FormChat.ChatHistory.List[I];
-      N := Json.Add;
-      N.Add('message', CH.Message);
-      N.Add('time', CH.Time);
-      case CH.SenderType of
-        cseSatania:
-          N.Add('sender', Satania.Name);
-        cseUser:
-          N.Add('sender', Save.Settings.UserName);
-        else
-          N.Add('sender', 'System');
-      end;
-    end;
-    Write(Json.AsJson);
-  finally
-    Json.Free;
-  end;
+  Write(FormChat.ChatHistory.ToJSONString(0));
+end;  
+
+procedure TWebUI_ChatHistoryPlainText.Post;
+begin
+  Write(FormChat.ChatHistory.ToEdit);
 end;
 
-procedure TChatAction.Post;
-var
-  Name, Value, Typ, Message: String;
-  I: Integer;
-  HC: Integer;
-  Json: TJsonNode;
-  Ticks: Integer = 0;
+procedure TWebUI_ChatHistoryClear.Post;
 begin
-  Typ := 'chat';
-  for I := 0 to Fields.Count - 1 do
-  begin
-    Fields.GetNameValue(I, Name, Value);
-    if Name = 'message' then
-      Message := Value
-    else
-    if Name = 'type' then
-      Typ := Value;
-  end;
-  HC := FormChat.ChatHistory.List.Count;
-  if Message <> '' then
-    Satania.Action(Typ, Message);
-  while HC = FormChat.ChatHistory.List.Count do
-  begin
-    Sleep(100);
-    Inc(Ticks, 100);
-    if Ticks > 60000 then
-    begin
-      HttpResponse.SetStatus(400);
-      Exit;
-    end;
-  end;
-  Json := TJsonNode.Create;
-  try
-    Json.Add('message', FormChat.ChatHistory.List[FormChat.ChatHistory.List.Count - 1].Message);
-    Write(Json.AsJson);
-  finally
-    Json.Free;
-  end;
+  FormChat.ClearHistory;
+end;          
+
+procedure TWebUI_ChatHistorySavePlainText.Post;
+begin
+  FormChat.SaveHistory(Self.HttpRequest.Content);
+end;
+
+procedure TWebUI_ChatIsStreaming.Post;
+begin
+  Write(BoolToStr(FormChat.RichText.IsStreaming, '1', '0'));
+end;          
+
+procedure TWebUI_ChatSend.Post;
+var
+  Thread: TWebUIToNativeUIThread;
+begin
+  Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatSendProc, Self.HttpRequest.Content);
+  Thread.Start;
+  WaitForThreadTerminate(Thread.ThreadID, 5000);
+end;
+
+procedure TWebUI_ChatStopGenerating.Post;
+begin
+  FormChat.StopGenerating;
+end;  
+
+procedure TWebUI_ChatServiceGet.Post;
+begin
+  Write(IntToStr(FormChat.ComboBoxService.ItemIndex));
+end;
+
+procedure TWebUI_ChatServiceSet.Post;
+var
+  Thread: TWebUIToNativeUIThread;
+begin
+  Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceSetProc, Self.HttpRequest.Content);
+  Thread.Start;
+  WaitForThreadTerminate(Thread.ThreadID, 5000);
+end;
+
+procedure TWebUI_ChatServiceGetList.Post;
+begin
+  Write(FormChat.LoadServiceList);
+end;
+
+procedure TWebUI_ChatServiceEdit.Post;
+var
+  Thread: TWebUIToNativeUIThread;
+begin
+  Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceEditProc, '');
+  Thread.Start;
+  WaitForThreadTerminate(Thread.ThreadID, 5000);
+end; 
+
+procedure TWebUI_ChatServiceGetType.Post;
+begin
+  Write(WebUI_ChatServiceGetTypeProc);
+end;      
+
+procedure TWebUI_ChatServiceGetSetting.Post;
+var
+  S: String;
+begin
+  S := Satania.LocalFlagIni.ReadString('Flags', Save.Settings.LastServiceUsed, '☙❥');
+  if S = '☙❥' then
+    Write('')
+  else
+    Write(S);
+end;
+
+procedure TWebUI_ChatServiceSetSetting.Post;
+begin
+  Satania.LocalFlagIni.WriteString('Flags', Save.Settings.LastServiceUsed, Self.HttpRequest.Content);
+end;      
+
+procedure TWebUI_CharacterSkinGet.Post;
+begin
+  Write(Save.Settings.Skin);
+end;
+
+procedure TWebUI_CharacterNameGet.Post;
+begin
+  Write(Satania.Name);
 end;
 
 initialization
-  TChatAction.Register('/api/v1/chat');
-  THistoryAction.Register('/api/v1/chat_history');
-  TWebUIAction.Register('*');
+  TWebUI_ChatHistory.Register('/api/v1/chat_history_get');
+  TWebUI_ChatHistoryPlainText.Register('/api/v1/chat_history_plaintext_get');
+  TWebUI_ChatHistoryClear.Register('/api/v1/chat_history_clear');
+  TWebUI_ChatHistorySavePlainText.Register('/api/v1/chat_history_plaintext_save');
+  TWebUI_ChatIsStreaming.Register('/api/v1/chat_is_streaming');
+  TWebUI_ChatSend.Register('/api/v1/chat_send');
+  TWebUI_ChatStopGenerating.Register('/api/v1/chat_stop_generating');
+  TWebUI_ChatServiceGet.Register('/api/v1/chat_service_get');
+  TWebUI_ChatServiceSet.Register('/api/v1/chat_service_set');
+  TWebUI_ChatServiceGetList.Register('/api/v1/chat_service_list_get');
+  TWebUI_ChatServiceEdit.Register('/api/v1/chat_service_edit');
+  TWebUI_ChatServiceGetType.Register('/api/v1/chat_service_type_get');
+  TWebUI_ChatServiceGetSetting.Register('/api/v1/chat_service_settings_get');
+  TWebUI_ChatServiceSetSetting.Register('/api/v1/chat_service_settings_set');
+  TWebUI_CharacterSkinGet.Register('/api/v1/character_skin_get');
+  TWebUI_CharacterNameGet.Register('/api/v1/character_name_get');
+  TWebUIDefaultAction.Register('*');
 
 end.
 

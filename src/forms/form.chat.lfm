@@ -45,11 +45,11 @@ object FormChat: TFormChat
     0000000000000000000000000000000000000000000000000000000000000000
     0000
   }
-  OnCreate = FormCreate
-  OnShow = FormShow
   Position = poDefault
   ShowInTaskBar = stAlways
   LCLVersion = '3.99.0.0'
+  OnCreate = FormCreate
+  OnShow = FormShow
   object PageControl: TPageControl
     Left = 0
     Height = 509
@@ -120,9 +120,9 @@ object FormChat: TFormChat
           Width = 515
           Align = alClient
           BorderSpacing.Around = 6
+          TabOrder = 0
           OnKeyDown = EditChatKeyDown
           OnKeyUp = EditChatKeyUp
-          TabOrder = 0
         end
       end
       object Splitter1: TSplitter
@@ -152,8 +152,8 @@ object FormChat: TFormChat
           Align = alLeft
           BorderSpacing.Around = 8
           Caption = 'Always on top'
-          OnChange = CheckBoxAlwaysOnTopChange
           TabOrder = 1
+          OnChange = CheckBoxAlwaysOnTopChange
         end
         object ComboBoxService: TComboBox
           Left = 274
@@ -169,10 +169,10 @@ object FormChat: TFormChat
           Items.Strings = (
             'None'
           )
-          OnChange = ComboBoxServiceChange
           ReadOnly = True
           TabOrder = 0
           Text = 'None'
+          OnChange = ComboBoxServiceChange
         end
         object ButtonOpenService: TSpeedButton
           Left = 438
