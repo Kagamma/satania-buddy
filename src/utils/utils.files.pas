@@ -25,13 +25,14 @@ unit Utils.Files;
 interface
 
 uses
-  Classes, SysUtils, Types, StrUtils;
+  Classes, SysUtils, Types, StrUtils, FileUtil;
 
 function LookForFileInPath(const Name: String): String;
 function ReadFileAsString(const Name: String): String; overload;
 procedure ReadFileAsString(const Name: String; var Str: String); overload;
+function DelDir(DirectoryName: String; OnlyChilds: Boolean = False): Boolean;
 
-implementation      
+implementation
 
 function LookForFileInPath(const Name: String): String;
 var
@@ -97,6 +98,39 @@ begin
   finally
     MS.Free;
   end;
+end;
+
+function DelDir(DirectoryName: String; OnlyChilds: Boolean = False): Boolean;
+var
+  FileInfo: TSearchRec;
+  CurFilename: String;
+begin
+  Result := False;
+  DirectoryName := DirectoryName + '/';
+  if FindFirst(DirectoryName + GetAllFilesMask, faAnyFile, FileInfo) = 0 then
+  begin
+    repeat
+      // check if special file
+      if (FileInfo.Name = '.') or (FileInfo.Name = '..') or (FileInfo.Name = '') then
+        continue;
+      CurFilename := DirectoryName + FileInfo.Name;
+      if (FileInfo.Attr and faReadOnly) > 0 then
+        FileSetAttr(CurFilename, FileInfo.Attr-faReadOnly);
+      if (FileInfo.Attr and faDirectory) > 0 then
+      begin
+        if not DelDir(CurFilename, False) then
+          exit;
+      end else
+      begin
+        if not DeleteFile(CurFilename) then
+          exit;
+      end;
+    until FindNext(FileInfo)<>0;
+  end;
+  FindClose(FileInfo);
+  if (not OnlyChilds) and (not RemoveDir(DirectoryName)) then
+    exit;
+  Result := True;
 end;
 
 end.

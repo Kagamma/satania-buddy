@@ -35,6 +35,7 @@ type
   { TFormSettings }
 
   TFormSettings = class(TForm)
+    ButtonDeleteSkin: TBitBtn;
     ButtonOk: TBitBtn;
     ButtonCloneSkin: TBitBtn;
     ButtonCancel: TBitBtn;
@@ -163,8 +164,10 @@ type
     procedure ButtonChatWindowFontClick(Sender: TObject);
     procedure ButtonApplyClick(Sender: TObject);
     procedure ButtonCloneSkinClick(Sender: TObject);
+    procedure ButtonDeleteSkinClick(Sender: TObject);
     procedure ButtonOkClick(Sender: TObject);
     procedure ButtonSpeechRecognitionHelpClick(Sender: TObject);
+    procedure ComboBoxSkinChange(Sender: TObject);
     procedure ComboBoxSTTBackendChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ListBoxSettingsSelectionChange(Sender: TObject; User: boolean);
@@ -192,6 +195,7 @@ uses
   Form.chat,
   Form.Touch,
   com.Brokers,
+  Utils.Files,
   Utils.Encdec;
 
 { TFormSettings }
@@ -351,6 +355,8 @@ begin
       ComboBoxImageQuality.ItemIndex := I;
       break;
     end;
+  //
+  ButtonDeleteSkin.Enabled := DirectoryExists(GetOSLocalDir + 'data/sprites/' + Save.Settings.Skin);
 end;
 
 procedure TFormSettings.ListBoxSettingsSelectionChange(Sender: TObject;
@@ -455,6 +461,8 @@ begin
     if Save.SpeechToText then
       SataniaSpeechToText.Enable;
   end;
+  //
+  ButtonDeleteSkin.Enabled := DirectoryExists(GetOSLocalDir + 'data/scripts/' + Save.Settings.Skin);
 end;
 
 procedure TFormSettings.ButtonApplyClick(Sender: TObject);
@@ -505,6 +513,35 @@ begin
   end;
 end;
 
+procedure TFormSettings.ButtonDeleteSkinClick(Sender: TObject);
+var
+  CurrentSelectedSkin: String;
+  DefaultString: String = 'satania (bloomers)';
+  I: Integer;
+begin
+  CurrentSelectedSkin := ComboBoxSkin.Items[ComboBoxSkin.ItemIndex];
+  if MessageDlg('Character deletion', 'Do you want to delete "' + CurrentSelectedSkin + '"?', mtConfirmation, [mbOk, mbCancel], 0) = mrOK then
+  begin
+    ComboBoxSkin.Items.Delete(ComboBoxSkin.ItemIndex);
+    if Save.Settings.Skin = CurrentSelectedSkin then
+    begin
+      Satania.SwitchCharacter(DefaultString);
+    end else
+      DefaultString := Save.Settings.Skin;
+    for I := 0 to ComboBoxSkin.Items.Count - 1 do
+    begin
+      if ComboBoxSkin.Items[I] = DefaultString then
+      begin
+        ComboBoxSkin.ItemIndex := I;
+        break;
+      end;
+    end;
+    DelDir(GetOSLocalDir + 'data/sprites/' + CurrentSelectedSkin);
+    DelDir(GetOSLocalDir + 'data/scripts/' + CurrentSelectedSkin);
+    MessageDlg('', 'Character "' + CurrentSelectedSkin + '" deleted!', mtInformation, [mbOk], 0)
+  end;
+end;
+
 procedure TFormSettings.ButtonOkClick(Sender: TObject);
 begin
   try
@@ -522,6 +559,11 @@ end;
 procedure TFormSettings.ButtonSpeechRecognitionHelpClick(Sender: TObject);
 begin
   OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Speech-Recognition');
+end;
+
+procedure TFormSettings.ComboBoxSkinChange(Sender: TObject);
+begin
+  ButtonDeleteSkin.Enabled := DirectoryExists(GetOSLocalDir + 'data/sprites/' + ComboBoxSkin.Items[ComboBoxSkin.ItemIndex]);
 end;
 
 procedure TFormSettings.ComboBoxSTTBackendChange(Sender: TObject);

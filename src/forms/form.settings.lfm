@@ -47,10 +47,9 @@ object FormSettings: TFormSettings
     0000000000000000000000000000000000000000000000000000000000000000
     0000
   }
-  OnShow = FormShow
   Position = poScreenCenter
   ShowInTaskBar = stAlways
-  LCLVersion = '3.99.0.0'
+  OnShow = FormShow
   object PanelButtons: TPanel
     Left = 0
     Height = 42
@@ -70,8 +69,8 @@ object FormSettings: TFormSettings
       Caption = 'Cancel'
       Images = FormMain.ImageList
       ImageIndex = 10
-      OnClick = ButtonCancelClick
       TabOrder = 0
+      OnClick = ButtonCancelClick
     end
     object ButtonApply: TBitBtn
       Left = 655
@@ -83,8 +82,8 @@ object FormSettings: TFormSettings
       Caption = 'Apply'
       Images = FormMain.ImageList
       ImageIndex = 11
-      OnClick = ButtonApplyClick
       TabOrder = 1
+      OnClick = ButtonApplyClick
     end
     object ButtonOk: TBitBtn
       Left = 770
@@ -96,8 +95,8 @@ object FormSettings: TFormSettings
       Caption = 'Ok'
       Images = FormMain.ImageList
       ImageIndex = 11
-      OnClick = ButtonOkClick
       TabOrder = 2
+      OnClick = ButtonOkClick
     end
   end
   object PanelSettings: TPanel
@@ -178,10 +177,11 @@ object FormSettings: TFormSettings
           Left = 192
           Height = 23
           Top = 112
-          Width = 304
+          Width = 208
           ItemHeight = 15
           ReadOnly = True
           TabOrder = 3
+          OnChange = ComboBoxSkinChange
         end
         object CheckBoxRules: TCheckBox
           Left = 192
@@ -248,15 +248,15 @@ object FormSettings: TFormSettings
           TabOrder = 7
         end
         object ButtonCloneSkin: TBitBtn
-          Left = 496
+          Left = 400
           Height = 23
           Top = 112
           Width = 96
           Caption = 'Clone'
           Images = FormMain.ImageList
           ImageIndex = 6
-          OnClick = ButtonCloneSkinClick
           TabOrder = 8
+          OnClick = ButtonCloneSkinClick
         end
         object LabelDefaultChatWindow: TLabel
           Left = 24
@@ -271,6 +271,17 @@ object FormSettings: TFormSettings
           Top = 304
           Width = 18
           TabOrder = 9
+        end
+        object ButtonDeleteSkin: TBitBtn
+          Left = 496
+          Height = 23
+          Top = 112
+          Width = 96
+          Caption = 'Delete'
+          Images = FormMain.ImageList
+          ImageIndex = 10
+          TabOrder = 10
+          OnClick = ButtonDeleteSkinClick
         end
       end
       object TabSheetGraphics: TTabSheet
@@ -917,9 +928,9 @@ object FormSettings: TFormSettings
             Top = 16
             Width = 400
             ItemHeight = 15
-            OnChange = ComboBoxSTTBackendChange
             ReadOnly = True
             TabOrder = 0
+            OnChange = ComboBoxSTTBackendChange
           end
         end
         object GroupBoxSTTWhisper: TGroupBox
@@ -969,8 +980,8 @@ object FormSettings: TFormSettings
             Caption = 'Help'
             Images = FormMain.ImageList
             ImageIndex = 16
-            OnClick = ButtonSpeechRecognitionHelpClick
             TabOrder = 0
+            OnClick = ButtonSpeechRecognitionHelpClick
           end
         end
       end
@@ -1018,8 +1029,8 @@ object FormSettings: TFormSettings
         'Developer'
       )
       ItemHeight = 15
-      OnSelectionChange = ListBoxSettingsSelectionChange
       TabOrder = 1
+      OnSelectionChange = ListBoxSettingsSelectionChange
     end
     object Splitter1: TSplitter
       Left = 173
