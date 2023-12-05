@@ -48,11 +48,21 @@ uses
 
 procedure EmbeddedServerStart;
 begin
-  Application.Port := Save.Settings.EmbeddedServerPort;
-  Application.Threaded := False;
-  Application.Initialize;
-  WebAppThread := TWebAppThread.Create;
-  WebAppThread.Start;
+  if WebAppThread = nil then
+  begin
+    Application.Port := Save.Settings.EmbeddedServerPort;
+    Application.Threaded := False;
+    Application.Initialize;
+    WebAppThread := TWebAppThread.Create;
+    WebAppThread.Start;
+  end;
+end;
+
+procedure EmbeddedServerStop;
+begin
+  if WebAppThread <> nil then
+    WebAppThread.Terminate;
+  WebAppThread := nil;
 end;
 
 constructor TWebAppThread.Create;
@@ -84,8 +94,7 @@ initialization
   WebAppThread := nil;
 
 finalization
-  if WebAppThread <> nil then
-    WebAppThread.Terminate;
+  EmbeddedServerStop;
 
 end.
 
