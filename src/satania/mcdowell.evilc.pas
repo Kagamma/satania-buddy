@@ -5980,18 +5980,40 @@ var
 
   var
     Token: TSEToken;
-    Lib: String;
+    Lib: TLibHandle;
+    LibName: String;
+    LibNames: TStrings;
   begin
-    Token := NextTokenExpected([tkString]);
-    Lib := Token.Value;
+    LibNames := TStringList.Create;
+    try
+      Token := NextTokenExpected([tkString]);
+      LibNames.Add(Token.Value);
+      while PeekAtNextToken.Kind = tkComma do
+      begin
+        NextToken;
+        Token := NextTokenExpected([tkString]);
+        LibNames.Add(Token.Value);
+      end;
+      for LibName in LibNames do
+      begin
+        Lib := LoadLibrary(LibName);
+        if Lib <> nil then
+        begin
+          FreeLibrary(Lib);
+          Break;
+        end;
+      end;
+    finally
+      LibNames.Free;
+    end;
     if PeekAtNextToken.Kind <> tkBegin then
-      FuncImport(Lib)
+      FuncImport(LibName)
     else
     begin
       NextToken;
       while True do
       begin
-        FuncImport(Lib);
+        FuncImport(LibName);
         if PeekAtNextTokenExpected([tkEnd, tkFunctionDecl]).Kind = tkEnd then
         begin
           NextToken;
