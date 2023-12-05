@@ -26,7 +26,8 @@ interface
 
 uses
   Classes, SysUtils, Globals,
-  fphttpapp, httpdefs, httproute;
+  fphttpapp, httpdefs, httproute,
+  CastleURIUtils;
 
 implementation
 
@@ -48,16 +49,7 @@ begin
   if FileExists(Path) then
   begin
     FS := TFileStream.Create(Path, fmOpenRead);
-    case LowerCase(ExtractFileExt(Path)) of
-      '.jpg':
-        Res.ContentType := 'image/jpeg';
-      '.png':
-        Res.ContentType := 'image/png';
-      '.woff':
-        Res.ContentType := 'application/x-font-woff';
-      '.css':
-        Res.ContentType := 'text/css';
-    end;
+    Res.ContentType := UriMimeType(Path);
     Res.ContentStream := FS;
     Res.FreeContentStream := True;
   end else
