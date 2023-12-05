@@ -92,6 +92,7 @@ a = 'a string'
 
 b = 'this is ${a}'
 // Replace ${a} with the content in variable a. The result will be 'this is a string'
+// It is equivalent to: b = 'this is ' + string(a)
 
 b = 'this is
 a multi-line
@@ -958,9 +959,9 @@ sprite_other_render('3d cube',
 *flag_global_set(flag: string, value: string)*
 - Set a flag. Result stores in ~configs.json~.
 *flag_local_get(flag: string): string*
-- Get a flag from ~scripts/flags.ini~. If no flag is found, the function return ~null~ instead.
+- Get a flag from ~scripts/<character directory>/flags.ini~. If no flag is found, the function return ~null~ instead.
 *flag_local_set(flag: string, value: string)*
-- Set a flag. Result stores in ~scripts/flags.ini~.
+- Set a flag. Result stores in ~scripts/<character directory>/flags.ini~.
 *get(flag: string): any*
 - Get a flag from memory. If no flag is found, the function return ~null~ instead.
 - The data retrieved from get() is the same as the one set by the set() function.
