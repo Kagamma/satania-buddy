@@ -6127,7 +6127,7 @@ var
 
   var
     Token: TSEToken;
-    Lib: TLibHandle;
+    Lib: TLibHandle = 0;
     LibName: String;
     LibNames: TStrings;
   begin
@@ -6148,10 +6148,10 @@ var
         else
         begin
           Lib := LoadLibrary(LibName);
-          if Lib <> nil then
+          if Lib <> 0 then
             DynlibMap.Add(LibName, Lib);
         end;
-        if Lib <> nil then
+        if Lib <> 0 then
         begin
           Break;
         end;
@@ -7067,7 +7067,7 @@ begin
   FuncImportInfo.Return := Return;
   FuncImportInfo.Name := Name;
   FuncImportInfo.Func := nil;
-  if Lib <> nil then
+  if Lib <> 0 then
   begin
     FuncImportInfo.Func := GetProcAddress(Lib, ActualName);
   end;
