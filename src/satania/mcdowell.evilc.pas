@@ -337,7 +337,7 @@ type
     FramePtr: PSEFrame;
     TrapPtr: PSETrap;
     StackSize: Integer;
-    FrameSize: Integer;  
+    FrameSize: Integer;
     TrapSize: Integer;
     Parent: TEvilC;
     Binaries: array of TSEBinary;
@@ -528,7 +528,7 @@ type
   end;
 
 function SEValueToText(const Value: TSEValue; const IsRoot: Boolean = True): String;
-function SESize(constref Value: TSEValue): Cardinal; inline; 
+function SESize(constref Value: TSEValue): Cardinal; inline;
 procedure SEMapDelete(constref V: TSEValue; constref I: Integer); inline; overload;
 procedure SEMapDelete(constref V: TSEValue; constref S: String); inline; overload;
 procedure SEMapDelete(constref V, I: TSEValue); inline; overload;
@@ -602,7 +602,7 @@ type
     class function SEBufferGetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferGetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferGetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEBufferGetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    class function SEBufferGetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferGetF32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferGetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferSetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -685,7 +685,7 @@ type
     class function SEGCObjectCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGCUsed(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEGCCollect(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEAssert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+    class function SEAssert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEChar(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEOrd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 
@@ -1086,7 +1086,7 @@ class function TBuiltInFunction.SEBufferSetI64(const VM: TSEVM; const Args: arra
 begin
   Int64(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
   Result := SENull;
-end; 
+end;
 
 class function TBuiltInFunction.SEBufferSetF32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
@@ -1702,7 +1702,7 @@ class function TBuiltInFunction.SEAssert(const VM: TSEVM; const Args: array of T
 begin
   if Args[0] = False then
     raise EAssertionFailed.Create(Args[1]);
-end;     
+end;
 
 class function TBuiltInFunction.SEChar(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
@@ -2671,7 +2671,7 @@ begin
   Self.IsDone := True;
   Self.WaitTime := 0;
   Self.StackSize := 65536;
-  Self.FrameSize := 1024;  
+  Self.FrameSize := 1024;
   Self.TrapSize := 1024;
   if VMList = nil then
     VMList := TSEVMList.Create;
@@ -2707,10 +2707,10 @@ begin
   Self.Parent.IsDone := False;
   Self.WaitTime := 0;
   SetLength(Self.Stack, Self.StackSize);
-  SetLength(Self.Frame, Self.FrameSize);  
+  SetLength(Self.Frame, Self.FrameSize);
   SetLength(Self.Trap, Self.TrapSize);
   FillChar(Self.Stack[0], Length(Self.Stack) * SizeOf(TSEValue), 0);
-  FillChar(Self.Frame[0], Length(Self.Frame) * SizeOf(TSEFrame), 0); 
+  FillChar(Self.Frame[0], Length(Self.Frame) * SizeOf(TSEFrame), 0);
   FillChar(Self.Trap[0], Length(Self.Trap) * SizeOf(TSETrap), 0);
   Self.FramePtr := @Self.Frame[0];
   Self.StackPtr := @Self.Stack[0];
@@ -2749,6 +2749,7 @@ var
   FuncImport, P, PP, PC: Pointer;
   BinaryLocalCountMinusOne: Integer;
   LineOfCode: TSELineOfCode;
+  StackModulo: QWord;
 
   procedure Push(const Value: TSEValue); inline;
   begin
@@ -2939,7 +2940,7 @@ var
     @labelCallImport,
     @labelYield,
     @labelHlt,
-                
+
     @labelPushTrap,
     @labelPopTrap,
     @labelThrow
@@ -3458,6 +3459,13 @@ begin
           {$ifdef CPUX86_64}
           {$if defined(WINDOWS)}
             asm
+              xor  rdx,rdx
+              mov  rax,rsp
+              mov  rbx,16
+              div  rbx
+              mov  StackModulo,rdx
+              sub  esp,StackModulo
+
               xor  rax,rax
               mov  eax,ArgCount
               mov  r10,rax
@@ -3556,7 +3564,7 @@ begin
               sub  rsp,32
               call [FuncImport]
               mov  ImportResult,rax
-              movsd ImportResultD,xmm0   
+              movsd ImportResultD,xmm0
               movss ImportResultS,xmm0
               xor  rax,rax
               mov  eax,ArgCountStack
@@ -3564,9 +3572,17 @@ begin
               mul  ecx
               add  rsp,rax
               add  rsp,32
+              add  rsp,StackModulo
             end ['rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'xmm0', 'xmm1', 'xmm2', 'xmm3'];
           {$elseif defined(LINUX)}
             asm
+              xor  rdx,rdx
+              mov  rax,rsp
+              mov  rbx,16
+              div  rbx
+              mov  StackModulo,rdx
+              sub  esp,StackModulo
+
               xor  rax,rax
               mov  eax,ArgCount
               mov  r10,rax
@@ -3734,6 +3750,7 @@ begin
               mov  ecx,8
               mul  ecx
               add  rsp,rax
+              add  rsp,StackModulo
             end ['rsi', 'rdi', 'rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'xmm0', 'xmm1', 'xmm2', 'xmm3', 'xmm4', 'xmm5', 'xmm6', 'xmm7'];
           {$endif}
           {$else}
@@ -3988,7 +4005,7 @@ begin
       {$ifdef SE_COMPUTED_GOTO}labelPushTrap{$else}opPushTrap{$endif}:
         begin
           Inc(Self.TrapPtr);
-          Self.TrapPtr^.FramePtr := Self.FramePtr;   
+          Self.TrapPtr^.FramePtr := Self.FramePtr;
           Self.TrapPtr^.Stack := StackPtrLocal;
           Self.TrapPtr^.Binary := BinaryPtrLocal;
           Self.TrapPtr^.CatchCode := Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer);
@@ -4032,7 +4049,7 @@ begin
     Break;
   except
     on E: Exception do
-    begin  
+    begin
       if Self.TrapPtr < @Self.Trap[0] then
       begin
         I := 0;
@@ -4137,7 +4154,7 @@ begin
   Self.RegisterFunc('___map_create', @TBuiltInFunction(nil).SEMapCreate, -1);
   Self.RegisterFunc('map_key_delete', @TBuiltInFunction(nil).SEMapKeyDelete, 2);
   Self.RegisterFunc('map_keys_get', @TBuiltInFunction(nil).SEMapKeysGet, 1);
-  Self.RegisterFunc('array_resize', @TBuiltInFunction(nil).SEArrayResize, 2);          
+  Self.RegisterFunc('array_resize', @TBuiltInFunction(nil).SEArrayResize, 2);
   Self.RegisterFunc('array_to_map', @TBuiltInFunction(nil).SEArrayToMap, 1);
   Self.RegisterFunc('sign', @TBuiltInFunction(nil).SESign, 1);
   Self.RegisterFunc('min', @TBuiltInFunction(nil).SEMin, -1);
@@ -4194,7 +4211,7 @@ begin
   Self.RegisterFunc('mem_used', @TBuiltInFunction(nil).SEGCUsed, 0);
   Self.RegisterFunc('mem_gc', @TBuiltInFunction(nil).SEGCCollect, 0);
   Self.RegisterFunc('base64_encode', @TBuiltInFunction(nil).SEBase64Encode, 1);
-  Self.RegisterFunc('base64_decode', @TBuiltInFunction(nil).SEBase64Decode, 1);  
+  Self.RegisterFunc('base64_decode', @TBuiltInFunction(nil).SEBase64Decode, 1);
   Self.RegisterFunc('assert', @TBuiltInFunction(nil).SEAssert, 2);
   Self.RegisterFunc('chr', @TBuiltInFunction(nil).SEChar, 1);
   Self.RegisterFunc('ord', @TBuiltInFunction(nil).SEOrd, 1);
@@ -4455,7 +4472,7 @@ begin
                   begin
                     NextChar;
                     Token.Value := Token.Value + #13;
-                  end else   
+                  end else
                   if C = 't' then
                   begin
                     NextChar;
@@ -6512,7 +6529,7 @@ var
       EmitAssignVar(PVarIdent^);
     NextTokenExpected([tkBracketClose]);
     ParseBlock;
-                                               
+
     Patch(JumpCatchBlock - 1, Pointer(CatchBlock));
     Patch(JumpFinallyBlock - 1, Pointer(Self.Binary.Count));
     I := Self.ScopeStack.Pop;
