@@ -6143,10 +6143,16 @@ var
       end;
       for LibName in LibNames do
       begin
-        Lib := LoadLibrary(LibName);
+        if DynlibMap.ContainsKey(LibName) then
+          Lib := DynlibMap[LibName]
+        else
+        begin
+          Lib := LoadLibrary(LibName);
+          if Lib <> nil then
+            DynlibMap.Add(LibName, Lib);
+        end;
         if Lib <> nil then
         begin
-          FreeLibrary(Lib);
           Break;
         end;
       end;
