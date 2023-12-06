@@ -3743,19 +3743,24 @@ begin
           case FuncImportInfo^.Return of
             seakI8, seakI16, seakI32:
               begin
-                TV := Int64(LongInt(ImportResult))
+                TV := Int64(LongInt(ImportResult));
               end;
             seakI64:
               begin
-                TV := Int64(ImportResult)
+                TV := Int64(ImportResult);
               end;
             seakU8, seakU16, seakU32:
               begin
-                TV := QWord(LongWord(ImportResult))
+                TV := QWord(LongWord(ImportResult));
               end;
-            seakU64, seakBuffer, seakWBuffer:
+            seakU64:
               begin
-                TV := QWord(ImportResult)
+                TV := QWord(ImportResult);
+              end;
+            seakBuffer, seakWBuffer:
+              begin
+                GC.AllocBuffer(@TV, 8);
+                TV.VarBuffer^.Ptr := Pointer(QWord(ImportResult));
               end;
             seakF32:
               begin
