@@ -2757,7 +2757,6 @@ var
   ffiCif: ffi_cif;
   ffiArgTypes: array [0..31] of pffi_type;
   ffiArgValues: array [0..31] of Pointer;
-  ffiResult: ffi_arg;
   ffiResultType: ffi_type;
   {$endif}
 
@@ -3362,109 +3361,119 @@ begin
               seakI8:
                 begin
                   Int64((@ImportBufferData[I * 8])^) := ShortInt(Round(Pop^.VarNumber));
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
                   {$ifdef SE_LIBFFI}
                   ffiArgTypes[I] := @ffi_type_sint8;
                   ffiArgValues[I] := @ImportBufferData[I * 8];
+                  {$else}
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                   {$endif}
                 end;
               seakI16:
                 begin
                   Int64((@ImportBufferData[I * 8])^) := SmallInt(Round(Pop^.VarNumber));
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
                   {$ifdef SE_LIBFFI}
                   ffiArgTypes[I] := @ffi_type_sint16;
                   ffiArgValues[I] := @ImportBufferData[I * 8];
+                  {$else}
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                   {$endif}
                 end;
               seakI32:
                 begin
                   Int64((@ImportBufferData[I * 8])^) := LongInt(Round(Pop^.VarNumber));
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
                   {$ifdef SE_LIBFFI}
                   ffiArgTypes[I] := @ffi_type_sint32;
                   ffiArgValues[I] := @ImportBufferData[I * 8];
+                  {$else}
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                   {$endif}
                 end;
               seakI64:
                 begin
                   Int64((@ImportBufferData[I * 8])^) := Int64(Round(Pop^.VarNumber));
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
                   {$ifdef SE_LIBFFI}
                   ffiArgTypes[I] := @ffi_type_sint64;
                   ffiArgValues[I] := @ImportBufferData[I * 8];
+                  {$else}
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                   {$endif}
                 end;
               seakU8:
                 begin
                   QWord((@ImportBufferData[I * 8])^) := Byte(Round(Pop^.VarNumber));
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
                   {$ifdef SE_LIBFFI}
                   ffiArgTypes[I] := @ffi_type_uint8;
                   ffiArgValues[I] := @ImportBufferData[I * 8];
+                  {$else}
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                   {$endif}
                 end;
               seakU16:
                 begin
                   QWord((@ImportBufferData[I * 8])^) := Word(Round(Pop^.VarNumber));
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
                   {$ifdef SE_LIBFFI}
                   ffiArgTypes[I] := @ffi_type_uint16;
                   ffiArgValues[I] := @ImportBufferData[I * 8];
+                  {$else}
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                   {$endif}
                 end;
               seakU32:
                 begin
                   QWord((@ImportBufferData[I * 8])^) := LongWord(Round(Pop^.VarNumber));
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
                   {$ifdef SE_LIBFFI}
                   ffiArgTypes[I] := @ffi_type_uint32;
                   ffiArgValues[I] := @ImportBufferData[I * 8];
+                  {$else}
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                   {$endif}
                 end;
               seakU64:
                 begin
                   QWord((@ImportBufferData[I * 8])^) := QWord(Round(Pop^.VarNumber));
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
                   {$ifdef SE_LIBFFI}
                   ffiArgTypes[I] := @ffi_type_uint64;
                   ffiArgValues[I] := @ImportBufferData[I * 8];
+                  {$else}
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                   {$endif}
                 end;
               seakF32:
                 begin
                   Single((@ImportBufferData[I * 8])^) := Single(Pop^.VarNumber);
-                  ImportBufferIndex[I] := 2;
-                  {$ifdef WINDOWS}
-                  Inc(RegCount);
-                  {$else}
-                  Inc(MMXCount);
-                  {$endif}
                   {$ifdef SE_LIBFFI}
                   ffiArgTypes[I] := @ffi_type_float;
                   ffiArgValues[I] := @ImportBufferData[I * 8];
+                  {$else}
+                    ImportBufferIndex[I] := 2;
+                    {$ifdef WINDOWS}
+                    Inc(RegCount);
+                    {$else}
+                    Inc(MMXCount);
+                    {$endif}
                   {$endif}
                 end;
               seakF64:
                 begin
                   TSENumber((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
-                  ImportBufferIndex[I] := 1;
-                  {$ifdef WINDOWS}
-                  Inc(RegCount);
-                  {$else}
-                  Inc(MMXCount);
-                  {$endif}
                   {$ifdef SE_LIBFFI}
                   ffiArgTypes[I] := @ffi_type_double;
                   ffiArgValues[I] := @ImportBufferData[I * 8];
+                  {$else}
+                    ImportBufferIndex[I] := 1;
+                    {$ifdef WINDOWS}
+                    Inc(RegCount);
+                    {$else}
+                    Inc(MMXCount);
+                    {$endif}
                   {$endif}
                 end;
               seakBuffer:
@@ -3479,11 +3488,12 @@ begin
                     PChar((@ImportBufferData[I * 8])^) := PChar(A^.VarBuffer^.Ptr)
                   else
                     QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
                   {$ifdef SE_LIBFFI}
                   ffiArgTypes[I] := @ffi_type_pointer;
                   ffiArgValues[I] := @ImportBufferData[I * 8];
+                  {$else}
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                   {$endif}
                 end;
               seakWBuffer:
@@ -3498,17 +3508,16 @@ begin
                     PWideChar((@ImportBufferData[I * 8])^) := PWideChar(A^.VarBuffer^.Ptr)
                   else
                     QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
                   {$ifdef SE_LIBFFI}
                   ffiArgTypes[I] := @ffi_type_pointer;
                   ffiArgValues[I] := @ImportBufferData[I * 8];
+                  {$else}
+                  ImportBufferIndex[I] := 0;
+                  Inc(RegCount);
                   {$endif}
                 end;
             end;
           end;
-          P := @ImportBufferData[0];
-          PP := @ImportBufferIndex[0];
         {$ifdef SE_LIBFFI}
           case FuncImportInfo^.Return of
             seakI8:
@@ -3557,11 +3566,15 @@ begin
               end;
           end;
           ffi_prep_cif(@ffiCif, FFI_DEFAULT_ABI, ArgCount, @ffiResultType, @ffiArgTypes[0]);
-          ffi_call(@ffiCif, ffi_fn(FuncImport), @ffiResult, @ffiArgValues[0]);
-          ImportResult := ffiResult;
-          ImportResultS := PSingle(@ffiResult)^;
-          ImportResultD := PDouble(@ffiResult)^;
+          ffi_call(@ffiCif, ffi_fn(FuncImport), @ImportResult, @ffiArgValues[0]);
+          if FuncImportInfo^.Return = seakF32 then
+            ImportResultS := PSingle(@ImportResult)^
+          else
+          if FuncImportInfo^.Return = seakF64 then
+            ImportResultD := PDouble(@ImportResult)^;
         {$else}
+          P := @ImportBufferData[0];
+          PP := @ImportBufferIndex[0];
           {$if defined(WINDOWS)}
           ArgCountStack := Max(0, Int64(RegCount) - 4);
           {$elseif defined(LINUX)}
