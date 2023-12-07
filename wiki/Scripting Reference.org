@@ -538,6 +538,8 @@ You can enable assertions globally in Settings, or locally in script editor.
 
 *cot(n: number): number*
 
+*sqrt(n: number): number*
+
 *range(x, y: number): map*
 - Return [x..y] array with step = 1.
 
