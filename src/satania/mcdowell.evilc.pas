@@ -597,7 +597,8 @@ uses
 type
   TBuiltInFunction = class
     class function SEBufferCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;    
+    class function SEBufferCopy(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferGetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferGetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBufferGetU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -978,6 +979,12 @@ begin
     else
       Result := 0;
   end;
+end;
+
+class function TBuiltInFunction.SEBufferCopy(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Move(Args[1].VarBuffer^.Ptr^, Args[0].VarBuffer^.Ptr^, Round(Args[2].VarNumber));
+  Result := Args[0];
 end;
 
 class function TBuiltInFunction.SEBufferGetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -4244,7 +4251,8 @@ begin
   //
   Self.VM.Parent := Self;
   Self.RegisterFunc('buffer_create', @TBuiltInFunction(nil).SEBufferCreate, 1);
-  Self.RegisterFunc('buffer_length', @TBuiltInFunction(nil).SEBufferLength, 1);
+  Self.RegisterFunc('buffer_length', @TBuiltInFunction(nil).SEBufferLength, 1);   
+  Self.RegisterFunc('buffer_copy', @TBuiltInFunction(nil).SEBufferCopy, 3);
   Self.RegisterFunc('buffer_u8_get', @TBuiltInFunction(nil).SEBufferGetU8, 1);
   Self.RegisterFunc('buffer_u16_get', @TBuiltInFunction(nil).SEBufferGetU16, 1);
   Self.RegisterFunc('buffer_u32_get', @TBuiltInFunction(nil).SEBufferGetU32, 1);
