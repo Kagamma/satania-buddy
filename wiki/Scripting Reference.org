@@ -555,59 +555,59 @@ You can enable assertions globally in Settings, or locally in script editor.
 
 ** Buffers
 *buffer_create(size: number): buffer*
-- Create a new buffer. The result is a pointer points to the start of allocated memory.
+- Creates a new buffer. The result is a pointer points to the start of allocated memory.
 *buffer_length(buffer: buffer): number*
-- Return length of a buffer.
+- Returns length of a buffer.
 *buffer_copy(dst, src: buffer, count: number): number*
 - Copy ~count~ bytes from ~src~ to ~dst~.
 *buffer_u8_fill(buffer: buffer, value, count: number): number*
 - Sets the first ~count~ bytes of the block of memory pointed by ~buffer~ to the specified value (interpreted as an unsigned char).
 *buffer_u8_get(buffer: buffer): number*
-- Get 1-byte unsigned data from buffer.
+- Gets 1-byte unsigned data from buffer.
 *buffer_i8_get(buffer: buffer): number*
-- Get 1-byte data from buffer.
+- Gets 1-byte data from buffer.
 *buffer_u16_get(buffer: buffer): number*
-- Get 2-byte unsigned data from buffer.
+- Gets 2-byte unsigned data from buffer.
 *buffer_i16_get(buffer: buffer): number*
-- Get 2-byte data from buffer.
+- Gets 2-byte data from buffer.
 *buffer_u32_get(buffer: buffer): number*
-- Get 4-byte unsigned data from buffer.
+- Gets 4-byte unsigned data from buffer.
 *buffer_i32_get(buffer: buffer): number*
-- Get 4-byte data from buffer.
+- Gets 4-byte data from buffer.
 *buffer_u64_get(buffer: buffer): number*
-- Get 8-byte unsigned data from buffer.
+- Gets 8-byte unsigned data from buffer.
 *buffer_i64_get(buffer: buffer): number*
-- Get 8-byte data from buffer.
+- Gets 8-byte data from buffer.
 *buffer_f32_get(buffer: buffer): number*
-- Get float-type data from buffer.
+- Gets float-type data from buffer.
 *buffer_f64_get(buffer: buffer): number*
-- Get double-type data from buffer.
+- Gets double-type data from buffer.
 *buffer_u8_set(buffer: buffer, data: number): number*
-- Write 1-byte unsigned data to buffer.
+- Writes 1-byte unsigned data to buffer.
 *buffer_i8_set(buffer: buffer, data: number): number*
-- Write 1-byte data to buffer.
+- Writes 1-byte data to buffer.
 *buffer_u16_set(buffer: buffer, data: number): number*
-- Write 2-byte unsigned data to buffer.
+- Writes 2-byte unsigned data to buffer.
 *buffer_i16_set(buffer: buffer, data: number): number*
-- Write 2-byte data to buffer.
+- Writes 2-byte data to buffer.
 *buffer_u32_set(buffer: buffer, data: number): number*
-- Write 4-byte unsigned data to buffer.
+- Writes 4-byte unsigned data to buffer.
 *buffer_i32_set(buffer: buffer, data: number): number*
-- Write 4-byte data to buffer.
+- Writes 4-byte data to buffer.
 *buffer_u64_set(buffer: buffer, data: number): number*
-- Write 8-byte unsigned data to buffer.
+- Writes 8-byte unsigned data to buffer.
 *buffer_i64_set(buffer: buffer, data: number): number*
-- Write 8-byte data to buffer.
+- Writes 8-byte data to buffer.
 *buffer_f32_set(buffer: buffer, data: number): number*
-- Write float-type data to buffer.
+- Writes float-type data to buffer.
 *buffer_f64_set(buffer: buffer, data: number): number*
-- Write double-type data to buffer.
+- Writes double-type data to buffer.
 *string_to_buffer(s: string): buffer*
-- Return pointer point to the first element of the string.
+- Returns pointer point to the first element of the string.
 *buffer_to_string(b: buffer): string*
-- Copy buffer content to string.
+- Copies buffer content to string.
 *wbuffer_to_string(b: buffer): string*
-- Copy wbuffer content to string.
+- Copies wbuffer content to string.
 
 ** Strings
 *numbers(s: string): map*
