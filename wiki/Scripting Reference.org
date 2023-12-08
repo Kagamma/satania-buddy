@@ -564,6 +564,24 @@ You can enable assertions globally in Settings, or locally in script editor.
 - Copy ~count~ bytes from ~src~ to ~dst~.
 *buffer_u8_fill(buffer: buffer, value, count: number): number*
 - Sets the first ~count~ bytes of the block of memory pointed by ~buffer~ to the specified value (interpreted as an unsigned char).
+*buffer_u16_fill(buffer: buffer, value, count: number): number*
+- Sets the first ~count * 2~ bytes of the block of memory pointed by ~buffer~ to the specified value (interpreted as an unsigned short).
+*buffer_u32_fill(buffer: buffer, value, count: number): number*
+- Sets the first ~count * 4~ bytes of the block of memory pointed by ~buffer~ to the specified value (interpreted as an unsigned int).
+*buffer_u64_fill(buffer: buffer, value, count: number): number*
+- Sets the first ~count * 8~ bytes of the block of memory pointed by ~buffer~ to the specified value (interpreted as an unsigned long long).
+*buffer_i8_fill(buffer: buffer, value, count: number): number*
+- Sets the first ~count~ bytes of the block of memory pointed by ~buffer~ to the specified value (interpreted as an char).
+*buffer_i16_fill(buffer: buffer, value, count: number): number*
+- Sets the first ~count * 2~ bytes of the block of memory pointed by ~buffer~ to the specified value (interpreted as an short).
+*buffer_i32_fill(buffer: buffer, value, count: number): number*
+- Sets the first ~count * 4~ bytes of the block of memory pointed by ~buffer~ to the specified value (interpreted as an int).
+*buffer_i64_fill(buffer: buffer, value, count: number): number*
+- Sets the first ~count * 8~ bytes of the block of memory pointed by ~buffer~ to the specified value (interpreted as an long long).
+*buffer_f32_fill(buffer: buffer, value, count: number): number*
+- Sets the first ~count * 4~ bytes of the block of memory pointed by ~buffer~ to the specified value (interpreted as an float).
+*buffer_f64_fill(buffer: buffer, value, count: number): number*
+- Sets the first ~count * 8~ bytes of the block of memory pointed by ~buffer~ to the specified value (interpreted as an double).
 *buffer_u8_get(buffer: buffer): number*
 - Gets 1-byte unsigned data from buffer.
 *buffer_i8_get(buffer: buffer): number*
@@ -610,6 +628,14 @@ You can enable assertions globally in Settings, or locally in script editor.
 - Copies buffer content to string.
 *wbuffer_to_string(b: buffer): string*
 - Copies wbuffer content to string.
+*buffer_to_array_f32(b: buffer, count: number): map*
+- Converts ~count~ floats from buffer to map.
+*buffer_to_array_f64(b: buffer, count: number): map*
+- Converts ~count~ doubles from buffer to map.
+*array_to_buffer_f32(b: buffer): map*
+- Converts a map to a buffer. The buffer's type of data is float.
+*array_to_buffer_f64(b: buffer): map*
+- Converts a map to a buffer. The buffer's type of data is double.
 
 ** Strings
 *numbers(s: string): map*
