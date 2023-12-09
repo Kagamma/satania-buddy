@@ -1201,14 +1201,24 @@ end;
 class function TBuiltInFunction.SEBufferSetU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin        
   SEValidateType(@Args[0], sevkBuffer, 1);
-  LongWord(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
+  case Args[1].Kind of
+    sevkBuffer:
+      LongWord(Args[0].VarBuffer^.Ptr^) := LongWord(Args[1].VarBuffer^.Ptr);
+    else
+      LongWord(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
+  end;
   Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetU64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin      
   SEValidateType(@Args[0], sevkBuffer, 1);
-  QWord(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
+  case Args[1].Kind of
+    sevkBuffer:
+      QWord(Args[0].VarBuffer^.Ptr^) := QWord(Args[1].VarBuffer^.Ptr);
+    else
+      QWord(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
+  end;
   Result := SENull;
 end;
 
@@ -4123,7 +4133,7 @@ begin
               end;
             seakBuffer, seakWBuffer:
               begin
-                GC.AllocBuffer(@TV, 8);
+                GC.AllocBuffer(@TV, 0);
                 TV.VarBuffer^.Ptr := Pointer(QWord(ImportResult));
               end;
             seakF32:
