@@ -483,45 +483,45 @@ You can enable assertions globally in Settings, or locally in script editor.
 *name: string* ~deprecated, use charname instead~
 
 *charname: string*
-- Get character's name
+- Gets character's name
 *username: string*
-- Get user's name
+- Gets user's name
 *character: string*
-- Get character's directory name
+- Gets character's directory name
 *meta: map*
 - ~meta.json~ content
 *os: string*
-- Get OS name
+- Gets OS name
 
 ** Common functions
 *typeof(v: any): string*
-- Return type of variable (number / boolean / string / map / array / buffer / function / null).
+- Returns type of variable (number / boolean / string / map / array / buffer / function / null).
 *string(n: number): string*
-- Convert n to string.
+- Converts n to string.
 *number(s: string): number*
-- Convert s to number.
+- Converts s to number.
 *write(...)*
-- Write to console.
+- Writes to console.
 *writeln(...)*
-- Write to console. End with newline.
+- Writes to console. End with newline.
 *wait(seconds: number)*
 - Wait in seconds. This won't block the main process.
 *map_create(): map*
-- Create a new map. This function is comparable to [] syntax.
+- Creates a new map. This function is comparable to [] syntax.
 *map_key_delete(a: map, key: number/string): map*
-- Delete map elements.
+- Deletes map elements.
 *map_keys_get(a: map): map*
-- Return map contains all keys from map a.
+- Returns map contains all keys from map a.
 *array_resize(a: map, size: number): map*
-- Resize a valid array.
+- Resizes a valid array.
 *array_to_map(arr: array): map*
-- Convert array arr to map. Note that arr itself will be converted.
+- Converts array arr to map. Note that arr itself will be converted.
 *length(a: map/string)*
-- Return length of string, map or buffer.
+- Returns length of string, map or buffer.
 *random(n: number): number*
-- Return a random integer number range from 0 - (n-1)
+- Returns a random integer number range from 0 - (n-1)
 *rnd: number*
-- Return a random number range from 0 - 1
+- Returns a random number range from 0 - 1
 *sign(n: number): number*
 
 *round(n: number): number*
@@ -541,19 +541,19 @@ You can enable assertions globally in Settings, or locally in script editor.
 *sqrt(n: number): number*
 
 *range(x, y: number): map*
-- Return [x..y] array with step = 1.
+- Returns [x..y] array with step = 1.
 
 *range(x, y, step: number): map*
-- Return [x..y] array.
+- Returns [x..y] array.
 
 *min(...): number*
 
 *max(...): number*
 
 *chr(number): string*
-- Typecast a number (0..255) to equivalent char value.
+- Typecasts a number (0..255) to equivalent char value.
 *ord(string): number*
-- Typecast a char to equivalent number value.
+- Typecasts a char to equivalent number value.
 
 ** Buffers
 *buffer_create(size: number): buffer*
@@ -639,105 +639,105 @@ You can enable assertions globally in Settings, or locally in script editor.
 
 ** Strings
 *numbers(s: string): map*
-- Convert words to map of numbers.
+- Converts words to map of numbers.
   + Input: two thousands five hundreds kg of stones arrived at ten o'clock
   + Output: [2500, 10]
 
 *months_to_numbers(s: string): map*
-- Convert words to map of numbers represent month.
+- Converts words to map of numbers represent month.
   + Input: february and november
   + Output: [2, 11]
 
 *string_concat(s, s1, s2: string)*
-- Concatenate s1 and s2 and save result to s, without creating a new copy of s. Use this instead of =s = s1 + s2= if you try to concatenate a lot of strings.
+- Concatenates s1 and s2 and save result to s, without creating a new copy of s. Use this instead of =s = s1 + s2= if you try to concatenate a lot of strings.
 *string_empty(s)*
-- Empty string s. It is used to set a string built by /string_concat()/ back to an empty string.
+- Empties string s. It is used to set a string built by /string_concat()/ back to an empty string.
 *string_insert(source, substring: string, index: number): string*
-- Insert a string at index.
+- Inserts a string at index.
 *string_grep(s: string, subs: map of strings): string*
-- grep a string
+- greps a string
 *string_split(s, delimiter: string): map*
-- Split a string into multiple parts.
+- Splits a string into multiple parts.
 *string_find(s, sub: string): number*
-- Find location of substring in a string. Return -1 if no substring is found.
+- Finds location of substring in a string. Return -1 if no substring is found.
 *string_delete(s: string, index, count: number): string*
-- Delete part of a string at index.
+- Deletes part of a string at index.
 *string_replace(s, old, new: string): string*
-- Replace all ~old~ with ~new~ in string s.
+- Replaces all ~old~ with ~new~ in string s.
 *string_uppercase(s: string): string*
-- Return uppercase string.
+- Returns uppercase string.
 *string_lowercase(s: string): string*
-- Return lowercase string.
+- Returns lowercase string.
 *string_trim(s: string): string*
-- Trim string.
+- Trims string.
 *string_trim_left(s: string): string*
-- Trim left of string.
+- Trims left of string.
 *string_trim_right(s: string): string*
-- Trim right of string.
+- Trims right of string.
 *string_format(s: string, subs: map): string*
-- Replace a string with contents from map
+- Replaces a string with contents from map
   + Example: ~string_format('{0} is {1} gold', ['Key', 500])~ => Key is 500 gold
 *string_find_regex(s, regex: string): map*
-- Return map of matched string + matched location.
+- Returns map of matched string + matched location.
 
 ** Base64
 *base64_encode(buf: buffer): string*
-- Encode a given string to base64 string.
+- Encodes a given string to base64 string.
 *base64_decode(s: string): buffer*
-- Decode a given base64 string back to original string.
+- Decodes a given base64 string back to original string.
 
 ** Datetime
 *ticks(): number*
-- Return system's ticks, in miliseconds.
+- Returns system's ticks, in miliseconds.
 *dt_now(): number*
-- Return current time in datetime format.
+- Returns current time in datetime format.
 *dt_year_get(dt: number): number*
-- Return year in number.
+- Returns year in number.
 *dt_month_get(dt: number): number*
-- Return month number.
+- Returns month number.
 *dt_day_get(dt: number): number: number*
-- Return day number.
+- Returns day number.
 *dt_hour_get(dt: number): number*
-- Return hour number.
+- Returns hour number.
 *dt_minute_get(dt: number): number*
-- Return minute number.
+- Returns minute number.
 *dt_day_add(dt, days: number): number*
-- Increase dt by number of days.
+- Increases dt by number of days.
 *dt_month_add(dt, months: number): number*
-- Increase dt by number of months.
+- Increases dt by number of months.
 *dt_year_add(dt, years: number): number*
-- Increase dt by number of years.
+- Increases dt by number of years.
 *dt_date_set(year, month, day: number): number*
-- Encode date from year, month and day.
+- Encodes date from year, month and day.
 *dt_time_set(hour, minute, second, milisecond: number): number*
-- Encode time from hour, minute, second and milisecond.
+- Encodes time from hour, minute, second and milisecond.
 
 ** File system
 *fs_directory_create(path: string)*
-- Create new directory.
+- Creates new directory.
 *fs_directory_delete(path: string)*
-- Delete directory.
+- Deletes directory.
 *fs_directory_find_all(path: string, is_subdir: boolean)*
-- Perform search for directories in certain paths. Return map of paths.
+- Performs search for directories in certain paths. Return map of paths.
 *fs_directory_exists(path: string): boolean*.
-- Check if a directory is exists.
+- Checks if a directory is exists.
 *fs_directory_config_get(): string*
-- Return satania-buddy's config directory path.
+- Returns satania-buddy's config directory path.
 *fs_file_read_binary(filename: string): buffer*
-- Read content from file.
+- Reads content from file.
 *fs_file_write_binary(filename: string, buf: buffer, buf_size: number)*
-- Write content at the end file. If the file is not exist then a new file is created.
+- Writes content at the end file. If the file is not exist then a new file is created.
 *fs_file_read(filename: string): string* ~deprecated, use fs_file_read_text() instead~
 
 *fs_file_read_text(filename: string): string*
-- Read text from file.
+- Reads text from file.
 *fs_file_write(filename, text: string)* ~deprecated, use fs_file_write_text() instead~
 
 *fs_file_write_text(filename, text: string)*
-- Write text at the end of file. If the file is not exist then a new file is created.
+- Writes text at the end of file. If the file is not exist then a new file is created.
 *fs_file_find_all(path, mask: string, is_subdir: boolean, attribute:
 number): map*
-- Perform search for files in certain paths. Return map of paths.
+- Performs search for files in certain paths. Return map of paths.
 - List of attributes:
   + FA_DIRECTORY
   + FA_READONLY
@@ -748,84 +748,84 @@ number): map*
   + FA_SYSFILE
   + FA_ANYFILE
 *fs_file_copy(src, dst: string): boolean*
-- Copy src to dst, override if dst exists. Return true if success.
+- Copies src to dst, override if dst exists. Return true if success.
 
 *fs_file_exists(filename: string): boolean*
-- Check if a file exists.
+- Checks if a file exists.
 *fs_file_delete(filename: string)*
-- Delete a file.
+- Deletes a file.
 *fs_file_rename(oldname, newname: string)*
-- Rename a file.
+- Renames a file.
 *fs_file_size_get(filename: string): number*
 - Returns size of file.
 
 ** Clipboard
 *clipboard_get(): string*
-- Get text from clipboard.
+- Gets text from clipboard.
 *clipboard_to_file(filename: string)*
-- Save content (image, text) from clipboard to a file.
+- Saves content (image, text) from clipboard to a file.
 
 ** Process
 *process_run(process: string, show_window: boolean): string*
-- Run a process by name. Return process guid.
+- Runs a process by name. Return process guid.
 *process_pipe_get(guid: string): map*
-- Return process's actual id, status and stdout / stderr pipes: /[ "process_id": number, "running": boolean, "output": null / string ]/
+- Returns process's actual id, status and stdout / stderr pipes: /[ "process_id": number, "running": boolean, "output": null / string ]/
 *process_pipe_set(guid, s: string)*
-- Write s to process's stdin pipe.
+- Writes s to process's stdin pipe.
 *process_terminate(guid: string)*
-- Terminate process.
+- Terminates process.
 
 ** HTTP requests
 *url_encode(s: string): string*
-- Encode URL element.
+- Encodes URL element.
 *url_decode(s: string): string*
-- Decode URL element.
+- Decodes URL element.
 *http_open(url: string)*
-- Open an URL using default web browser.
+- Opens an URL using default web browser.
 *http_fetch(method, url: string, headers: map, data: string/map): string*
-- Make a request to URL. Return guid.
+- Makes a request to URL. Return guid.
 *http_upload(url: string, headers: map, data: string/map, field, file: string): string*
-- Upload a file to URL. Return guid.
+- Uploads a file to URL. Return guid.
 *http_progress_get(guid: string): map*
-- Get current progress of HTTP request. Result map contains position and length: /[ position: number, length: number ]/
+- Gets current progress of HTTP request. Result map contains position and length: /[ position: number, length: number ]/
 *http_is_success(guid: string): boolean*
-- Check if url query (get, post, etc) is finished.
+- Checks if url query (get, post, etc) is finished.
 *http_result_get(guid: string, force_buffer: boolean): map*
-- Get HTML result from url_fetch / url_upload. Result map contains status, headers and data. Depends on ~Content-Type~, data can be either string or buffer: /[ status: number, headers: map, data: string | buffer ]/
+- Gets HTML result from url_fetch / url_upload. Result map contains status, headers and data. Depends on ~Content-Type~, data can be either string or buffer: /[ status: number, headers: map, data: string | buffer ]/
 - ~force_buffer~ is optional. If it is set to ~true~, then result data is always buffer.
 *http_query(data, xpath: string): map*
-- Extract data from HTML string.
+- Extracts data from HTML string.
 
 ** Email
 *email_load(): boolean*
 - Tells Satania to check for email's connection.
 *email_unseen_count(): number*
-- Return number of unread emails.
+- Returns number of unread emails.
 *email_sender_get(email_index: number): string*
-- Get email's sender.
+- Gets email's sender.
 *email_subject_get(email_index: number): string*
-- Get email's subject.
+- Gets email's subject.
 *email_is_loading(): boolean*
-- Return true if Satania is loading emails.
+- Returns true if Satania is loading emails.
 *email_is_success(): boolean*
-- Return true if Satania is succeeded in loading emails.
+- Returns true if Satania is succeeded in loading emails.
 *email_is_configured(): boolean*
-- Return true if IMAP is configured in Settings.
+- Returns true if IMAP is configured in Settings.
 
 ** JSON
 *json_parse(json: string): map*
-- Convert a JSON string to map.
+- Converts a JSON string to map.
   + json = json_parse('{ "a": 5, "b": 2, "c": { "d": "a text", "e": ["another text", 2] } }') will return a map, which can be accessed for values for example: =json.c.e[0] // another text=
 
 *json_stringify(map: map): string*
-- Convert a map to JSON string.
+- Converts a map to JSON string.
 
 ** Workers
 - /Please note workers run on the same thread as main script. Make sure to use yield to avoid infinite loop./
 
 *worker_create(worker_name: string, evil_script: string, interval:
 number, consts: map): string*
-- Create a new worker. Unlike main script, workers will automatically delete itself once its done executing.
+- Creates a new worker. Unlike main script, workers will automatically delete itself once its done executing.
 - Unless the worker is marked as persistent, workers will be deleted if user changes character.
   + ~worker_name~: Name of worker.
   + ~evil_script~: The script that will be executed by worker.
@@ -834,26 +834,26 @@ number, consts: map): string*
   + ~Return~: Worker name.
 
 *worker_persistent_set(worker_name: string, persistent: boolean)*
-- Set worker's persistent flag.
+- Sets worker's persistent flag.
 *worker_exists(worker_name: string): boolean*
-- Check if a worker exists.
+- Checks if a worker exists.
 *worker_delete(worker_name: string)*
-- Delete a worker by name.
+- Deletes a worker by name.
 
 ** Tools
 *tool_evilc_editor(filename: string)*
-- Open a file with built-in EvilC editor.
+- Opens a file with built-in EvilC editor.
 
 *tool_hex_editor(filename: string)*
-- Open a file with built-in hex editor.
+- Opens a file with built-in hex editor.
 
 ** Memory management
 *mem_used(): number*
-- Return memory usage by script engine in bytes.
+- Returns memory usage by script engine in bytes.
 *mem_object_count(): number*
-- Return number of objects allocated by script engine.
+- Returns number of objects allocated by script engine.
 *mem_gc()*
-- Trigger garbage collection.
+- Triggers garbage collection.
 
 ** Satania-specific function
 *talk(message: string)*
@@ -861,11 +861,11 @@ number, consts: map): string*
 - The script engine will be blocked until all the text is shown on screen.
 - Calling this function will automatically disable streaming mode
 *stream_enable()*
-- Enable streaming mode. Useful for integrating with chatbot backends
+- Enables streaming mode. Useful for integrating with chatbot backends
 *stream_disable()*
-- Disable steaming mode.
+- Disables steaming mode.
 *stream(message: string)*
-- Stream a text to chat window / speech bubble
+- Streams a text to chat window / speech bubble
 *notify(message: string)*
 - Shows a notification at top-left of the screen.
 *ask(caption, message: string, width, height: number)*
@@ -896,36 +896,37 @@ What do you think about me?<br />
 [[https://user-images.githubusercontent.com/7451778/181904113-fc4b3e03-76d8-406b-8b03-1baffcaa55a0.png]]
 
 *answer(): any*
-- Return result value from ask(). If no answer is found, then it returns null.
+- Returns result value from ask(). If no answer is found, then it returns null.
 - For example #1, the result is a string, either /Yes/ or /No/, taken from /href/ attribute.
 - For example #2, the result is a map, which is /[ "thought": "Your answer" ]/.
 *sprite_animation_stop_all()*
-- Stop all animations.
+- Stops all animations.
 *sprite_load(sprite: string)*
-- Load a model (supports X3D, Spine, images, glTF, Cocos2D, Starling) in /data/sprites/current_character/
+- Loads a model (supports X3D, Spine, images, glTF, Cocos2D, Starling) in /data/sprites/current_character/
 *sprite_animation_speed_set(animation_name: string, total_time:
 number)*
-- Set animation's interval in seconds.
+*sprite_animation_speed_set(animation_name: string, time: number)*
+- Sets animation's interval in seconds.
 *sprite_animation_play(animation_name: string, loop: boolean = false)*
-- Play an animation by name
+- Plays an animation by name
 - For skeletal animations, the animations are not override each other so you can play multiple animations at once.
 *sprite_animation_is_playing(animation_name: string): boolean*
-- Return true if animation is playing.
+- Returns true if animation is playing.
 *sprite_animation_stop(animation_name: string)*
-- Stop an animation.
+- Stops an animation.
 *sprite_animation_talk_set(loop, finish: string, random_script_files: map of strings)*
-- Set default talking animations.
+- Sets default talking animations.
 - ~random_script_files~ is optional, which indicates which script to run when start talking. This is useful if you want your character to play different animations when start talking.
 *sprite_scale_set(scale: number)*
-- Scale the sprite.
+- Scales the sprite.
 *sprite_visible_set(visible: boolean)*
-- Set sprite visibility
+- Sets sprite visibility
 *sprite_visible_get(): boolean*
-- Get sprite visibility
+- Gets sprite visibility
 *sprite_other_create(name: string)*
-- Create a new sprite with name. Sprites created using this function can only be controlled by ~sprite_other_xxx()~ functions
+- Creates a new sprite with name. Sprites created using this function can only be controlled by ~sprite_other_xxx()~ functions
 *sprite_other_render(name: string, source: string, format: string)*
-- Render sprite ~name~ with content from ~source~. If ~name~ doesn't exist, create a new one.
+- Renders sprite ~name~ with content from ~source~. If ~name~ doesn't exist, create a new one.
 - ~format~ accepts the following formats:
   + x3dv: Source is X3D with classic encoding string
   + wrl: Same as x3dv
@@ -975,27 +976,27 @@ sprite_other_render('3d cube',
 #+end_example
 
 *sprite_other_delete(name: string)*
-- Delete other sprite with ~name~
+- Deletes other sprite with ~name~
 *sprite_other_delete_all()*
-- Delete all other sprites
+- Deletes all other sprites
 *is_sow(): boolean*
-- Return true if Sit on Window is turned on.
+- Returns true if Sit on Window is turned on.
 *is_lewd(): boolean*
-- Return true if Fanservice is turned on.
+- Returns true if Fanservice is turned on.
 *is_silent(): boolean*
-- Return true if Silent is turned on.
+- Returns true if Silent is turned on.
 *is_speech_to_text(): boolean*
-- Return true if Speech Recognition is turned on.
+- Returns true if Speech Recognition is turned on.
 *flag_global_get(flag: string): string*
-- Get a flag from ~configs.json~. If no flag is found, the function return ~null~ instead.
+- Gets a flag from ~configs.json~. If no flag is found, the function return ~null~ instead.
 *flag_global_set(flag: string, value: string)*
-- Set a flag. Result stores in ~configs.json~.
+- Sets a flag. Result stores in ~configs.json~.
 *flag_local_get(flag: string): string*
-- Get a flag from ~scripts/<character directory>/flags.ini~. If no flag is found, the function return ~null~ instead.
+- Gets a flag from ~scripts/<character directory>/flags.ini~. If no flag is found, the function return ~null~ instead.
 *flag_local_set(flag: string, value: string)*
-- Set a flag. Result stores in ~scripts/<character directory>/flags.ini~.
+- Sets a flag. Result stores in ~scripts/<character directory>/flags.ini~.
 *get(flag: string): any*
-- Get a flag from memory. If no flag is found, the function return ~null~ instead.
+- Gets a flag from memory. If no flag is found, the function return ~null~ instead.
 - The data retrieved from get() is the same as the one set by the set() function.
 - You can use this function, combined with set(), to exchange data between multiple scripts.
 - A predefined flag ~global~ is available by default. This flag, which is a map, can be used as a common way to exchange data.
@@ -1008,7 +1009,7 @@ global.value = 'This is a string'
 #+end_example
 
 *set(flag: string, value: any)*
-- Set a flag. Result stores in memory.
+- Sets a flag. Result stores in memory.
 - You can use this function, combined with get(), to exchange data between multiple scripts.
 - Example:
 
@@ -1018,13 +1019,13 @@ set('new_flag', 'Data')
 #+end_example
 
 *scheme_load(scheme_name: string)*
-- Load an .evil scheme file in ~data/scripts/current_character~. This will also stop the current script.
+- Loads an .evil scheme file in ~data/scripts/current_character~. This will also stop the current script.
 *scheme_default(): string*
-- Return Default Evil Script.
+- Returns Default Evil Script.
 *delta_time(): number*
 - Delta Time, in seconds.
 *sound_play(sound_name: string)*
-- Play a sound in /sounds/ directory.
+- Plays a sound in /sounds/ directory.
 *chat_mode_set(chatmode: number)*
 - Set chat mode:
   + CHATMODE_CHAT
@@ -1036,7 +1037,7 @@ set('new_flag', 'Data')
 - If no chat message is found, an empty string will be returned.
 
 *chat_history_get(): array*
-- Return array of chat message. Each item has the following format: { name: string, message: string, timestamp: string }
+- Retursn array of chat message. Each item has the following format: { name: string, message: string, timestamp: string }
 
 ** About Evil script compiler
 - The compiler itself is a one-pass compiler. It follows Niklaus Wirth's design, completely skips AST generation and generates binary directly.
