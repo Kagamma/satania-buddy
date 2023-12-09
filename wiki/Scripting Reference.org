@@ -629,13 +629,13 @@ You can enable assertions globally in Settings, or locally in script editor.
 *wbuffer_to_string(b: buffer): string*
 - Copies wbuffer content to string.
 *buffer_to_array_f32(b: buffer, count: number): map*
-- Converts ~count~ floats from buffer to map.
+- Converts ~count~ floats from buffer to valid array.
 *buffer_to_array_f64(b: buffer, count: number): map*
-- Converts ~count~ doubles from buffer to map.
-*array_to_buffer_f32(b: buffer): map*
-- Converts a map to a buffer. The buffer's type of data is float.
-*array_to_buffer_f64(b: buffer): map*
-- Converts a map to a buffer. The buffer's type of data is double.
+- Converts ~count~ doubles from buffer to valid array.
+*array_to_buffer_f32(a: map): buffer*
+- Converts a valid array to a buffer. The buffer's type of data is float.
+*array_to_buffer_f64(a: map): buffer*
+- Converts a valid array to a buffer. The buffer's type of data is double.
 
 ** Strings
 *numbers(s: string): map*
