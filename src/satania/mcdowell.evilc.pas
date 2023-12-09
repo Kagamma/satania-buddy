@@ -31,9 +31,14 @@ unit Mcdowell.EvilC;
 // enable this if you want to handle UTF-8 strings (requires LCL)
 {$define SE_STRING_UTF8}
 // use computed goto instead of case of
-{$define SE_COMPUTED_GOTO}
+{$ifndef AARCH64}
+  {$define SE_COMPUTED_GOTO}
+{$endif}
 // enable this if you want to use libffi to handle dynamic function calls
 {$define SE_LIBFFI}
+{$if defined(CPU32) or defined(CPU64) or defined(SE_LIBFFI)}
+  {$define SE_DYNLIBS}
+{$endif}
 
 interface
 
@@ -41,7 +46,7 @@ uses
   SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr,
   base64
   {$ifdef SE_LIBFFI}, ffi{$endif}
-  {$ifdef SE_STRING_UTF8},LazUTF8{$endif}{$ifdef CPU64}, dynlibs{$endif};
+  {$ifdef SE_STRING_UTF8},LazUTF8{$endif}{$ifdef SE_DYNLIBS}, dynlibs{$endif};
 
 const
   // Maximum memory in bytes before GC starts acting aggressive
