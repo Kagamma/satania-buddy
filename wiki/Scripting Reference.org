@@ -905,6 +905,8 @@ What do you think about me?<br />
 - Loads a model (supports X3D, Spine, images, glTF, Cocos2D, Starling) in /data/sprites/current_character/
 *sprite_animation_speed_set(animation_name: string, total_time:
 number)*
+*sprite_animation_exists(animation_name: string): boolean*
+- Checks if an animation exists or not.
 *sprite_animation_speed_set(animation_name: string, time: number)*
 - Sets animation's interval in seconds.
 *sprite_animation_play(animation_name: string, loop: boolean = false)*

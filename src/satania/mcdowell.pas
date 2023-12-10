@@ -99,6 +99,7 @@ type
     procedure StartAnimation(URL, AnimName: String; IsRepeat: Boolean = True); overload;
     procedure StopAnimation(AnimName: String);
     procedure StopAllAnimations;
+    function  AnimationExists(AnimName: String): Boolean;
     procedure Log(LogName, S: String); overload;
     procedure Log(S: String); overload;
     procedure Error(S: String);
@@ -224,6 +225,7 @@ begin
   S.RegisterFunc('sprite_visible_get', @SESpriteVisibleGet, 0);
   S.RegisterFunc('sprite_animation_stop_all', @SEStopAllAnimations, 0);
   S.RegisterFunc('sprite_load', @SESpriteLoad, 1);
+  S.RegisterFunc('sprite_animation_exists', @SEAnimationExists, 1);
   S.RegisterFunc('sprite_animation_speed_set', @SESetAnimationSpeed, 2);
   S.RegisterFunc('sprite_animation_play', @SEStartAnimation, 2);
   S.RegisterFunc('sprite_animation_is_playing', @SEIsAnimationPlaying, 1);
@@ -459,6 +461,11 @@ end;
 procedure TSatania.StopAllAnimations;
 begin
   SpriteStopAllAnimations(Self.Sprite, Self.Mixer);
+end;
+
+function  TSatania.AnimationExists(AnimName: String): Boolean;
+begin
+  Result := SpriteAnimationExists(Self.Sprite, Self.Mixer, AnimName);
 end;
 
 procedure TSatania.Action(Typ, Message: String);

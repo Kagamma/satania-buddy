@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEProcessPipeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEProcessTerminate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsAnimationPlaying(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEAnimationExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStopAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStopAllAnimations(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStartAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -330,6 +331,11 @@ function TSatania.SESetAnimationSpeed(const VM: TSEVM; const Args: array of TSEV
 begin
   SetAnimationSpeed(Args[0], Args[1].VarNumber);
   Result := SENull;
+end;
+
+function TSatania.SEAnimationExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := AnimationExists(Args[0]);
 end;
 
 function TSatania.SEStopAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

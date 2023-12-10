@@ -12,7 +12,8 @@ procedure SpriteSetFilter(const Sprite: TCastleTransform; const S: String);
 procedure SpriteSetAnimationSpeed(const Sprite: TCastleTransform; const AnimName: String; const Speed: Single);
 procedure SpriteStartAnimation(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior; const AnimName: String; const IsRepeat: Boolean);
 procedure SpriteStopAnimation(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior; const AnimName: String);
-procedure SpriteStopAllAnimations(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior);
+procedure SpriteStopAllAnimations(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior);                     
+function  SpriteAnimationExists(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior; const AnimName: String): Boolean;
 
 var
   TrackDict: TTrackDict;
@@ -192,6 +193,33 @@ begin
       Track := TrackDict[S];
       Track.IsLooped := False;
       TrackDict[S] := Track;
+    end;
+  end;
+end;
+
+function  SpriteAnimationExists(const Sprite: TCastleTransform; const Mixer: TCastleSpineMixerBehavior; const AnimName: String): Boolean; 
+var
+  TimeSensor: TTimeSensorNode;
+begin
+  Result := False;
+  if Sprite is TCastleScene then
+  begin
+    try
+      TimeSensor := TCastleScene(Sprite).Node(AnimName) as TTimeSensorNode;
+      Result := True;
+    except
+      on E: Exception do;
+    end;
+  end else
+  if Sprite is TCastleSpine then
+  begin
+    if (Mixer.Data <> nil) and (Mixer.Data.FindAnimation(AnimName) <> nil) then
+    begin
+      Result := True;
+    end else
+    if TrackDict.ContainsKey(AnimName) then
+    begin
+      Result := True;
     end;
   end;
 end;
