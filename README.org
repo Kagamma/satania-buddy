@@ -1,3 +1,5 @@
+This repo only contains code. For resources, see https://github.com/Kagamma/satania-buddy-data
+
 ** satania-buddy
 Open source virtual desktop assistant / LLM frontend in the form of Satanichia Kurumizawa McDowell, developed using Free Pascal and Castle Game Engine.
 
