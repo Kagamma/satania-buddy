@@ -112,7 +112,7 @@ type
     procedure Chat(S: String);
     procedure Action(Typ, Message: String);
     procedure Worker(const AKey, AScript: String; const ATime: Single; const AArgs: TSEValue);
-    procedure WorkerDelete(const AKey: String);      
+    procedure WorkerDelete(const AKey: String);
     procedure ActionFromFileGlobal(FileName: String; IsChecked: Boolean = True);
     procedure ActionFromFile(FileName: String; IsChecked: Boolean = True);
     procedure SetScale(Scale: Single);
@@ -125,7 +125,7 @@ type
     procedure UpdateReminders;
     procedure UpdateMeta(const S: TEvilC);
     procedure CleanUpCache;
-    procedure BackgroundScriptClearAll;       
+    procedure BackgroundScriptClearAll;
     function CreateEvilC(const IsSafe: Boolean = False): TEvilC;
   end;
 
@@ -207,11 +207,11 @@ begin
     S.RegisterFunc('ask', @SEAsk, -1);
     S.RegisterFunc('scheme_load', @SESchemeLoad, 1);
   end;
-  S.RegisterFunc('talk', @SETalk, 1);    
+  S.RegisterFunc('talk', @SETalk, 1);
   S.RegisterFunc('talk_system', @SELog, 1);
   S.RegisterFunc('stream_enable', @SEStreamEnable, 0);
   S.RegisterFunc('stream_disable', @SEStreamDisable, 0);
-  S.RegisterFunc('stream', @SEStream, 1);       
+  S.RegisterFunc('stream', @SEStream, 1);
   S.RegisterFunc('stream_position_get', @SEStreamPositionGet, 0);
   S.RegisterFunc('numbers', @SENumbers, 1);
   S.RegisterFunc('months_to_numbers', @SEMonthsToNumbers, 1);
@@ -219,7 +219,7 @@ begin
   S.RegisterFunc('notify', @SENotify, 1);
   S.RegisterFunc('process_run', @SEProcessRun, 2);
   S.RegisterFunc('process_pipe_get', @SEProcessPipeGet, 1);
-  S.RegisterFunc('process_pipe_set', @SEProcessPipeSet, 2); 
+  S.RegisterFunc('process_pipe_set', @SEProcessPipeSet, 2);
   S.RegisterFunc('process_terminate', @SEProcessTerminate, 1);
   S.RegisterFunc('sprite_visible_set', @SESpriteVisibleSet, 1);
   S.RegisterFunc('sprite_visible_get', @SESpriteVisibleGet, 0);
@@ -256,13 +256,14 @@ begin
   S.RegisterFunc('sound_play', @SESoundPlay, 1);
   S.RegisterFunc('http_open', @SEOpenURL, 1);
   S.RegisterFunc('http_fetch', @SEURLFetch, 4);
-  S.RegisterFunc('http_upload', @SEURLUpload, 5); 
+  S.RegisterFunc('http_upload', @SEURLUpload, 5);
   S.RegisterFunc('http_progress_get', @SEURLGetProgress, 1);
   S.RegisterFunc('http_is_success', @SEURLIsSuccess, 1);
   S.RegisterFunc('http_result_get', @SEURLGetResult, -1);
   S.RegisterFunc('http_query', @SEURLProcess, 2);
   S.RegisterFunc('url_encode', @SEURLEncode, 1);
   S.RegisterFunc('url_decode', @SEURLDecode, 1);
+  S.RegisterFunc('chat_bubble_get', @SEChatBubbleGet, 0);
   S.RegisterFunc('chat_history_get', @SEChatHistoryGet, 0);
   S.RegisterFunc('chat_mode_set', @SEChatModeSet, 1);
   S.RegisterFunc('chat_result_get', @SEChatResultGet, 0);
@@ -272,10 +273,10 @@ begin
   S.RegisterFunc('clipboard_to_file', @SEClipboardToFile, 1);
   S.RegisterFunc('fs_file_delete', @SEFileDelete, 1);
   S.RegisterFunc('fs_file_rename', @SEFileRename, 2);
-  S.RegisterFunc('fs_file_exists', @SEFileExists, 1); 
+  S.RegisterFunc('fs_file_exists', @SEFileExists, 1);
   S.RegisterFunc('fs_file_read', @SEFileReadText, 1);
   S.RegisterFunc('fs_file_read_text', @SEFileReadText, 1);
-  S.RegisterFunc('fs_file_read_binary', @SEFileReadBinary, 1); 
+  S.RegisterFunc('fs_file_read_binary', @SEFileReadBinary, 1);
   S.RegisterFunc('fs_file_write', @SEFileWriteText, 2);
   S.RegisterFunc('fs_file_write_text', @SEFileWriteText, 2);
   S.RegisterFunc('fs_file_write_binary', @SEFileWriteBinary, 3);
@@ -285,7 +286,7 @@ begin
   S.RegisterFunc('fs_directory_create', @SEDirectoryCreate, 1);
   S.RegisterFunc('fs_directory_delete', @SEDirectoryDelete, 1);
   S.RegisterFunc('fs_directory_find_all', @SEDirectoryFindAll, 2);
-  S.RegisterFunc('fs_directory_exists', @SEDirectoryExists, 1);     
+  S.RegisterFunc('fs_directory_exists', @SEDirectoryExists, 1);
   S.RegisterFunc('fs_directory_config_get', @SEDirectoryGetConfig, 0);
   S.RegisterFunc('json_parse', @SEJSONParse, 1);
   S.RegisterFunc('json_stringify', @SEJSONStringify, 1);
@@ -474,7 +475,7 @@ begin
   try
     Self.Script.IncludePathList.Clear;
     Self.Script.IncludePathList.Add(GetOSLocalDir);
-    Self.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');  
+    Self.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
     Self.Script.IncludePathList.Add(GetOSLocalDir + 'data/scripts/' + Save.Settings.Skin + '/');
     case Typ of
       'chat':
@@ -1097,7 +1098,7 @@ begin
     end;
   end;
   FreeAndNil(RunProcessNonBlockResultList);
-end; 
+end;
 
 var
   Key: String;

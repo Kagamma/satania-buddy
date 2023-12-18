@@ -64,6 +64,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SESoundPlay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEChatBubbleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEChatResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEChatHistoryGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -451,6 +452,11 @@ function TSatania.SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue):
 begin
   ChatMode := Round(Args[0].VarNumber);
   Result := SENull;
+end;
+
+function TSatania.SEChatBubbleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := FormBubble.KMemo.Text;
 end;
 
 function TSatania.SEChatResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

@@ -62,7 +62,7 @@ end;
 procedure WebUI_API_ChatHistory(Req: TRequest; Res: TResponse);
 begin
   Res.Content := FormChat.ChatHistory.ToJSONString(0);
-end;  
+end;
 
 procedure WebUI_API_ChatHistoryPlainText(Req: TRequest; Res: TResponse);
 begin
@@ -72,7 +72,7 @@ end;
 procedure WebUI_API_ChatHistoryClear(Req: TRequest; Res: TResponse);
 begin
   FormChat.ClearHistory;
-end;          
+end;
 
 procedure WebUI_API_ChatHistorySavePlainText(Req: TRequest; Res: TResponse);
 begin
@@ -82,7 +82,7 @@ end;
 procedure WebUI_API_ChatIsStreaming(Req: TRequest; Res: TResponse);
 begin
   Res.Content := BoolToStr(FormChat.RichText.IsStreaming, '1', '0');
-end;          
+end;
 
 procedure WebUI_API_ChatSend(Req: TRequest; Res: TResponse);
 var
@@ -96,7 +96,7 @@ end;
 procedure WebUI_API_ChatStopGenerating(Req: TRequest; Res: TResponse);
 begin
   FormChat.StopGenerating;
-end;  
+end;
 
 procedure WebUI_API_ChatServiceGet(Req: TRequest; Res: TResponse);
 begin
@@ -124,12 +124,12 @@ begin
   Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceEditProc, '');
   Thread.Start;
   WaitForThreadTerminate(Thread.ThreadID, 5000);
-end; 
+end;
 
 procedure WebUI_API_ChatServiceGetType(Req: TRequest; Res: TResponse);
 begin
   Res.Content := WebUI_ChatServiceGetTypeProc;
-end;      
+end;
 
 procedure WebUI_API_ChatServiceGetSetting(Req: TRequest; Res: TResponse);
 var
@@ -145,7 +145,7 @@ end;
 procedure WebUI_API_ChatServiceSetSetting(Req: TRequest; Res: TResponse);
 begin
   Satania.LocalFlagIni.WriteString('Flags', Save.Settings.LastServiceUsed, Req.Content);
-end;      
+end;
 
 procedure WebUI_API_CharacterSkinGet(Req: TRequest; Res: TResponse);
 begin
