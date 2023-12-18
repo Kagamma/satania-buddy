@@ -13,7 +13,7 @@
 {"hash":205858901,"name":"tformsettings.labelyourname.caption","sourcebytes":[89,111,117,114,32,78,97,109,101],"value":"Your Name"},
 {"hash":41831989,"name":"tformsettings.edityourname.text","sourcebytes":[69,100,105,116,89,111,117,114,78,97,109,101],"value":"EditYourName"},
 {"hash":242337042,"name":"tformsettings.labelerrormessage.caption","sourcebytes":[68,105,115,112,108,97,121,32,101,114,114,111,114,32,109,101,115,115,97,103,101,115,32,97,115,32,34,83,121,115,116,101,109,34],"value":"Display error messages as \"System\""},
-{"hash":127487347,"name":"tformsettings.labelenableitalicforusertext.caption","sourcebytes":[69,110,97,98,108,101,32,115,116,121,108,105,110,103,32,102,111,114,32,117,115,101,114,32,109,101,115,115,97,103,101,115],"value":"Enable styling for user messages"},
+{"hash":125856073,"name":"tformsettings.labelenableitalicforusertext.caption","sourcebytes":[69,110,97,98,108,101,32,115,116,121,108,105,110,103,32,102,111,114,32,117,115,101,114,32,109,101,115,115,97,103,101,115,32,40,110,97,116,105,118,101,32,99,104,97,116,32,85,73,32,111,110,108,121,41],"value":"Enable styling for user messages (native chat UI only)"},
 {"hash":4863557,"name":"tformsettings.buttoncloneskin.caption","sourcebytes":[67,108,111,110,101],"value":"Clone"},
 {"hash":67742823,"name":"tformsettings.labeldefaultchatwindow.caption","sourcebytes":[83,101,116,32,67,104,97,116,32,40,87,101,98,85,73,41,32,97,115,32,100,101,102,97,117,108,116,32,67,104,97,116,32,119,105,110,100,111,119],"value":"Set Chat (WebUI) as default Chat window"},
 {"hash":78392485,"name":"tformsettings.buttondeleteskin.caption","sourcebytes":[68,101,108,101,116,101],"value":"Delete"},

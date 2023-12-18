@@ -113,9 +113,9 @@ object FormSettings: TFormSettings
       Height = 546
       Top = 1
       Width = 707
-      ActivePage = TabSheetEmbeddedServer
+      ActivePage = TabSheetGeneral
       Align = alClient
-      TabIndex = 4
+      TabIndex = 0
       TabOrder = 0
       object TabSheetGeneral: TTabSheet
         Caption = 'General'
@@ -227,7 +227,7 @@ object FormSettings: TFormSettings
           Caption = 'Display error messages as "System"'
         end
         object CheckBoxErrorMessage: TCheckBox
-          Left = 344
+          Left = 382
           Height = 17
           Top = 248
           Width = 18
@@ -237,11 +237,11 @@ object FormSettings: TFormSettings
           Left = 24
           Height = 15
           Top = 276
-          Width = 170
-          Caption = 'Enable styling for user messages'
+          Width = 279
+          Caption = 'Enable styling for user messages (native chat UI only)'
         end
         object CheckBoxEnableItalicForUserText: TCheckBox
-          Left = 344
+          Left = 382
           Height = 17
           Top = 276
           Width = 18
@@ -266,7 +266,7 @@ object FormSettings: TFormSettings
           Caption = 'Set Chat (WebUI) as default Chat window'
         end
         object CheckBoxDefaultChatWindow: TCheckBox
-          Left = 344
+          Left = 382
           Height = 17
           Top = 304
           Width = 18
