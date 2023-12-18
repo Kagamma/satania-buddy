@@ -285,7 +285,7 @@ end;
 
 procedure TFormMain.MenuItemAboutClick(Sender: TObject);
 begin
-  Satania.Talk('Satania Buddy'#10'Homepage: https://kgm.itch.io/satania-buddy');
+  Satania.Talk('Satania Buddy'#10'Homepage: https://kgm.itch.io/satania-buddy'#10'Icon set: https://github.com/legacy-icons/famfamfam-silk by Mark James');
 end;
 
 procedure TFormMain.MenuItemAlarmsAndRemindersClick(Sender: TObject);
