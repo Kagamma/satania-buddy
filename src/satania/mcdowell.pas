@@ -295,7 +295,7 @@ begin
   S.RegisterFunc('sprite_other_delete', @SESketchClear, 1);
   S.RegisterFunc('sprite_other_delete_all', @SESketchClearAll, 0);
   S.RegisterFunc('worker_create', @SEWorkerCreate, -1);
-  S.RegisterFunc('worker_persistent_set', @SEWorkerExists, 2);
+  S.RegisterFunc('worker_persistent_set', @SEWorkerSetPersistent, 2);
   S.RegisterFunc('worker_exists', @SEWorkerExists, 1);
   S.RegisterFunc('worker_delete', @SEWorkerDelete, 1);
   S.RegisterFunc('tool_evilc_editor', @SEToolEvilCEditor, 1);

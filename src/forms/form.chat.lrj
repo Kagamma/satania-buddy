@@ -11,6 +11,8 @@
 {"hash":140834020,"name":"tformchat.tabsheetchatedit.caption","sourcebytes":[67,104,97,116,32,69,100,105,116],"value":"Chat Edit"},
 {"hash":6655509,"name":"tformchat.labeleditmode.caption","sourcebytes":[69,100,105,116,32,77,111,100,101],"value":"Edit Mode"},
 {"hash":179187383,"name":"tformchat.menuitemstopgenerating.caption","sourcebytes":[83,116,111,112,32,103,101,110,101,114,97,116,105,110,103],"value":"Stop generating"},
+{"hash":148970197,"name":"tformchat.menuitemcontinuetogenerate.caption","sourcebytes":[67,111,110,116,105,110,117,101,32,116,111,32,103,101,110,101,114,97,116,101,32,102,114,111,109,32,108,97,115,116,32,109,101,115,115,97,103,101],"value":"Continue to generate from last message"},
+{"hash":22339429,"name":"tformchat.menuitemregenerate.caption","sourcebytes":[82,101,45,103,101,110,101,114,97,116,101,32,116,104,101,32,108,97,115,116,32,109,101,115,115,97,103,101],"value":"Re-generate the last message"},
 {"hash":165650585,"name":"tformchat.menuitemeditmode.caption","sourcebytes":[69,100,105,116,32,99,104,97,116,32,104,105,115,116,111,114,121],"value":"Edit chat history"},
 {"hash":221685945,"name":"tformchat.menuitemclearhistory.caption","sourcebytes":[67,108,101,97,114,32,99,104,97,116,32,104,105,115,116,111,114,121],"value":"Clear chat history"},
 {"hash":70081961,"name":"tformchat.menuitemshowwebui.caption","sourcebytes":[83,104,111,119,32,99,104,97,116,32,118,105,97,32,87,101,98,85,73],"value":"Show chat via WebUI"}

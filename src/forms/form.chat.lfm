@@ -47,7 +47,6 @@ object FormChat: TFormChat
   }
   Position = poDefault
   ShowInTaskBar = stAlways
-  LCLVersion = '3.99.0.0'
   OnCreate = FormCreate
   OnShow = FormShow
   object PageControl: TPageControl
@@ -295,6 +294,16 @@ object FormChat: TFormChat
       Enabled = False
       ImageIndex = 25
       OnClick = MenuItemStopGeneratingClick
+    end
+    object MenuItemContinueToGenerate: TMenuItem
+      Caption = 'Continue to generate from last message'
+      ImageIndex = 31
+      OnClick = MenuItemContinueToGenerateClick
+    end
+    object MenuItemRegenerate: TMenuItem
+      Caption = 'Re-generate the last message'
+      ImageIndex = 23
+      OnClick = MenuItemRegenerateClick
     end
     object MenuItemEditMode: TMenuItem
       Caption = 'Edit chat history'

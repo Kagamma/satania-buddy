@@ -402,6 +402,11 @@
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
+    <Debugger>
+      <ClassConfig Version="1">
+        <Config ConfigName="New" ConfigClass="TGDBMIDebugger" Active="True" UID="{778FAF89-062E-44DD-B0D5-747147D9C27A}"/>
+      </ClassConfig>
+    </Debugger>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>

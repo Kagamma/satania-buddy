@@ -45,6 +45,8 @@ type
     LabelEditMode: TLabel;
     MemoEdit: TMemo;
     MemoChatLog: TKMemo;
+    MenuItemRegenerate: TMenuItem;
+    MenuItemContinueToGenerate: TMenuItem;
     MenuItemShowWebUI: TMenuItem;
     MenuItemStopGenerating: TMenuItem;
     MenuItemClearHistory: TMenuItem;
@@ -77,6 +79,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MenuItemContinueToGenerateClick(Sender: TObject);
+    procedure MenuItemRegenerateClick(Sender: TObject);
     procedure MenuItemShowWebUIClick(Sender: TObject);
     procedure MenuItemStopGeneratingClick(Sender: TObject);
   private
@@ -253,6 +257,46 @@ begin
   LoadServiceList;
   Self.ButtonOpenService.Enabled := Self.ComboBoxService.ItemIndex > 0;
   Self.Caption := 'Chat with ' + Satania.Name + '!';
+end;
+
+procedure TFormChat.MenuItemContinueToGenerateClick(Sender: TObject);
+begin
+  Self.EditChat.Lines.Text := '/blank';
+  Self.Send;
+  InsertTyping;
+  ScrollToBottom;
+end;
+
+procedure TFormChat.MenuItemRegenerateClick(Sender: TObject);
+var
+  I: Integer;
+  CH: TChatHistoryRec;
+begin
+  // Delete latest chat item
+  if Self.ChatHistory.List.Count > 0 then
+  begin
+    Self.ChatHistory.List.Delete(Self.ChatHistory.List.Count - 1);
+  end;
+  // Reload the chat
+  MemoChatLog.Blocks.Clear;
+  MemoChatLog.Blocks.LockUpdate;
+  FIsWriteToHistoryLog := False;
+  for I := 0 to Self.ChatHistory.List.Count - 1 do
+  begin
+    CH := Self.ChatHistory.List[I];
+    if CH.SenderType = cseSatania then
+      InsertLog(Satania.Name, CH.Message, CH.Time)
+    else
+      InsertLog(Save.Settings.UserName, CH.Message, CH.Time);
+    RemoveTyping;
+  end;
+  FIsWriteToHistoryLog := True;
+  MemoChatLog.Blocks.UnLockUpdate;
+  // Generate new one
+  Self.EditChat.Lines.Text := '/blank';
+  Self.Send;
+  InsertTyping;
+  ScrollToBottom;
 end;
 
 procedure TFormChat.MenuItemShowWebUIClick(Sender: TObject);

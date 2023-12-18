@@ -668,8 +668,8 @@ object FormSettings: TFormSettings
           Left = 23
           Height = 45
           Top = 88
-          Width = 388
-          Caption = '*Enable this will allows to access chat (WebUI) directly from web browsers'#13#10'*The URL is ''http://localhost:<port number>'''#13#10'*Restart satania-buddy is required for changes to take effect'
+          Width = 385
+          Caption = '*Enable this will allows to access chat (WebUI) remotely via web browsers'#13#10'*The URL is ''http://localhost:<port number>'''#13#10'*Restart satania-buddy is required for changes to take effect'
         end
         object LabelEmbeddedServerEnable: TLabel
           Left = 23
