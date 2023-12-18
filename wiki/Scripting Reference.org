@@ -1039,7 +1039,10 @@ set('new_flag', 'Data')
 - If no chat message is found, an empty string will be returned.
 
 *chat_history_get(): array*
-- Retursn array of chat message. Each item has the following format: { name: string, message: string, timestamp: string }
+- Returns array of chat message. Each item has the following format: { name: string, message: string, timestamp: string }
+
+*chat_bubble_get(): string*
+- Gets the current text in chat bubble.
 
 ** About Evil script compiler
 - The compiler itself is a one-pass compiler. It follows Niklaus Wirth's design, completely skips AST generation and generates binary directly.
