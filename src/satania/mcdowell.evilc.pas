@@ -123,16 +123,6 @@ type
 
   TSENestedProc = procedure is nested;
 
-  PSEStackTraceSymbol = ^TSEStackTraceSymbol;
-  TSEStackTraceSymbol = record
-    Name,
-    Value,
-    Kind: String;
-    Childs: array of TSEStackTraceSymbol;
-  end;
-  TSEStackTraceSymbolArray = array of TSEStackTraceSymbol;
-  TSEStackTraceSymbolProc = procedure(Nodes: TSEStackTraceSymbolArray) of object;
-
   TSEValueKind = (
     sevkNull,
     sevkNumber,
@@ -151,6 +141,16 @@ type
   PSEBuffer = ^TSEBuffer;
 
   TSEFuncKind = (sefkNative, sefkScript, sefkImport);
+
+  PSEStackTraceSymbol = ^TSEStackTraceSymbol;
+  TSEStackTraceSymbol = record
+    Name,
+    Value: String;
+    Kind: TSEValueKind;
+    Childs: array of TSEStackTraceSymbol;
+  end;
+  TSEStackTraceSymbolArray = array of TSEStackTraceSymbol;
+  TSEStackTraceSymbolProc = procedure(Nodes: TSEStackTraceSymbolArray) of object;
 
   {$mode delphi}
   PSEValue = ^TSEValue;
@@ -3039,7 +3039,7 @@ var
       SetLength(Node^.Childs, C);
       Node := @Node^.Childs[C - 1];
       Node^.Name := AName;
-      Node^.Kind := ValueKindNames[AValue.Kind];
+      Node^.Kind := AValue.Kind;
       case AValue.Kind of
         sevkMap:
           begin
@@ -3076,7 +3076,6 @@ var
           SetLength(Nodes, NodeCount);
           CurFunc := CurFrame^.Func;
           Nodes[NodeCount - 1].Name := CurFunc^.Name;
-          Nodes[NodeCount - 1].Kind := '';
           for J := 0 to CurFrame^.Func^.VarSymbols.Count - 1 do
           begin
             AddChildNode(@Nodes[NodeCount - 1], CurFunc^.VarSymbols[J], CurFrame^.Stack[J - 1]);
@@ -3086,8 +3085,7 @@ var
       // Global
       Inc(NodeCount);
       SetLength(Nodes, NodeCount);
-      Nodes[NodeCount - 1].Name := '___global';
-      Nodes[NodeCount - 1].Kind := '';
+      Nodes[NodeCount - 1].Name := 'global_variables';
       for J := 0 to Self.Parent.GlobalVarSymbols.Count - 1 do
       begin
         AddChildNode(@Nodes[NodeCount - 1], Self.Parent.GlobalVarSymbols[J], Self.Global[J]);

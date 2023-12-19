@@ -61,7 +61,7 @@ procedure TFormStackViewer.RenderStackTraceInfo(StackTraceArray: TSEStackTraceSy
     if Parent = nil then
       Result := TreeView.Items.Add(Parent, StackNode^.Name + '()')
     else
-      Result := TreeView.Items.AddChild(Parent, StackNode^.Name + ' (' + StackNode^.Kind + '): ' + S);
+      Result := TreeView.Items.AddChild(Parent, StackNode^.Name + ' (' + ValueKindNames[StackNode^.Kind] + '): ' + S);
     C := Length(StackNode^.Childs);
     if C > 0 then
     begin
