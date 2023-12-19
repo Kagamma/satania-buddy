@@ -150,7 +150,7 @@ type
     Childs: array of TSEStackTraceSymbol;
   end;
   TSEStackTraceSymbolArray = array of TSEStackTraceSymbol;
-  TSEStackTraceSymbolProc = procedure(Nodes: TSEStackTraceSymbolArray) of object;
+  TSEStackTraceSymbolProc = procedure(Message: String; Nodes: TSEStackTraceSymbolArray) of object;
 
   {$mode delphi}
   PSEValue = ^TSEValue;
@@ -3021,7 +3021,7 @@ var
   ffiResultType: ffi_type;
   {$endif}
 
-  procedure PrintEvilScriptStackTrace;
+  procedure PrintEvilScriptStackTrace(Message: String);
   var
     CurFrame: PSEFrame;
     CurFunc: PSEFuncScriptInfo;
@@ -3090,7 +3090,7 @@ var
       begin
         AddChildNode(@Nodes[NodeCount - 1], Self.Parent.GlobalVarSymbols[J], Self.Global[J]);
       end;
-      Self.Parent.StackTraceHandler(Nodes);
+      Self.Parent.StackTraceHandler(Message, Nodes);
     end;
   end;
 
@@ -4520,11 +4520,12 @@ begin
             break;
           Inc(I);
         end;
-        PrintEvilScriptStackTrace;
         if LineOfCode.Module = '' then
-          raise Exception.Create(Format('Runtime error %s: "%s" at line %d', [E.ClassName, E.Message, LineOfCode.Line]))
+          S := Format('Runtime error %s: "%s" at line %d', [E.ClassName, E.Message, LineOfCode.Line])
         else
-          raise Exception.Create(Format('Runtime error %s: "%s" at line %d (%s)', [E.ClassName, E.Message, LineOfCode.Line, LineOfCode.Module]));
+          S := Format('Runtime error %s: "%s" at line %d (%s)', [E.ClassName, E.Message, LineOfCode.Line, LineOfCode.Module]);
+        PrintEvilScriptStackTrace(S);
+        raise Exception.Create(S);
       end else
       begin
         Self.FramePtr := Self.TrapPtr^.FramePtr;

@@ -13,22 +13,22 @@ type
   { TFormStackViewer }
 
   TFormStackViewer = class(TForm)
-    MenuItemClear: TMenuItem;
+    MenuItemExpandSelected: TMenuItem;
+    MenuItemClearAll: TMenuItem;
     MenuItemCollapseAll: TMenuItem;
     MenuItemExpandAll: TMenuItem;
     Panel: TPanel;
     PopupMenuTree: TPopupMenu;
     TreeView: TTreeView;
     procedure FormShow(Sender: TObject);
-    procedure MenuItemClearClick(Sender: TObject);
+    procedure MenuItemClearAllClick(Sender: TObject);
     procedure MenuItemCollapseAllClick(Sender: TObject);
     procedure MenuItemExpandAllClick(Sender: TObject);
+    procedure MenuItemExpandSelectedClick(Sender: TObject);
+    procedure PopupMenuTreePopup(Sender: TObject);
   private
-    FIsRendered: Boolean;
-    FStackTraceArray: TSEStackTraceSymbolArray;
   public
-    procedure RenderStackTraceInfo(StackTraceArray: TSEStackTraceSymbolArray);
-    procedure GatherStackTraceInfo(StackTraceArray: TSEStackTraceSymbolArray);
+    procedure GatherStackTraceInfo(Message: String; StackTraceArray: TSEStackTraceSymbolArray);
   end;
 
 var
@@ -40,21 +40,34 @@ implementation
 
 { TFormStackViewer }
 
-procedure TFormStackViewer.GatherStackTraceInfo(StackTraceArray: TSEStackTraceSymbolArray);
+function GetRootCount(Tree: TTreeView): Integer;
+var
+  Node: TTreeNode;
 begin
-  Self.FStackTraceArray := StackTraceArray;
-  Self.FIsRendered := False;
-  if Self.Visible then
-    Self.RenderStackTraceInfo(Self.FStackTraceArray);
+  Result := 0;
+  Node := Tree.Items.GetFirstNode;
+  while Node <> nil do
+  begin
+    Inc(Result);
+    Node := Node.GetNextSibling;
+  end;
+end;
+
+function GetRootItem(Tree: TTreeView; Index: Integer): TTreeNode;
+begin
+  Result := Tree.Items.GetFirstNode;
+  while (Result <> nil) and (Index > 0) do
+  begin
+    Result := Result.GetNextSibling;
+    Dec(Index);
+  end;
 end;
 
 procedure TFormStackViewer.FormShow(Sender: TObject);
 begin
-  if not Self.FIsRendered then
-    Self.RenderStackTraceInfo(Self.FStackTraceArray);
 end;
 
-procedure TFormStackViewer.MenuItemClearClick(Sender: TObject);
+procedure TFormStackViewer.MenuItemClearAllClick(Sender: TObject);
 begin
   Self.TreeView.Items.Clear;
 end;
@@ -69,9 +82,19 @@ begin
   Self.TreeView.FullExpand;
 end;
 
-procedure TFormStackViewer.RenderStackTraceInfo(StackTraceArray: TSEStackTraceSymbolArray);
+procedure TFormStackViewer.MenuItemExpandSelectedClick(Sender: TObject);
+begin
+  Self.TreeView.Selected.Expand(True);
+end;
 
-  function AddNode(const Parent: TTreeNode; const StackNode: PSEStackTraceSymbol): TTreeNode;
+procedure TFormStackViewer.PopupMenuTreePopup(Sender: TObject);
+begin
+  Self.MenuItemExpandSelected.Enabled := Self.TreeView.Selected <> nil;
+end;
+
+procedure TFormStackViewer.GatherStackTraceInfo(Message: String; StackTraceArray: TSEStackTraceSymbolArray);
+
+  function AddNode(const Root: Boolean; const Parent: TTreeNode; const StackNode: PSEStackTraceSymbol): TTreeNode;
   var
     I, C: Integer;
     S: String;
@@ -82,15 +105,15 @@ procedure TFormStackViewer.RenderStackTraceInfo(StackTraceArray: TSEStackTraceSy
     C := Length(S);
     if C > 4096 then
       SetLength(S, 4096);
-    if Parent = nil then
-      Result := TreeView.Items.Add(Parent, StackNode^.Name + '()')
+    if Root then
+      Result := TreeView.Items.AddChild(Parent, StackNode^.Name + '()')
     else
       Result := TreeView.Items.AddChild(Parent, StackNode^.Name + ' (' + ValueKindNames[StackNode^.Kind] + '): ' + S);
     C := Length(StackNode^.Childs);
     if C > 0 then
     begin
       for I := 0 to C - 1 do
-        AddNode(Result, @StackNode^.Childs[I]);
+        AddNode(False, Result, @StackNode^.Childs[I]);
     end;
   end;
 
@@ -98,13 +121,16 @@ var
   I: Integer;
 begin
   TreeView.BeginUpdate;
-  TreeView.Items.Clear;
+  if GetRootCount(Self.TreeView) > 9 then
+    TreeView.Items.Delete(GetRootItem(Self.TreeView, 9));
   for I := 0 to Length(StackTraceArray) - 1 do
   begin
-    AddNode(nil, @StackTraceArray[I]);
+    if TreeView.Items.Count = 0 then
+      AddNode(True, TreeView.Items.Add(nil, '[' + FormatDateTime('YYYY/MM/DD hh:mm:ss', Now) + '] ' + Message), @StackTraceArray[I])
+    else
+      AddNode(True, TreeView.Items.Insert(TreeView.Items.GetFirstNode, '[' + FormatDateTime('YYYY/MM/DD hh:mm:ss', Now) + '] ' + Message), @StackTraceArray[I]);
   end;
   TreeView.EndUpdate;
-  Self.FIsRendered := True;
 end;
 
 end.
