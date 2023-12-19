@@ -119,16 +119,18 @@ procedure TFormStackViewer.GatherStackTraceInfo(Message: String; StackTraceArray
 
 var
   I: Integer;
+  Node: TTreeNode;
 begin
   TreeView.BeginUpdate;
   if GetRootCount(Self.TreeView) > 9 then
     TreeView.Items.Delete(GetRootItem(Self.TreeView, 9));
+  if TreeView.Items.Count = 0 then
+    Node := TreeView.Items.Add(nil, '[' + FormatDateTime('YYYY/MM/DD hh:mm:ss', Now) + '] ' + Message)
+  else
+    Node := TreeView.Items.Insert(TreeView.Items.GetFirstNode, '[' + FormatDateTime('YYYY/MM/DD hh:mm:ss', Now) + '] ' + Message);
   for I := 0 to Length(StackTraceArray) - 1 do
   begin
-    if TreeView.Items.Count = 0 then
-      AddNode(True, TreeView.Items.Add(nil, '[' + FormatDateTime('YYYY/MM/DD hh:mm:ss', Now) + '] ' + Message), @StackTraceArray[I])
-    else
-      AddNode(True, TreeView.Items.Insert(TreeView.Items.GetFirstNode, '[' + FormatDateTime('YYYY/MM/DD hh:mm:ss', Now) + '] ' + Message), @StackTraceArray[I]);
+    AddNode(True, Node, @StackTraceArray[I]);
   end;
   TreeView.EndUpdate;
 end;
