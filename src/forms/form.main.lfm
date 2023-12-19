@@ -493,6 +493,10 @@ object FormMain: TFormMain
         Caption = '-'
       end
     end
+    object MenuItemCharacters: TMenuItem
+      Caption = 'Characters'
+      ImageIndex = 30
+    end
     object MenuItemEmail: TMenuItem
       Caption = 'Email'
       Visible = False
@@ -517,10 +521,6 @@ object FormMain: TFormMain
       Caption = 'Console'
       ImageIndex = 21
       OnClick = MenuItemConsoleClick
-    end
-    object MenuItemCharacters: TMenuItem
-      Caption = 'Characters'
-      ImageIndex = 30
     end
     object MenuItemSettings: TMenuItem
       Caption = 'Settings'
