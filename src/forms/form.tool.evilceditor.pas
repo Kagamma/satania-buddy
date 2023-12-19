@@ -36,6 +36,7 @@ type
   { TFormEvilCEditor }
 
   TFormEvilCEditor = class(TForm)
+    MenuItemShowDebugger: TMenuItem;
     MenuItemEnableAssertions: TMenuItem;
     MenuItemEditorCut: TMenuItem;
     MenuItemEditorCopy: TMenuItem;
@@ -77,6 +78,7 @@ type
     procedure MenuItemEditorCutClick(Sender: TObject);
     procedure MenuItemEditorPasteClick(Sender: TObject);
     procedure MenuItemEnableAssertionsClick(Sender: TObject);
+    procedure MenuItemShowDebuggerClick(Sender: TObject);
     procedure SynCompletionBeforeExecute(ASender: TSynBaseCompletion;
       var ACurrentString: String; var APosition: Integer; var AnX,
       AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
@@ -96,7 +98,7 @@ type
     Script: TEvilC;
     Highlighter: TSynFacilSyn;
     procedure GenerateAutoComplete(const ASource: String = '');
-    procedure LoadHighligher(const Ext: String);                    
+    procedure LoadHighligher(const Ext: String);
     procedure FindNext;
   public
     EnbaleAssertions: Boolean;
@@ -114,6 +116,7 @@ uses
   Globals,
   Math,
   Mcdowell.Data,
+  Form.Tool.StackViewer,
   Mcdowell;
 
 { TFormEvilCEditor }
@@ -227,6 +230,11 @@ begin
   Self.MenuItemEnableAssertions.Checked := Self.EnbaleAssertions;
 end;
 
+procedure TFormEvilCEditor.MenuItemShowDebuggerClick(Sender: TObject);
+begin
+  FormStackViewer.Show;
+end;
+
 procedure TFormEvilCEditor.SynCompletionBeforeExecute(
   ASender: TSynBaseCompletion; var ACurrentString: String;
   var APosition: Integer; var AnX, AnY: Integer;
@@ -278,6 +286,7 @@ procedure TFormEvilCEditor.FormCreate(Sender: TObject);
 begin
   ErrorPos.Y := -1;
   Self.Script := Satania.CreateEvilC;
+  Self.Script.StackTraceHandler := nil;
   ToolButtonNewClick(Sender);
   {$ifdef WINDOWS}
   //Editor.Font.Name := 'Consolas';

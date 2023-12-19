@@ -159,6 +159,7 @@ uses
   mcdowell.net,
   mcdowell.numbers,
   form.main,
+  Form.Tool.StackViewer,
   mcdowell.imap,
   mcdowell.smtp,
   mcdowell.sketch,
@@ -1076,6 +1077,7 @@ end;
 function TSatania.CreateEvilC(const IsSafe: Boolean = False): TEvilC;
 begin
   Result := TEvilC.Create;
+  Result.StackTraceHandler := @FormStackViewer.GatherStackTraceInfo;
   Self.RegisterFuncs(Result, IsSafe);
   Self.UpdateMeta(Result);
 end;

@@ -34,7 +34,7 @@ uses
   CastleVectors, {$ifdef WINDOWS}CastleControl,{$else}OpenGLContext,{$endif} CastleWindow,
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, Menus,
   LCLType, StdCtrls, PopupNotifier, Globals, HtmlView, LCLintf, CastleDownload,
-  CastleFilesUtils,
+  CastleFilesUtils, Form.Tool.StackViewer,
   Mcdowell, LCLTranslator, AnchorDocking;
 
 type
@@ -77,6 +77,7 @@ type
     CastleControl: TCastleControl;
     ImageList: TImageList;
     MenuItem1: TMenuItem;
+    MenuItemDebugger: TMenuItem;
     MenuItemCharacters: TMenuItem;
     MenuItemChatWebUI: TMenuItem;
     MenuItemConsole: TMenuItem;
@@ -120,6 +121,7 @@ type
     procedure MenuItemChatWebUIClick(Sender: TObject);
     procedure MenuItemChatWithHerClick(Sender: TObject);
     procedure MenuItemConsoleClick(Sender: TObject);
+    procedure MenuItemDebuggerClick(Sender: TObject);
     procedure MenuItemEditorClick(Sender: TObject);
     procedure MenuItemHelpAlarmsAndRemindersClick(Sender: TObject);
     procedure MenuItemHelpCreateNewCharacterClick(Sender: TObject);
@@ -225,6 +227,7 @@ var
 begin
   if UtilActiveWindow = nil then
   begin
+    Satania.Script.StackTraceHandler := @FormStackViewer.GatherStackTraceInfo;
     InitializeLog;
     Ticks := GetTickCount64;
     UtilActiveWindow := TUtilActiveWindow.Create;
@@ -312,6 +315,11 @@ begin
   else
     ShowWindow(GetConsoleWindow, SW_HIDE);
   {$endif}
+end;
+
+procedure TFormMain.MenuItemDebuggerClick(Sender: TObject);
+begin
+  FormStackViewer.Show;
 end;
 
 procedure TFormMain.MenuItemEditorClick(Sender: TObject);

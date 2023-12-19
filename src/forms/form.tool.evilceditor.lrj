@@ -29,5 +29,6 @@
 {"hash":19140,"name":"tformevilceditor.menuitemeditorcut.caption","sourcebytes":[67,117,116],"value":"Cut"},
 {"hash":304761,"name":"tformevilceditor.menuitemeditorcopy.caption","sourcebytes":[67,111,112,121],"value":"Copy"},
 {"hash":5671589,"name":"tformevilceditor.menuitemeditorpaste.caption","sourcebytes":[80,97,115,116,101],"value":"Paste"},
-{"hash":245516627,"name":"tformevilceditor.menuitemenableassertions.caption","sourcebytes":[69,110,97,98,108,101,32,65,115,115,101,114,116,105,111,110,115],"value":"Enable Assertions"}
+{"hash":245516627,"name":"tformevilceditor.menuitemenableassertions.caption","sourcebytes":[69,110,97,98,108,101,32,65,115,115,101,114,116,105,111,110,115],"value":"Enable Assertions"},
+{"hash":6665234,"name":"tformevilceditor.menuitemshowdebugger.caption","sourcebytes":[83,116,97,99,107,32,86,105,101,119,101,114],"value":"Stack Viewer"}
 ]}

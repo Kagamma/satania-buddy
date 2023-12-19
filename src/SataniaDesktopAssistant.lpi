@@ -401,6 +401,14 @@
         <Filename Value="forms/form.chat_webui.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="forms/form.tool.stackviewer.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormStackViewer"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Form.Tool.StackViewer"/>
+      </Unit>
     </Units>
     <Debugger>
       <ClassConfig Version="1">

@@ -1,0 +1,30 @@
+object FormStackViewer: TFormStackViewer
+  Left = 350
+  Height = 559
+  Top = 250
+  Width = 395
+  Caption = 'Evil Script Stack Viewer'
+  ClientHeight = 559
+  ClientWidth = 395
+  FormStyle = fsSystemStayOnTop
+  OnShow = FormShow
+  object Panel: TPanel
+    Left = 0
+    Height = 40
+    Top = 0
+    Width = 395
+    Align = alTop
+    Caption = 'Display stack trace from latest Evil Script exception'
+    TabOrder = 0
+  end
+  object TreeView: TTreeView
+    Left = 0
+    Height = 519
+    Top = 40
+    Width = 395
+    Align = alClient
+    ReadOnly = True
+    TabOrder = 1
+    Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
+  end
+end

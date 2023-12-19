@@ -1,0 +1,4 @@
+{"version":1,"strings":[
+{"hash":218123554,"name":"tformstackviewer.caption","sourcebytes":[69,118,105,108,32,83,99,114,105,112,116,32,83,116,97,99,107,32,86,105,101,119,101,114],"value":"Evil Script Stack Viewer"},
+{"hash":231693486,"name":"tformstackviewer.panel.caption","sourcebytes":[68,105,115,112,108,97,121,32,115,116,97,99,107,32,116,114,97,99,101,32,102,114,111,109,32,108,97,116,101,115,116,32,69,118,105,108,32,83,99,114,105,112,116,32,101,120,99,101,112,116,105,111,110],"value":"Display stack trace from latest Evil Script exception"}
+]}

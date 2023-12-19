@@ -43,7 +43,7 @@ uses
 Com.WebApp, Com.Brokers, form.ask, utils.sprites,
   mcdowell.sketch, form.tool.hexeditor, Mcdowell.RichText, Form.Bubble,
   Utils.Colors, CopyDir, Vosk, BassAudioSource, SttThread, whisper,
-  Mcdowell.Data;
+  Mcdowell.Data, Form.Tool.StackViewer;
 
 {$R *.res}
 
@@ -61,6 +61,7 @@ begin
   Application.CreateForm(TFormRules, FormRules);
   Application.CreateForm(TFormAsk, FormAsk);
   Application.CreateForm(TFormHexEditor, FormHexEditor);
+  Application.CreateForm(TFormStackViewer, FormStackViewer);
   Application.Run;
  end.
 

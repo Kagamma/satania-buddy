@@ -2,10 +2,10 @@ object FormEvilCEditor: TFormEvilCEditor
   Left = 50
   Height = 663
   Top = 50
-  Width = 799
+  Width = 675
   Caption = 'EvilC Editor'
   ClientHeight = 663
-  ClientWidth = 799
+  ClientWidth = 675
   Icon.Data = {
     7E04000000000100010010100000010020006804000016000000280000001000
     0000200000000100200000000000000400006400000064000000000000000000
@@ -45,19 +45,18 @@ object FormEvilCEditor: TFormEvilCEditor
     0000000000000000000000000000000000000000000000000000000000000000
     0000
   }
+  Position = poDefaultPosOnly
+  ShowInTaskBar = stAlways
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  Position = poDefaultPosOnly
-  ShowInTaskBar = stAlways
-  LCLVersion = '3.99.0.0'
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
     Top = 0
-    Width = 799
+    Width = 675
     Caption = 'ToolBar1'
     Images = FormMain.ImageList
     ParentColor = False
@@ -80,7 +79,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator2: TToolButton
       Left = 101
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator2'
       Style = tbsSeparator
@@ -103,7 +102,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator1: TToolButton
       Left = 24
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator1'
       Style = tbsSeparator
@@ -117,7 +116,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator3: TToolButton
       Left = 209
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator3'
       Style = tbsSeparator
@@ -132,7 +131,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton2: TToolButton
       Left = 155
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButton2'
       Style = tbsSeparator
@@ -161,7 +160,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton3: TToolButton
       Left = 263
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButton3'
       Style = tbsSeparator
@@ -185,9 +184,9 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   inline Editor: TSynEdit
     Left = 0
-    Height = 613
+    Height = 614
     Top = 26
-    Width = 799
+    Width = 675
     Align = alClient
     Color = 1644825
     Font.Color = 14737632
@@ -694,9 +693,9 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   object StatusBar: TStatusBar
     Left = 0
-    Height = 24
-    Top = 639
-    Width = 799
+    Height = 23
+    Top = 640
+    Width = 675
     Panels = <    
       item
         Width = 1
@@ -756,11 +755,16 @@ object FormEvilCEditor: TFormEvilCEditor
     Top = 64
   end
   object PopupMenuCompilerFlags: TPopupMenu
+    Images = FormMain.ImageList
     Left = 344
     Top = 129
     object MenuItemEnableAssertions: TMenuItem
       Caption = 'Enable Assertions'
       OnClick = MenuItemEnableAssertionsClick
+    end
+    object MenuItemShowDebugger: TMenuItem
+      Caption = 'Stack Viewer'
+      OnClick = MenuItemShowDebuggerClick
     end
   end
 end
