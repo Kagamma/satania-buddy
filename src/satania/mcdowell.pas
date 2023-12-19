@@ -319,6 +319,7 @@ begin
   (FormTouch as TFormTouch).TimerBlinking.Enabled := True;
   FormChat.LoadChatHistoryFromFile;
   webui_close(WebUIHandle);
+  FormChat.Hide;
   //
   Self.UpdateMeta(Self.Script);
   Self.ActionFromFile(Save.Settings.DefaultEvilScheme);
