@@ -6,16 +6,23 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
-  Mcdowell.EvilC;
+  Menus, Buttons, Mcdowell.EvilC;
 
 type
 
   { TFormStackViewer }
 
   TFormStackViewer = class(TForm)
+    MenuItemClear: TMenuItem;
+    MenuItemCollapseAll: TMenuItem;
+    MenuItemExpandAll: TMenuItem;
     Panel: TPanel;
+    PopupMenuTree: TPopupMenu;
     TreeView: TTreeView;
     procedure FormShow(Sender: TObject);
+    procedure MenuItemClearClick(Sender: TObject);
+    procedure MenuItemCollapseAllClick(Sender: TObject);
+    procedure MenuItemExpandAllClick(Sender: TObject);
   private
     FIsRendered: Boolean;
     FStackTraceArray: TSEStackTraceSymbolArray;
@@ -47,6 +54,21 @@ begin
     Self.RenderStackTraceInfo(Self.FStackTraceArray);
 end;
 
+procedure TFormStackViewer.MenuItemClearClick(Sender: TObject);
+begin
+  Self.TreeView.Items.Clear;
+end;
+
+procedure TFormStackViewer.MenuItemCollapseAllClick(Sender: TObject);
+begin
+  Self.TreeView.FullCollapse;
+end;
+
+procedure TFormStackViewer.MenuItemExpandAllClick(Sender: TObject);
+begin
+  Self.TreeView.FullExpand;
+end;
+
 procedure TFormStackViewer.RenderStackTraceInfo(StackTraceArray: TSEStackTraceSymbolArray);
 
   function AddNode(const Parent: TTreeNode; const StackNode: PSEStackTraceSymbol): TTreeNode;
@@ -54,6 +76,8 @@ procedure TFormStackViewer.RenderStackTraceInfo(StackTraceArray: TSEStackTraceSy
     I, C: Integer;
     S: String;
   begin
+    if StackNode^.Name.IndexOf('___') = 0 then
+      Exit;
     S := StackNode^.Value;
     C := Length(S);
     if C > 4096 then

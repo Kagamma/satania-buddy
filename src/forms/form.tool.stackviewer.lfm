@@ -2,29 +2,46 @@ object FormStackViewer: TFormStackViewer
   Left = 350
   Height = 559
   Top = 250
-  Width = 395
-  Caption = 'Evil Script Stack Viewer'
+  Width = 432
+  Caption = 'Gab Watcher'
   ClientHeight = 559
-  ClientWidth = 395
+  ClientWidth = 432
   FormStyle = fsSystemStayOnTop
+  PopupMenu = PopupMenuTree
   OnShow = FormShow
   object Panel: TPanel
     Left = 0
     Height = 40
     Top = 0
-    Width = 395
+    Width = 432
     Align = alTop
-    Caption = 'Display stack trace from latest Evil Script exception'
+    Caption = 'Display call stack and variables from last Evil Script exception'
     TabOrder = 0
   end
   object TreeView: TTreeView
     Left = 0
     Height = 519
     Top = 40
-    Width = 395
+    Width = 432
     Align = alClient
     ReadOnly = True
     TabOrder = 1
     Options = [tvoAutoItemHeight, tvoHideSelection, tvoKeepCollapsedNodes, tvoReadOnly, tvoShowButtons, tvoShowLines, tvoShowRoot, tvoToolTips, tvoThemedDraw]
+  end
+  object PopupMenuTree: TPopupMenu
+    Left = 92
+    Top = 117
+    object MenuItemExpandAll: TMenuItem
+      Caption = 'Expand All'
+      OnClick = MenuItemExpandAllClick
+    end
+    object MenuItemCollapseAll: TMenuItem
+      Caption = 'Collapse All'
+      OnClick = MenuItemCollapseAllClick
+    end
+    object MenuItemClear: TMenuItem
+      Caption = 'Clear'
+      OnClick = MenuItemClearClick
+    end
   end
 end

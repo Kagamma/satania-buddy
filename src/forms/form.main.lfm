@@ -567,7 +567,7 @@ object FormMain: TFormMain
       end
     end
     object MenuItemDebugger: TMenuItem
-      Caption = 'Stack Viewer'
+      Caption = 'Gab Watcher'
       ImageIndex = 38
       OnClick = MenuItemDebuggerClick
     end

@@ -1,4 +1,7 @@
 {"version":1,"strings":[
-{"hash":218123554,"name":"tformstackviewer.caption","sourcebytes":[69,118,105,108,32,83,99,114,105,112,116,32,83,116,97,99,107,32,86,105,101,119,101,114],"value":"Evil Script Stack Viewer"},
-{"hash":231693486,"name":"tformstackviewer.panel.caption","sourcebytes":[68,105,115,112,108,97,121,32,115,116,97,99,107,32,116,114,97,99,101,32,102,114,111,109,32,108,97,116,101,115,116,32,69,118,105,108,32,83,99,114,105,112,116,32,101,120,99,101,112,116,105,111,110],"value":"Display stack trace from latest Evil Script exception"}
+{"hash":231205522,"name":"tformstackviewer.caption","sourcebytes":[71,97,98,32,87,97,116,99,104,101,114],"value":"Gab Watcher"},
+{"hash":100056718,"name":"tformstackviewer.panel.caption","sourcebytes":[68,105,115,112,108,97,121,32,99,97,108,108,32,115,116,97,99,107,32,97,110,100,32,118,97,114,105,97,98,108,101,115,32,102,114,111,109,32,108,97,115,116,32,69,118,105,108,32,83,99,114,105,112,116,32,101,120,99,101,112,116,105,111,110],"value":"Display call stack and variables from last Evil Script exception"},
+{"hash":138578252,"name":"tformstackviewer.menuitemexpandall.caption","sourcebytes":[69,120,112,97,110,100,32,65,108,108],"value":"Expand All"},
+{"hash":53573292,"name":"tformstackviewer.menuitemcollapseall.caption","sourcebytes":[67,111,108,108,97,112,115,101,32,65,108,108],"value":"Collapse All"},
+{"hash":4860802,"name":"tformstackviewer.menuitemclear.caption","sourcebytes":[67,108,101,97,114],"value":"Clear"}
 ]}

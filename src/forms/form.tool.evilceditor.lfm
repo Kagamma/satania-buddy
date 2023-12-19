@@ -763,7 +763,7 @@ object FormEvilCEditor: TFormEvilCEditor
       OnClick = MenuItemEnableAssertionsClick
     end
     object MenuItemShowDebugger: TMenuItem
-      Caption = 'Stack Viewer'
+      Caption = 'Gab Watcher'
       OnClick = MenuItemShowDebuggerClick
     end
   end
