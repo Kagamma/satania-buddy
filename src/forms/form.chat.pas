@@ -205,6 +205,7 @@ begin
   end;
   FIsWriteToHistoryLog := True;
   MemoChatLog.Blocks.UnLockUpdate;
+  Self.ScrollToBottom;
 end;
 
 procedure TFormChat.FormCreate(Sender: TObject);
