@@ -32,6 +32,7 @@ type
     procedure MenuItemExportJSONClick(Sender: TObject);
     procedure PopupMenuTreePopup(Sender: TObject);
   private
+    function Export: String;
   public
     procedure GatherStackTraceInfo(Message: String; StackTraceArray: TSEStackTraceSymbolArray);
   end;
@@ -96,7 +97,7 @@ begin
   Self.TreeView.Selected.Expand(True);
 end;
 
-procedure TFormStackViewer.MenuItemExportJSONClick(Sender: TObject);
+function TFormStackViewer.Export: String;
   procedure Decode(var JSONStr: String; Node: TTreeNode);
   var
     I: Integer = 0;
@@ -121,11 +122,16 @@ procedure TFormStackViewer.MenuItemExportJSONClick(Sender: TObject);
     end;
     JSONStr := JSONStr + '}';
   end;
+begin
+  Decode(Result, Self.TreeView.Items.GetFirstNode);
+end;
+
+procedure TFormStackViewer.MenuItemExportJSONClick(Sender: TObject);
 var
-  JSONStr: String = '';
+  JSONStr: String;
   SL: TStringList;
 begin
-  Decode(JSONStr, Self.TreeView.Items.GetFirstNode);
+  JSONStr := Self.Export;
   if Self.ExportJsonDialog.Execute then
   begin
     SL := TStringList.Create;
