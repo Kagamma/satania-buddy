@@ -886,6 +886,7 @@ begin
       MenuItem := TMenuItem.Create(FormMain);
       MenuItem.Caption := S;
       MenuItem.OnClick := @FormMain.DoExecuteScriptFromMenuGlobal;
+      MenuItem.ImageIndex := 2;
       FormMain.MenuItemActions.Add(MenuItem);
       MenuItems[I] := MenuItem;
     end;
@@ -906,6 +907,7 @@ begin
       MenuItem := TMenuItem.Create(FormMain);
       MenuItem.Caption := S;
       MenuItem.OnClick := @FormMain.DoExecuteScriptFromMenuLocal;
+      MenuItem.ImageIndex := 2;
       FormMain.MenuItemActions.Add(MenuItem);
       MenuItems[Anchor + I] := MenuItem;
     end;
