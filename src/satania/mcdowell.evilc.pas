@@ -3022,13 +3022,6 @@ var
   {$endif}
 
   procedure PrintEvilScriptStackTrace(Message: String);
-  var
-    CurFrame: PSEFrame;
-    CurFunc: PSEFuncScriptInfo;
-    I, J: Integer;
-
-    Nodes: TSEStackTraceSymbolArray;
-    NodeCount: Integer = 0;
 
     procedure AddChildNode(Node: PSEStackTraceSymbol; const AName: String; const AValue: TSEValue);
     var
@@ -3063,7 +3056,15 @@ var
           end;
       end;
     end;
-
+  
+  var
+    CurFrame: PSEFrame;
+    CurFunc: PSEFuncScriptInfo;
+    I, J: Integer;
+    LineOfCode: TSELineOfCode;
+    Nodes: TSEStackTraceSymbolArray;
+    NodeCount: Integer = 0;
+    BinaryPos: Integer;
   begin
     if Self.Parent.StackTraceHandler <> nil then
     begin
@@ -3075,7 +3076,20 @@ var
           Inc(NodeCount);
           SetLength(Nodes, NodeCount);
           CurFunc := CurFrame^.Func;
-          Nodes[NodeCount - 1].Name := CurFunc^.Name;
+
+          J := Self.Parent.LineOfCodeList.Count - 1;
+          while J >= 0 do
+          begin
+            LineOfCode := Self.Parent.LineOfCodeList[J];
+            if I = 1 then
+              BinaryPos := 0
+            else
+              BinaryPos := Self.Frame[I - 1].Func^.BinaryPos;
+            if (CurFrame^.Binary < LineOfCode.BinaryCount) and (BinaryPos = LineOfCode.BinaryPtr) then
+              break;
+            Dec(J);
+          end;
+          Nodes[NodeCount - 1].Name := CurFunc^.Name + '<' + LineOfCode.Module + ':' + IntToStr(LineOfCode.Line) + '>';
           for J := 0 to CurFrame^.Func^.VarSymbols.Count - 1 do
           begin
             AddChildNode(@Nodes[NodeCount - 1], CurFunc^.VarSymbols[J], CurFrame^.Stack[J - 1]);
@@ -4512,13 +4526,13 @@ begin
     begin
       if Self.TrapPtr < @Self.Trap[0] then
       begin
-        I := 0;
-        while I <= Self.Parent.LineOfCodeList.Count - 1 do
+        I := Self.Parent.LineOfCodeList.Count - 1;
+        while I >= 0 do
         begin
           LineOfCode := Self.Parent.LineOfCodeList[I];
-          if (CodePtrLocal <= LineOfCode.BinaryCount) and (Self.BinaryPtr = LineOfCode.BinaryPtr) then
+          if (CodePtrLocal < LineOfCode.BinaryCount) and (Self.BinaryPtr = LineOfCode.BinaryPtr) then
             break;
-          Inc(I);
+          Dec(I);
         end;
         if LineOfCode.Module = '' then
           S := Format('Runtime error %s: "%s" at line %d', [E.ClassName, E.Message, LineOfCode.Line])
