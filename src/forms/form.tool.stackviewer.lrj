@@ -1,6 +1,6 @@
 {"version":1,"strings":[
 {"hash":231205522,"name":"tformstackviewer.caption","sourcebytes":[71,97,98,32,87,97,116,99,104,101,114],"value":"Gab Watcher"},
-{"hash":151195043,"name":"tformstackviewer.panel.caption","sourcebytes":[68,105,115,112,108,97,121,32,99,97,108,108,32,115,116,97,99,107,32,97,110,100,32,118,97,114,105,97,98,108,101,115,32,102,114,111,109,32,108,97,115,116,32,49,48,32,69,118,105,108,32,83,99,114,105,112,116,32,101,120,99,101,112,116,105,111,110,115],"value":"Display call stack and variables from last 10 Evil Script exceptions"},
+{"hash":23086531,"name":"tformstackviewer.panel.caption","sourcebytes":[68,105,115,112,108,97,121,32,99,97,108,108,32,115,116,97,99,107,32,97,110,100,32,118,97,114,105,97,98,108,101,115,32,102,114,111,109,32,108,97,115,116,32,49,48,32,117,110,104,97,110,100,108,101,100,32,101,120,99,101,112,116,105,111,110,115],"value":"Display call stack and variables from last 10 unhandled exceptions"},
 {"hash":246383572,"name":"tformstackviewer.menuitemexpandselected.caption","sourcebytes":[69,120,112,97,110,100,32,83,101,108,101,99,116,101,100],"value":"Expand Selected"},
 {"hash":138578252,"name":"tformstackviewer.menuitemexpandall.caption","sourcebytes":[69,120,112,97,110,100,32,65,108,108],"value":"Expand All"},
 {"hash":53573292,"name":"tformstackviewer.menuitemcollapseall.caption","sourcebytes":[67,111,108,108,97,112,115,101,32,65,108,108],"value":"Collapse All"},

@@ -549,7 +549,7 @@ object FormStackViewer: TFormStackViewer
     Top = 0
     Width = 432
     Align = alTop
-    Caption = 'Display call stack and variables from last 10 Evil Script exceptions'
+    Caption = 'Display call stack and variables from last 10 unhandled exceptions'
     TabOrder = 0
   end
   object TreeView: TTreeView
