@@ -4526,13 +4526,26 @@ begin
     begin
       if Self.TrapPtr < @Self.Trap[0] then
       begin
-        I := Self.Parent.LineOfCodeList.Count - 1;
-        while I >= 0 do
+        if FramePtr = @Self.Frame[0] then
         begin
-          LineOfCode := Self.Parent.LineOfCodeList[I];
-          if (CodePtrLocal < LineOfCode.BinaryCount) and (BinaryPtrLocal = LineOfCode.BinaryPtr) then
-            break;
-          Dec(I);
+          I := Self.Parent.LineOfCodeList.Count - 1;
+          while I >= 0 do
+          begin
+            LineOfCode := Self.Parent.LineOfCodeList[I];
+            if (CodePtrLocal >= LineOfCode.BinaryCount) and (LineOfCode.BinaryPtr = 0) then
+              break;
+            Dec(I);
+          end;
+        end else
+        begin
+          I := 0;
+          while I < Self.Parent.LineOfCodeList.Count - 1 do
+          begin
+            LineOfCode := Self.Parent.LineOfCodeList[I];
+            if (CodePtrLocal < LineOfCode.BinaryCount) and (BinaryPtrLocal = LineOfCode.BinaryPtr) then
+              break;
+            Inc(I);
+          end;
         end;
         if LineOfCode.Module = '' then
           S := Format('Runtime error %s: "%s" at line %d', [E.ClassName, E.Message, LineOfCode.Line])
