@@ -577,9 +577,26 @@ object FormStackViewer: TFormStackViewer
       Caption = 'Collapse All'
       OnClick = MenuItemCollapseAllClick
     end
+    object Separator1: TMenuItem
+      Caption = '-'
+    end
     object MenuItemClearAll: TMenuItem
       Caption = 'Clear All'
       OnClick = MenuItemClearAllClick
     end
+    object Separator2: TMenuItem
+      Caption = '-'
+    end
+    object MenuItemExportJSON: TMenuItem
+      Caption = 'Export JSON'
+      OnClick = MenuItemExportJSONClick
+    end
+  end
+  object ExportJsonDialog: TSaveDialog
+    Title = 'Export JSON'
+    FileName = 'export.json'
+    Filter = 'JSON|*.json|All|*.*'
+    Left = 92
+    Top = 181
   end
 end

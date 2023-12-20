@@ -4,5 +4,7 @@
 {"hash":246383572,"name":"tformstackviewer.menuitemexpandselected.caption","sourcebytes":[69,120,112,97,110,100,32,83,101,108,101,99,116,101,100],"value":"Expand Selected"},
 {"hash":138578252,"name":"tformstackviewer.menuitemexpandall.caption","sourcebytes":[69,120,112,97,110,100,32,65,108,108],"value":"Expand All"},
 {"hash":53573292,"name":"tformstackviewer.menuitemcollapseall.caption","sourcebytes":[67,111,108,108,97,112,115,101,32,65,108,108],"value":"Collapse All"},
-{"hash":193203724,"name":"tformstackviewer.menuitemclearall.caption","sourcebytes":[67,108,101,97,114,32,65,108,108],"value":"Clear All"}
+{"hash":193203724,"name":"tformstackviewer.menuitemclearall.caption","sourcebytes":[67,108,101,97,114,32,65,108,108],"value":"Clear All"},
+{"hash":153616734,"name":"tformstackviewer.menuitemexportjson.caption","sourcebytes":[69,120,112,111,114,116,32,74,83,79,78],"value":"Export JSON"},
+{"hash":153616734,"name":"tformstackviewer.exportjsondialog.title","sourcebytes":[69,120,112,111,114,116,32,74,83,79,78],"value":"Export JSON"}
 ]}

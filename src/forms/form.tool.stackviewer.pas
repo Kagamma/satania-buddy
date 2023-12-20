@@ -13,18 +13,23 @@ type
   { TFormStackViewer }
 
   TFormStackViewer = class(TForm)
+    MenuItemExportJSON: TMenuItem;
     MenuItemExpandSelected: TMenuItem;
     MenuItemClearAll: TMenuItem;
     MenuItemCollapseAll: TMenuItem;
     MenuItemExpandAll: TMenuItem;
     Panel: TPanel;
     PopupMenuTree: TPopupMenu;
+    ExportJsonDialog: TSaveDialog;
+    Separator1: TMenuItem;
+    Separator2: TMenuItem;
     TreeView: TTreeView;
     procedure FormShow(Sender: TObject);
     procedure MenuItemClearAllClick(Sender: TObject);
     procedure MenuItemCollapseAllClick(Sender: TObject);
     procedure MenuItemExpandAllClick(Sender: TObject);
     procedure MenuItemExpandSelectedClick(Sender: TObject);
+    procedure MenuItemExportJSONClick(Sender: TObject);
     procedure PopupMenuTreePopup(Sender: TObject);
   private
   public
@@ -37,6 +42,10 @@ var
 implementation
 
 {$R *.lfm}
+
+uses
+  fpjson,
+  Utils.Strings;
 
 { TFormStackViewer }
 
@@ -85,6 +94,48 @@ end;
 procedure TFormStackViewer.MenuItemExpandSelectedClick(Sender: TObject);
 begin
   Self.TreeView.Selected.Expand(True);
+end;
+
+procedure TFormStackViewer.MenuItemExportJSONClick(Sender: TObject);
+  procedure Decode(var JSONStr: String; Node: TTreeNode);
+  var
+    I: Integer = 0;
+    V: TSEValue;
+    Key: String;
+  begin
+    JSONStr := JSONStr + '{';
+    while Node <> nil do
+    begin
+      if (I > 0) then
+        JSONStr := JSONStr + ',';
+      if Node.HasChildren then
+      begin
+        JSONStr := JSONStr + '"' + StringToJSONString(Node.Text) + '":';
+        Decode(JSONStr, Node.GetFirstChild);
+      end else
+      begin
+        JSONStr := JSONStr + '"' + StringToJSONString(Node.Text) + '":null';
+      end;
+      Node := Node.GetNextSibling;
+      Inc(I);
+    end;
+    JSONStr := JSONStr + '}';
+  end;
+var
+  JSONStr: String = '';
+  SL: TStringList;
+begin
+  Decode(JSONStr, Self.TreeView.Items.GetFirstNode);
+  if Self.ExportJsonDialog.Execute then
+  begin
+    SL := TStringList.Create;
+    try
+      SL.Text := JSONStr;
+      SL.SaveToFile(Self.ExportJsonDialog.FileName);
+    finally
+      SL.Free;
+    end;
+  end;
 end;
 
 procedure TFormStackViewer.PopupMenuTreePopup(Sender: TObject);
