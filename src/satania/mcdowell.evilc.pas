@@ -3089,7 +3089,7 @@ var
               break;
             Dec(J);
           end;
-          Nodes[NodeCount - 1].Name := CurFunc^.Name + '<' + LineOfCode.Module + ':' + IntToStr(LineOfCode.Line) + '>';
+          Nodes[NodeCount - 1].Name := CurFunc^.Name + ' [' + LineOfCode.Module + ':' + IntToStr(LineOfCode.Line) + ']';
           for J := 0 to CurFrame^.Func^.VarSymbols.Count - 1 do
           begin
             AddChildNode(@Nodes[NodeCount - 1], CurFunc^.VarSymbols[J], CurFrame^.Stack[J - 1]);
