@@ -7500,6 +7500,7 @@ var
 begin
   Self.VM.BinaryClear;
   Self.LineOfCodeList.Clear;
+  Self.GlobalVarSymbols.Clear;
   for I := 0 to Cache.LineOfCodeList.Count - 1 do
     Self.LineOfCodeList.Add(Cache.LineOfCodeList[I]);
   SetLength(Self.VM.Binaries, Length(Cache.Binaries));
