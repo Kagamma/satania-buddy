@@ -24,6 +24,7 @@ type
     Separator1: TMenuItem;
     Separator2: TMenuItem;
     TreeView: TTreeView;
+    procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure MenuItemClearAllClick(Sender: TObject);
     procedure MenuItemCollapseAllClick(Sender: TObject);
@@ -46,6 +47,7 @@ implementation
 
 uses
   fpjson,
+  Mcdowell.Data,
   Utils.Strings;
 
 { TFormStackViewer }
@@ -75,6 +77,19 @@ end;
 
 procedure TFormStackViewer.FormShow(Sender: TObject);
 begin
+end;
+
+procedure TFormStackViewer.FormDestroy(Sender: TObject);
+var
+  SL: TStrings;
+begin
+  SL := TStringList.Create;
+  try
+    SL.Text := Self.Export;
+    SL.SaveToFile(GetOSLocalDir + 'gab-watcher-report.json');
+  finally
+    SL.Free;
+  end;
 end;
 
 procedure TFormStackViewer.MenuItemClearAllClick(Sender: TObject);
@@ -129,7 +144,7 @@ end;
 procedure TFormStackViewer.MenuItemExportJSONClick(Sender: TObject);
 var
   JSONStr: String;
-  SL: TStringList;
+  SL: TStrings;
 begin
   JSONStr := Self.Export;
   if Self.ExportJsonDialog.Execute then

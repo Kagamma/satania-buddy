@@ -541,6 +541,7 @@ object FormStackViewer: TFormStackViewer
     0000
   }
   PopupMenu = PopupMenuTree
+  OnDestroy = FormDestroy
   OnShow = FormShow
   object Panel: TPanel
     Left = 0
