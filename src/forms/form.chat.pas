@@ -262,6 +262,7 @@ end;
 
 procedure TFormChat.MenuItemContinueToGenerateClick(Sender: TObject);
 begin
+  if FRichText.IsStreaming then Exit;
   Self.EditChat.Lines.Text := '/blank';
   Self.Send;
   InsertTyping;
@@ -273,6 +274,7 @@ var
   I: Integer;
   CH: TChatHistoryRec;
 begin
+  if FRichText.IsStreaming then Exit;
   // Delete latest chat item
   if Self.ChatHistory.List.Count > 0 then
   begin
