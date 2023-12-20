@@ -4530,7 +4530,7 @@ begin
         while I >= 0 do
         begin
           LineOfCode := Self.Parent.LineOfCodeList[I];
-          if (CodePtrLocal < LineOfCode.BinaryCount) and (Self.BinaryPtr = LineOfCode.BinaryPtr) then
+          if (CodePtrLocal < LineOfCode.BinaryCount) and (BinaryPtrLocal = LineOfCode.BinaryPtr) then
             break;
           Dec(I);
         end;
