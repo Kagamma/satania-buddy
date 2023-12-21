@@ -175,8 +175,11 @@ procedure TFormStackViewer.GatherStackTraceInfo(Message: String; StackTraceArray
       Exit;
     S := StackNode^.Value;
     C := Length(S);
-    if C > 4096 then
-      SetLength(S, 4096);
+    if C > 64000 then
+    begin
+      SetLength(S, 64000);
+      S := S + '...';
+    end;
     if Root then
       Result := TreeView.Items.AddChild(Parent, StackNode^.Name)
     else

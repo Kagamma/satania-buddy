@@ -541,6 +541,7 @@ object FormStackViewer: TFormStackViewer
     0000
   }
   PopupMenu = PopupMenuTree
+  LCLVersion = '3.99.0.0'
   OnDestroy = FormDestroy
   OnShow = FormShow
   object Panel: TPanel
