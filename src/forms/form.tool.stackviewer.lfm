@@ -2,10 +2,10 @@ object FormStackViewer: TFormStackViewer
   Left = 350
   Height = 559
   Top = 250
-  Width = 432
+  Width = 523
   Caption = 'Gab Watcher'
   ClientHeight = 559
-  ClientWidth = 432
+  ClientWidth = 523
   FormStyle = fsSystemStayOnTop
   Icon.Data = {
     3E42000000000100010040400000010020002842000016000000280000004000
@@ -541,14 +541,13 @@ object FormStackViewer: TFormStackViewer
     0000
   }
   PopupMenu = PopupMenuTree
-  LCLVersion = '3.99.0.0'
   OnDestroy = FormDestroy
   OnShow = FormShow
   object Panel: TPanel
     Left = 0
     Height = 40
     Top = 0
-    Width = 432
+    Width = 523
     Align = alTop
     Caption = 'Display call stack and variables from last 10 unhandled exceptions'
     TabOrder = 0
@@ -557,7 +556,7 @@ object FormStackViewer: TFormStackViewer
     Left = 0
     Height = 519
     Top = 40
-    Width = 432
+    Width = 523
     Align = alClient
     ReadOnly = True
     TabOrder = 1
