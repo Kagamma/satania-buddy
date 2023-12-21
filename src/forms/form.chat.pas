@@ -583,6 +583,7 @@ var
   Script: TEvilC;
   SL: TStrings;
   Value: TSEValue;
+  S: String;
 begin
   Path := GetPhysFilePath('data/scripts/' + Save.Settings.Skin + '/services/' + Save.Settings.LastServiceUsed);
   if not FileExists(Path) then
@@ -596,7 +597,9 @@ begin
       Value := Script.ExecFuncOnly('_greeting', []);
       if Value.Kind = sevkString then
       begin
-        SaveHistory(Value);
+        S := StringReplace(Value, '{{user}}', Save.Settings.UserName, [rfReplaceAll]);
+        S := StringReplace(S, '{{char}}', Satania.Name, [rfReplaceAll]);
+        SaveHistory(S);
       end;
     except
       on E: Exception do
