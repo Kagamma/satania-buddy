@@ -375,26 +375,26 @@ obj.name = 'Satania'
 writeln(obj.hello()) // obj will be passed to hello() as "self"
 #+end_example
 
-- There are limitations in how ~self~ is passed to the calling function. Only a named variable or a map returned from the nearest function call can be passed.
+- There are limitations in how ~self~ is passed to the calling function. Only a map returned from the nearest function call can be passed.
 - The following examples will work correctly:
 
 #+begin_example
-obj.call()
-func().call()
+obj.call() // obj is passed as self
+obj.middle.call() // middle is passed as self
+func().call() // Result from func() is passed as self
 obj.func().func2().call()
 #+end_example
 
-- However, the following examples won't work:
+- However, the following example won't work:
 
 #+begin_example
-obj.middle.call() // obj will be passed as "self" instead of middle
 func().middle.call() // the result from func() will be passed as "self" instead of middle
 #+end_example
 
 - Solution for this issue is to assign ~middle~ to a named variable:
 
 #+begin_example
-mid = obj.middle
+mid = func().middle
 mid.call()
 #+end_example
 
