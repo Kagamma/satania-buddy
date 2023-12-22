@@ -2989,13 +2989,13 @@ var
   A, B, C, V,
   OA, OB, OC, OV: PSEValue;
   AA: array[0..15] of PSEValue;
-  TV: TSEValue;
+  TV, TV2: TSEValue;
   S, S1, S2: String;
   WS, WS1, WS2: WideString;
   FuncNativeInfo: PSEFuncNativeInfo;
   FuncScriptInfo: PSEFuncScriptInfo;
   FuncImportInfo: PSEFuncImportInfo;
-  I, J, ArgCountStack, ArgCount, ArgSize: Integer;
+  I, J, ArgCountStack, ArgCount, ArgSize, DeepCount: Integer;
   This: TSEValue;
   Args: array of TSEValue;
   CodePtrLocal: Integer;
@@ -3607,6 +3607,7 @@ begin
       {$ifdef SE_COMPUTED_GOTO}labelCallRef{$else}opCallRef{$endif}:
         begin
           A := Pop; // Ref or map
+          DeepCount := 0;
           case A^.Kind of
             sevkFunction:
               begin
@@ -3614,13 +3615,14 @@ begin
               end;
             sevkMap:
               begin
-                ArgCount := Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer);
-                if ArgCount = 0 then
+                DeepCount := Integer(BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer);
+                if DeepCount = 0 then
                   raise Exception.Create('Not a function reference');
-                for I := ArgCount - 1 downto 0 do
+                for I := DeepCount - 1 downto 0 do
                   AA[I] := Pop;
-                for I := 0 to ArgCount - 1 do
+                for I := 0 to DeepCount - 1 do
                 begin
+                  TV2 := A^;
                   TV := SEMapGet(A^, AA[I]^);
                   A := @TV;
                 end;
@@ -3632,6 +3634,8 @@ begin
           case A^.VarFuncKind of
             sefkScript:
               begin
+                if DeepCount > 1 then
+                  (StackPtrLocal - 1)^ := TV2;
                 goto CallScript;
               end;
             sefkImport:
@@ -3641,6 +3645,8 @@ begin
               end;
             sefkNative:
               begin
+                if DeepCount > 1 then
+                  (StackPtrLocal - 1)^ := TV2;
                 This := Pop^;
                 Dec(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer); // ArgCount contains this, so we minus it by 1
                 goto CallNative;
@@ -3667,7 +3673,7 @@ begin
             Exit;
           end;
           Push(TV);
-          Inc(CodePtrLocal, 3);
+          Inc(CodePtrLocal, 4);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelCallScript{$else}opCallScript{$endif}:
@@ -3681,7 +3687,7 @@ begin
             raise Exception.Create('Too much recursion');
           Self.FramePtr^.Stack := StackPtrLocal - ArgCount;
           StackPtrLocal := StackPtrLocal + FuncScriptInfo^.VarCount;
-          Self.FramePtr^.Code := CodePtrLocal + 3;
+          Self.FramePtr^.Code := CodePtrLocal + 4;
           Self.FramePtr^.Binary := BinaryPtrLocal;
           Self.FramePtr^.Func := FuncScriptInfo;
           CodePtrLocal := 0;
@@ -4263,7 +4269,7 @@ begin
               end;
           end;
           Push(TV);
-          Inc(CodePtrLocal, 3);
+          Inc(CodePtrLocal, 4);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelPopFrame{$else}opPopFrame{$endif}:
@@ -6213,7 +6219,7 @@ var
     // Push map to stack
     Rewind(RewindStartAdd, RewindCount);
     EmitPushVar(Ident);
-    Emit([Pointer(opCallRef), Pointer(DeepCount), Pointer(ArgCount)]);
+    Emit([Pointer(opCallRef), Pointer(0), Pointer(ArgCount), Pointer(DeepCount)]);
   end;
 
   procedure ParseFuncRefCallByRewind(const RewindStartAdd: Integer; const ThisRefIdent: PSEIdent = nil);
@@ -6242,7 +6248,7 @@ var
       Emit([Pointer(opPushConst), SENull]);
     // Func def already exists in stack, rewind to access it
     Rewind(RewindStartAdd, RewindCount);
-    Emit([Pointer(opCallRef), Pointer(0), Pointer(ArgCount)]);
+    Emit([Pointer(opCallRef), Pointer(0), Pointer(ArgCount), Pointer(0)]);
   end;
 
   procedure ParseFuncRefCallByName(const Name: String);
@@ -6266,7 +6272,7 @@ var
     Emit([Pointer(opPushConst), SENull]);
     // We now push func def to stack
     EmitPushVar(FindVar(Name)^);
-    Emit([Pointer(opCallRef), Pointer(0), Pointer(ArgCount)]);
+    Emit([Pointer(opCallRef), Pointer(0), Pointer(ArgCount), Pointer(0)]);
   end;
 
   procedure ParseFuncCall(const Name: String);
@@ -6323,16 +6329,16 @@ var
     end;
     if FuncNativeInfo <> nil then
     begin
-      Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), Pointer(ArgCount)]);
+      Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), Pointer(ArgCount), Pointer(0)]);
     end else
     if FuncScriptInfo <> nil then
     begin
       Emit([Pointer(opPushConst), SENull]); // this
       Inc(ArgCount);
-      Emit([Pointer(opCallScript), Pointer(Ind), Pointer(ArgCount)])
+      Emit([Pointer(opCallScript), Pointer(Ind), Pointer(ArgCount), Pointer(0)])
     end
     else
-      Emit([Pointer(opCallImport), Pointer(Ind), Pointer(0)]);
+      Emit([Pointer(opCallImport), Pointer(Ind), Pointer(0), Pointer(0)]);
   end;
 
   function ParseFuncDecl(const IsAnon: Boolean = False): TSEToken;
@@ -6747,7 +6753,7 @@ var
         StartBlock := Self.Binary.Count;
 
         EmitPushVar(VarHiddenArrayIdent);
-        Emit([Pointer(opCallNative), FindFuncNative('length', Ind), Pointer(1)]);
+        Emit([Pointer(opCallNative), FindFuncNative('length', Ind), Pointer(1), Pointer(0)]);
         EmitPushVar(VarHiddenCountIdent);
         JumpEnd := Emit([Pointer(opJumpEqualOrLesser), Pointer(0)]);
 
@@ -6902,7 +6908,7 @@ var
       end;
       Token := NextTokenExpected([tkComma, tkSquareBracketClose]);
     until Token.Kind = tkSquareBracketClose;
-    Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), Pointer(ArgCount)]);
+    Emit([Pointer(opCallNative), Pointer(FuncNativeInfo), Pointer(ArgCount), Pointer(0)]);
   end;
 
   procedure ParseAssignTail;
