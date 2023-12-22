@@ -500,7 +500,6 @@ type
     FInternalIdentCount: QWord;
     procedure SetSource(V: String);
     function InternalIdent: String;
-    procedure FuncScriptListClear;
   public
     OptimizePeephole,         // True = enable peephole optimization, default is true
     OptimizeConstantFolding,  // True = enable constant folding optimization, default is true
@@ -4772,15 +4771,6 @@ begin
   Result := IntToStr(FInternalIdentCount);
 end;
 
-procedure TEvilC.FuncScriptListClear;
-var
-  I: Integer;
-begin
-  for I := 0 to Self.FuncScriptList.Count - 1 do
-    Self.FuncScriptList[I].VarSymbols.Free;
-  Self.FuncScriptList.Clear;
-end;
-
 function TEvilC.IsWaited: Boolean;
 begin
   Exit(Self.VM.IsWaited);
@@ -7296,13 +7286,15 @@ end;
 procedure TEvilC.Reset;
 var
   Ident: TSEIdent;
-  FuncScriptInfo: TSEFuncScriptInfo;
+  I: Integer;
 begin
   Self.GlobalVarCount := 2;
   Self.GlobalVarSymbols.Clear;
   Self.GlobalVarSymbols.Add('result');
   Self.GlobalVarSymbols.Add('___result');
-  Self.FuncScriptListClear;
+  for I := 0 to Self.FuncScriptList.Count - 1 do
+    Self.FuncScriptList[I].VarSymbols.Free;
+  Self.FuncScriptList.Clear;
   Self.FuncImportList.Clear;
   Self.CurrentFileList.Clear;
   Self.LocalVarCountList.Clear;
@@ -7495,6 +7487,7 @@ function TEvilC.Backup: TSECache;
 var
   I, J: Integer;
   BackupBinary, SrcBinary: TSEBinary;
+  FuncScriptInfo: TSEFuncScriptInfo;
 begin
   Result.LineOfCodeList := TSELineOfCodeList.Create;
   Result.FuncScriptList := TSEFuncScriptList.Create;
@@ -7517,16 +7510,16 @@ begin
   end;
   for I := 0 to Self.FuncScriptList.Count - 1 do
   begin
-    Result.FuncScriptList.Add(Self.FuncScriptList[I]);
+    FuncScriptInfo := Self.FuncScriptList[I];
+    FuncScriptInfo.VarSymbols := TStringList.Create;
+    FuncScriptInfo.VarSymbols.Assign(Self.FuncScriptList[I].VarSymbols);
+    Result.FuncScriptList.Add(FuncScriptInfo);
   end;
   for I := 0 to Self.FuncImportList.Count - 1 do
   begin
     Result.FuncImportList.Add(Self.FuncImportList[I]);
   end;     
-  for I := 0 to Self.GlobalVarSymbols.Count - 1 do
-  begin
-    Result.GlobalVarSymbols.Add(Self.GlobalVarSymbols[I]);
-  end;
+  Result.GlobalVarSymbols.Assign(Self.GlobalVarSymbols);
   Result.GlobalVarCount := Self.GlobalVarCount;
 end;
 
@@ -7534,6 +7527,7 @@ procedure TEvilC.Restore(const Cache: TSECache);
 var
   I, J: Integer;
   BackupBinary, DstBinary: TSEBinary;
+  FuncScriptInfo: TSEFuncScriptInfo;
 begin
   Self.VM.BinaryClear;
   Self.LineOfCodeList.Clear;
@@ -7550,11 +7544,15 @@ begin
       DstBinary.Add(BackupBinary[J]);
   end;
   for I := 0 to Cache.FuncScriptList.Count - 1 do
-    Self.FuncScriptList.Add(Cache.FuncScriptList[I]);
+  begin 
+    FuncScriptInfo := Cache.FuncScriptList[I];
+    FuncScriptInfo.VarSymbols := TStringList.Create;
+    FuncScriptInfo.VarSymbols.Assign(Cache.FuncScriptList[I].VarSymbols);
+    Self.FuncScriptList.Add(FuncScriptInfo);
+  end;
   for I := 0 to Cache.FuncImportList.Count - 1 do
     Self.FuncImportList.Add(Cache.FuncImportList[I]);  
-  for I := 0 to Cache.GlobalVarSymbols.Count - 1 do
-    Self.GlobalVarSymbols.Add(Cache.GlobalVarSymbols[I]);
+  Self.GlobalVarSymbols.Assign(Cache.GlobalVarSymbols);
   Self.GlobalVarCount := Cache.GlobalVarCount;
   Self.IsParsed := True;
 end;
@@ -7569,6 +7567,8 @@ begin
     for I := 0 to High(Cache.Binaries) do
       Cache.Binaries[I].Free;
     Cache.LineOfCodeList.Free;
+    for I := 0 to Cache.FuncScriptList.Count - 1 do
+      Cache.FuncScriptList[I].VarSymbols.Free;
     Cache.FuncScriptList.Free;
     Cache.FuncImportList.Free;
     Cache.GlobalVarSymbols.Free;
