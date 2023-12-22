@@ -500,6 +500,7 @@ type
     FInternalIdentCount: QWord;
     procedure SetSource(V: String);
     function InternalIdent: String;
+    procedure FuncScriptListClear;
   public
     OptimizePeephole,         // True = enable peephole optimization, default is true
     OptimizeConstantFolding,  // True = enable constant folding optimization, default is true
@@ -4771,6 +4772,15 @@ begin
   Result := IntToStr(FInternalIdentCount);
 end;
 
+procedure TEvilC.FuncScriptListClear;
+var
+  I: Integer;
+begin
+  for I := 0 to Self.FuncScriptList.Count - 1 do
+    Self.FuncScriptList[I].VarSymbols.Free;
+  Self.FuncScriptList.Clear;
+end;
+
 function TEvilC.IsWaited: Boolean;
 begin
   Exit(Self.VM.IsWaited);
@@ -7292,7 +7302,7 @@ begin
   Self.GlobalVarSymbols.Clear;
   Self.GlobalVarSymbols.Add('result');
   Self.GlobalVarSymbols.Add('___result');
-  Self.FuncScriptList.Clear;
+  Self.FuncScriptListClear;
   Self.FuncImportList.Clear;
   Self.CurrentFileList.Clear;
   Self.LocalVarCountList.Clear;
