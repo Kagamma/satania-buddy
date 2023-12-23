@@ -370,9 +370,35 @@ fn obj_create() {
   ]
 }
 
+another_obj = [
+  hello: hello,
+  name: 'Gabriel',
+]
+
 obj = obj_create()
 obj.name = 'Satania'
 writeln(obj.hello()) // obj will be passed to hello() as "self"
+#+end_example
+
+- Because of the way we pass ~self~, one function can be used in multiple object instances, for example:
+
+#+begin_example
+fn test() {
+  result = self.value
+}
+
+obj1 = [
+  value: 1,
+  test: test,
+]
+
+obj2 = [
+  value: 2,
+  test: test,
+]
+
+writeln(obj1.test())
+writeln(obj2.test())
 #+end_example
 
 - There are limitations in how ~self~ is passed to the calling function. Only a map returned from the nearest function call can be passed.
