@@ -90,7 +90,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileRename(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEFileFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEFileGetSize(const VM: TSEVM; const Args: array of TSEValue): TSEValue;  
+    function SEFileGetSize(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEFileGetAge(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -984,6 +985,17 @@ begin
     Reset(F);
     Result := FileSize(F);
     CloseFile(F);
+  end;
+end;
+
+function TSatania.SEFileGetAge(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  F: File of Byte;
+begin
+  Result := -1;
+  if FileExists(Args[0].VarString^) then
+  begin
+    Result := FileAge(Args[0].VarString^);
   end;
 end;
 

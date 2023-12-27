@@ -785,7 +785,9 @@ number): map*
 *fs_file_rename(oldname, newname: string)*
 - Renames a file.
 *fs_file_size_get(filename: string): number*
-- Returns size of file.
+- Returns size of file in bytes.
+*fs_file_age_get(filename: string): number*
+- Returns the last modification Unix time of file.
 
 ** Clipboard
 *clipboard_get(): string*
