@@ -6,6 +6,7 @@ object FrameRulesEditItem: TFrameRulesEditItem
   Align = alTop
   ClientHeight = 27
   ClientWidth = 692
+  ParentBackground = False
   TabOrder = 0
   DesignLeft = 407
   DesignTop = 197
@@ -19,26 +20,14 @@ object FrameRulesEditItem: TFrameRulesEditItem
     Images = FormMain.ImageList
     ImageIndex = 10
   end
-  object ButtonRun: TSpeedButton
-    Left = 642
-    Height = 23
-    Top = 2
-    Width = 23
-    Align = alRight
-    BorderSpacing.Around = 2
-    Images = FormMain.ImageList
-    ImageIndex = 2
-    OnClick = ButtonRunClick
-  end
   object EditText: TEdit
     Left = 2
     Height = 23
     Top = 2
-    Width = 634
+    Width = 659
     Align = alClient
     BorderSpacing.Right = 4
     BorderSpacing.Around = 2
     TabOrder = 0
-    Text = 'talk(''Response'')'
   end
 end

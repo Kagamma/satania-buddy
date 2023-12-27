@@ -58,7 +58,7 @@ type
 
   TRuleRec = record
     Patterns: TStringDynArray;
-    Responses: TStringDynArray;
+    Response: String;
   end;
 
   THttpResponseRec = record

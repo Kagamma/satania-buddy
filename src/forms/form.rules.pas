@@ -92,7 +92,6 @@ begin
   for I := 0 to JSONArray.Count - 1 do
   begin
     SetLength(Rule.Patterns, 0);
-    SetLength(Rule.Responses, 0);
     JSONItem := JSONArray[I] as TJSONObject;
     Tagg := JSONItem['tag'].AsString;
     JSONArraySub := JSONItem['patterns'] as TJSONArray;
@@ -101,12 +100,7 @@ begin
     begin
       Rule.Patterns[J] := JSONArraySub[J].AsString;
     end;
-    JSONArraySub := JSONItem['responses'] as TJSONArray;
-    SetLength(Rule.Responses, JSONArraySub.Count);
-    for J := 0 to JSONArraySub.Count - 1 do
-    begin
-      Rule.Responses[J] := JSONArraySub[J].AsString;
-    end;
+    Rule.Response := JSONItem['response'].AsString;
     RuleDict.Add(Tagg, Rule);
   end;
   S.Free;
@@ -153,6 +147,7 @@ begin
         if Frame.EditTag.Text = '' then
           continue;
         JSONItem.Add('tag', Frame.EditTag.Text);
+        JSONItem.Add('response', Frame.EditResponse.Lines.Text);
         JSONArraySub := TJSONArray.Create;
         for I := 0 to Frame.ScrollBoxPatterns.ControlCount - 1 do
         begin
@@ -160,13 +155,6 @@ begin
           JSONArraySub.Add(Trim(EditFrame.EditText.Text));
         end;
         JSONItem.Add('patterns', JSONArraySub);
-        JSONArraySub := TJSONArray.Create;
-        for I := 0 to Frame.ScrollBoxResponses.ControlCount - 1 do
-        begin
-          EditFrame := TFrameRulesEditItem(Frame.ScrollBoxResponses.Controls[I]);
-          JSONArraySub.Add(Trim(EditFrame.EditText.Text));
-        end;
-        JSONItem.Add('responses', JSONArraySub);
         JSONArray.Add(JSONItem);
       end;
       FS := TStringList.Create;
@@ -235,10 +223,7 @@ begin
     begin
       Frame.AddPattern(Rule.Patterns[J]);
     end;
-    for J := 0 to Length(Rule.Responses) - 1 do
-    begin
-      Frame.AddResponse(Rule.Responses[J]);
-    end;
+    Frame.EditResponse.Lines.Text := Rule.Response;
     ScrollBoxRules.InsertControl(Frame);
   end;
   KeyList.Free;
@@ -251,6 +236,7 @@ begin
   Frame := TFrameRulesItem.Create(Self);
   Frame.Name := GUIDName;
   Frame.ButtonDelete.OnClick := @DoDeleteRule;
+  Frame.EditTag.Text := 'YouShouldRenameThis_' + IntToStr(ScrollBoxRules.ControlCount);
   ScrollBoxRules.InsertControl(Frame, 0);
 end;
 

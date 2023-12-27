@@ -1,11 +1,12 @@
 object FrameRulesItem: TFrameRulesItem
   Left = 0
-  Height = 211
+  Height = 323
   Top = 0
-  Width = 560
+  Width = 708
   Align = alTop
-  ClientHeight = 211
-  ClientWidth = 560
+  ClientHeight = 323
+  ClientWidth = 708
+  ParentBackground = False
   TabOrder = 0
   DesignLeft = 347
   DesignTop = 26
@@ -13,12 +14,13 @@ object FrameRulesItem: TFrameRulesItem
     Left = 4
     Height = 32
     Top = 4
-    Width = 552
+    Width = 700
     Align = alTop
     BorderSpacing.Around = 4
     ClientHeight = 32
-    ClientWidth = 552
+    ClientWidth = 700
     Color = clInactiveCaption
+    ParentBackground = False
     ParentColor = False
     TabOrder = 0
     object Label1: TLabel
@@ -42,7 +44,7 @@ object FrameRulesItem: TFrameRulesItem
       TabOrder = 0
     end
     object ButtonDelete: TSpeedButton
-      Left = 524
+      Left = 672
       Height = 22
       Top = 5
       Width = 23
@@ -54,14 +56,15 @@ object FrameRulesItem: TFrameRulesItem
   end
   object GroupBoxPatterns: TGroupBox
     Left = 4
-    Height = 167
+    Height = 279
     Top = 40
     Width = 335
     Align = alLeft
     BorderSpacing.Around = 4
     Caption = 'Patterns'
-    ClientHeight = 147
+    ClientHeight = 259
     ClientWidth = 331
+    ParentBackground = False
     TabOrder = 1
     object ButtonAddPattern: TSpeedButton
       Left = 0
@@ -75,7 +78,7 @@ object FrameRulesItem: TFrameRulesItem
     end
     object ScrollBoxPatterns: TScrollBox
       Left = 0
-      Height = 125
+      Height = 237
       Top = 22
       Width = 331
       HorzScrollBar.Page = 1
@@ -83,47 +86,75 @@ object FrameRulesItem: TFrameRulesItem
       VertScrollBar.Page = 1
       VertScrollBar.Smooth = True
       Align = alClient
+      ParentBackground = False
       TabOrder = 0
     end
   end
   object Splitter1: TSplitter
     Left = 343
-    Height = 171
+    Height = 283
     Top = 40
     Width = 5
   end
-  object GroupBoxResponses: TGroupBox
+  object GroupBoxResponse: TGroupBox
     Left = 352
-    Height = 167
+    Height = 279
     Top = 40
-    Width = 204
+    Width = 352
     Align = alClient
     BorderSpacing.Around = 4
-    Caption = 'Responses'
-    ClientHeight = 147
-    ClientWidth = 200
+    Caption = 'Response'
+    ClientHeight = 259
+    ClientWidth = 348
+    ParentBackground = False
     TabOrder = 3
-    object ButtonAddResponse: TSpeedButton
+    object ScrollBoxResponse: TScrollBox
       Left = 0
-      Height = 22
+      Height = 259
       Top = 0
-      Width = 200
-      Align = alTop
-      Images = FormMain.ImageList
-      ImageIndex = 8
-      OnClick = ButtonAddResponseClick
-    end
-    object ScrollBoxResponses: TScrollBox
-      Left = 0
-      Height = 125
-      Top = 22
-      Width = 200
-      HorzScrollBar.Page = 1
-      VertScrollBar.Increment = 1
-      VertScrollBar.Page = 1
+      Width = 348
+      HorzScrollBar.Page = 182
+      VertScrollBar.Increment = 2
+      VertScrollBar.Page = 29
       VertScrollBar.Smooth = True
       Align = alClient
+      ClientHeight = 255
+      ClientWidth = 344
+      ParentBackground = False
       TabOrder = 0
+      object Panel2: TPanel
+        Left = 312
+        Height = 255
+        Top = 0
+        Width = 32
+        Align = alRight
+        ClientHeight = 255
+        ClientWidth = 32
+        ParentBackground = False
+        TabOrder = 0
+        object ButtonRun: TSpeedButton
+          Left = 3
+          Height = 23
+          Top = 3
+          Width = 26
+          Align = alTop
+          BorderSpacing.Around = 2
+          Images = FormMain.ImageList
+          ImageIndex = 2
+          OnClick = ButtonRunClick
+        end
+      end
+      object EditResponse: TMemo
+        Left = 0
+        Height = 255
+        Top = 0
+        Width = 312
+        Align = alClient
+        Lines.Strings = (
+          'talk(''Hello'')'
+        )
+        TabOrder = 1
+      end
     end
   end
 end

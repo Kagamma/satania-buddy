@@ -34,8 +34,6 @@ type
   TFrameRulesEditItem = class(TFrame)
     EditText: TEdit;
     ButtonDelete: TSpeedButton;
-    ButtonRun: TSpeedButton;
-    procedure ButtonRunClick(Sender: TObject);
   private
 
   public
@@ -50,11 +48,6 @@ uses
 {$R *.lfm}
 
 { TFrameRulesEditItem }
-
-procedure TFrameRulesEditItem.ButtonRunClick(Sender: TObject);
-begin
-  Satania.Action('script', EditText.Text);
-end;
 
 end.
 
