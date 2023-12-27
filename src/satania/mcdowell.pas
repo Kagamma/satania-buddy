@@ -154,7 +154,6 @@ uses
   form.bubble,
   form.tool.evilceditor,
   form.tool.hexeditor,
-  mcdowell.chatbot,
   mcdowell.sound,
   mcdowell.net,
   mcdowell.numbers,

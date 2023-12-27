@@ -182,8 +182,6 @@ uses
   form.rules,
   form.tool.hexeditor,
   Mcdowell.EvilC,
-  Mcdowell.chatbot,
-  Mcdowell.chatbot.train,
   mcdowell.speechtotext,
   Mcdowell.Data,
   State.Main;
@@ -272,7 +270,6 @@ begin
 
     // Generate script menu
     Satania.UpdateMenuItems;
-    Mcdowell.Chatbot.Reload;
 
     if Save.Settings.EmbeddedServerEnable then
       EmbeddedServerStart;

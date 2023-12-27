@@ -6,8 +6,8 @@ object FormRules: TFormRules
   Caption = 'Rules'
   ClientHeight = 542
   ClientWidth = 851
-  OnShow = FormShow
   Position = poScreenCenter
+  OnShow = FormShow
   object Panel1: TPanel
     Left = 0
     Height = 42
@@ -18,7 +18,7 @@ object FormRules: TFormRules
     ClientWidth = 851
     TabOrder = 0
     object ButtonCancel: TBitBtn
-      Left = 275
+      Left = 390
       Height = 24
       Top = 9
       Width = 107
@@ -27,8 +27,8 @@ object FormRules: TFormRules
       Caption = 'Cancel'
       Images = FormMain.ImageList
       ImageIndex = 10
-      OnClick = ButtonCancelClick
       TabOrder = 0
+      OnClick = ButtonCancelClick
     end
     object ButtonSave: TBitBtn
       Left = 735
@@ -40,11 +40,11 @@ object FormRules: TFormRules
       Caption = 'Save'
       Images = FormMain.ImageList
       ImageIndex = 1
-      OnClick = ButtonSaveClick
       TabOrder = 1
+      OnClick = ButtonSaveClick
     end
     object ButtonAddRule: TBitBtn
-      Left = 505
+      Left = 620
       Height = 24
       Top = 9
       Width = 107
@@ -53,24 +53,11 @@ object FormRules: TFormRules
       Caption = 'Add Rule'
       Images = FormMain.ImageList
       ImageIndex = 8
-      OnClick = ButtonAddRuleClick
       TabOrder = 2
-    end
-    object ButtonLearnRules: TBitBtn
-      Left = 620
-      Height = 24
-      Top = 9
-      Width = 107
-      Align = alRight
-      BorderSpacing.Around = 8
-      Caption = 'Learn'
-      Images = FormMain.ImageList
-      ImageIndex = 6
-      OnClick = ButtonLearnRulesClick
-      TabOrder = 3
+      OnClick = ButtonAddRuleClick
     end
     object ButtonHelp: TBitBtn
-      Left = 390
+      Left = 505
       Height = 24
       Top = 9
       Width = 107
@@ -79,8 +66,8 @@ object FormRules: TFormRules
       Caption = 'Help'
       Images = FormMain.ImageList
       ImageIndex = 16
+      TabOrder = 3
       OnClick = ButtonHelpClick
-      TabOrder = 4
     end
   end
   object ScrollBoxRules: TScrollBox
@@ -101,8 +88,8 @@ object FormRules: TFormRules
     Width = 835
     Align = alTop
     BorderSpacing.Around = 8
-    OnChange = EditSearchChange
     TabOrder = 2
     TextHint = 'Search for tags...'
+    OnChange = EditSearchChange
   end
 end

@@ -77,7 +77,6 @@ implementation
 uses
   utils.Encdec,
   mcdowell,
-  mcdowell.chatbot,
   Form.chat,
   Mcdowell.Data,
   Mcdowell.EvilC;
@@ -161,8 +160,6 @@ begin
     end else}
     begin
       // Rules or not
-      if Save.Settings.Rules then
-        ChatResponse := Inference(S);
       if ChatResponse = '' then
       begin
         PerformCustomScriptRequest;

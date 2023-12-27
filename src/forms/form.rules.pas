@@ -26,7 +26,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons,
-  LCLIntf, StdCtrls;
+  LCLIntf, StdCtrls, globals;
 
 type
 
@@ -35,7 +35,6 @@ type
   TFormRules = class(TForm)
     ButtonAddRule: TBitBtn;
     ButtonHelp: TBitBtn;
-    ButtonLearnRules: TBitBtn;
     ButtonCancel: TBitBtn;
     ButtonSave: TBitBtn;
     EditSearch: TEdit;
@@ -51,12 +50,14 @@ type
   private
     IsSaved: Boolean;
     procedure DoDeleteRule(Sender: TObject);
+    procedure ReadRules;
   public
 
   end;
 
 var
   FormRules: TFormRules;
+  RuleDict: TRuleDict;
 
 implementation
 
@@ -64,14 +65,52 @@ implementation
 
 uses
   Utils.Encdec,
-  globals,
   mcdowell,
-  mcdowell.chatbot,
-  mcdowell.chatbot.train,
   frame.rules.item,
   frame.rules.edititem,
   fpjson, jsonparser,
+  mcdowell.Data,
   generics.collections;
+
+procedure TFormRules.ReadRules;
+var
+  JSONArray, JSONArraySub: TJSONArray;
+  JSONItem: TJSONObject;
+  S: TStringList;
+  Tagg: String;
+  Rule: TRuleRec;
+  I, J: Integer;
+  Path: String;
+begin
+  RuleDict.Clear;
+  Path := GetOSLocalDir + PATH_SCRIPTS_RAW + Save.Settings.Skin + '/rules.json';
+  if not FileExists(Path) then
+    Exit;
+  S := TStringList.Create;
+  S.LoadFromFile(Path);
+  JSONArray := GetJSON(S.Text) as TJSONArray;
+  for I := 0 to JSONArray.Count - 1 do
+  begin
+    SetLength(Rule.Patterns, 0);
+    SetLength(Rule.Responses, 0);
+    JSONItem := JSONArray[I] as TJSONObject;
+    Tagg := JSONItem['tag'].AsString;
+    JSONArraySub := JSONItem['patterns'] as TJSONArray;
+    SetLength(Rule.Patterns, JSONArraySub.Count);
+    for J := 0 to JSONArraySub.Count - 1 do
+    begin
+      Rule.Patterns[J] := JSONArraySub[J].AsString;
+    end;
+    JSONArraySub := JSONItem['responses'] as TJSONArray;
+    SetLength(Rule.Responses, JSONArraySub.Count);
+    for J := 0 to JSONArraySub.Count - 1 do
+    begin
+      Rule.Responses[J] := JSONArraySub[J].AsString;
+    end;
+    RuleDict.Add(Tagg, Rule);
+  end;
+  S.Free;
+end;
 
 procedure TFormRules.DoDeleteRule(Sender: TObject);
 begin
@@ -91,8 +130,6 @@ end;
 procedure TFormRules.ButtonLearnRulesClick(Sender: TObject);
 begin
   ButtonSaveClick(Self);
-  if IsSaved then
-    RunTrain;
 end;
 
 procedure TFormRules.ButtonSaveClick(Sender: TObject);
@@ -134,7 +171,7 @@ begin
       end;
       FS := TStringList.Create;
       FS.Text := JSONArray.AsJSON;
-      FS.SaveToFile('data/nn/chatbot/rules.json');
+      FS.SaveToFile(GetOSLocalDir + PATH_SCRIPTS_RAW + Save.Settings.Skin + '/rules.json');
       FS.Free;
       ReadRules;
       IsSaved := True;
@@ -216,6 +253,12 @@ begin
   Frame.ButtonDelete.OnClick := @DoDeleteRule;
   ScrollBoxRules.InsertControl(Frame, 0);
 end;
+
+initialization
+  RuleDict := TRuleDict.Create;
+
+finalization
+  RuleDict.Free;
 
 end.
 

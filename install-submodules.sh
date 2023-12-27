@@ -18,10 +18,6 @@ git clone https://github.com/Kagamma/castle-engine.git
 cd castle-engine
 git checkout satania-buddy
 cd ..
-git clone --depth 1 https://github.com/joaopauloschuler/neural-api
-cd neural-api
-git apply ../patches/neural-api.patch
-cd ..
 svn checkout https://svn.code.sf.net/p/synalist/code/trunk synalist
 git clone --depth 1 https://github.com/Kagamma/internettools.git
 git clone --depth 1 https://github.com/kryslt/KControls.git

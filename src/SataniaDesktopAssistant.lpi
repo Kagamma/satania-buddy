@@ -181,14 +181,6 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="satania/mcdowell.chatbot.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="satania/mcdowell.chatbot.train.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="forms/form.tool.evilceditor.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FormEvilCEditor"/>
