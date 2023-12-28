@@ -28,17 +28,17 @@ object FrameRulesItem: TFrameRulesItem
       Left = 5
       Height = 22
       Top = 5
-      Width = 73
+      Width = 98
       Align = alLeft
       BorderSpacing.Around = 4
       Caption = 'Unique Name'
       ParentColor = False
     end
     object EditTag: TEdit
-      Left = 90
+      Left = 115
       Height = 22
       Top = 5
-      Width = 304
+      Width = 317
       Align = alLeft
       BorderSpacing.Left = 8
       BorderSpacing.Around = 4
@@ -55,10 +55,10 @@ object FrameRulesItem: TFrameRulesItem
       ImageIndex = 10
     end
     object Label2: TLabel
-      Left = 406
+      Left = 444
       Height = 22
       Top = 5
-      Width = 81
+      Width = 112
       Align = alLeft
       BorderSpacing.Left = 8
       BorderSpacing.Around = 4
@@ -66,10 +66,10 @@ object FrameRulesItem: TFrameRulesItem
       ParentColor = False
     end
     object EditSimilarityScore: TFloatSpinEdit
-      Left = 499
+      Left = 568
       Height = 22
       Top = 5
-      Width = 50
+      Width = 69
       Align = alLeft
       BorderSpacing.Left = 8
       BorderSpacing.Around = 4
@@ -87,15 +87,15 @@ object FrameRulesItem: TFrameRulesItem
     Align = alLeft
     BorderSpacing.Around = 4
     Caption = 'Patterns for comparison'
-    ClientHeight = 259
-    ClientWidth = 331
+    ClientHeight = 251
+    ClientWidth = 329
     ParentBackground = False
     TabOrder = 1
     object ButtonAddPattern: TSpeedButton
       Left = 0
       Height = 22
       Top = 0
-      Width = 331
+      Width = 329
       Align = alTop
       Images = FormMain.ImageList
       ImageIndex = 8
@@ -103,9 +103,9 @@ object FrameRulesItem: TFrameRulesItem
     end
     object ScrollBoxPatterns: TScrollBox
       Left = 0
-      Height = 237
+      Height = 229
       Top = 22
-      Width = 331
+      Width = 329
       HorzScrollBar.Page = 1
       VertScrollBar.Increment = 1
       VertScrollBar.Page = 1
@@ -129,31 +129,31 @@ object FrameRulesItem: TFrameRulesItem
     Align = alClient
     BorderSpacing.Around = 4
     Caption = 'Response in Evil Script'
-    ClientHeight = 259
-    ClientWidth = 348
+    ClientHeight = 251
+    ClientWidth = 346
     ParentBackground = False
     TabOrder = 3
     object ScrollBoxResponse: TScrollBox
       Left = 0
-      Height = 259
+      Height = 251
       Top = 0
-      Width = 348
+      Width = 346
       HorzScrollBar.Page = 182
-      VertScrollBar.Increment = 2
-      VertScrollBar.Page = 29
+      VertScrollBar.Increment = 19
+      VertScrollBar.Page = 192
       VertScrollBar.Smooth = True
       Align = alClient
-      ClientHeight = 255
+      ClientHeight = 249
       ClientWidth = 344
       ParentBackground = False
       TabOrder = 0
       object Panel2: TPanel
         Left = 312
-        Height = 255
+        Height = 249
         Top = 0
         Width = 32
         Align = alRight
-        ClientHeight = 255
+        ClientHeight = 249
         ClientWidth = 32
         ParentBackground = False
         TabOrder = 0
@@ -171,7 +171,7 @@ object FrameRulesItem: TFrameRulesItem
       end
       object EditResponse: TMemo
         Left = 0
-        Height = 255
+        Height = 249
         Top = 0
         Width = 312
         Align = alClient
