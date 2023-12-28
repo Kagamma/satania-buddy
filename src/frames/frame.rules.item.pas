@@ -25,7 +25,7 @@ unit frame.rules.item;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, ExtCtrls, StdCtrls, Buttons;
+  Classes, SysUtils, Forms, Controls, ExtCtrls, StdCtrls, Buttons, Spin;
 
 type
 
@@ -34,10 +34,12 @@ type
   TFrameRulesItem = class(TFrame)
     ButtonRun: TSpeedButton;
     EditTag: TEdit;
+    EditSimilarityScore: TFloatSpinEdit;
     GroupBoxPatterns: TGroupBox;
     GroupBoxResponse: TGroupBox;
     Label1: TLabel;
     EditResponse: TMemo;
+    Label2: TLabel;
     Panel1: TPanel;
     ButtonAddPattern: TSpeedButton;
     Panel2: TPanel;

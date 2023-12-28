@@ -93,7 +93,7 @@ begin
   begin
     SetLength(Rule.Patterns, 0);
     JSONItem := JSONArray[I] as TJSONObject;
-    Tagg := JSONItem['tag'].AsString;
+    Tagg := JSONItem['name'].AsString;
     JSONArraySub := JSONItem['patterns'] as TJSONArray;
     SetLength(Rule.Patterns, JSONArraySub.Count);
     for J := 0 to JSONArraySub.Count - 1 do
@@ -101,6 +101,7 @@ begin
       Rule.Patterns[J] := JSONArraySub[J].AsString;
     end;
     Rule.Response := JSONItem['response'].AsString;
+    Rule.SimilarityScore := JSONItem['similarity_score'].AsFloat;
     RuleDict.Add(Tagg, Rule);
   end;
   S.Free;
@@ -146,8 +147,9 @@ begin
         Frame.EditTag.Text := Trim(Frame.EditTag.Text);
         if Frame.EditTag.Text = '' then
           continue;
-        JSONItem.Add('tag', Frame.EditTag.Text);
-        JSONItem.Add('response', Frame.EditResponse.Lines.Text);
+        JSONItem.Add('name', Frame.EditTag.Text);
+        JSONItem.Add('response', Frame.EditResponse.Lines.Text);   
+        JSONItem.Add('similarity_score', Frame.EditSimilarityScore.Value);
         JSONArraySub := TJSONArray.Create;
         for I := 0 to Frame.ScrollBoxPatterns.ControlCount - 1 do
         begin

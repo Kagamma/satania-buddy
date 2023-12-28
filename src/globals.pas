@@ -59,6 +59,7 @@ type
   TRuleRec = record
     Patterns: TStringDynArray;
     Response: String;
+    SimilarityScore: Single;
   end;
 
   THttpResponseRec = record
