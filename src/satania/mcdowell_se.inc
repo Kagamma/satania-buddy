@@ -43,7 +43,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEStopAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStopAllAnimations(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEStartAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESetAnimationSpeed(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESetAnimationSpeed(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    function SEIsRules(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsSoW(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsLewd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsSilent(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -496,6 +497,11 @@ begin
     SEMapSet(Item, 'timestamp', CH.Time);
     SEMapSet(Result, I, Item);
   end;
+end;    
+
+function TSatania.SEIsRules(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := Save.Settings.Rules
 end;
 
 function TSatania.SEIsSoW(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

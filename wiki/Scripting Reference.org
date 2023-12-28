@@ -1019,6 +1019,8 @@ sprite_other_render('cube3d',
 - Returns true if Silent is turned on.
 *is_speech_to_text(): boolean*
 - Returns true if Speech Recognition is turned on.
+*is_rules(): boolean*
+- Returns true if Rules is turned on.
 *flag_global_get(flag: string): string*
 - Gets a flag from ~configs.json~. If no flag is found, the function return ~null~ instead.
 *flag_global_set(flag: string, value: string)*
