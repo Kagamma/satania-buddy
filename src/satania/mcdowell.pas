@@ -205,7 +205,8 @@ begin
   if not IsSafe then
   begin
     S.RegisterFunc('ask', @SEAsk, -1);
-    S.RegisterFunc('scheme_load', @SESchemeLoad, 1);
+    S.RegisterFunc('scheme_load', @SESchemeLoad, 1);  
+    S.RegisterFunc('scheme_execute', @SESchemeExecute, 1);
   end;
   S.RegisterFunc('talk', @SETalk, 1);
   S.RegisterFunc('talk_system', @SELog, 1);

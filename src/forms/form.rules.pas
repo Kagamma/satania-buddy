@@ -238,7 +238,7 @@ begin
   Frame := TFrameRulesItem.Create(Self);
   Frame.Name := GUIDName;
   Frame.ButtonDelete.OnClick := @DoDeleteRule;
-  Frame.EditTag.Text := 'YouShouldRenameThis_' + IntToStr(ScrollBoxRules.ControlCount);
+  Frame.EditTag.Text := 'YouShouldRenameThis_' + IntToStr(Random($FFFFFFFF));
   ScrollBoxRules.InsertControl(Frame, 0);
 end;
 

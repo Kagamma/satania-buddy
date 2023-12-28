@@ -1051,7 +1051,9 @@ set('new_flag', 'Data')
 #+end_example
 
 *scheme_load(scheme_name: string)*
-- Loads an .evil scheme file in ~data/scripts/current_character~. This will also stop the current script.
+- Loads and execute an .evil scheme file in ~data/scripts/current_character~. This will also stop the current script.
+*scheme_execute(script: string)*
+- Executes script ~script~. This will also stop the current script.
 *scheme_default(): string*
 - Returns Default Evil Script.
 *delta_time(): number*

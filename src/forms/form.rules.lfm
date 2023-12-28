@@ -7,7 +7,6 @@ object FormRules: TFormRules
   ClientHeight = 542
   ClientWidth = 851
   Position = poScreenCenter
-  LCLVersion = '3.99.0.0'
   OnShow = FormShow
   object Panel1: TPanel
     Left = 0
@@ -90,7 +89,7 @@ object FormRules: TFormRules
     Align = alTop
     BorderSpacing.Around = 8
     TabOrder = 2
-    TextHint = 'Search for tags...'
+    TextHint = 'Search for name...'
     OnChange = EditSearchChange
   end
 end

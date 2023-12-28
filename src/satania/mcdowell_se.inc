@@ -48,7 +48,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEIsLewd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsSilent(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEIsSpeechToText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESchemeLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESchemeLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
+    function SESchemeExecute(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEDelta(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SELoadEmails(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEGetUnseenEmailCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -355,6 +356,12 @@ end;
 function TSatania.SESchemeLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Satania.ActionFromFile(Args[0]);
+  Result := SENull;
+end;
+
+function TSatania.SESchemeExecute(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Satania.Action('script', Args[0]);
   Result := SENull;
 end;
 
