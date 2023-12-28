@@ -85,7 +85,12 @@ begin
   RuleDict.Clear;
   Path := GetOSLocalDir + PATH_SCRIPTS_RAW + Save.Settings.Skin + '/rules.json';
   if not FileExists(Path) then
-    Exit;
+  begin
+    // Try to load default rules if any
+    Path := PATH_SCRIPTS_RAW + Save.Settings.Skin + '/rules.json';
+    if not FileExists(Path) then
+      Exit;
+  end;
   S := TStringList.Create;
   S.LoadFromFile(Path);
   JSONArray := GetJSON(S.Text) as TJSONArray;
