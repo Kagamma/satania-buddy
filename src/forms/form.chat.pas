@@ -237,6 +237,7 @@ begin
   ComboBoxService.ItemIndex := 0;
 
   SL := TStringList.Create;
+  SL.Sorted := True;
   FindAllFiles(SL, GetPhysDirPath('data/scripts/' + Save.Settings.Skin + '/services'), '*.evil', False);
   for I := 0 to SL.Count - 1 do
   begin
