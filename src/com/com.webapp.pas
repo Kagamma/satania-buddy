@@ -75,8 +75,12 @@ begin
 end;
 
 procedure WebUI_API_ChatHistorySavePlainText(Req: TRequest; Res: TResponse);
+var
+  Thread: TWebUIToNativeUIThread;
 begin
-  FormChat.SaveHistory(Req.Content);
+  Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceSavePlainTextProc, Req.Content);
+  Thread.Start;
+  WaitForThreadTerminate(Thread.ThreadID, 5000);
 end;
 
 procedure WebUI_API_ChatIsStreaming(Req: TRequest; Res: TResponse);

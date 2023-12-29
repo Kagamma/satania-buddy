@@ -37,6 +37,7 @@ type
 procedure WebUI_ChatSendProc(S: String);
 procedure WebUI_ChatServiceEditProc(S: String);
 procedure WebUI_ChatServiceSetProc(S: String);
+procedure WebUI_ChatServiceSavePlainTextProc(S: String);
 function WebUI_ChatServiceGetTypeProc: String;
 {$endif unit_declare_interface}
 
@@ -142,9 +143,17 @@ begin
   FormChat.ClearHistory;
 end;
 
-procedure WebUI_ChatHistorySavePlainText(E: PWebUIEvent);
+procedure WebUI_ChatServiceSavePlainTextProc(S: String);
 begin
-  FormChat.SaveHistory(webui_get_string(E));
+  FormChat.SaveHistory(S);
+end;
+procedure WebUI_ChatHistorySavePlainText(E: PWebUIEvent);
+var
+  Thread: TWebUIToNativeUIThread;
+begin
+  Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceSavePlainTextProc, webui_get_string(E));
+  Thread.Start;
+  WaitForThreadTerminate(Thread.ThreadID, 5000);
 end;
 
 procedure WebUI_ChatServiceSetProc(S: String);
