@@ -468,7 +468,7 @@ begin
       SataniaSpeechToText.Enable;
   end;
   //
-  ButtonDeleteSkin.Enabled := DirectoryExists(GetOSLocalDir + 'data/scripts/' + Save.Settings.Skin);
+  //ButtonDeleteSkin.Enabled := DirectoryExists(GetOSLocalDir + 'data/sprites/' + Save.Settings.Skin);
 end;
 
 procedure TFormSettings.ButtonApplyClick(Sender: TObject);

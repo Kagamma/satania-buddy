@@ -170,14 +170,36 @@ begin
   WaitForThreadTerminate(Thread.ThreadID, 5000);
 end;
 
-procedure WebUI_ChatServiceGet(E: PWebUIEvent);
+var
+  ChatServiceGetValue: String;
+procedure WebUI_ChatServiceGetProc(S: String);
 begin
-  webui_return_string(E, PChar(IntToStr(FormChat.ComboBoxService.ItemIndex)));
+  ChatServiceGetValue := IntToStr(FormChat.ComboBoxService.ItemIndex);
+end;
+procedure WebUI_ChatServiceGet(E: PWebUIEvent);
+var
+  Thread: TWebUIToNativeUIThread;
+begin
+  Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceGetProc, '');
+  Thread.Start;
+  WaitForThreadTerminate(Thread.ThreadID, 5000);
+  webui_return_string(E, PChar(ChatServiceGetValue));
 end;
 
-procedure WebUI_ChatServiceGetList(E: PWebUIEvent);
+var
+  ChatServiceGetListValue: String;
+procedure WebUI_ChatServiceGetListProc(S: String);
 begin
-  webui_return_string(E, PChar(FormChat.LoadServiceList));
+  ChatServiceGetListValue := FormChat.LoadServiceList;
+end;
+procedure WebUI_ChatServiceGetList(E: PWebUIEvent);
+var
+  Thread: TWebUIToNativeUIThread;
+begin
+  Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceGetListProc, '');
+  Thread.Start;
+  WaitForThreadTerminate(Thread.ThreadID, 5000);
+  webui_return_string(E, PChar(ChatServiceGetListValue));
 end;
        
 procedure WebUI_ChatServiceEditProc(S: String);
