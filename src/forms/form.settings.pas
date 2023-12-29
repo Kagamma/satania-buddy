@@ -255,13 +255,13 @@ begin
 
   ComboBoxSkin.Items.Clear;
   SL := TStringList.Create;
-  SL.Sorted := True;
   SL2 := TStringList.Create;
-  SL2.Sorted := True;
   FindAllDirectories(SL, 'data/sprites', False);
   FindAllDirectories(SL, GetOSLocalDir + 'data/sprites', False);
   FindAllDirectories(SL2, 'data/scripts', False);
   FindAllDirectories(SL2, GetOSLocalDir + 'data/scripts', False);
+  SL.Sort;
+  SL2.Sort;
   for I := 0 to SL.Count - 1 do
   begin
     SL[I] := ExtractFileName(SL[I]);
@@ -301,8 +301,8 @@ begin
   // Vosk loader
   ComboBoxSTTVoskModel.Clear;
   SL := TStringList.Create;
-  SL.Sorted := True;
   FindAllDirectories(SL, 'data/nn/vosk', False);
+  SL.Sort;
   for I := 0 to SL.Count - 1 do
   begin
     S := ExtractFileName(SL[I]);
@@ -317,8 +317,8 @@ begin
   // whisper loader
   ComboBoxSTTWhisperModel.Clear;
   SL := TStringList.Create;
-  SL.Sorted := True;
   FindAllFiles(SL, 'data/nn/whisper.cpp', '*.bin', False);
+  SL.Sort;
   for I := 0 to SL.Count - 1 do
   begin
     S := ExtractFileName(SL[I]);
@@ -331,8 +331,8 @@ begin
   SL.Free;
 
   SL := TStringList.Create;
-  SL.Sorted := True;
   FindAllFiles(SL, 'data/fonts', '', False);
+  SL.Sort;
   for I := 0 to SL.Count - 1 do
   begin
     S := ExtractFileName(SL[I]);
