@@ -143,7 +143,7 @@ end;
        
 procedure WebUI_ChatStopGeneratingProc(S: String);
 begin
-  FormChat.SaveHistory(S);
+  FormChat.StopGenerating;
 end;
 procedure WebUI_ChatStopGenerating(E: PWebUIEvent);
 var
