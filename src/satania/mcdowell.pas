@@ -313,6 +313,9 @@ begin
 end;
 
 procedure TSatania.SwitchCharacter(S: String);
+var
+  RootPath,
+  AvatarPath: String;
 begin
   SataniaSketch.DeleteAll;
   Self.BackgroundScriptClearAll;
@@ -333,6 +336,18 @@ begin
   //
   FormChat.ApplySettings;
   FormBubble.ApplySettings;
+  // Prepare avatar
+  // Try to set root at user config dir if exists
+  RootPath := GetOSLocalDir + 'data/webui';
+  if not DirectoryExists(RootPath) then
+    RootPath := 'data/webui';
+  AvatarPath := GetPhysFilePath('data/sprites/' + Save.Settings.Skin + '/avatar.png');
+  if FileExists(RootPath + '/chat/avatar_1.png') then
+    DeleteFile(RootPath + '/chat/avatar_1.png');
+  if FileExists(AvatarPath) then
+  begin
+    CopyFile(AvatarPath, RootPath + '/chat/avatar_1.png');
+  end;
 end;
 
 procedure TSatania.DefaultPosition;
