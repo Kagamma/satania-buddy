@@ -98,13 +98,22 @@ begin
 end;
 
 procedure WebUI_API_ChatStopGenerating(Req: TRequest; Res: TResponse);
+var
+  Thread: TWebUIToNativeUIThread;
 begin
-  FormChat.StopGenerating;
+  Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatStopGeneratingProc, Req.Content);
+  Thread.Start;
+  WaitForThreadTerminate(Thread.ThreadID, 5000);
 end;
 
 procedure WebUI_API_ChatServiceGet(Req: TRequest; Res: TResponse);
+var
+  Thread: TWebUIToNativeUIThread;
 begin
-  Res.Content := IntToStr(FormChat.ComboBoxService.ItemIndex);
+  Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceGetProc, Req.Content);
+  Thread.Start;
+  WaitForThreadTerminate(Thread.ThreadID, 5000);
+  Res.Content := ChatServiceGetValue;
 end;
 
 procedure WebUI_API_ChatServiceSet(Req: TRequest; Res: TResponse);
@@ -117,8 +126,13 @@ begin
 end;
 
 procedure WebUI_API_ChatServiceGetList(Req: TRequest; Res: TResponse);
+var
+  Thread: TWebUIToNativeUIThread;
 begin
-  Res.Content := FormChat.LoadServiceList;
+  Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceGetListProc, Req.Content);
+  Thread.Start;
+  WaitForThreadTerminate(Thread.ThreadID, 5000);
+  Res.Content := ChatServiceGetListValue;
 end;
 
 procedure WebUI_API_ChatServiceEdit(Req: TRequest; Res: TResponse);
