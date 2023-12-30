@@ -72,8 +72,8 @@ object FormRules: TFormRules
   end
   object ScrollBoxRules: TScrollBox
     Left = 8
-    Height = 453
-    Top = 39
+    Height = 449
+    Top = 43
     Width = 835
     HorzScrollBar.Page = 1
     VertScrollBar.Page = 1
@@ -83,13 +83,13 @@ object FormRules: TFormRules
   end
   object EditSearch: TEdit
     Left = 8
-    Height = 23
+    Height = 27
     Top = 8
     Width = 835
     Align = alTop
     BorderSpacing.Around = 8
     TabOrder = 2
-    TextHint = 'Search for name...'
+    TextHint = 'Search by name...'
     OnChange = EditSearchChange
   end
 end
