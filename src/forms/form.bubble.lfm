@@ -9,7 +9,6 @@ object FormBubble: TFormBubble
   ClientWidth = 400
   FormStyle = fsSystemStayOnTop
   ShowHint = True
-  LCLVersion = '3.99.0.0'
   Visible = True
   OnActivate = FormActivate
   OnCreate = FormCreate
@@ -29,22 +28,22 @@ object FormBubble: TFormBubble
     TabOrder = 0
     OnPaint = PanelPaint
     object Panel1: TPanel
-      Left = 7
-      Height = 186
-      Top = 7
-      Width = 386
+      Left = 15
+      Height = 170
+      Top = 15
+      Width = 370
       Align = alClient
       BorderSpacing.Around = 15
       BevelOuter = bvNone
-      ClientHeight = 186
-      ClientWidth = 386
+      ClientHeight = 170
+      ClientWidth = 370
       ParentBackground = False
       TabOrder = 0
       object KMemo: TKMemo
         Left = 0
-        Height = 186
+        Height = 170
         Top = 0
-        Width = 386
+        Width = 370
         Align = alClient
         BorderStyle = bsNone
         Colors.BkGnd = clWhite

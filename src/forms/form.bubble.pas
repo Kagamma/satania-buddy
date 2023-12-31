@@ -49,6 +49,7 @@ type
     procedure TimerTimer(Sender: TObject);
   private
     FRichText: TSataniaRichText;
+    FIsStartTalking: Boolean;
     FText: String;
     FNumWordsDisplay: Single;
     FTypingSpeed: Single;
@@ -119,6 +120,8 @@ end;
 procedure TFormBubble.DisableStreaming;
 begin
   Self.IsPersistent := False;
+  Satania.StopAnimation(Satania.AnimTalkFinish);
+  Self.FIsStartTalking := False;
 end;
 
 procedure TFormBubble.Streaming(S: String);
@@ -198,7 +201,12 @@ begin
       Satania.StopAnimation(Satania.AnimTalkLoop);
       Satania.StartAnimation(Satania.AnimTalkFinish, False);
     end else
+    if not Self.FIsStartTalking then
+    begin
+      Self.FIsStartTalking := True;
+      Satania.StopAnimation(Satania.AnimTalkFinish);
       Satania.StartAnimation(Satania.AnimTalkLoop);
+    end;
     ScrollToBottom;
   end;
 end;
