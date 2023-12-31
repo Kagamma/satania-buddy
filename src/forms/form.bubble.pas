@@ -237,10 +237,10 @@ var
 begin
   inherited;
   C := Panel.Canvas;
-  C.Pen.Width := 3;
+  C.Pen.Width := 1;
   C.Pen.Color := clBlack;
   C.Brush.Color := clWhite;
-  C.RoundRect(1, 1, Panel.Width - 2, Panel.Height - 2, 16, 16);
+  C.RoundRect(8, 8, Panel.Width - 9, Panel.Height - 9, 16, 16);
 end;
 
 procedure TFormBubble.ApplySettings;

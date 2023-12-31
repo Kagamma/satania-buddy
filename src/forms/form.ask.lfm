@@ -8,11 +8,12 @@ object FormAsk: TFormAsk
   ClientHeight = 148
   ClientWidth = 314
   FormStyle = fsSystemStayOnTop
+  ShowHint = True
+  ShowInTaskBar = stNever
+  LCLVersion = '3.99.0.0'
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnShow = FormShow
-  ShowInTaskBar = stNever
-  LCLVersion = '3.99.0.0'
   object Panel: TPanel
     Left = 0
     Height = 148
