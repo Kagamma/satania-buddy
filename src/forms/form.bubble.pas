@@ -52,11 +52,11 @@ type
   private
     FRichText: TSataniaRichText;
     FText: String;
-    FNumWordsDisplay: Integer;
-    FTypingSpeed: Integer;
+    FNumWordsDisplay: Single;
+    FTypingSpeed: Single;
     FVisibleViaSize: Boolean;
     procedure SetText(S: String);
-    procedure SetTypingSpeed(S: Integer);
+    procedure SetTypingSpeed(S: Single);
     procedure SetVisibleViaSize(B: Boolean);
   public
     IsPersistent: Boolean;
@@ -66,7 +66,7 @@ type
     procedure Streaming(S: String);
     procedure ApplySettings;
     property Text: String read FText write SetText;
-    property TypingSpeed: Integer read FTypingSpeed write SetTypingSpeed;
+    property TypingSpeed: Single read FTypingSpeed write SetTypingSpeed;
     property VisibleViaSize: Boolean read FVisibleViaSize write SetVisibleViaSize;
   end;
 
@@ -136,10 +136,10 @@ begin
   Self.FRichText.Source := S;
 end;
 
-procedure TFormBubble.SetTypingSpeed(S: Integer);
+procedure TFormBubble.SetTypingSpeed(S: Single);
 begin
   Self.FTypingSpeed := S;
-  Self.Timer.Interval := 1000 div S;
+  Self.Timer.Interval := 48;
 end;
 
 procedure TFormBubble.SetText(S: String);
@@ -181,8 +181,8 @@ begin
   if (not Self.FinishedTyping) and (not Satania.IsAsking) then
   begin
     if Self.FRichText.TokenList.Count > Self.FNumWordsDisplay - 1 then
-      Inc(Self.FNumWordsDisplay);
-    Self.FRichText.NextTokenPos := Self.FNumWordsDisplay;
+      Self.FNumWordsDisplay := Self.FNumWordsDisplay + Self.FTypingSpeed / 20;
+    Self.FRichText.NextTokenPos := Round(Self.FNumWordsDisplay);
     Self.FRichText.Parse(Self.KMemo);
     if (Self.FRichText.TokenList.Count <= Self.FNumWordsDisplay - 1) and not Self.IsPersistent then
     begin
@@ -195,7 +195,6 @@ begin
     end else
       Satania.StartAnimation(Satania.AnimTalkLoop);
     ScrollToBottom;
-    Self.Timer.Interval := 1000 div Self.FTypingSpeed;
   end;
 end;
 

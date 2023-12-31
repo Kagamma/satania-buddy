@@ -7,6 +7,7 @@ object FormBubble: TFormBubble
   BorderStyle = bsNone
   ClientHeight = 200
   ClientWidth = 400
+  Color = clWhite
   FormStyle = fsSystemStayOnTop
   Visible = True
   OnActivate = FormActivate
@@ -22,7 +23,9 @@ object FormBubble: TFormBubble
     BevelOuter = bvNone
     ClientHeight = 200
     ClientWidth = 400
+    Color = clWhite
     ParentBackground = False
+    ParentColor = False
     TabOrder = 0
     OnPaint = PanelPaint
     object Panel1: TPanel
@@ -57,7 +60,7 @@ object FormBubble: TFormBubble
     end
   end
   object Timer: TTimer
-    Interval = 100
+    Interval = 48
     OnTimer = TimerTimer
     Left = 16
     Top = 16
