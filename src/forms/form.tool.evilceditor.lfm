@@ -46,6 +46,7 @@ object FormEvilCEditor: TFormEvilCEditor
     0000
   }
   Position = poDefaultPosOnly
+  ShowHint = True
   ShowInTaskBar = stAlways
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
@@ -184,7 +185,7 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   inline Editor: TSynEdit
     Left = 0
-    Height = 614
+    Height = 613
     Top = 26
     Width = 675
     Align = alClient
@@ -200,7 +201,7 @@ object FormEvilCEditor: TFormEvilCEditor
     TabOrder = 1
     OnKeyDown = EditorKeyDown
     Gutter.Color = 1644825
-    Gutter.Width = 57
+    Gutter.Width = 61
     Gutter.MouseActions = <>
     RightGutter.Width = 0
     RightGutter.MouseActions = <>
@@ -660,7 +661,7 @@ object FormEvilCEditor: TFormEvilCEditor
         MouseActions = <>
       end
       object SynGutterLineNumber: TSynGutterLineNumber
-        Width = 17
+        Width = 21
         MouseActions = <>
         MarkupInfo.Background = 1644825
         MarkupInfo.Foreground = clGray
@@ -693,8 +694,8 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   object StatusBar: TStatusBar
     Left = 0
-    Height = 23
-    Top = 640
+    Height = 24
+    Top = 639
     Width = 675
     Panels = <    
       item

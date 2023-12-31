@@ -45,8 +45,9 @@ object FormReminders: TFormReminders
     0000000000000000000000000000000000000000000000000000000000000000
     0000
   }
-  OnShow = FormShow
   Position = poScreenCenter
+  ShowHint = True
+  OnShow = FormShow
   object ScrollBoxReminders: TScrollBox
     Left = 8
     Height = 510
@@ -82,8 +83,8 @@ object FormReminders: TFormReminders
       Caption = 'Cancel'
       Images = FormMain.ImageList
       ImageIndex = 10
-      OnClick = ButtonCancelClick
       TabOrder = 0
+      OnClick = ButtonCancelClick
     end
     object ButtonSave: TBitBtn
       Left = 827
@@ -95,8 +96,8 @@ object FormReminders: TFormReminders
       Caption = 'Save'
       Images = FormMain.ImageList
       ImageIndex = 1
-      OnClick = ButtonSaveClick
       TabOrder = 1
+      OnClick = ButtonSaveClick
     end
     object ButtonAddNew1: TBitBtn
       Left = 712
@@ -108,8 +109,8 @@ object FormReminders: TFormReminders
       Caption = 'Add'
       Images = FormMain.ImageList
       ImageIndex = 8
-      OnClick = ToolButtonAddNewClick
       TabOrder = 2
+      OnClick = ToolButtonAddNewClick
     end
     object ButtonCancel1: TBitBtn
       Left = 597
@@ -121,8 +122,8 @@ object FormReminders: TFormReminders
       Caption = 'Help'
       Images = FormMain.ImageList
       ImageIndex = 5
-      OnClick = ButtonCancel1Click
       TabOrder = 3
+      OnClick = ButtonCancel1Click
     end
   end
 end

@@ -6,10 +6,10 @@ object FormHexEditor: TFormHexEditor
   Caption = 'Hex Editor'
   ClientHeight = 532
   ClientWidth = 814
-  OnShow = FormShow
   Position = poScreenCenter
+  ShowHint = True
   ShowInTaskBar = stAlways
-  LCLVersion = '3.99.0.0'
+  OnShow = FormShow
   object HexEditor: TKHexEditor
     Left = 0
     Height = 506

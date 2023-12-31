@@ -9,6 +9,7 @@ object FormBubble: TFormBubble
   ClientWidth = 400
   Color = clWhite
   FormStyle = fsSystemStayOnTop
+  ShowHint = True
   LCLVersion = '3.99.0.0'
   Visible = True
   OnActivate = FormActivate

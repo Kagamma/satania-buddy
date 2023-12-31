@@ -7,6 +7,7 @@ object FormRules: TFormRules
   ClientHeight = 542
   ClientWidth = 851
   Position = poScreenCenter
+  ShowHint = True
   OnShow = FormShow
   object Panel1: TPanel
     Left = 0

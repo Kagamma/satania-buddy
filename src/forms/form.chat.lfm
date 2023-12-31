@@ -46,6 +46,7 @@ object FormChat: TFormChat
     0000
   }
   Position = poDefault
+  ShowHint = True
   ShowInTaskBar = stAlways
   LCLVersion = '3.99.0.0'
   OnCreate = FormCreate
