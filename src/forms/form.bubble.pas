@@ -26,6 +26,9 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, kmemo,
+{$ifdef WINDOWS}
+  Windows,
+{$endif}
 {$ifdef LINUX_X11}
   X, Xlib, xatom, sataniaqt, qtwidgets,
 {$endif}
@@ -37,11 +40,14 @@ type
 
   TFormBubble = class(TForm)
     KMemo: TKMemo;
+    Panel1: TPanel;
+    Panel: TPanel;
     Timer: TTimer;
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure PanelPaint(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
   private
     FRichText: TSataniaRichText;
@@ -194,12 +200,24 @@ begin
 end;
 
 procedure TFormBubble.FormCreate(Sender: TObject);
+var
+  {$ifdef LINUX_X11}W: QWidgetH;{$endif}
+  {$ifdef WINDOWS}Attrib: Longint;{$endif}
 begin
+  {$ifdef WINDOWS}
+  Color := $000002EE;
+  Attrib := GetWindowLongA(Handle, GWL_EXSTYLE);
+  SetWindowLongA(Handle, GWL_EXSTYLE, Attrib Or WS_EX_LAYERED);
+  SetLayeredWindowAttributes(ThehWnd, $000002EE, 0, 1);
+  {$endif}
   {$ifdef LINUX_X11}
   Self.Enabled := False;       
   Self.KMemo.Enabled := False;
-  TQtWidget(TQtMainWindow(Handle).Widget).setFocusPolicy(QtNoFocus);
-  // TQtWidget(TQtMainWindow(Handle).Widget).setAttribute(QtWA_ShowWithoutActivating);
+  W := TQtMainWindow(Handle).Widget;
+  QWidget_setFocusPolicy(W, QtNoFocus);
+  QWidget_setAttribute(W, QtWA_ShowWithoutActivating, True);
+  QWidget_setAttribute(W, QtWA_TranslucentBackground, True);
+  QWidget_setAttribute(W, QtWA_NoSystemBackground, True);
   {$endif}
   Self.FRichText := TSataniaRichText.Create;
   Self.FRichText.IsStreaming := True;
@@ -226,6 +244,18 @@ end;
 procedure TFormBubble.FormShow(Sender: TObject);
 begin
   BringToFront;
+end;
+
+procedure TFormBubble.PanelPaint(Sender: TObject);
+var
+  C: TCanvas;
+begin
+  inherited;
+  C := Panel.Canvas;
+  C.Pen.Width := 3;
+  C.Pen.Color := clBlack;
+  C.Brush.Color := clWhite;
+  C.RoundRect(1, 1, Panel.Width - 2, Panel.Height - 2, 16, 16);
 end;
 
 procedure TFormBubble.ApplySettings;

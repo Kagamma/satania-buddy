@@ -8,25 +8,53 @@ object FormBubble: TFormBubble
   ClientHeight = 200
   ClientWidth = 400
   FormStyle = fsSystemStayOnTop
-  LCLVersion = '3.99.0.0'
   Visible = True
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  object KMemo: TKMemo
+  object Panel: TPanel
     Left = 0
+    Height = 200
     Top = 0
     Width = 400
     Align = alClient
-    ContentPadding.Left = 5
-    ContentPadding.Top = 5
-    ContentPadding.Right = 5
-    ContentPadding.Bottom = 5
-    ParentFont = False
-    ReadOnly = True
+    BevelOuter = bvNone
+    ClientHeight = 200
+    ClientWidth = 400
+    ParentBackground = False
     TabOrder = 0
-    Visible = True
+    OnPaint = PanelPaint
+    object Panel1: TPanel
+      Left = 8
+      Height = 184
+      Top = 8
+      Width = 384
+      Align = alClient
+      BorderSpacing.Around = 8
+      BevelOuter = bvNone
+      ClientHeight = 184
+      ClientWidth = 384
+      ParentBackground = False
+      TabOrder = 0
+      object KMemo: TKMemo
+        Left = 0
+        Height = 184
+        Top = 0
+        Width = 384
+        Align = alClient
+        BorderStyle = bsNone
+        Colors.BkGnd = clWhite
+        ContentPadding.Left = 5
+        ContentPadding.Top = 5
+        ContentPadding.Right = 5
+        ContentPadding.Bottom = 5
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 0
+        Visible = True
+      end
+    end
   end
   object Timer: TTimer
     Interval = 100
