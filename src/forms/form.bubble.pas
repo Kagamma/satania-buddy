@@ -240,7 +240,7 @@ begin
   C.Pen.Width := 1;
   C.Pen.Color := clBlack;
   C.Brush.Color := clWhite;
-  C.RoundRect(8, 8, Panel.Width - 9, Panel.Height - 9, 16, 16);
+  C.RoundRect(0, 0, Panel.Width, Panel.Height, 16, 16);
 end;
 
 procedure TFormBubble.ApplySettings;

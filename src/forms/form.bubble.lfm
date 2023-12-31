@@ -30,22 +30,22 @@ object FormBubble: TFormBubble
     TabOrder = 0
     OnPaint = PanelPaint
     object Panel1: TPanel
-      Left = 8
-      Height = 184
-      Top = 8
-      Width = 384
+      Left = 7
+      Height = 186
+      Top = 7
+      Width = 386
       Align = alClient
-      BorderSpacing.Around = 8
+      BorderSpacing.Around = 7
       BevelOuter = bvNone
-      ClientHeight = 184
-      ClientWidth = 384
+      ClientHeight = 186
+      ClientWidth = 386
       ParentBackground = False
       TabOrder = 0
       object KMemo: TKMemo
         Left = 0
-        Height = 184
+        Height = 186
         Top = 0
-        Width = 384
+        Width = 386
         Align = alClient
         BorderStyle = bsNone
         Colors.BkGnd = clWhite
