@@ -97,9 +97,9 @@ begin
     if B then
     begin
       if Self.Width = 1 then
-        Self.Width := Save.Settings.ChatBubbleSizeX + 8;
+        Self.Width := Save.Settings.ChatBubbleSizeX + 32;
       if Self.Height = 1 then
-        Self.Height := Save.Settings.ChatBubbleSizeY + 8;
+        Self.Height := Save.Settings.ChatBubbleSizeY + 32;
       AlphaBlendValue := 255;
     end else
     begin
