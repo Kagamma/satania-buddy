@@ -26,12 +26,10 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, kmemo,
-{$ifdef WINDOWS}
-  Windows,
-{$endif}
-{$ifdef LINUX_X11}
-  X, Xlib, xatom, sataniaqt, qtwidgets,
-{$endif}
+  {$define unit_declare_interface}
+  {$I form.bubble_linux_x11.inc}
+  {$I form.bubble_windows.inc}
+  {$undef unit_declare_interface}
   Mcdowell.RichText;
 
 type
@@ -55,6 +53,7 @@ type
     FNumWordsDisplay: Single;
     FTypingSpeed: Single;
     FVisibleViaSize: Boolean;
+    procedure CreateCommons;
     procedure SetText(S: String);
     procedure SetTypingSpeed(S: Single);
     procedure SetVisibleViaSize(B: Boolean);
@@ -84,6 +83,11 @@ uses
 {$R *.lfm}
 
 { TFormBubble }
+
+{$define unit_implmentation}
+{$I form.bubble_linux_x11.inc}
+{$I form.bubble_windows.inc}
+{$undef unit_implmentation}
 
 procedure TFormBubble.SetVisibleViaSize(B: Boolean);
 begin
@@ -198,26 +202,8 @@ begin
   end;
 end;
 
-procedure TFormBubble.FormCreate(Sender: TObject);
-var
-  {$ifdef LINUX_X11}W: QWidgetH;{$endif}
-  {$ifdef WINDOWS}Attrib: Longint;{$endif}
+procedure TFormBubble.CreateCommons;
 begin
-  {$ifdef WINDOWS}
-  Color := $000002EE;
-  Attrib := GetWindowLongA(Handle, GWL_EXSTYLE);
-  SetWindowLongA(Handle, GWL_EXSTYLE, Attrib Or WS_EX_LAYERED);
-  SetLayeredWindowAttributes(ThehWnd, $000002EE, 0, 1);
-  {$endif}
-  {$ifdef LINUX_X11}
-  Self.Enabled := False;       
-  Self.KMemo.Enabled := False;
-  W := TQtMainWindow(Handle).Widget;
-  QWidget_setFocusPolicy(W, QtNoFocus);
-  QWidget_setAttribute(W, QtWA_ShowWithoutActivating, True);
-  QWidget_setAttribute(W, QtWA_TranslucentBackground, True);
-  QWidget_setAttribute(W, QtWA_NoSystemBackground, True);
-  {$endif}
   Self.FRichText := TSataniaRichText.Create;
   Self.FRichText.IsStreaming := True;
   Self.FRichText.IsPerformance := False;
