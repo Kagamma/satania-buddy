@@ -219,7 +219,6 @@ end;
 
 procedure TFormMain.InitCommon;
 var
-  StateMain: TStateMain;
   S: String;
   I: Integer;
 begin

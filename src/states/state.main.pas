@@ -186,29 +186,41 @@ begin
     0:
       begin
         FormBubble.Left := Round(Box.Min.X - FormBubble.Width) + FormMain.Monitor.Left;
-        if FormBubble.Left < FormMain.Monitor.Left then
+        if FormBubble.Left < FormMain.Monitor.Left then 
+        begin
           BubbleSideX := 1;
+          FormBubble.Invalidate;
+        end;
       end;
     1:
       begin
         FormBubble.Left := Round(Box.Max.X) + FormMain.Monitor.Left;
-        if FormBubble.Left + FormBubble.Width > FormBubble.Width * 2 + (Box.Max.X - Box.Min.X) + FormMain.Monitor.Left then
+        if FormBubble.Left + FormBubble.Width > FormBubble.Width * 2 + (Box.Max.X - Box.Min.X) + FormMain.Monitor.Left then  
+        begin
           BubbleSideX := 0;
+          FormBubble.Invalidate;
+        end;
       end;
   end;
   case BubbleSideY of
     0:
       begin
         FormBubble.Top := UIToScreenCoord(Box.Max.Y) - FormBubble.Height;
-        if FormBubble.Top < 0 then
+        if FormBubble.Top < 0 then  
+        begin
           BubbleSideY := 1;
+          FormBubble.Invalidate;
+        end;
       end;
     1:
       begin
         FormBubble.Top := UIToScreenCoord(Box.Min.Y);
         FormBubble.Top := UIToScreenCoord(Box.Min.Y);
-        if FormBubble.Top + FormBubble.Height > Application.ScreenHeight then
+        if FormBubble.Top + FormBubble.Height > Application.ScreenHeight then    
+        begin
           BubbleSideY := 0;
+          FormBubble.Invalidate;
+        end;
       end;
   end;
 end;

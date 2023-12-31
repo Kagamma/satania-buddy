@@ -7,9 +7,9 @@ object FormBubble: TFormBubble
   BorderStyle = bsNone
   ClientHeight = 200
   ClientWidth = 400
-  Color = clWhite
   FormStyle = fsSystemStayOnTop
   ShowHint = True
+  LCLVersion = '3.99.0.0'
   Visible = True
   OnActivate = FormActivate
   OnCreate = FormCreate
@@ -24,7 +24,6 @@ object FormBubble: TFormBubble
     BevelOuter = bvNone
     ClientHeight = 200
     ClientWidth = 400
-    Color = clWhite
     ParentBackground = False
     ParentColor = False
     TabOrder = 0
@@ -35,7 +34,7 @@ object FormBubble: TFormBubble
       Top = 7
       Width = 386
       Align = alClient
-      BorderSpacing.Around = 7
+      BorderSpacing.Around = 15
       BevelOuter = bvNone
       ClientHeight = 186
       ClientWidth = 386

@@ -78,6 +78,7 @@ uses
   globals,
   Mcdowell,
   Form.chat,
+  State.Main,
   Utils.ActiveWindow;
 
 {$R *.lfm}
@@ -95,9 +96,9 @@ begin
     if B then
     begin
       if Self.Width = 1 then
-        Self.Width := Save.Settings.ChatBubbleSizeX;
+        Self.Width := Save.Settings.ChatBubbleSizeX + 8;
       if Self.Height = 1 then
-        Self.Height := Save.Settings.ChatBubbleSizeY;
+        Self.Height := Save.Settings.ChatBubbleSizeY + 8;
       AlphaBlendValue := 255;
     end else
     begin
@@ -234,13 +235,49 @@ end;
 procedure TFormBubble.PanelPaint(Sender: TObject);
 var
   C: TCanvas;
+  P: array[0..2] of TPoint;
 begin
   inherited;
   C := Panel.Canvas;
   C.Pen.Width := 1;
   C.Pen.Color := clBlack;
   C.Brush.Color := clWhite;
-  C.RoundRect(0, 0, Panel.Width, Panel.Height, 16, 16);
+  C.RoundRect(8, 8, Panel.Width - 8, Panel.Height - 8, 16, 16);
+  if StateMain = nil then
+    Exit;
+  if StateMain.BubbleSideY = 0 then
+  begin
+    if StateMain.BubbleSideX = 0 then
+    begin
+      P[0].X := Panel.Width - 38; P[0].Y := Panel.Height - 9;
+      P[1].X := Panel.Width - 18; P[1].Y := Panel.Height - 9;
+      P[2].X := Panel.Width -  8; P[2].Y := Panel.Height;
+    end else
+    begin
+      P[0].X := 18; P[0].Y := Panel.Height - 9;
+      P[1].X := 38; P[1].Y := Panel.Height - 9;
+      P[2].X :=  8; P[2].Y := Panel.Height;
+    end;
+  end else
+  begin
+    if StateMain.BubbleSideX = 0 then
+    begin
+      P[0].X := Panel.Width - 38; P[0].Y := 9;
+      P[1].X := Panel.Width - 18; P[1].Y := 9;
+      P[2].X := Panel.Width -  8; P[2].Y := 0;
+    end else
+    begin
+      P[0].X := 18; P[0].Y := 9;
+      P[1].X := 38; P[1].Y := 9;
+      P[2].X :=  8; P[2].Y := 0;
+    end;
+  end;
+  C.Pen.Color := clBlack;
+  C.Polygon(P);
+  C.Pen.Color := clWhite;
+  P[0].X := P[0].X + 1;
+  P[1].X := P[1].X - 1;
+  C.Line(P[0], P[1]);
 end;
 
 procedure TFormBubble.ApplySettings;
