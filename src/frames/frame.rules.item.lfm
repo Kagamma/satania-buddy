@@ -1,10 +1,10 @@
 object FrameRulesItem: TFrameRulesItem
   Left = 0
-  Height = 373
+  Height = 283
   Top = 0
   Width = 815
   Align = alTop
-  ClientHeight = 373
+  ClientHeight = 283
   ClientWidth = 815
   ParentBackground = False
   TabOrder = 0
@@ -90,13 +90,13 @@ object FrameRulesItem: TFrameRulesItem
   end
   object GroupBoxPatterns: TGroupBox
     Left = 4
-    Height = 329
+    Height = 239
     Top = 40
     Width = 335
     Align = alLeft
     BorderSpacing.Around = 4
     Caption = 'Patterns for comparison'
-    ClientHeight = 301
+    ClientHeight = 211
     ClientWidth = 329
     ParentBackground = False
     TabOrder = 1
@@ -112,7 +112,7 @@ object FrameRulesItem: TFrameRulesItem
     end
     object ScrollBoxPatterns: TScrollBox
       Left = 0
-      Height = 279
+      Height = 189
       Top = 22
       Width = 329
       HorzScrollBar.Page = 1
@@ -126,25 +126,25 @@ object FrameRulesItem: TFrameRulesItem
   end
   object Splitter1: TSplitter
     Left = 343
-    Height = 333
+    Height = 243
     Top = 40
     Width = 5
   end
   object GroupBoxResponse: TGroupBox
     Left = 352
-    Height = 329
+    Height = 239
     Top = 40
     Width = 459
     Align = alClient
     BorderSpacing.Around = 4
     Caption = 'Response in Evil Script'
-    ClientHeight = 301
+    ClientHeight = 211
     ClientWidth = 453
     ParentBackground = False
     TabOrder = 3
     object ScrollBoxResponse: TScrollBox
       Left = 0
-      Height = 301
+      Height = 211
       Top = 0
       Width = 453
       HorzScrollBar.Page = 182
@@ -152,17 +152,17 @@ object FrameRulesItem: TFrameRulesItem
       VertScrollBar.Page = 192
       VertScrollBar.Smooth = True
       Align = alClient
-      ClientHeight = 299
+      ClientHeight = 209
       ClientWidth = 451
       ParentBackground = False
       TabOrder = 0
       object Panel2: TPanel
         Left = 419
-        Height = 299
+        Height = 209
         Top = 0
         Width = 32
         Align = alRight
-        ClientHeight = 299
+        ClientHeight = 209
         ClientWidth = 32
         ParentBackground = False
         TabOrder = 0
@@ -180,7 +180,7 @@ object FrameRulesItem: TFrameRulesItem
       end
       object EditResponse: TMemo
         Left = 0
-        Height = 299
+        Height = 209
         Top = 0
         Width = 419
         Align = alClient
