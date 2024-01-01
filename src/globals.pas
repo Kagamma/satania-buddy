@@ -60,6 +60,7 @@ type
     Patterns: TStringDynArray;
     Response: String;
     SimilarityScore: Single;
+    Confirmation: Boolean;
   end;
 
   THttpResponseRec = record
@@ -237,7 +238,7 @@ type
     property STTWhisperModel: String read FSTTWhisperModel write FSTTWhisperModel;
     property STTBackend: Integer read FSTTBackend write FSTTBackend default 0;
     property UserName: String read FUserName write FUserName;
-    property Rules: Boolean read FRules write FRules default False;
+    property Rules: Boolean read FRules write FRules default True;
     property SystemErrorMessage: Boolean read FSystemErrorMessage write FSystemErrorMessage default False;
     property LastServiceUsed: String read FLastServiceUsed write FLastServiceUsed;
     property EnableItalicForUserText: Boolean read FEnableItalicForUserText write FEnableItalicForUserText default False;
@@ -388,7 +389,7 @@ begin
   FSettings.FSitOnWindowRightMargin := 86;
   FSettings.FEmbeddedServerPort := 8666;
   FSettings.FEmbeddedServerEnable := False;
-  FSettings.FRules := False;
+  FSettings.FRules := True;
   FSettings.FUserName := 'Anon';
   FSettings.FLastServiceUsed := 'WolframAlpha.evil';
   FSettings.FSystemErrorMessage := False;
