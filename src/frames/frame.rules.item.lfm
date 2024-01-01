@@ -1,11 +1,11 @@
 object FrameRulesItem: TFrameRulesItem
   Left = 0
-  Height = 323
+  Height = 373
   Top = 0
-  Width = 708
+  Width = 815
   Align = alTop
-  ClientHeight = 323
-  ClientWidth = 708
+  ClientHeight = 373
+  ClientWidth = 815
   ParentBackground = False
   TabOrder = 0
   DesignLeft = 347
@@ -14,38 +14,37 @@ object FrameRulesItem: TFrameRulesItem
     Left = 4
     Height = 32
     Top = 4
-    Width = 700
+    Width = 807
     Align = alTop
     BorderSpacing.Around = 4
     BevelColor = clMenuBar
     ClientHeight = 32
-    ClientWidth = 700
+    ClientWidth = 807
     Color = clInactiveCaption
     ParentBackground = False
     ParentColor = False
     TabOrder = 0
     object Label1: TLabel
-      Left = 5
-      Height = 22
-      Top = 5
-      Width = 98
+      Left = 7
+      Height = 18
+      Top = 7
+      Width = 43
       Align = alLeft
-      BorderSpacing.Around = 4
-      Caption = 'Unique Name'
+      BorderSpacing.Around = 6
+      Caption = 'Name'
       ParentColor = False
     end
     object EditTag: TEdit
-      Left = 115
+      Left = 56
       Height = 22
       Top = 5
-      Width = 317
+      Width = 205
       Align = alLeft
-      BorderSpacing.Left = 8
       BorderSpacing.Around = 4
       TabOrder = 0
     end
     object ButtonDelete: TSpeedButton
-      Left = 672
+      Left = 779
       Height = 22
       Top = 5
       Width = 23
@@ -55,39 +54,51 @@ object FrameRulesItem: TFrameRulesItem
       ImageIndex = 10
     end
     object Label2: TLabel
-      Left = 444
-      Height = 22
-      Top = 5
+      Left = 275
+      Height = 18
+      Top = 7
       Width = 112
       Align = alLeft
       BorderSpacing.Left = 8
-      BorderSpacing.Around = 4
+      BorderSpacing.Around = 6
       Caption = 'Similarity Score'
       ParentColor = False
     end
     object EditSimilarityScore: TFloatSpinEdit
-      Left = 568
+      Left = 393
       Height = 22
       Top = 5
       Width = 69
       Align = alLeft
-      BorderSpacing.Left = 8
       BorderSpacing.Around = 4
       Increment = 0.01
       MaxValue = 1
       TabOrder = 1
       Value = 0.7
     end
+    object CheckBoxConfirm: TCheckBox
+      Left = 470
+      Height = 30
+      Top = 1
+      Width = 159
+      Align = alLeft
+      Alignment = taLeftJustify
+      BorderSpacing.Left = 8
+      Caption = 'Need Confirmation'
+      Checked = True
+      State = cbChecked
+      TabOrder = 2
+    end
   end
   object GroupBoxPatterns: TGroupBox
     Left = 4
-    Height = 279
+    Height = 329
     Top = 40
     Width = 335
     Align = alLeft
     BorderSpacing.Around = 4
     Caption = 'Patterns for comparison'
-    ClientHeight = 251
+    ClientHeight = 301
     ClientWidth = 329
     ParentBackground = False
     TabOrder = 1
@@ -103,7 +114,7 @@ object FrameRulesItem: TFrameRulesItem
     end
     object ScrollBoxPatterns: TScrollBox
       Left = 0
-      Height = 229
+      Height = 279
       Top = 22
       Width = 329
       HorzScrollBar.Page = 1
@@ -117,43 +128,43 @@ object FrameRulesItem: TFrameRulesItem
   end
   object Splitter1: TSplitter
     Left = 343
-    Height = 283
+    Height = 333
     Top = 40
     Width = 5
   end
   object GroupBoxResponse: TGroupBox
     Left = 352
-    Height = 279
+    Height = 329
     Top = 40
-    Width = 352
+    Width = 459
     Align = alClient
     BorderSpacing.Around = 4
     Caption = 'Response in Evil Script'
-    ClientHeight = 251
-    ClientWidth = 346
+    ClientHeight = 301
+    ClientWidth = 453
     ParentBackground = False
     TabOrder = 3
     object ScrollBoxResponse: TScrollBox
       Left = 0
-      Height = 251
+      Height = 301
       Top = 0
-      Width = 346
+      Width = 453
       HorzScrollBar.Page = 182
       VertScrollBar.Increment = 19
       VertScrollBar.Page = 192
       VertScrollBar.Smooth = True
       Align = alClient
-      ClientHeight = 249
-      ClientWidth = 344
+      ClientHeight = 299
+      ClientWidth = 451
       ParentBackground = False
       TabOrder = 0
       object Panel2: TPanel
-        Left = 312
-        Height = 249
+        Left = 419
+        Height = 299
         Top = 0
         Width = 32
         Align = alRight
-        ClientHeight = 249
+        ClientHeight = 299
         ClientWidth = 32
         ParentBackground = False
         TabOrder = 0
@@ -171,9 +182,9 @@ object FrameRulesItem: TFrameRulesItem
       end
       object EditResponse: TMemo
         Left = 0
-        Height = 249
+        Height = 299
         Top = 0
-        Width = 312
+        Width = 419
         Align = alClient
         Lines.Strings = (
           'talk(''Hello'')'

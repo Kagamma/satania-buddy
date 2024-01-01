@@ -1,10 +1,10 @@
 object FrameRemindersItem: TFrameRemindersItem
   Left = 0
-  Height = 173
+  Height = 188
   Top = 0
   Width = 1041
   BorderSpacing.Around = 4
-  ClientHeight = 173
+  ClientHeight = 188
   ClientWidth = 1041
   ParentBackground = False
   TabOrder = 0
@@ -12,11 +12,11 @@ object FrameRemindersItem: TFrameRemindersItem
   DesignTop = 27
   object Panel1: TPanel
     Left = 0
-    Height = 173
+    Height = 188
     Top = 0
     Width = 240
     Align = alLeft
-    ClientHeight = 173
+    ClientHeight = 188
     ClientWidth = 240
     ParentBackground = False
     TabOrder = 0
@@ -45,19 +45,19 @@ object FrameRemindersItem: TFrameRemindersItem
     end
     object ComboBoxKind: TComboBox
       Left = 48
-      Height = 29
+      Height = 27
       Top = 9
       Width = 178
-      ItemHeight = 0
+      ItemHeight = 19
       ItemIndex = 0
       Items.Strings = (
         'Alarm'
         'Reminder'
       )
-      OnChange = ComboBoxKindChange
       ReadOnly = True
       TabOrder = 1
       Text = 'Alarm'
+      OnChange = ComboBoxKindChange
     end
     object LabelAlarmType: TLabel
       Left = 9
@@ -78,20 +78,20 @@ object FrameRemindersItem: TFrameRemindersItem
   end
   object Panel2: TPanel
     Left = 952
-    Height = 173
+    Height = 188
     Top = 0
     Width = 89
     Align = alRight
-    ClientHeight = 173
+    ClientHeight = 188
     ClientWidth = 89
     ParentBackground = False
     TabOrder = 1
     object CheckBoxEnable: TCheckBox
       Left = 8
-      Height = 23
+      Height = 25
       Hint = 'Enable'
       Top = 40
-      Width = 74
+      Width = 75
       Caption = 'Enable'
       Checked = True
       State = cbChecked
@@ -116,20 +116,20 @@ object FrameRemindersItem: TFrameRemindersItem
     end
   end
   object Panel3: TPanel
-    Left = 350
-    Height = 173
+    Left = 360
+    Height = 188
     Top = 0
-    Width = 602
+    Width = 592
     Align = alClient
-    ClientHeight = 173
-    ClientWidth = 602
+    ClientHeight = 188
+    ClientWidth = 592
     ParentBackground = False
     TabOrder = 2
     object MemoScript: TMemo
       Left = 1
-      Height = 171
+      Height = 186
       Top = 1
-      Width = 600
+      Width = 590
       Align = alClient
       Lines.Strings = (
         '// Code that will be executed'
@@ -144,94 +144,110 @@ object FrameRemindersItem: TFrameRemindersItem
   end
   object PanelDate: TPanel
     Left = 240
-    Height = 173
+    Height = 188
     Top = 0
-    Width = 110
+    Width = 120
     Align = alLeft
     AutoSize = True
-    ClientHeight = 173
-    ClientWidth = 110
+    ClientHeight = 188
+    ClientWidth = 120
     ParentBackground = False
     TabOrder = 3
     object CheckBoxMonday: TCheckBox
-      Left = 1
-      Height = 23
+      Left = 5
+      Height = 25
       Hint = 'Monday'
-      Top = 24
-      Width = 108
+      Top = 30
+      Width = 110
       Align = alTop
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Monday'
       Checked = True
       State = cbChecked
       TabOrder = 1
     end
     object CheckBoxSaturday: TCheckBox
-      Left = 1
-      Height = 23
+      Left = 5
+      Height = 25
       Hint = 'Saturday'
-      Top = 139
-      Width = 108
+      Top = 155
+      Width = 110
       Align = alTop
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
+      BorderSpacing.Bottom = 4
       Caption = 'Saturday'
       Checked = True
       State = cbChecked
       TabOrder = 6
     end
     object CheckBoxFriday: TCheckBox
-      Left = 1
-      Height = 23
+      Left = 5
+      Height = 25
       Hint = 'Friday'
-      Top = 116
-      Width = 108
+      Top = 130
+      Width = 110
       Align = alTop
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Friday'
       Checked = True
       State = cbChecked
       TabOrder = 5
     end
     object CheckBoxThursday: TCheckBox
-      Left = 1
-      Height = 23
+      Left = 5
+      Height = 25
       Hint = 'Thursday'
-      Top = 93
-      Width = 108
+      Top = 105
+      Width = 110
       Align = alTop
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Thursday'
       Checked = True
       State = cbChecked
       TabOrder = 4
     end
     object CheckBoxWednesday: TCheckBox
-      Left = 1
-      Height = 23
+      Left = 5
+      Height = 25
       Hint = 'Wednesday'
-      Top = 70
-      Width = 108
+      Top = 80
+      Width = 110
       Align = alTop
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Wednesday'
       Checked = True
       State = cbChecked
       TabOrder = 3
     end
     object CheckBoxTuesday: TCheckBox
-      Left = 1
-      Height = 23
+      Left = 5
+      Height = 25
       Hint = 'Tuesday'
-      Top = 47
-      Width = 108
+      Top = 55
+      Width = 110
       Align = alTop
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 4
       Caption = 'Tuesday'
       Checked = True
       State = cbChecked
       TabOrder = 2
     end
     object CheckBoxSunday: TCheckBox
-      Left = 1
-      Height = 23
+      Left = 5
+      Height = 25
       Hint = 'Sunday'
-      Top = 1
-      Width = 108
+      Top = 5
+      Width = 110
       Align = alTop
+      BorderSpacing.Left = 4
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 4
       Caption = 'Sunday'
       Checked = True
       State = cbChecked
