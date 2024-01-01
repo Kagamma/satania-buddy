@@ -153,8 +153,8 @@ begin
         Frame.EditTag.Text := Trim(Frame.EditTag.Text);
         if Frame.EditTag.Text = '' then
           continue;
-        JSONItem.Add('name', Frame.EditTag.Text);
-        JSONItem.Add('response', Frame.EditResponse.Lines.Text);   
+        JSONItem.Add('name', Trim(Frame.EditTag.Text));
+        JSONItem.Add('response', Trim(Frame.EditResponse.Lines.Text));   
         JSONItem.Add('similarity_score', Frame.EditSimilarityScore.Value);
         JSONItem.Add('confirmation', Frame.CheckBoxConfirm.Checked);
         JSONArraySub := TJSONArray.Create;
