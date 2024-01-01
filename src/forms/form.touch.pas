@@ -180,6 +180,7 @@ procedure TFormTouch.FormShow(Sender: TObject);
 begin
   // QWidget_setWindowFlags(TQtMainWindow(Handle).Widget, QtTool);
   // QWidget_setWindowFlags(TQtMainWindow(Handle).Widget, QtWindowStaysOnTopHint);
+  ShowInTaskBar := stNever;
 end;
 
 procedure TFormTouch.TimerBlinkingStartTimer(Sender: TObject);
