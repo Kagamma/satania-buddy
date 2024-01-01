@@ -83,11 +83,11 @@ var
   Path: String;
 begin
   RuleDict.Clear;
-  Path := GetOSLocalDir + PATH_SCRIPTS_RAW + Save.Settings.Skin + '/rules.json';
+  Path := GetOSLocalDir + PATH_SCRIPTS_RAW + Save.Settings.Skin + '/commands.json';
   if not FileExists(Path) then
   begin
     // Try to load default rules if any
-    Path := PATH_SCRIPTS_RAW + Save.Settings.Skin + '/rules.json';
+    Path := PATH_SCRIPTS_RAW + Save.Settings.Skin + '/commands.json';
     if not FileExists(Path) then
       Exit;
   end;
@@ -124,7 +124,7 @@ end;
 
 procedure TFormRules.ButtonHelpClick(Sender: TObject);
 begin
-  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Rules');
+  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Commands');
 end;
 
 procedure TFormRules.ButtonLearnRulesClick(Sender: TObject);
@@ -166,7 +166,7 @@ begin
       end;
       FS := TStringList.Create;
       FS.Text := JSONArray.AsJSON;
-      FS.SaveToFile(GetOSLocalDir + PATH_SCRIPTS_RAW + Save.Settings.Skin + '/rules.json');
+      FS.SaveToFile(GetOSLocalDir + PATH_SCRIPTS_RAW + Save.Settings.Skin + '/commands.json');
       FS.Free;
       ReadRules;
       IsSaved := True;

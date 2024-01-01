@@ -94,7 +94,6 @@ type
     GroupBoxSTTVosk: TGroupBox;
     GroupBoxSTTWhisper: TGroupBox;
     Label1: TLabel;
-    Label4: TLabel;
     LabelChatbotServer4: TLabel;
     LabelChatBubbleDelay: TLabel;
     LabelChatBubbleSize: TLabel;

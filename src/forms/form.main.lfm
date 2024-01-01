@@ -12,7 +12,6 @@ object FormMain: TFormMain
   Position = poDefault
   ShowHint = True
   ShowInTaskBar = stNever
-  LCLVersion = '3.99.0.0'
   Scaled = False
   Visible = True
   WindowState = wsMaximized
@@ -21,7 +20,7 @@ object FormMain: TFormMain
   OnShow = FormShow
   object CastleControl: TCastleControl
     Left = 0
-    Height = 1061
+    Height = 1100
     Top = 0
     Width = 2000
     Align = alClient
@@ -507,7 +506,7 @@ object FormMain: TFormMain
       end
     end
     object MenuItemRules: TMenuItem
-      Caption = 'Rules'
+      Caption = 'Commands'
       ImageIndex = 32
       OnClick = MenuItemRulesClick
     end

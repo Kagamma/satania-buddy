@@ -236,7 +236,7 @@ begin
   S.RegisterFunc('is_sow', @SEIsSoW, 0);
   S.RegisterFunc('is_lewd', @SEIsLewd, 0);
   S.RegisterFunc('is_silent', @SEIsSilent, 0);      
-  S.RegisterFunc('is_rules', @SEIsRules, 0);
+  S.RegisterFunc('is_commands', @SEIsRules, 0);
   S.RegisterFunc('is_speech_to_text', @SEIsSpeechToText, 0);
   S.RegisterFunc('sprite_scale_set', @SESpriteScaleGet, 1);
   S.RegisterFunc('flag_global_get', @Save.SEGetFlag, 1);

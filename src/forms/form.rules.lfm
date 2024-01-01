@@ -3,7 +3,7 @@ object FormRules: TFormRules
   Height = 542
   Top = 31
   Width = 851
-  Caption = 'Rules'
+  Caption = 'Commands'
   ClientHeight = 542
   ClientWidth = 851
   Position = poScreenCenter
@@ -51,7 +51,7 @@ object FormRules: TFormRules
       Width = 107
       Align = alRight
       BorderSpacing.Around = 8
-      Caption = 'Add Rule'
+      Caption = 'Add'
       Images = FormMain.ImageList
       ImageIndex = 8
       TabOrder = 2
