@@ -85,8 +85,6 @@ object FrameRulesItem: TFrameRulesItem
       Alignment = taLeftJustify
       BorderSpacing.Left = 8
       Caption = 'Need Confirmation'
-      Checked = True
-      State = cbChecked
       TabOrder = 2
     end
   end
