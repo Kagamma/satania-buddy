@@ -2347,8 +2347,12 @@ operator + (V1: TSEValue; V2: String) R: TSEValue; inline;
 var
   S: String;
 begin
-  S := V1.VarString^;
-  R := S + V2;
+  if V1.Kind = sevkString then
+  begin
+    S := V1.VarString^;
+    R := S + V2;
+  end else
+    R := V2;
 end;
 
 operator + (V1: TSEValue; V2: Pointer) R: TSEValue; inline;
@@ -2394,7 +2398,10 @@ begin
       end;
     sevkString:
       begin
-        GC.AllocString(@R, V1.VarString^ + V2.VarString^);
+        if V2.Kind = sevkString then
+          GC.AllocString(@R, V1.VarString^ + V2.VarString^)
+        else
+          GC.AllocString(@R, V1.VarString^);
       end;
     sevkMap:
       begin
