@@ -187,6 +187,7 @@ object FrameRulesItem: TFrameRulesItem
         Lines.Strings = (
           'talk(''Hello'')'
         )
+        ScrollBars = ssAutoBoth
         TabOrder = 1
       end
     end
