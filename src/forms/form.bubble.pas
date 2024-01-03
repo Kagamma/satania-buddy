@@ -100,12 +100,19 @@ begin
         Self.Width := Save.Settings.ChatBubbleSizeX + 32;
       if Self.Height = 1 then
         Self.Height := Save.Settings.ChatBubbleSizeY + 32;
+      {$ifdef LINUX_X11}
       AlphaBlendValue := 255;
+      {$endif}
     end else
     begin
+      {$ifdef LINUX_X11}
       Self.Width := 1;
-      Self.Height := 1; 
+      Self.Height := 1;
       AlphaBlendValue := 1;
+      {$else}
+      Self.Width := 0;
+      Self.Height := 0;
+      {$endif}
     end;
   Self.FVisibleViaSize := B;
 end;
@@ -220,8 +227,6 @@ begin
   Self.TypingSpeed := Save.Settings.TextSpeed;
   Self.Width := 1;
   Self.Height := 1;
-  AlphaBlend := True;
-  AlphaBlendValue := 1;
   ApplySettings;
 end;
 

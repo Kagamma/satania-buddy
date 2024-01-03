@@ -36,6 +36,8 @@ begin
   QWidget_setAttribute(W, QtWA_ShowWithoutActivating, True);
   QWidget_setAttribute(W, QtWA_TranslucentBackground, True);
   QWidget_setAttribute(W, QtWA_NoSystemBackground, True);
+  AlphaBlend := True;
+  AlphaBlendValue := 1;
   CreateCommons;
 end;
 {$endif}

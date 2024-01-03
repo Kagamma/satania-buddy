@@ -31,8 +31,11 @@ var
 begin
   Color := $000002EE;
   Attrib := GetWindowLongA(Handle, GWL_EXSTYLE);
-  SetWindowLongA(Handle, GWL_EXSTYLE, Attrib Or WS_EX_LAYERED);
-  SetLayeredWindowAttributes(ThehWnd, $000002EE, 0, 1);
+  SetWindowLongA(Handle, GWL_EXSTYLE, Attrib or WS_EX_LAYERED);
+  SetLayeredWindowAttributes(Handle, $000002EE, 0, 1);
+
+  Panel.ControlStyle := Panel.ControlStyle - [csOpaque] + [csParentBackground];
+
   CreateCommons;
 end;
 {$endif}
