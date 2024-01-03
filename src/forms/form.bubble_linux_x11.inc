@@ -25,6 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {$endif unit_declare_interface}
 
 {$ifdef unit_implmentation}
+
+const
+  MINIMAL_SIZE = 1;
+
 procedure TFormBubble.FormCreate(Sender: TObject);
 var
   W: QWidgetH;
@@ -38,6 +42,8 @@ begin
   QWidget_setAttribute(W, QtWA_NoSystemBackground, True);
   AlphaBlend := True;
   AlphaBlendValue := 1;
+  Self.Width := 1;
+  Self.Height := 1;
   CreateCommons;
 end;
 {$endif}

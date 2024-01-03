@@ -24,7 +24,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   Windows,
 {$endif unit_declare_interface}
 
-{$ifdef unit_implmentation}
+{$ifdef unit_implmentation}      
+
+const
+  MINIMAL_SIZE = 0;
+
 procedure TFormBubble.FormCreate(Sender: TObject);
 var
   Attrib: Longint;

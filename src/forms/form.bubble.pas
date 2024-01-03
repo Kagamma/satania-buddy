@@ -95,28 +95,20 @@ procedure TFormBubble.SetVisibleViaSize(B: Boolean);
 begin
   if Self.FVisibleViaSize <> B then
     if B then
-    begin 
+    begin    
+      if Self.Width = MINIMAL_SIZE then
+        Self.Width := Save.Settings.ChatBubbleSizeX + 32;
+      if Self.Height = MINIMAL_SIZE then
+        Self.Height := Save.Settings.ChatBubbleSizeY + 32;
       {$ifdef LINUX_X11}
-      if Self.Width = 1 then
-        Self.Width := Save.Settings.ChatBubbleSizeX + 32;
-      if Self.Height = 1 then
-        Self.Height := Save.Settings.ChatBubbleSizeY + 32;
-      AlphaBlendValue := 255;   
-      {$else}
-      if Self.Width = 0 then
-        Self.Width := Save.Settings.ChatBubbleSizeX + 32;
-      if Self.Height = 0 then
-        Self.Height := Save.Settings.ChatBubbleSizeY + 32;
+      AlphaBlendValue := 255;
       {$endif}
     end else
     begin
+      Self.Width := MINIMAL_SIZE;
+      Self.Height := MINIMAL_SIZE;  
       {$ifdef LINUX_X11}
-      Self.Width := 1;
-      Self.Height := 1;
       AlphaBlendValue := 1;
-      {$else}
-      Self.Width := 0;
-      Self.Height := 0;
       {$endif}
     end;
   Self.FVisibleViaSize := B;
@@ -230,8 +222,8 @@ begin
   Self.FRichText.IsPerformance := False;
   AddFormToIgnoreHandleList(Self);
   Self.TypingSpeed := Save.Settings.TextSpeed;
-  Self.Width := 1;
-  Self.Height := 1;
+  Self.Width := MINIMAL_SIZE;
+  Self.Height := MINIMAL_SIZE;
   ApplySettings;
 end;
 
