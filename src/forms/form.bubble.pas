@@ -95,13 +95,18 @@ procedure TFormBubble.SetVisibleViaSize(B: Boolean);
 begin
   if Self.FVisibleViaSize <> B then
     if B then
-    begin
+    begin 
+      {$ifdef LINUX_X11}
       if Self.Width = 1 then
         Self.Width := Save.Settings.ChatBubbleSizeX + 32;
       if Self.Height = 1 then
         Self.Height := Save.Settings.ChatBubbleSizeY + 32;
-      {$ifdef LINUX_X11}
-      AlphaBlendValue := 255;
+      AlphaBlendValue := 255;   
+      {$else}
+      if Self.Width = 0 then
+        Self.Width := Save.Settings.ChatBubbleSizeX + 32;
+      if Self.Height = 0 then
+        Self.Height := Save.Settings.ChatBubbleSizeY + 32;
       {$endif}
     end else
     begin
