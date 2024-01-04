@@ -7367,7 +7367,6 @@ begin
   Self.VM.BinaryPtr := 0;
   Self.VM.IsPaused := False;
   Self.VM.IsDone := False;
-  Self.VM.IsDone := False;
   Self.VM.WaitTime := 0;
   Self.VM.FramePtr := @Self.VM.Frame[0];
   Self.VM.StackPtr := @Self.VM.Stack[0] + 32;
