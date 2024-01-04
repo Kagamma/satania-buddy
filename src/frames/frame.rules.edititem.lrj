@@ -1,3 +1,3 @@
 {"version":1,"strings":[
-{"hash":219067161,"name":"tframerulesedititem.edittext.text","sourcebytes":[116,97,108,107,40,39,82,101,115,112,111,110,115,101,39,41],"value":"talk('Response')"}
+{"hash":171821181,"name":"tframerulesedititem.buttondelete.hint","sourcebytes":[68,101,108,101,116,101,32,105,116,101,109],"value":"Delete item"}
 ]}

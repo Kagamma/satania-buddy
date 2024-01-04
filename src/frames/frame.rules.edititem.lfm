@@ -13,6 +13,7 @@ object FrameRulesEditItem: TFrameRulesEditItem
   object ButtonDelete: TSpeedButton
     Left = 667
     Height = 23
+    Hint = 'Delete item'
     Top = 2
     Width = 23
     Align = alRight

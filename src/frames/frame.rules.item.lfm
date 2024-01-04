@@ -28,14 +28,14 @@ object FrameRulesItem: TFrameRulesItem
       Left = 7
       Height = 18
       Top = 7
-      Width = 43
+      Width = 32
       Align = alLeft
       BorderSpacing.Around = 6
       Caption = 'Name'
       ParentColor = False
     end
     object EditTag: TEdit
-      Left = 56
+      Left = 45
       Height = 22
       Top = 5
       Width = 205
@@ -46,6 +46,7 @@ object FrameRulesItem: TFrameRulesItem
     object ButtonDelete: TSpeedButton
       Left = 779
       Height = 22
+      Hint = 'Delete command'
       Top = 5
       Width = 23
       Align = alRight
@@ -54,10 +55,10 @@ object FrameRulesItem: TFrameRulesItem
       ImageIndex = 10
     end
     object Label2: TLabel
-      Left = 275
+      Left = 264
       Height = 18
       Top = 7
-      Width = 112
+      Width = 81
       Align = alLeft
       BorderSpacing.Left = 8
       BorderSpacing.Around = 6
@@ -65,7 +66,7 @@ object FrameRulesItem: TFrameRulesItem
       ParentColor = False
     end
     object EditSimilarityScore: TFloatSpinEdit
-      Left = 393
+      Left = 351
       Height = 22
       Top = 5
       Width = 69
@@ -77,10 +78,10 @@ object FrameRulesItem: TFrameRulesItem
       Value = 0.7
     end
     object CheckBoxConfirm: TCheckBox
-      Left = 470
+      Left = 428
       Height = 30
       Top = 1
-      Width = 159
+      Width = 120
       Align = alLeft
       Alignment = taLeftJustify
       BorderSpacing.Left = 8
@@ -96,25 +97,26 @@ object FrameRulesItem: TFrameRulesItem
     Align = alLeft
     BorderSpacing.Around = 4
     Caption = 'Patterns for comparison'
-    ClientHeight = 211
-    ClientWidth = 329
+    ClientHeight = 219
+    ClientWidth = 331
     ParentBackground = False
     TabOrder = 1
     object ButtonAddPattern: TSpeedButton
       Left = 0
       Height = 22
       Top = 0
-      Width = 329
+      Width = 331
       Align = alTop
+      Caption = 'Add pattern'
       Images = FormMain.ImageList
       ImageIndex = 8
       OnClick = ButtonAddPatternClick
     end
     object ScrollBoxPatterns: TScrollBox
       Left = 0
-      Height = 189
+      Height = 197
       Top = 22
-      Width = 329
+      Width = 331
       HorzScrollBar.Page = 1
       VertScrollBar.Increment = 1
       VertScrollBar.Page = 1
@@ -138,37 +140,38 @@ object FrameRulesItem: TFrameRulesItem
     Align = alClient
     BorderSpacing.Around = 4
     Caption = 'Response in Evil Script'
-    ClientHeight = 211
-    ClientWidth = 453
+    ClientHeight = 219
+    ClientWidth = 455
     ParentBackground = False
     TabOrder = 3
     object ScrollBoxResponse: TScrollBox
       Left = 0
-      Height = 211
+      Height = 219
       Top = 0
-      Width = 453
+      Width = 455
       HorzScrollBar.Page = 182
-      VertScrollBar.Increment = 19
-      VertScrollBar.Page = 192
+      VertScrollBar.Increment = 2
+      VertScrollBar.Page = 29
       VertScrollBar.Smooth = True
       Align = alClient
-      ClientHeight = 209
+      ClientHeight = 215
       ClientWidth = 451
       ParentBackground = False
       TabOrder = 0
       object Panel2: TPanel
         Left = 419
-        Height = 209
+        Height = 215
         Top = 0
         Width = 32
         Align = alRight
-        ClientHeight = 209
+        ClientHeight = 215
         ClientWidth = 32
         ParentBackground = False
         TabOrder = 0
         object ButtonRun: TSpeedButton
           Left = 3
           Height = 23
+          Hint = 'Test response'
           Top = 3
           Width = 26
           Align = alTop
@@ -180,7 +183,7 @@ object FrameRulesItem: TFrameRulesItem
       end
       object EditResponse: TMemo
         Left = 0
-        Height = 209
+        Height = 215
         Top = 0
         Width = 419
         Align = alClient

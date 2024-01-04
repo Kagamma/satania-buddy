@@ -1,7 +1,10 @@
 {"version":1,"strings":[
 {"hash":346165,"name":"tframerulesitem.label1.caption","sourcebytes":[78,97,109,101],"value":"Name"},
+{"hash":110138756,"name":"tframerulesitem.buttondelete.hint","sourcebytes":[68,101,108,101,116,101,32,99,111,109,109,97,110,100],"value":"Delete command"},
 {"hash":192198261,"name":"tframerulesitem.label2.caption","sourcebytes":[83,105,109,105,108,97,114,105,116,121,32,83,99,111,114,101],"value":"Similarity Score"},
 {"hash":233461822,"name":"tframerulesitem.checkboxconfirm.caption","sourcebytes":[78,101,101,100,32,67,111,110,102,105,114,109,97,116,105,111,110],"value":"Need Confirmation"},
 {"hash":204362094,"name":"tframerulesitem.groupboxpatterns.caption","sourcebytes":[80,97,116,116,101,114,110,115,32,102,111,114,32,99,111,109,112,97,114,105,115,111,110],"value":"Patterns for comparison"},
-{"hash":64488196,"name":"tframerulesitem.groupboxresponse.caption","sourcebytes":[82,101,115,112,111,110,115,101,32,105,110,32,69,118,105,108,32,83,99,114,105,112,116],"value":"Response in Evil Script"}
+{"hash":114035454,"name":"tframerulesitem.buttonaddpattern.caption","sourcebytes":[65,100,100,32,112,97,116,116,101,114,110],"value":"Add pattern"},
+{"hash":64488196,"name":"tframerulesitem.groupboxresponse.caption","sourcebytes":[82,101,115,112,111,110,115,101,32,105,110,32,69,118,105,108,32,83,99,114,105,112,116],"value":"Response in Evil Script"},
+{"hash":107823685,"name":"tframerulesitem.buttonrun.hint","sourcebytes":[84,101,115,116,32,114,101,115,112,111,110,115,101],"value":"Test response"}
 ]}

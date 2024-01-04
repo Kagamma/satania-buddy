@@ -5,6 +5,8 @@
 {"hash":372789,"name":"tframeremindersitem.labelalarmtime.caption","sourcebytes":[84,105,109,101],"value":"Time"},
 {"hash":79984933,"name":"tframeremindersitem.checkboxenable.hint","sourcebytes":[69,110,97,98,108,101],"value":"Enable"},
 {"hash":79984933,"name":"tframeremindersitem.checkboxenable.caption","sourcebytes":[69,110,97,98,108,101],"value":"Enable"},
+{"hash":78392485,"name":"tframeremindersitem.buttondelete.hint","sourcebytes":[68,101,108,101,116,101],"value":"Delete"},
+{"hash":130046484,"name":"tframeremindersitem.buttonrun.hint","sourcebytes":[84,101,115,116,32,115,99,114,105,112,116],"value":"Test script"},
 {"hash":88492681,"name":"tframeremindersitem.checkboxmonday.hint","sourcebytes":[77,111,110,100,97,121],"value":"Monday"},
 {"hash":88492681,"name":"tframeremindersitem.checkboxmonday.caption","sourcebytes":[77,111,110,100,97,121],"value":"Monday"},
 {"hash":146575129,"name":"tframeremindersitem.checkboxsaturday.hint","sourcebytes":[83,97,116,117,114,100,97,121],"value":"Saturday"},
