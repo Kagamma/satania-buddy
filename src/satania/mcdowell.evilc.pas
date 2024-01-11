@@ -1,23 +1,3 @@
-{
-
-satania-buddy
-Copyright (C) 2022-2023 kagamma
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-}
-
 unit Mcdowell.EvilC;
 
 {$mode objfpc}
@@ -2979,7 +2959,7 @@ begin
   SetLength(Self.Global, Self.Parent.GlobalVarCount);
   SetLength(Self.Stack, Self.StackSize);
   SetLength(Self.Frame, Self.FrameSize);
-  SetLength(Self.Trap, Self.TrapSize);                
+  SetLength(Self.Trap, Self.TrapSize);
   FillChar(Self.Global[0], Length(Self.Global) * SizeOf(TSEValue), 0);
   FillChar(Self.Stack[0], Length(Self.Stack) * SizeOf(TSEValue), 0);
   FillChar(Self.Frame[0], Length(Self.Frame) * SizeOf(TSEFrame), 0);
@@ -3063,7 +3043,7 @@ var
           end;
       end;
     end;
-  
+
   var
     CurFrame: PSEFrame;
     CurFunc: PSEFuncScriptInfo;
@@ -6630,6 +6610,7 @@ var
   procedure ParseDoWhile;
   var
     StartBlock,
+    ContinueBlock,
     EndBlock,
     JumpBlock,
     JumpEnd: Integer;
@@ -6644,6 +6625,7 @@ var
       BreakStack.Push(BreakList);
       StartBlock := Self.Binary.Count;
       ParseBlock;
+      ContinueBlock := Self.Binary.Count;
       NextTokenExpected([tkWhile]);
       ParseExpr;
       Emit([Pointer(opPushConst), False]);
@@ -6653,7 +6635,7 @@ var
       ContinueList := ContinueStack.Pop;
       BreakList := BreakStack.Pop;
       for I := 0 to ContinueList.Count - 1 do
-        Patch(Integer(ContinueList[I]), Pointer(StartBlock));
+        Patch(Integer(ContinueList[I]), Pointer(ContinueBlock));
       for I := 0 to BreakList.Count - 1 do
         Patch(Integer(BreakList[I]), Pointer(EndBlock));
       Patch(JumpBlock - 1, Pointer(StartBlock));
@@ -6667,6 +6649,7 @@ var
  procedure ParseFor;
   var
     StartBlock,
+    ContinueBlock,
     EndBlock,
     JumpBlock,
     JumpEnd: Integer;
@@ -6722,6 +6705,7 @@ var
 
         ParseBlock;
 
+        ContinueBlock := Self.Binary.Count;
         EmitPushVar(VarIdent);
         if Token.Kind = tkTo then
         begin
@@ -6771,6 +6755,7 @@ var
 
         ParseBlock;
 
+        ContinueBlock := Self.Binary.Count;
         EmitPushVar(VarHiddenCountIdent);
         Emit([Pointer(opPushConst), 1]);
         Emit([Pointer(opOperatorAdd)]);
@@ -6782,7 +6767,7 @@ var
       ContinueList := ContinueStack.Pop;
       BreakList := BreakStack.Pop;
       for I := 0 to ContinueList.Count - 1 do
-        Patch(Integer(ContinueList[I]), Pointer(StartBlock));
+        Patch(Integer(ContinueList[I]), Pointer(ContinueBlock));
       for I := 0 to BreakList.Count - 1 do
         Patch(Integer(BreakList[I]), Pointer(EndBlock));
       Patch(JumpBlock - 1, Pointer(StartBlock));
@@ -7464,7 +7449,7 @@ begin
   Self.VM.Binaries[Length(Self.VM.Binaries) - 1] := TSEBinary.Create;
   FuncScriptInfo.ArgCount := ArgCount;
   FuncScriptInfo.BinaryPos := Length(Self.VM.Binaries) - 1;
-  FuncScriptInfo.Name := Name;                               
+  FuncScriptInfo.Name := Name;
   FuncScriptInfo.VarSymbols := TStringList.Create;
   Self.FuncScriptList.Add(FuncScriptInfo);
   Result := Self.FuncScriptList.Ptr(Self.FuncScriptList.Count - 1);
@@ -7530,7 +7515,7 @@ begin
   for I := 0 to Self.FuncImportList.Count - 1 do
   begin
     Result.FuncImportList.Add(Self.FuncImportList[I]);
-  end;     
+  end;
   Result.GlobalVarSymbols.Assign(Self.GlobalVarSymbols);
   Result.GlobalVarCount := Self.GlobalVarCount;
 end;
@@ -7556,14 +7541,14 @@ begin
       DstBinary.Add(BackupBinary[J]);
   end;
   for I := 0 to Cache.FuncScriptList.Count - 1 do
-  begin 
+  begin
     FuncScriptInfo := Cache.FuncScriptList[I];
     FuncScriptInfo.VarSymbols := TStringList.Create;
     FuncScriptInfo.VarSymbols.Assign(Cache.FuncScriptList[I].VarSymbols);
     Self.FuncScriptList.Add(FuncScriptInfo);
   end;
   for I := 0 to Cache.FuncImportList.Count - 1 do
-    Self.FuncImportList.Add(Cache.FuncImportList[I]);  
+    Self.FuncImportList.Add(Cache.FuncImportList[I]);
   Self.GlobalVarSymbols.Assign(Cache.GlobalVarSymbols);
   Self.GlobalVarCount := Cache.GlobalVarCount;
   Self.IsParsed := True;

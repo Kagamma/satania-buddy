@@ -6,7 +6,9 @@ object FrameRemindersItem: TFrameRemindersItem
   BorderSpacing.Around = 4
   ClientHeight = 188
   ClientWidth = 1041
+  Font.Color = 16119285
   ParentBackground = False
+  ParentFont = False
   TabOrder = 0
   DesignLeft = 348
   DesignTop = 27

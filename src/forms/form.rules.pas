@@ -229,7 +229,9 @@ begin
     Frame := TFrameRulesItem.Create(Self);
     Frame.Name := GUIDName;
     Frame.EditTag.Text := Key;
-    Frame.ButtonDelete.OnClick := @DoDeleteRule;
+    Frame.ButtonDelete.OnClick := @DoDeleteRule;      
+    Frame.CheckBoxConfirm.Checked := Rule.Confirmation;        
+    Frame.CheckBoxEnable.Checked := Rule.Enable;
     {$ifndef WINDOWS}
     Frame.EditResponse.Font.Name := 'Liberation Mono';
     Frame.EditResponse.Font.Quality := fqAntialiased;
