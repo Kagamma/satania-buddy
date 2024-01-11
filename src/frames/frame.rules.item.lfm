@@ -88,6 +88,19 @@ object FrameRulesItem: TFrameRulesItem
       Caption = 'Need Confirmation'
       TabOrder = 2
     end
+    object CheckBoxEnable: TCheckBox
+      Left = 556
+      Height = 30
+      Top = 1
+      Width = 53
+      Align = alLeft
+      Alignment = taLeftJustify
+      BorderSpacing.Left = 8
+      Caption = 'Enable'
+      Checked = True
+      State = cbChecked
+      TabOrder = 3
+    end
   end
   object GroupBoxPatterns: TGroupBox
     Left = 4
@@ -187,9 +200,11 @@ object FrameRulesItem: TFrameRulesItem
         Top = 0
         Width = 419
         Align = alClient
+        Font.Name = 'Consolas'
         Lines.Strings = (
           'talk(''Hello'')'
         )
+        ParentFont = False
         ScrollBars = ssAutoBoth
         TabOrder = 1
       end

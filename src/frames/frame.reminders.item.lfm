@@ -133,13 +133,16 @@ object FrameRemindersItem: TFrameRemindersItem
       Top = 1
       Width = 621
       Align = alClient
+      Font.Name = 'Consolas'
       Lines.Strings = (
         '// Code that will be executed'
-        's = "It''s time!"'
-        'notify(s)'
-        'talk(s)'
-        'sound_play("beep.ogg")'
+        's = "It''s time!"       // Notification text'
+        'notify(s)              // Show notification'
+        'talk(s)                // Show Satania''s text balloon'
+        'sound_play("beep.ogg") // Play beeping sound'
+        ''
       )
+      ParentFont = False
       ScrollBars = ssAutoBoth
       TabOrder = 0
     end

@@ -108,6 +108,7 @@ begin
     Rule.Response := JSONItem['response'].AsString;
     Rule.SimilarityScore := JSONItem['similarity_score'].AsFloat;     
     Rule.Confirmation := JSONItem['confirmation'].AsBoolean;
+    Rule.Enable := JSONItem['enable'].AsBoolean;
     RuleDict.Add(Tagg, Rule);
   end;
   S.Free;
@@ -156,7 +157,8 @@ begin
         JSONItem.Add('name', Trim(Frame.EditTag.Text));
         JSONItem.Add('response', Trim(Frame.EditResponse.Lines.Text));   
         JSONItem.Add('similarity_score', Frame.EditSimilarityScore.Value);
-        JSONItem.Add('confirmation', Frame.CheckBoxConfirm.Checked);
+        JSONItem.Add('confirmation', Frame.CheckBoxConfirm.Checked); 
+        JSONItem.Add('enable', Frame.CheckBoxEnable.Checked);
         JSONArraySub := TJSONArray.Create;
         for I := 0 to Frame.ScrollBoxPatterns.ControlCount - 1 do
         begin
@@ -228,6 +230,11 @@ begin
     Frame.Name := GUIDName;
     Frame.EditTag.Text := Key;
     Frame.ButtonDelete.OnClick := @DoDeleteRule;
+    {$ifndef WINDOWS}
+    Frame.EditResponse.Font.Name := 'Liberation Mono';
+    Frame.EditResponse.Font.Quality := fqAntialiased;
+    Frame.EditResponse.Font.Height := 16;
+    {$endif}
     for J := 0 to Length(Rule.Patterns) - 1 do
     begin
       Frame.AddPattern(Rule.Patterns[J]);
@@ -246,6 +253,11 @@ begin
   Frame.Name := GUIDName;
   Frame.ButtonDelete.OnClick := @DoDeleteRule;
   Frame.EditTag.Text := 'YouShouldRenameThis_' + IntToStr(Random($FFFFFFFF));
+  {$ifndef WINDOWS}
+  Frame.EditResponse.Font.Name := 'Liberation Mono';
+  Frame.EditResponse.Font.Quality := fqAntialiased;
+  Frame.EditResponse.Font.Height := 16;
+  {$endif}
   ScrollBoxRules.InsertControl(Frame, 0);
 end;
 

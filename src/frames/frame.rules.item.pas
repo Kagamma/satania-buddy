@@ -34,6 +34,7 @@ type
   TFrameRulesItem = class(TFrame)
     ButtonRun: TSpeedButton;
     CheckBoxConfirm: TCheckBox;
+    CheckBoxEnable: TCheckBox;
     EditTag: TEdit;
     EditSimilarityScore: TFloatSpinEdit;
     GroupBoxPatterns: TGroupBox;

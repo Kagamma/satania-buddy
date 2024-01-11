@@ -61,6 +61,7 @@ type
     Response: String;
     SimilarityScore: Single;
     Confirmation: Boolean;
+    Enable: Boolean;
   end;
 
   THttpResponseRec = record

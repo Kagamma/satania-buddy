@@ -75,6 +75,11 @@ begin
   Frame.ButtonDelete.OnClick := @DoDelete;
   Frame.DateTimePicker.Date := Now;
   Frame.DateTimePicker.Time := EncodeTime(0, 0, 0, 0);
+  {$ifndef WINDOWS}
+  Frame.MemoScript.Font.Name := 'Liberation Mono';
+  Frame.MemoScript.Font.Quality := fqAntialiased;
+  Frame.MemoScript.Font.Height := 16;
+  {$endif}
   ScrollBoxReminders.InsertControl(Frame);
   Frame.Align := alTop;
   Result := Frame;
