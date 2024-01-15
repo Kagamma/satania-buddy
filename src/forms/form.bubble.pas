@@ -49,7 +49,8 @@ type
     procedure TimerTimer(Sender: TObject);
   private
     FRichText: TSataniaRichText;
-    FIsStartTalking: Boolean;
+    FIsStartTalking: Boolean;     
+    FIsStartTalkingAnimated: Boolean;
     FText: String;
     FNumWordsDisplay: Single;
     FTypingSpeed: Single;
@@ -119,12 +120,12 @@ begin
   Self.IsPersistent := True;
   Self.FinishedTyping := False;
   Self.FText := '';
+  Self.FIsStartTalkingAnimated := False;
 end;
 
 procedure TFormBubble.DisableStreaming;
 begin
   Self.IsPersistent := False;
-  Satania.StopAnimation(Satania.AnimTalkFinish);
   Self.FIsStartTalking := False;
 end;
 
@@ -163,7 +164,8 @@ begin
   else
   begin
     Self.FNumWordsDisplay := 0;
-    Self.FinishedTyping := False;
+    Self.FinishedTyping := False; 
+    Self.FIsStartTalkingAnimated := False;
     Self.KMemo.Blocks.Clear;
     Self.FRichText.Reset;
     Self.FRichText.Source := S;
@@ -189,27 +191,35 @@ procedure TFormBubble.TimerTimer(Sender: TObject);
     KMemo.ScrollBy(0, 999999, False);
     KMemo.Refresh;
   end;
+var
+  OldTokenCount: Integer;
 begin
   if (not Self.FinishedTyping) and (not Satania.IsAsking) then
   begin
     if Self.FRichText.TokenList.Count > Self.FNumWordsDisplay - 1 then
       Self.FNumWordsDisplay := Self.FNumWordsDisplay + Self.FTypingSpeed / 20;
     Self.FRichText.NextTokenPos := Round(Self.FNumWordsDisplay);
+    OldTokenCount := Self.FRichText.TokenList.Count;
     Self.FRichText.Parse(Self.KMemo);
     if (Self.FRichText.TokenList.Count <= Self.FNumWordsDisplay - 1) and not Self.IsPersistent then
     begin
       Self.FinishedTyping := True;
     end;
-    if (Self.FRichText.TokenList.Count <= Self.FNumWordsDisplay - 1)  then
+    if (Self.FRichText.TokenList.Count <= Self.FNumWordsDisplay - 1) and (OldTokenCount = Self.FRichText.TokenList.Count)  then
     begin
       Satania.StopAnimation(Satania.AnimTalkLoop);
       Satania.StartAnimation(Satania.AnimTalkFinish, False);
+      Self.FIsStartTalkingAnimated := False;
     end else
-    if not Self.FIsStartTalking then
+    if (not Self.FIsStartTalking) or (OldTokenCount <> Self.FRichText.TokenList.Count) then
     begin
       Self.FIsStartTalking := True;
-      Satania.StopAnimation(Satania.AnimTalkFinish);
-      Satania.StartAnimation(Satania.AnimTalkLoop);
+      if not Self.FIsStartTalkingAnimated then
+      begin
+        Satania.StopAnimation(Satania.AnimTalkFinish);
+        Satania.StartAnimation(Satania.AnimTalkLoop);
+        Self.FIsStartTalkingAnimated := True;
+      end;
     end;
     ScrollToBottom;
   end;
