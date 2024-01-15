@@ -343,7 +343,7 @@ end;
 
 procedure TFormMain.MenuItemHelpRulesClick(Sender: TObject);
 begin
-  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Rules');
+  OpenURL('https://github.com/Kagamma/satania-buddy/wiki/Commands');
 end;
 
 procedure TFormMain.MenuItemHelpVoiceCommandClick(Sender: TObject);

@@ -5,7 +5,7 @@ object FormMain: TFormMain
   Width = 2000
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 1100
+  ClientHeight = 1061
   ClientWidth = 2000
   FormStyle = fsSystemStayOnTop
   PopupMenu = TrayMenu
@@ -20,7 +20,7 @@ object FormMain: TFormMain
   OnShow = FormShow
   object CastleControl: TCastleControl
     Left = 0
-    Height = 1100
+    Height = 1061
     Top = 0
     Width = 2000
     Align = alClient
@@ -548,7 +548,7 @@ object FormMain: TFormMain
         OnClick = MenuItemHelpExternalServicesClick
       end
       object MenuItemHelpRules: TMenuItem
-        Caption = 'Rules'
+        Caption = 'Commands'
         OnClick = MenuItemHelpRulesClick
       end
       object MenuItemScriptingAPIs: TMenuItem

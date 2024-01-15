@@ -31,6 +31,7 @@ object FrameRemindersItem: TFrameRemindersItem
       MaxDate = 2958465
       MinDate = -53780
       AutoSize = False
+      ParentFont = False
       TabOrder = 0
       TrailingSeparator = False
       TextForNullDate = 'NULL'
@@ -56,6 +57,7 @@ object FrameRemindersItem: TFrameRemindersItem
         'Alarm'
         'Reminder'
       )
+      ParentFont = False
       ReadOnly = True
       TabOrder = 1
       Text = 'Alarm'
@@ -68,6 +70,7 @@ object FrameRemindersItem: TFrameRemindersItem
       Width = 24
       Caption = 'Type'
       ParentColor = False
+      ParentFont = False
     end
     object LabelAlarmTime: TLabel
       Left = 9
@@ -76,6 +79,7 @@ object FrameRemindersItem: TFrameRemindersItem
       Width = 26
       Caption = 'Time'
       ParentColor = False
+      ParentFont = False
     end
   end
   object Panel2: TPanel

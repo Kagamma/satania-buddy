@@ -33,7 +33,6 @@ type
     constructor Create(AOwner: TComponent); override;
     procedure Start; override;
     procedure Update(const SecondsPassed: Single; var HandleInput: Boolean); override;
-    function Press(const Event: TInputPressRelease): Boolean; override;
   end;
 
 var
@@ -242,12 +241,6 @@ begin
     on E: Exception do
       Satania.Log('System', E.Message);
   end;
-end;
-
-function TStateMain.Press(const Event: TInputPressRelease): Boolean;
-begin
-  Result := inherited;
-  if Result then Exit;
 end;
 
 end.
