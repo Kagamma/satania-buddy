@@ -111,7 +111,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEWorkerCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEWorkerSetPersistent(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;         
+    function SEAppCloseScriptRegister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEAppCloseScriptUnregister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEToolHexEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
@@ -1338,6 +1340,19 @@ function TSatania.SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue)
 begin
   Self.WorkerDelete(Args[0]);
   Result := SENull;
+end;
+
+function TSatania.SEAppCloseScriptRegister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Self.DestroyScriptDict.AddOrSetValue(Args[0], Args[1]);
+end;
+
+function TSatania.SEAppCloseScriptUnregister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  if Self.DestroyScriptDict.ContainsKey(Args[0]) then
+  begin
+    Self.DestroyScriptDict.Remove(Args[0]);
+  end;
 end;
 
 function TSatania.SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;

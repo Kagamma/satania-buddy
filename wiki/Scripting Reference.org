@@ -870,6 +870,12 @@ number, consts: map): string*
 *worker_delete(worker_name: string)*
 - Deletes a worker by name.
 
+** Other script-related functions
+*app_close_script_register(name: string, script: string)*
+- Registers a script ~script~ that will be executed when the app is closed.
+*app_close_script_unregister(name: string)*
+- Removes registered script by name.
+
 ** Tools
 *tool_evilc_editor(filename: string)*
 - Opens a file with built-in EvilC editor.

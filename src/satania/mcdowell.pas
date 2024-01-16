@@ -42,7 +42,8 @@ type
     Interval,
     LastTimestamp: QWord;
   end;
-  TSataniaBackgroundScriptDict = specialize TDictionary<String, TSataniaBackgroundScript>;
+  TSataniaBackgroundScriptDict = specialize TDictionary<String, TSataniaBackgroundScript>;  
+  TSataniaDestroyScriptDict = specialize TDictionary<String, String>;
 
   TSatania = class
   protected
@@ -76,6 +77,7 @@ type
     Name: String;
     Script: TEvilC;
     BackgroundScriptDict: TSataniaBackgroundScriptDict;
+    DestroyScriptDict: TSataniaDestroyScriptDict;
     AnimTalkScriptList: TStringList; // List of possible scripts to execute during talking
     UsedRemindersList: TStringList;
     { Where we should move our touch panel to }
@@ -180,6 +182,7 @@ begin
   UsedRemindersList.Sorted := True;
   Script := TEvilC.Create;
   BackgroundScriptDict := TSataniaBackgroundScriptDict.Create;
+  DestroyScriptDict := TSataniaDestroyScriptDict.Create;
   AnimTalkLoop := 'talk_loop';
   AnimTalkFinish := 'talk_finish';
   Self.AnimTalkScriptList := TStringList.Create;
@@ -189,7 +192,23 @@ begin
 end;
 
 destructor TSatania.Destroy;
+  procedure ExecuteDestroyScripts;
+  var
+    Key: String;
+    Script: TEvilC;
+  begin
+    for Key in DestroyScriptDict.Keys do
+    begin
+      Script := Self.CreateEvilC(False);
+      Script.Source := DestroyScriptDict[Key];
+      Script.Exec;
+      Script.Free;
+    end;
+  end;
+
 begin
+  ExecuteDestroyScripts;
+  DestroyScriptDict.Free;
   UsedRemindersList.Free;
   AnimTalkScriptList.Free;
   Script.Free;
@@ -301,7 +320,9 @@ begin
   S.RegisterFunc('worker_create', @SEWorkerCreate, -1);
   S.RegisterFunc('worker_persistent_set', @SEWorkerSetPersistent, 2);
   S.RegisterFunc('worker_exists', @SEWorkerExists, 1);
-  S.RegisterFunc('worker_delete', @SEWorkerDelete, 1);
+  S.RegisterFunc('worker_delete', @SEWorkerDelete, 1);     
+  S.RegisterFunc('app_close_script_register', @SEAppCloseScriptRegister, 2);
+  S.RegisterFunc('app_close_script_unregister', @SEAppCloseScriptUnregister, 1);
   S.RegisterFunc('tool_evilc_editor', @SEToolEvilCEditor, 1);
   S.RegisterFunc('tool_hex_editor', @SEToolHexEditor, 1);
 end;
