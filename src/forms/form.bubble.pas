@@ -143,6 +143,7 @@ begin
     Self.FRichText.Reset;
     Self.FNumWordsDisplay := 0;
   end;
+  Self.FinishedTyping := False;
   Satania.IsTalking := True;
   Satania.IsAsking := False;
   Self.FText := S;
