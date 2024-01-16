@@ -197,11 +197,21 @@ destructor TSatania.Destroy;
     Key: String;
     Script: TEvilC;
   begin
+    Writeln('Start executing close scripts');
     for Key in DestroyScriptDict.Keys do
     begin
-      Script := Self.CreateEvilC(False);
+      Writeln(' - Executing ', Key);
+      Script := TEvilC.Create;
+      Self.RegisterFuncs(Script, False);
+      Self.UpdateMeta(Script);
       Script.Source := DestroyScriptDict[Key];
-      Script.Exec;
+      try
+        while not Script.IsDone do
+          Script.Exec;
+      except
+        on E: Exception do
+          Writeln(E.Message);
+      end;
       Script.Free;
     end;
   end;
@@ -1163,18 +1173,11 @@ initialization
   RunProcessNonBlockResultList := TNonBlockProcessDict.Create;
   ThreadDict := TThreadDict.Create;
 
-finalization
+finalization 
+  FreeAndNil(Satania);
   Save.SaveToFile('configs.json');
   FreeAndNil(Save);
-  FreeAndNil(Satania);
   FreeAndNil(RunProcessResultList);
-  for Key in ThreadDict.Keys do
-  begin
-    Thread := ThreadDict[Key];
-    if Thread is TSataniaExecNonBlockThread then
-      ExecuteProcess(FindDefaultExecutablePath('taskkill'), '-f -im ' + ExtractFileName(TSataniaExecNonBlockThread(Thread).ExeName), []);
-  end;
-  Sleep(1000);
   ThreadDict.Free;
   FreeLeftoverProcesses;
   CSTalk.Free;

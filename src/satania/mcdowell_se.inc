@@ -229,19 +229,11 @@ function TSatania.SEProcessTerminate(const VM: TSEVM; const Args: array of TSEVa
 var
   Thread: TSataniaExecNonBlockThread;
 begin
-  {$ifdef WINDOWS}
-  if ThreadDict.ContainsKey(Args[0].VarString^) then
-  begin
-    Thread := ThreadDict[Args[0].VarString^] as TSataniaExecNonBlockThread;
-    ExecuteProcess(FindDefaultExecutablePath('taskkill'), '-f -im ' + ExtractFileName(Thread.ExeName), []);
-  end;
-  {$else}
   if ThreadDict.ContainsKey(Args[0].VarString^) then
   begin
     Thread := ThreadDict[Args[0].VarString^] as TSataniaExecNonBlockThread;
     Thread.IsForcedQuit := True;
   end;
-  {$endif}
 end;
 
 function TSatania.SEProcessPipeGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
