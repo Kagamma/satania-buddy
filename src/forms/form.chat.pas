@@ -27,9 +27,9 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
   ExtCtrls, Process, CastleControls, CastleUIControls, CastleURIUtils,
-  LCLTranslator, ComCtrls, Menus, kmemo, Types, StrUtils, Generics.Collections,
-  kgraphics, FileUtil, Mcdowell.RichText, Mcdowell.Chat.History, AnchorDocking,
-  WebUI;
+  LCLTranslator, ComCtrls, Menus, DBCtrls, kmemo, Types, StrUtils,
+  Generics.Collections, kgraphics, FileUtil, Mcdowell.RichText,
+  Mcdowell.Chat.History, AnchorDocking, WebUI;
 
 type
   { TFormChat }
@@ -41,6 +41,7 @@ type
     ButtonRefreshService: TSpeedButton;
     CheckBoxAlwaysOnTop: TCheckBox;
     ComboBoxService: TComboBox;
+    DBGroupBox1: TDBGroupBox;
     EditChat: TMemo;
     LabelEditMode: TLabel;
     MemoEdit: TMemo;

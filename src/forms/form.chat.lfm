@@ -48,7 +48,6 @@ object FormChat: TFormChat
   Position = poDefault
   ShowHint = True
   ShowInTaskBar = stAlways
-  LCLVersion = '3.99.0.0'
   OnCreate = FormCreate
   OnShow = FormShow
   object PageControl: TPageControl
@@ -222,6 +221,14 @@ object FormChat: TFormChat
             DropdownMenu = PopupMenuChat
             ImageIndex = 24
             PopupMenu = PopupMenuChat
+          end
+          object DBGroupBox1: TDBGroupBox
+            Left = 24
+            Height = 105
+            Top = 0
+            Width = 23
+            Caption = 'DBGroupBox1'
+            TabOrder = 0
           end
         end
       end

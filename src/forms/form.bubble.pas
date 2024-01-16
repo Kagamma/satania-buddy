@@ -98,9 +98,9 @@ begin
     if B then
     begin    
       if Self.Width = MINIMAL_SIZE then
-        Self.Width := Save.Settings.ChatBubbleSizeX + 32;
+        Self.Width := Save.Settings.ChatBubbleSizeX;
       if Self.Height = MINIMAL_SIZE then
-        Self.Height := Save.Settings.ChatBubbleSizeY + 32;
+        Self.Height := Save.Settings.ChatBubbleSizeY;
       {$ifdef LINUX_X11}
       AlphaBlendValue := 255;
       {$endif}
