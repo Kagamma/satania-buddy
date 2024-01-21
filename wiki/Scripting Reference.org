@@ -319,7 +319,7 @@ There're 2 ways to return a value:
 - Assign function result to =result= variable
 - Use =return=. Note that you need to wrap expression in brackets, for example =return (true)=
 
-Note: While we allow the declaration of nested functions, they behave exactly like completely separate functions. Since we do not support closures, they cannot access any local variables from the parent function.
+Note: While we allow the declaration of nested functions, the lack of closures mean they cannot access any local variables from the parent function if called outside of parent function.
 
 *** Function reference
 
