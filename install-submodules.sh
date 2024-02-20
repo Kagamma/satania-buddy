@@ -13,6 +13,8 @@ rm -rf src/components/spine-runtimes
 rm -rf src/components/cge-spine-mixer
 rm -rf src/components/SynFacilSyn
 rm -rf src/components/brookfreepascal
+rm -rf src/components/JsonTools
+rm -rf src/components/pascal-webui
 
 git clone --depth 1 https://github.com/Kagamma/satania-buddy-data.git data
 cd src/components
