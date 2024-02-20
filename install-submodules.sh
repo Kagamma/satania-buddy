@@ -1,3 +1,5 @@
+#!/bin/bash
+
 rm -rf data
 rm -rf src/components/castle-engine
 rm -rf src/components/neural-api
