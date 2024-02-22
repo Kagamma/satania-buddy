@@ -2718,7 +2718,7 @@ begin
             begin
               MS := Length(Value.Value.VarString^);
               Self.FAllocatedMem := Self.FAllocatedMem - MS;
-              // Value.Value.VarString^ := '';
+              Value.Value.VarString^ := '';
               Dispose(Value.Value.VarString);
             end;
           end;
@@ -2728,7 +2728,7 @@ begin
             begin
               MS := Length(Value.Value.VarBuffer^.Base);
               Self.FAllocatedMem := Self.FAllocatedMem - MS;
-              // Value.Value.VarBuffer^.Base := '';
+              Value.Value.VarBuffer^.Base := '';
               Dispose(Value.Value.VarBuffer);
             end;
           end;
