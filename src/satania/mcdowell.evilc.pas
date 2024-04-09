@@ -682,7 +682,8 @@ type
     class function SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringConcat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    class function SEStringReplaceIgnoreCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFormat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringUpperCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringLowerCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1688,6 +1689,14 @@ var
   S: String;
 begin
   S := StringReplace(Args[0], Args[1], Args[2], [rfReplaceAll]);
+  Result := S;
+end;       
+
+class function TBuiltInFunction.SEStringReplaceIgnoreCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  S: String;
+begin
+  S := StringReplace(Args[0], Args[1], Args[2], [rfReplaceAll, rfIgnoreCase]);
   Result := S;
 end;
 
@@ -4666,7 +4675,8 @@ begin
   Self.RegisterFunc('string_find', @TBuiltInFunction(nil).SEStringFind, 2);
   Self.RegisterFunc('string_delete', @TBuiltInFunction(nil).SEStringDelete, 3);
   Self.RegisterFunc('string_insert', @TBuiltInFunction(nil).SEStringInsert, 3);
-  Self.RegisterFunc('string_replace', @TBuiltInFunction(nil).SEStringReplace, 3);
+  Self.RegisterFunc('string_replace', @TBuiltInFunction(nil).SEStringReplace, 3);   
+  Self.RegisterFunc('string_replace_ignorecase', @TBuiltInFunction(nil).SEStringReplaceIgnoreCase, 3);
   Self.RegisterFunc('string_uppercase', @TBuiltInFunction(nil).SEStringUpperCase, 1);
   Self.RegisterFunc('string_lowercase', @TBuiltInFunction(nil).SEStringLowerCase, 1);
   Self.RegisterFunc('string_find_regex', @TBuiltInFunction(nil).SEStringFindRegex, 2);
