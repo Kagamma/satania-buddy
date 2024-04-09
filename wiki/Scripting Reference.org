@@ -692,6 +692,8 @@ You can enable assertions globally in Settings, or locally in script editor.
 - Deletes part of a string at index.
 *string_replace(s, old, new: string): string*
 - Replaces all ~old~ with ~new~ in string s.
+*string_replace_ignorecase(s, old, new: string): string*
+- Same as string_replace(), but ignore case.
 *string_uppercase(s: string): string*
 - Returns uppercase string.
 *string_lowercase(s: string): string*
