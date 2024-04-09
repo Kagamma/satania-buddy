@@ -599,8 +599,8 @@ begin
       Value := Script.ExecFuncOnly('_greeting', []);
       if Value.Kind = sevkString then
       begin
-        S := StringReplace(Value, '{{user}}', Save.Settings.UserName, [rfReplaceAll]);
-        S := StringReplace(S, '{{char}}', Satania.Name, [rfReplaceAll]);
+        S := StringReplace(Value, '{{user}}', Save.Settings.UserName, [rfReplaceAll, rfIgnoreCase]);
+        S := StringReplace(S, '{{char}}', Satania.Name, [rfReplaceAll, rfIgnoreCase]);
         SaveHistory(S);
       end;
     except
