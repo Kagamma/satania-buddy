@@ -543,7 +543,8 @@ begin
     end;
     DelDir(GetOSLocalDir + 'data/sprites/' + CurrentSelectedSkin);
     DelDir(GetOSLocalDir + 'data/scripts/' + CurrentSelectedSkin);
-    MessageDlg('', 'Character "' + CurrentSelectedSkin + '" deleted!', mtInformation, [mbOk], 0)
+    MessageDlg('', 'Character "' + CurrentSelectedSkin + '" deleted!', mtInformation, [mbOk], 0);
+    Self.ButtonDeleteSkin.Enabled := False;
   end;
 end;
 
