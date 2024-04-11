@@ -52,9 +52,9 @@ A: Type ~>app_name~ to execute external applications, for example: ~>echo Hello~
 
 Type an expression, for example ~5+3*2~ and she will answer with ~11~
 
-By default she has a simple rule-based chat system (note: ~Rules~ need to be enabled), you can configure patterns and responses in =Rules=, then tell her to learn the rules by pressing the =Learn= button.
+By default she has a simple rule-based chat system (note: ~Rules~ need to be enabled), you can configure patterns and responses in =Rules=.
 
-If none of the above apply, then she will use external services (WolframAlpha, ChatGPT, KoboldCPP, etc) for potential answers.
+If none of the above apply, then she will use external services (WolframAlpha, ChatGPT, KoboldCPP, etc) for answers.
 
 ***** Q: How can I change her size?
 A: ~Base Scaling~ in ~Settings~.
