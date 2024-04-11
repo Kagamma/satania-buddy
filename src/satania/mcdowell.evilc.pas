@@ -19,6 +19,7 @@ unit Mcdowell.EvilC;
 {$if defined(CPU32) or defined(CPU64) or defined(SE_LIBFFI)}
   {$define SE_DYNLIBS}
 {$endif}
+{$define SE_LOG}
 
 interface
 
@@ -6546,15 +6547,26 @@ var
         Token := NextTokenExpected([tkString]);
         LibNames.Add(Token.Value);
       end;
+
       for LibName in LibNames do
       begin
         if DynlibMap.ContainsKey(LibName) then
           Lib := DynlibMap[LibName]
         else
         begin
+          {$ifdef SE_LOG}
+          Writeln('Trying to load dynamic library "', LibName ,'"');
+          if FileExists(LibName) then
+            Writeln(' - Found the library in root directory')
+          else
+            Writeln(' - The library not exists in root directory');
+          {$endif}
           Lib := LoadLibrary(LibName);
           if Lib <> 0 then
             DynlibMap.Add(LibName, Lib);
+          {$ifdef SE_LOG}
+          Writeln(' - Library''s pointer: ', QWord(Lib));
+          {$endif}
         end;
         if Lib <> 0 then
         begin
@@ -7475,8 +7487,18 @@ begin
     Lib := DynlibMap[LibName]
   else
   begin
+    {$ifdef SE_LOG}
+    Writeln('Trying to load dynamic library "', LibName ,'"');
+    if FileExists(LibName) then
+      Writeln(' - Found the library in root directory')
+    else
+      Writeln(' - The library not exists in root directory');
+    {$endif}
     Lib := LoadLibrary(LibName);
-    DynlibMap.Add(LibName, Lib);
+    DynlibMap.Add(LibName, Lib); 
+    {$ifdef SE_LOG}
+    Writeln(' - Library''s pointer: ', QWord(Lib));
+    {$endif}
   end;
 
   FuncImportInfo.Args := Args;
