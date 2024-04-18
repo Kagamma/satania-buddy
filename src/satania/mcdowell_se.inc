@@ -1157,84 +1157,89 @@ begin
 end;
 
 function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-  procedure DecodeJSONArray(var JSONStr: String; const Map: TSEValue); forward;
-  procedure DecodeJSONObject(var JSONStr: String; const Map: TSEValue); forward;
+  procedure DecodeJSONArray(SB: TStringBuilder; const Map: TSEValue); forward;
+  procedure DecodeJSONObject(SB: TStringBuilder; const Map: TSEValue); forward;
 
-  procedure Decide(var JSONStr: String; const Map: TSEValue);
+  procedure Decide(SB: TStringBuilder; const Map: TSEValue);
   begin
     if SEMapIsValidArray(Map) then
-      DecodeJSONArray(JSONStr, Map)
+      DecodeJSONArray(SB, Map)
     else
-      DecodeJSONObject(JSONStr, Map);
+      DecodeJSONObject(SB, Map);
   end;
 
-  procedure DecodeJSONArray(var JSONStr: String; const Map: TSEValue);
+  procedure DecodeJSONArray(SB: TStringBuilder; const Map: TSEValue);
   var
     I: Integer = 0;
     V: TSEValue;
   begin
-    JSONStr := JSONStr + '[';
+    SB.Append('[');
     for I := 0 to TSEValueMap(Map.VarMap).List.Count - 1 do
     begin
       if (I > 0) then
-        JSONStr := JSONStr + ',';
+        SB.Append(',');
       V := SEMapGet(Map, I);
       case V.Kind of
         sevkString:
-          JSONStr := JSONStr + '"' + StringToJSONString(V.VarString^) + '"';
+          SB.Append('"' + StringToJSONString(V.VarString^) + '"');
         sevkNumber:
-          JSONStr := JSONStr + PointFloatToStr(V.VarNumber);
+          SB.Append(PointFloatToStr(V.VarNumber));
         sevkBoolean:
-          JSONStr := JSONStr + BoolToStr(Boolean(Round(V.VarNumber)), 'true', 'false');
+          SB.Append(BoolToStr(Boolean(Round(V.VarNumber)), 'true', 'false'));
         sevkMap:
           begin
-            Decide(JSONStr, V);
+            Decide(SB, V);
           end;
         sevkNull:
-          JSONStr := JSONStr + 'null';
+          SB.Append('null');
       end;
     end;
-    JSONStr := JSONStr + ']';
+    SB.Append(']');
   end;
 
-  procedure DecodeJSONObject(var JSONStr: String; const Map: TSEValue);
+  procedure DecodeJSONObject(SB: TStringBuilder; const Map: TSEValue);
   var
     I: Integer = 0;
     V: TSEValue;
     Key: String;
   begin
-    JSONStr := JSONStr + '{';
+    SB.Append('{');
     for Key in TSEValueMap(Map.VarMap).Keys do
     begin
       if (I > 0) then
-        JSONStr := JSONStr + ',';
-      JSONStr := JSONStr + '"' + StringToJSONString(Key) + '":';
+        SB.Append(',');
+      SB.Append('"' + StringToJSONString(Key) + '":');
       V := SEMapGet(Map, Key);
       case V.Kind of
         sevkString:
-          JSONStr := JSONStr + '"' + StringToJSONString(V.VarString^) + '"';
+          SB.Append('"' + StringToJSONString(V.VarString^) + '"');
         sevkNumber:
-          JSONStr := JSONStr + PointFloatToStr(V.VarNumber);
+          SB.Append(PointFloatToStr(V.VarNumber));
         sevkBoolean:
-          JSONStr := JSONStr + BoolToStr(Boolean(Round(V.VarNumber)), 'true', 'false');
+          SB.Append(BoolToStr(Boolean(Round(V.VarNumber)), 'true', 'false'));
         sevkMap:
           begin
-            Decide(JSONStr, V);
+            Decide(SB, V);
           end;
         sevkNull:
-          JSONStr := JSONStr + 'null';
+          SB.Append('null');
       end;
       Inc(I);
     end;
-    JSONStr := JSONStr + '}';
+    SB.Append('}');
   end;
 
 var
-  JSONStr: String = '';
+  SB: TStringBuilder;
 begin
-  if Args[0].Kind = sevkMap then
-    Decide(JSONStr, Args[0]);
-  Result := JSONStr;
+  SB := TStringBuilder.Create;
+  try
+    if Args[0].Kind = sevkMap then
+      Decide(SB, Args[0]);
+    Result := SB.ToString;
+  finally
+    SB.Free;
+  end;
 end;
 
 function TSatania.SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
