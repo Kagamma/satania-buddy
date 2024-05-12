@@ -34,7 +34,7 @@ git checkout satania-buddy
 cd ..
 git clone https://github.com/Kagamma/spine-runtimes.git
 cd spine-runtimes
-git checkout 4.1
+git checkout 4.2
 cd ..
 git clone --depth 1 https://github.com/Kagamma/cge-spine-mixer.git
 
