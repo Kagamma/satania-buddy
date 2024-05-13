@@ -34,8 +34,8 @@ type
     IsPlaying,
     IsLooped: Boolean;
     URL: String;
-    SoundBuffer: TSoundBuffer;
-    SoundSource: TInternalSoundSource;
+    Sound: TCastleSound;
+    SoundManager: TCastlePlayingSound;
     constructor Create(AOwner: TComponent);
     procedure Update(const SecondsPassed: Single; var RemoveMe: TRemoveType); override;
   end;
@@ -56,13 +56,15 @@ begin
   if not IsPlaying then
   begin
     IsPlaying := True;
-    SoundBuffer := SoundEngine.LoadBuffer(PATH_SOUND + URL);
-    SoundSource := SoundEngine.PlaySound(SoundBuffer);
+    Sound := TCastleSound.Create(Self);
+    Sound.Url := PATH_SOUND + URL;
+    SoundManager := TCastlePlayingSound.Create(Self);
+    SoundManager.Sound := Sound;
+    SoundEngine.Play(SoundManager);
   end;
-  if not SoundSource.PlayingOrPaused then
+  if not SoundManager.Playing then
   begin
     RemoveMe := rtRemoveAndFree;
-    SoundEngine.FreeBuffer(SoundBuffer);
   end else
     RemoveMe := rtNone;
 end;
