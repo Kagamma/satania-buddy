@@ -4801,6 +4801,7 @@ var
   Pos: Integer = 0;
   Token: TSEToken;
   C, PC, NC: Char;
+  IsScientificNotation: Boolean;
 
   function PeekAtNextChar: Char; inline;
   var
@@ -5119,6 +5120,7 @@ begin
         Token.Kind := tkMod;
       '0'..'9':
         begin
+          IsScientificNotation := False;
           Token.Kind := tkNumber;
           if (C = '0') and (LowerCase(PeekAtNextChar) = 'x') then
           begin
@@ -5132,12 +5134,20 @@ begin
           end else
           begin
             Token.Value := C;
-            while PeekAtNextChar in ['0'..'9', '.'] do
+            while PeekAtNextChar in ['0'..'9', '.', 'e', 'E'] do
             begin
               C := NextChar;
               Token.Value := Token.Value + C;
               if (C = '.') and not (PeekAtNextChar in ['0'..'9']) then
                 Error('Invalid number');
+              if (C in ['e', 'E']) then
+              begin
+                if IsScientificNotation then
+                  Error('Invalid number');
+                IsScientificNotation := True;
+                if PeekAtNextChar = '-' then
+                  Token.Value := Token.Value + NextChar;
+              end;
             end;
           end;
         end;
