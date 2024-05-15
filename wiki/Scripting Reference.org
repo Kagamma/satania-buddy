@@ -568,6 +568,10 @@ You can enable assertions globally in Settings, or locally in script editor.
 
 *sqrt(n: number): number*
 
+*abs(n: number): number*
+
+*frac(n: number): number*
+
 *range(x, y: number): map*
 - Returns [x..y] array with step = 1.
 
