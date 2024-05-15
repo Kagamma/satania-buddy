@@ -673,6 +673,7 @@ type
     class function SECot(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SESqrt(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
     class function SEAbs(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEFrac(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SERange(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMin(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEMax(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1804,6 +1805,11 @@ end;
 class function TBuiltInFunction.SEAbs(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Exit(Abs(TSENumber(Args[0])));
+end;
+
+class function TBuiltInFunction.SEFrac(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Exit(Frac(TSENumber(Args[0])));
 end;
 
 class function TBuiltInFunction.SEEaseInQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -4724,6 +4730,7 @@ begin
   Self.RegisterFunc('cot', @TBuiltInFunction(nil).SECot, 1);
   Self.RegisterFunc('sqrt', @TBuiltInFunction(nil).SESqrt, 1);  
   Self.RegisterFunc('abs', @TBuiltInFunction(nil).SEAbs, 1);
+  Self.RegisterFunc('frac', @TBuiltInFunction(nil).SEFrac, 1);
   Self.RegisterFunc('mem_object_count', @TBuiltInFunction(nil).SEGCObjectCount, 0);
   Self.RegisterFunc('mem_used', @TBuiltInFunction(nil).SEGCUsed, 0);
   Self.RegisterFunc('mem_gc', @TBuiltInFunction(nil).SEGCCollect, 0);
