@@ -1,4 +1,4 @@
-import 'tests/testffi.dll', 'tests/testffi.so' {
+import 'tests/testffi.dll', 'tests/libtestffi.so' {
   fn TestString(buffer): void
   fn TestInt(i64, i64): i64
   fn TestFloat(f32, f32): f32
