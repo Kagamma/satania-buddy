@@ -8,7 +8,7 @@
 *.a
 *#
 .#*
-*.evil
+/*.evil
 satania-buddy*
 link*.res
 lib

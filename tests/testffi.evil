@@ -1,0 +1,11 @@
+import 'tests/testffi.dll', 'tests/testffi.so' {
+  fn TestString(buffer): void
+  fn TestInt(i64, i64): i64
+  fn TestFloat(f32, f32): f32
+  fn TestDouble(f64, f64): f64
+}
+
+writeln(TestInt(2, 3))
+writeln(TestFloat(2.1, 3.2))
+writeln(TestDouble(2.1, 3.2))
+TestString('This is a string')
