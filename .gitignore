@@ -14,7 +14,6 @@ link*.res
 lib
 castle-engine-output
 src/components/castle-engine
-src/components/neural-api
 src/components/synalist
 src/components/typing-label
 src/components/TPocketSphinx

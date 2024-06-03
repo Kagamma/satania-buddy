@@ -9,7 +9,6 @@ rm -rf src/components/internettools
 rm -rf src/components/richmemo
 rm -rf src/components/KControls
 rm -rf src/components/HtmlViewer
-rm -rf src/components/spine-runtimes
 rm -rf src/components/cge-spine-mixer
 rm -rf src/components/SynFacilSyn
 rm -rf src/components/brookfreepascal
@@ -31,10 +30,6 @@ git clone --depth 1 https://github.com/Kagamma/pascal-webui.git
 git clone https://github.com/Kagamma/HtmlViewer.git
 cd HtmlViewer
 git checkout satania-buddy
-cd ..
-git clone https://github.com/Kagamma/spine-runtimes.git
-cd spine-runtimes
-git checkout 4.2
 cd ..
 git clone --depth 1 https://github.com/Kagamma/cge-spine-mixer.git
 
