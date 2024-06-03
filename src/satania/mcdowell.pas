@@ -26,7 +26,7 @@ interface
 
 uses
   Classes, SysUtils, Generics.Collections, Controls,
-  Forms, Menus, FileUtil, simpleinternet,
+  Forms, Menus, FileUtil, simpleinternet, xquery,
   fpjson, jsonparser, Process, LCLType, Types, LCLIntf, Graphics, syncobjs,
   CastleScene, CastleControls, CastleUIControls, CastleDownload,
   CastleVectors, X3DNodes, CastleBoxes, CastleFilesUtils, CastleURIUtils,

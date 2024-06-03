@@ -54,7 +54,7 @@ begin
     Res.FreeContentStream := True;
   end else
   begin
-    Res.SetStatus(404);
+    Res.Code := 404;
     Res.Content := '404 Not Found.';
   end;
 end;
