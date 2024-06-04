@@ -911,8 +911,6 @@ begin
       MS.Free;
     end;
 
-    Writeln('SPINE ATLAS: ', QWord(SpineData^.Atlas));
-
     // Load skeleton data
     MS := Download(SkeletonFullPath, [soForceMemoryStream]) as TMemoryStream;
     if not IsBinary then

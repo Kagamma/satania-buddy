@@ -20,6 +20,7 @@ unit Mcdowell.EvilC;
   {$define SE_DYNLIBS}
 {$endif}
 {$define SE_LOG}
+{$align 16}
 
 interface
 
@@ -2878,8 +2879,8 @@ procedure TSEGarbageCollector.AllocBuffer(const PValue: PSEValue; const Size: In
 begin
   PValue^.Kind := sevkBuffer;
   New(PValue^.VarBuffer);
-  SetLength(PValue^.VarBuffer^.Base, Size);
-  PValue^.VarBuffer^.Ptr := @PValue^.VarBuffer^.Base[1];
+  SetLength(PValue^.VarBuffer^.Base, Size + 16);
+  PValue^.VarBuffer^.Ptr := Pointer(QWord(@PValue^.VarBuffer^.Base[1]) + QWord(@PValue^.VarBuffer^.Base[1]) mod 16);
   PValue^.Size := Size;
   Self.FAllocatedMem := Self.FAllocatedMem + Size;
   Self.AddToList(PValue);
