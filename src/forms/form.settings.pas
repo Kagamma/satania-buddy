@@ -468,6 +468,10 @@ begin
   end;
   //
   //ButtonDeleteSkin.Enabled := DirectoryExists(GetOSLocalDir + 'data/sprites/' + Save.Settings.Skin);
+  if not IsSkinChanged then
+  begin
+    Satania.ActionFromFile(Save.Settings.DefaultEvilScheme);
+  end;
 end;
 
 procedure TFormSettings.ButtonApplyClick(Sender: TObject);
