@@ -37,7 +37,7 @@ begin
         0, 1, False, XA_CARDINAL, @A, @B, @C, @D, @Data
     ) = Success then
   begin
-    if Data^ <> LastVirtualDesktop then
+    if (Data <> nil) and (Data^ <> LastVirtualDesktop) then
     begin
       LastVirtualDesktop := Data^;
       BringToFront;

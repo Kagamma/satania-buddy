@@ -888,6 +888,7 @@ begin
   if not SpineDataCache.ContainsKey(Self.FURL) then
   begin
     New(SpineData);
+    SpineData^.Atlas := nil;
 
     Path := ExtractFilePath(Self.FURL);
     SkeletonFullPath := Self.FURL;
@@ -895,11 +896,22 @@ begin
     AtlasFullPath := Path + StringReplace(ExtractFileName(Self.FURL), ExtractFileExt(Self.FURL), '', [rfReplaceAll]) + '.atlas';
 
     // Load atlas
+    // TODO: There's an unknown segfault here on Linux system. We hide it for now...
     MS := Download(AtlasFullPath, [soForceMemoryStream]) as TMemoryStream;
-    SpineData^.Atlas := spAtlas_create(MS.Memory, MS.Size, PChar(Path), nil);
-    if SpineData^.Atlas = nil then
-      raise Exception.Create('Failed to load spine atlas');
-    MS.Free;
+    try
+      try
+        SpineData^.Atlas := spAtlas_create(MS.Memory, MS.Size, PChar(Path), nil);
+      except
+        on E: Exception do
+          ;
+      end;
+      if SpineData^.Atlas = nil then
+        raise Exception.Create('Failed to load spine atlas');
+    finally
+      MS.Free;
+    end;
+
+    Writeln('SPINE ATLAS: ', QWord(SpineData^.Atlas));
 
     // Load skeleton data
     MS := Download(SkeletonFullPath, [soForceMemoryStream]) as TMemoryStream;
