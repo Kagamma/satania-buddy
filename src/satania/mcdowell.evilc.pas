@@ -3929,7 +3929,8 @@ begin
                 ffiResultType := ffi_type_pointer;
               end;
           end;
-          ffi_prep_cif(@ffiCif, FFI_DEFAULT_ABI, ArgCount, @ffiResultType, @ffiArgTypes[0]);
+          if ffi_prep_cif(@ffiCif, ffi_abi({$ifdef WINDOWS}1{$else}2{$endif}), ArgCount, @ffiResultType, @ffiArgTypes[0]) <> FFI_OK then
+            raise Exception.Create('FFI status is not OK while calling external function "' + FuncImportInfo^.Name + '"');
           ffi_call(@ffiCif, ffi_fn(FuncImport), @ImportResult, @ffiArgValues[0]);
           if FuncImportInfo^.Return = seakF32 then
             ImportResultS := PSingle(@ImportResult)^
