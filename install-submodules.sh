@@ -10,8 +10,9 @@ rm -rf src/components/richmemo
 rm -rf src/components/KControls
 rm -rf src/components/HtmlViewer
 rm -rf src/components/cge-spine-mixer
-rm -rf src/components/SynFacilSyn
+rm -rf src/components/SynFacilSyn         
 rm -rf src/components/brookfreepascal
+rm -rf src/components/spine-runtimes
 rm -rf src/components/JsonTools
 rm -rf src/components/pascal-webui
 
