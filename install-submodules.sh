@@ -10,7 +10,7 @@ rm -rf src/components/richmemo
 rm -rf src/components/KControls
 rm -rf src/components/HtmlViewer
 rm -rf src/components/cge-spine-mixer
-rm -rf src/components/SynFacilSyn         
+rm -rf src/components/SynFacilSyn
 rm -rf src/components/brookfreepascal
 rm -rf src/components/spine-runtimes
 rm -rf src/components/JsonTools
@@ -28,6 +28,7 @@ git clone --depth 1 https://github.com/kryslt/KControls.git
 git clone --depth 1 https://github.com/Kagamma/JsonTools.git
 git clone --depth 1 https://github.com/t-edson/SynFacilSyn.git
 git clone --depth 1 https://github.com/Kagamma/pascal-webui.git
+git clone --depth 1 https://github.com/t-edson/UnTerminal.git
 git clone https://github.com/Kagamma/HtmlViewer.git
 cd HtmlViewer
 git checkout satania-buddy
