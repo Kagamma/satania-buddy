@@ -599,8 +599,6 @@ begin
 end;
 
 procedure TFormSettings.ButtonChatWindowFontClick(Sender: TObject);
-var
-  ScriptFiles: TStringList;
 begin
   FontDialog.Font.Name := EditChatWindowFont.Text;
   FontDialog.Font.Size := EditChatWindowFontSize;
@@ -609,7 +607,6 @@ begin
     EditChatWindowFont.Text := FontDialog.Font.Name;
     EditChatWindowFontSize := FontDialog.Font.Size;
   end;
-  FindAllFiles(ScriptFiles, 'data/scripts/libs/menu', '*.evil', False);
 end;
 
 end.
