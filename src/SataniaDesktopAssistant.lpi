@@ -406,6 +406,11 @@
         <Filename Value="forms/form.bubble_linux_x11.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="utils/utils.processes.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Utils.Processes"/>
+      </Unit>
     </Units>
     <Debugger>
       <ClassConfig Version="1">
@@ -420,7 +425,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);components/neural-api/neural;components/internettools;components/brookfreepascal/includes;forms"/>
-      <OtherUnitFiles Value="forms;utils;satania;states;components;components/synalist;frames;components/internettools/internet;components/internettools/data;components/activex;components/csscontrols;com;components/cge-spine-mixer/src;components/JsonTools;components/SynFacilSyn;components/speech-to-text;components/pascal-webui/src"/>
+      <OtherUnitFiles Value="forms;utils;satania;states;components;components/synalist;frames;components/internettools/internet;components/internettools/data;components/activex;components/csscontrols;com;components/cge-spine-mixer/src;components/JsonTools;components/SynFacilSyn;components/speech-to-text;components/pascal-webui/src;components/UnTerminal"/>
       <UnitOutputDirectory Value="../lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>

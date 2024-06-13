@@ -43,7 +43,7 @@ uses
 Com.WebApp, Com.Brokers, form.ask, utils.sprites,
   mcdowell.sketch, form.tool.hexeditor, Mcdowell.RichText, Form.Bubble,
   Utils.Colors, CopyDir, Vosk, BassAudioSource, SttThread, whisper,
-  Mcdowell.Data, Form.Tool.StackViewer;
+  Mcdowell.Data, Form.Tool.StackViewer, Utils.Processes;
 
 {$R *.res}
 

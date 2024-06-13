@@ -26,7 +26,8 @@ interface
 
 uses
   Classes, SysUtils, fpjson, jsonparser, fphttpclient, CastleURIUtils,
-  Process, LCLIntf, StrUtils, FIleUtil, globals;
+  Process, LCLIntf, StrUtils, FIleUtil, globals,
+  Utils.Processes;
 
 type
   TSataniaChatThread = class(TThread)
@@ -172,7 +173,7 @@ begin
     Delete(S, 1, 1);
     ChatType := 'chat';
     Synchronize(@RemoveTyping);
-    RunCommand(S, ChatResponse);
+    RunCommandWithoutAsciiEscapeCode(S, ChatResponse);
   end;
   Synchronize(@SendToHer);
   Terminate;
