@@ -1157,6 +1157,9 @@ begin
 end;
 
 function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  S: String;
+
   procedure DecodeJSONArray(SB: TStringBuilder; const Map: TSEValue); forward;
   procedure DecodeJSONObject(SB: TStringBuilder; const Map: TSEValue); forward;
 
@@ -1191,7 +1194,12 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
             Decide(SB, V);
           end;
         sevkNull:
-          SB.Append('null');
+          SB.Append('null');   
+        else
+          begin
+            WriteStr(S, V.Kind);
+            raise Exception.Create(Format('Array element "%d" with type "%s" is not a valid JSON value!', [I, S]))
+          end;
       end;
     end;
     SB.Append(']');
@@ -1223,6 +1231,11 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue
           end;
         sevkNull:
           SB.Append('null');
+        else
+          begin
+            WriteStr(S, V.Kind);
+            raise Exception.Create(Format('Key "%s" with type "%s" is not a valid JSON value!', [Key, S]))
+          end;
       end;
       Inc(I);
     end;
