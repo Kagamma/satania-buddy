@@ -791,8 +791,8 @@ type
   SYNCPROC = procedure(handle: HSYNC; channel, data: DWORD; user: Pointer); {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
   {
     Sync callback function.
-    handle : The sync that has occured
-    channel: Channel that the sync occured in
+    handle : The sync that has occurred
+    channel: Channel that the sync occurred in
     data   : Additional data associated with the sync's occurance
     user   : The 'user' parameter given when calling BASS_ChannelSetSync
   }
