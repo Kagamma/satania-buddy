@@ -870,7 +870,7 @@ begin
       end;
     sevkBuffer:
       begin
-        Result := Length(Value.VarBuffer^.Base);
+        Result := Length(Value.VarBuffer^.Base) - 16;
       end;
     else
       Result := Value.Size;
@@ -1012,7 +1012,7 @@ end;
 class function TBuiltInFunction.SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   SEValidateType(@Args[0], sevkBuffer, 1);
-  Result := Length(Args[0].VarBuffer^.Base);
+  Result := Length(Args[0].VarBuffer^.Base) - 16;
 end;
 
 class function TBuiltInFunction.SEBufferCopy(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -2749,7 +2749,7 @@ begin
           begin
             if Value.Value.VarBuffer <> nil then
             begin
-              MS := Length(Value.Value.VarBuffer^.Base);
+              MS := Length(Value.Value.VarBuffer^.Base) - 16;
               Self.FAllocatedMem := Self.FAllocatedMem - MS;
               Value.Value.VarBuffer^.Base := '';
               Dispose(Value.Value.VarBuffer);
