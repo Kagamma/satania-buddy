@@ -198,6 +198,7 @@ begin
   Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceGetProc, '');
   Thread.Start;
   WaitForThreadTerminate(Thread.ThreadID, 5000);
+  Sleep(100);
   webui_return_string(E, PChar(ChatServiceGetValue));
 end;
 
@@ -212,6 +213,7 @@ begin
   Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceGetListProc, '');
   Thread.Start;
   WaitForThreadTerminate(Thread.ThreadID, 5000);
+  Sleep(100);
   webui_return_string(E, PChar(ChatServiceGetListValue));
 end;
        

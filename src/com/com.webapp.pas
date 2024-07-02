@@ -113,6 +113,7 @@ begin
   Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceGetProc, Req.Content);
   Thread.Start;
   WaitForThreadTerminate(Thread.ThreadID, 5000);
+  Sleep(100);
   Res.Content := ChatServiceGetValue;
 end;
 
@@ -132,6 +133,7 @@ begin
   Thread := TWebUIToNativeUIThread.Create(@WebUI_ChatServiceGetListProc, Req.Content);
   Thread.Start;
   WaitForThreadTerminate(Thread.ThreadID, 5000);
+  Sleep(100);
   Res.Content := ChatServiceGetListValue;
 end;
 
