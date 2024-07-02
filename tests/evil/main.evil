@@ -1,0 +1,26 @@
+fn test_buffer_size() {
+  b = buffer_create(80)
+  assert(buffer_length(b) = 80, 'Buffer size must be 80')
+}
+
+fn test_func_alias() {
+  a = [
+    v: 5,
+    b: fn() {
+      result = self.v
+    }
+  ]
+  assert(a.b() = a.v, 'Result of a.b() must be equal to a.v')
+}
+
+fn test_nested_func() {
+  a = 5
+  fn nested_func() {
+    result = a
+  }
+  assert(nested_func() = a, 'Result of nested_func() must be equal to a')
+}
+
+test_buffer_size()
+test_func_alias()
+test_nested_func()
