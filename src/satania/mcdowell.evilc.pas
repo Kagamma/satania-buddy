@@ -852,7 +852,13 @@ begin
     sevkNull:
       Result := 'null';
     sevkBuffer:
-      Result := 'buffer@' + IntToStr(QWord(Value.VarBuffer^.Ptr));
+      begin
+        Result := 'buffer@' + IntToStr(QWord(Value.VarBuffer^.Ptr));
+        if Value.VarBuffer^.Base <> nil then
+        begin
+          Result := Result + ' <' + IntToStr(Length(Value.VarBuffer^.Base) - 16) + ' bytes>';
+        end;
+      end
     else
       Result := Value;
   end;
