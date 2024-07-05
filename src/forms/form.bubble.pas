@@ -218,6 +218,7 @@ begin
       if not Self.FIsStartTalkingAnimated then
       begin
         Satania.StopAnimation(Satania.AnimTalkFinish);
+        Satania.StopAnimation(Satania.AnimTalkLoop);
         Satania.StartAnimation(Satania.AnimTalkLoop);
         Self.FIsStartTalkingAnimated := True;
       end;
