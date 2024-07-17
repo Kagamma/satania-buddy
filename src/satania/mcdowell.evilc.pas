@@ -1158,14 +1158,14 @@ class function TBuiltInFunction.SEBufferGetI8(const VM: TSEVM; const Args: array
 begin
   SEValidateType(@Args[0], sevkBuffer, 1);
   Result.Kind := sevkNumber;
-  Result.VarNumber := SmallInt((Args[0].VarBuffer^.Ptr)^);
+  Result.VarNumber := ShortInt((Args[0].VarBuffer^.Ptr)^);
 end;
 
 class function TBuiltInFunction.SEBufferGetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   SEValidateType(@Args[0], sevkBuffer, 1);
   Result.Kind := sevkNumber;
-  Result.VarNumber := ShortInt((Args[0].VarBuffer^.Ptr)^);
+  Result.VarNumber := SmallInt((Args[0].VarBuffer^.Ptr)^);
 end;
 
 class function TBuiltInFunction.SEBufferGetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
