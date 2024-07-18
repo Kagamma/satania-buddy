@@ -26,7 +26,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr,
-  base64, FileUtil, syncobjs
+  base64, FileUtil
   {$ifdef SE_LIBFFI}, ffi{$endif}
   {$ifdef SE_STRING_UTF8},LazUTF8{$endif}{$ifdef SE_DYNLIBS}, dynlibs{$endif};
 
@@ -744,7 +744,7 @@ type
 var
   DynlibMap: TDynlibMap;
   VMList: TSEVMList;
-  CS: TCriticalSection;
+  CS: TRTLCriticalSection;
 
 function PointStrToFloat(S: String): Double; inline;
 var
@@ -1474,20 +1474,26 @@ end;
 
 class function TBuiltInFunction.SEGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  CS.Enter;
-  if ScriptVarMap.ContainsKey(Args[0].VarString^) then
-    Exit(ScriptVarMap[Args[0]])
-  else
-    Exit(SENull);
-  CS.Leave;
+  EnterCriticalSection(CS);
+  try
+    if ScriptVarMap.ContainsKey(Args[0].VarString^) then
+      Exit(ScriptVarMap[Args[0]])
+    else
+      Exit(SENull);
+  finally
+    LeaveCriticalSection(CS);
+  end;
 end;
 
 class function TBuiltInFunction.SESet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  CS.Enter;
-  ScriptVarMap.AddOrSetValue(Args[0].VarString^, Args[1]);
-  Result := SENull;
-  CS.Leave;
+  EnterCriticalSection(CS);  
+  try
+    ScriptVarMap.AddOrSetValue(Args[0].VarString^, Args[1]);
+    Result := SENull;
+  finally
+    LeaveCriticalSection(CS);
+  end;
 end;
 
 class function TBuiltInFunction.SEString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -7864,7 +7870,7 @@ begin
 end;
 
 initialization
-  CS := TCriticalSection.Create;
+  InitCriticalSection(CS);
   SENull.Kind := sevkNull;
   SENull.Ref := 0;
   SENull.VarNumber := Floor(0);
@@ -7874,7 +7880,7 @@ initialization
   ScriptCacheMap := TSECacheMap.Create;
 
 finalization
-  CS.Free;
+  DoneCriticalSection(CS);
   ScriptVarMap.Free;
   DynlibMap.Free;
   if VMList <> nil then
