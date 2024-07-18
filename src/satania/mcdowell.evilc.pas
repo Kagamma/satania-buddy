@@ -26,7 +26,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr,
-  base64
+  base64, FileUtil
   {$ifdef SE_LIBFFI}, ffi{$endif}
   {$ifdef SE_STRING_UTF8},LazUTF8{$endif}{$ifdef SE_DYNLIBS}, dynlibs{$endif};
 
@@ -719,6 +719,21 @@ type
     class function SEAssert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEChar(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEOrd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEFileReadText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEFileReadBinary(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEFileWriteText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEFileWriteBinary(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEFileCopy(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEFileRename(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEFileFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEFileGetSize(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEFileGetAge(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 
     class function SEBase64Encode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBase64Decode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -748,7 +763,26 @@ begin
   Result := FloatToStr(X, FS);
 end;
 
-procedure ReadFileAsString(const Name: String; var Str: String);
+function ReadFileAsString(const Name: String): String; overload;
+var
+  MS: TMemoryStream;
+begin
+  if not FileExists(Name) then
+    Exit;
+  MS := TMemoryStream.Create;
+  try
+    MS.LoadFromFile(Name);
+    if MS.Size > 0 then
+    begin
+      SetLength(Result, MS.Size div SizeOf(Char));
+      MS.ReadBuffer(Pointer(Result)^, MS.Size div SizeOf(Char));
+    end;
+  finally
+    MS.Free;
+  end;
+end;
+
+procedure ReadFileAsString(const Name: String; var Str: String); overload;
 var
   MS: TMemoryStream;
 begin
@@ -1977,6 +2011,156 @@ end;
 class function TBuiltInFunction.SEOrd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := Byte(Args[0].VarString^[1]);
+end;
+
+class function TBuiltInFunction.SEFileReadText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := ReadFileAsString(Args[0]);
+end;
+
+class function TBuiltInFunction.SEFileReadBinary(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  FS: TFileStream;
+begin
+  FS := TFileStream.Create(Args[0], fmOpenRead);
+  try
+    GC.AllocBuffer(@Result, FS.Size);
+    FS.Read(Result.VarBuffer^.Ptr^, FS.Size);
+  finally
+    FS.Free;
+  end;
+end;
+
+class function TBuiltInFunction.SEFileWriteText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  FS: TFileStream;
+begin
+  if FileExists(Args[0].VarString^) then
+    FS := TFileStream.Create(Args[0], fmOpenWrite)
+  else
+    FS := TFileStream.Create(Args[0], fmCreate);
+  try
+    FS.Position := FS.Size;
+    FS.Write(Args[1].VarString^[1], Length(Args[1].VarString^));
+  finally
+    FS.Free;
+  end;
+end;
+
+class function TBuiltInFunction.SEFileWriteBinary(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  FS: TFileStream;
+begin
+  if FileExists(Args[0].VarString^) then
+    FS := TFileStream.Create(Args[0], fmOpenWrite)
+  else
+    FS := TFileStream.Create(Args[0], fmCreate);
+  try
+    FS.Position := FS.Size;
+    FS.Write(Args[1].VarBuffer^.Ptr^, Args[2]);
+  finally
+    FS.Free;
+  end;
+end;
+
+class function TBuiltInFunction.SEFileCopy(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := False;
+  if FileExists(Args[0].VarString^) then
+  begin
+    Result := CopyFile(Args[0].VarString^, Args[1], [cffOverwriteFile], False);
+  end;
+end;
+
+class function TBuiltInFunction.SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := FileExists(Args[0].VarString^);
+end;
+
+class function TBuiltInFunction.SEFileDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  DeleteFile(Args[0].VarString^);
+  Result := SENull;
+end;
+
+class function TBuiltInFunction.SEFileRename(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  RenameFile(Args[0].VarString^, Args[1].VarString^);
+  Result := SENull;
+end;
+
+class function TBuiltInFunction.SEFileFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  SL: TStringList;
+  I: Integer;
+begin
+  SL := TStringList.Create;
+  try
+    FindAllFiles(SL, Args[0], Args[1], Boolean(Round(Args[2].VarNumber)), Round(Args[3].VarNumber));
+    GC.AllocMap(@Result);
+    for I := 0 to SL.Count - 1 do
+      SEMapSet(Result, I, SL[I]);
+  finally
+    SL.Free;
+  end;
+end;
+
+class function TBuiltInFunction.SEFileGetSize(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  F: File of Byte;
+begin
+  Result := 0;
+  if FileExists(Args[0].VarString^) then
+  begin
+    AssignFile(F, Args[0].VarString^);
+    Reset(F);
+    Result := FileSize(F);
+    CloseFile(F);
+  end;
+end;
+
+class function TBuiltInFunction.SEFileGetAge(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  F: File of Byte;
+begin
+  Result := -1;
+  if FileExists(Args[0].VarString^) then
+  begin
+    Result := FileAge(Args[0].VarString^);
+  end;
+end;
+
+class function TBuiltInFunction.SEDirectoryCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  ForceDirectories(Args[0].VarString^);
+  Result := SENull;
+end;
+
+class function TBuiltInFunction.SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  DeleteDirectory(Args[0], False);
+  Result := SENull;
+end;
+
+class function TBuiltInFunction.SEDirectoryFindAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+var
+  SL: TStringList;
+  I: Integer;
+begin
+  SL := TStringList.Create;
+  try
+    FindAllDirectories(SL, Args[0], Args[1]);
+    GC.AllocMap(@Result);
+    for I := 0 to SL.Count - 1 do
+      SEMapSet(Result, I, SL[I]);
+  finally
+    SL.Free;
+  end;
+end;
+
+class function TBuiltInFunction.SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := DirectoryExists(Args[0].VarString^);
 end;
 
 class function TBuiltInFunction.SEBase64Encode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -4742,6 +4926,23 @@ begin
   Self.RegisterFunc('mem_object_count', @TBuiltInFunction(nil).SEGCObjectCount, 0);
   Self.RegisterFunc('mem_used', @TBuiltInFunction(nil).SEGCUsed, 0);
   Self.RegisterFunc('mem_gc', @TBuiltInFunction(nil).SEGCCollect, 0);
+  Self.RegisterFunc('fs_file_delete', @TBuiltInFunction(nil).SEFileDelete, 1);
+  Self.RegisterFunc('fs_file_rename', @TBuiltInFunction(nil).SEFileRename, 2);
+  Self.RegisterFunc('fs_file_exists', @TBuiltInFunction(nil).SEFileExists, 1);
+  Self.RegisterFunc('fs_file_read', @TBuiltInFunction(nil).SEFileReadText, 1);
+  Self.RegisterFunc('fs_file_read_text', @TBuiltInFunction(nil).SEFileReadText, 1);
+  Self.RegisterFunc('fs_file_read_binary', @TBuiltInFunction(nil).SEFileReadBinary, 1);
+  Self.RegisterFunc('fs_file_write', @TBuiltInFunction(nil).SEFileWriteText, 2);
+  Self.RegisterFunc('fs_file_write_text', @TBuiltInFunction(nil).SEFileWriteText, 2);
+  Self.RegisterFunc('fs_file_write_binary', @TBuiltInFunction(nil).SEFileWriteBinary, 3);
+  Self.RegisterFunc('fs_file_copy', @TBuiltInFunction(nil).SEFileCopy, 2);
+  Self.RegisterFunc('fs_file_size_get', @TBuiltInFunction(nil).SEFileGetSize, 1);
+  Self.RegisterFunc('fs_file_age_get', @TBuiltInFunction(nil).SEFileGetAge, 1);
+  Self.RegisterFunc('fs_file_find_all', @TBuiltInFunction(nil).SEFileFindAll, 4);
+  Self.RegisterFunc('fs_directory_create', @TBuiltInFunction(nil).SEDirectoryCreate, 1);
+  Self.RegisterFunc('fs_directory_delete', @TBuiltInFunction(nil).SEDirectoryDelete, 1);
+  Self.RegisterFunc('fs_directory_find_all', @TBuiltInFunction(nil).SEDirectoryFindAll, 2);
+  Self.RegisterFunc('fs_directory_exists', @TBuiltInFunction(nil).SEDirectoryExists, 1);
   Self.RegisterFunc('base64_encode', @TBuiltInFunction(nil).SEBase64Encode, 1);
   Self.RegisterFunc('base64_decode', @TBuiltInFunction(nil).SEBase64Decode, 1);
   Self.RegisterFunc('assert', @TBuiltInFunction(nil).SEAssert, 2);
