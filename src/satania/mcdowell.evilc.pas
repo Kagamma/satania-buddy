@@ -26,7 +26,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr,
-  base64, FileUtil
+  base64, FileUtil, syncobjs
   {$ifdef SE_LIBFFI}, ffi{$endif}
   {$ifdef SE_STRING_UTF8},LazUTF8{$endif}{$ifdef SE_DYNLIBS}, dynlibs{$endif};
 
@@ -744,6 +744,7 @@ type
 var
   DynlibMap: TDynlibMap;
   VMList: TSEVMList;
+  CS: TCriticalSection;
 
 function PointStrToFloat(S: String): Double; inline;
 var
@@ -1473,16 +1474,20 @@ end;
 
 class function TBuiltInFunction.SEGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
+  CS.Enter;
   if ScriptVarMap.ContainsKey(Args[0].VarString^) then
     Exit(ScriptVarMap[Args[0]])
   else
     Exit(SENull);
+  CS.Leave;
 end;
 
 class function TBuiltInFunction.SESet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
+  CS.Enter;
   ScriptVarMap.AddOrSetValue(Args[0].VarString^, Args[1]);
   Result := SENull;
+  CS.Leave;
 end;
 
 class function TBuiltInFunction.SEString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -7859,6 +7864,7 @@ begin
 end;
 
 initialization
+  CS := TCriticalSection.Create;
   SENull.Kind := sevkNull;
   SENull.Ref := 0;
   SENull.VarNumber := Floor(0);
@@ -7868,7 +7874,8 @@ initialization
   ScriptCacheMap := TSECacheMap.Create;
 
 finalization
-  FreeAndNil(ScriptVarMap);
+  CS.Free;
+  ScriptVarMap.Free;
   DynlibMap.Free;
   if VMList <> nil then
     VMList.Free;
