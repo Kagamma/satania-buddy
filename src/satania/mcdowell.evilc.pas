@@ -2044,7 +2044,7 @@ begin
     end else
     if Length(Args) = 3 then
     begin
-      SizeToRead := Min(Round(FS.Size - Args[1]), Round(Args[2]));
+      SizeToRead := Min(FS.Size - Round(Args[1].VarNumber), Round(Args[2].VarNumber));
       if SizeToRead > 0 then
       begin
         GC.AllocBuffer(@Result, SizeToRead);
