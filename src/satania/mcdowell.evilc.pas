@@ -2032,11 +2032,26 @@ end;
 class function TBuiltInFunction.SEFileReadBinary(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
   FS: TFileStream;
+  SizeToRead: Int64;
 begin
   FS := TFileStream.Create(Args[0], fmOpenRead);
+  Result := SENull;
   try
-    GC.AllocBuffer(@Result, FS.Size);
-    FS.Read(Result.VarBuffer^.Ptr^, FS.Size);
+    if Length(Args) = 1 then
+    begin
+      GC.AllocBuffer(@Result, FS.Size);
+      FS.Read(Result.VarBuffer^.Ptr^, FS.Size);
+    end else
+    if Length(Args) = 3 then
+    begin
+      SizeToRead := Min(Round(FS.Size - Args[1]), Round(Args[2]));
+      if SizeToRead > 0 then
+      begin
+        GC.AllocBuffer(@Result, SizeToRead);
+        FS.Position := Args[1];
+        FS.Read(Result.VarBuffer^.Ptr^, SizeToRead);
+      end;
+    end;
   finally
     FS.Free;
   end;
@@ -4946,7 +4961,7 @@ begin
   Self.RegisterFunc('fs_file_exists', @TBuiltInFunction(nil).SEFileExists, 1);
   Self.RegisterFunc('fs_file_read', @TBuiltInFunction(nil).SEFileReadText, 1);
   Self.RegisterFunc('fs_file_read_text', @TBuiltInFunction(nil).SEFileReadText, 1);
-  Self.RegisterFunc('fs_file_read_binary', @TBuiltInFunction(nil).SEFileReadBinary, 1);
+  Self.RegisterFunc('fs_file_read_binary', @TBuiltInFunction(nil).SEFileReadBinary, -1);
   Self.RegisterFunc('fs_file_write', @TBuiltInFunction(nil).SEFileWriteText, 2);
   Self.RegisterFunc('fs_file_write_text', @TBuiltInFunction(nil).SEFileWriteText, 2);
   Self.RegisterFunc('fs_file_write_binary', @TBuiltInFunction(nil).SEFileWriteBinary, 3);
