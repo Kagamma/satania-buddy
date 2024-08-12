@@ -104,27 +104,52 @@ end;
 
 procedure WebUI_CharacterSkinGet(E: PWebUIEvent);
 begin
-  webui_return_string(E, PChar(Save.Settings.Skin));
+  EnterCriticalSection(CS);
+  try
+    webui_return_string(E, PChar(Save.Settings.Skin));
+  finally
+    LeaveCriticalSection(CS);
+  end;
 end;
 
 procedure WebUI_CharacterNameGet(E: PWebUIEvent);
 begin
-  webui_return_string(E, PChar(Satania.Name));
+  EnterCriticalSection(CS);
+  try
+    webui_return_string(E, PChar(Satania.Name));
+  finally
+    LeaveCriticalSection(CS);
+  end;
 end;
 
 procedure WebUI_ChatHistoryGet(E: PWebUIEvent);
-begin
-  webui_return_string(E, PChar(FormChat.ChatHistory.ToJSONString(0)));
+begin                                
+  EnterCriticalSection(CS);
+  try
+    webui_return_string(E, PChar(FormChat.ChatHistory.ToJSONString(0)));
+  finally
+    LeaveCriticalSection(CS);
+  end;
 end;
 
 procedure WebUI_ChatHistoryGetPlainText(E: PWebUIEvent);
-begin
-  webui_return_string(E, PChar(FormChat.ChatHistory.ToEdit));
+begin                     
+  EnterCriticalSection(CS);
+  try
+    webui_return_string(E, PChar(FormChat.ChatHistory.ToEdit));
+  finally
+    LeaveCriticalSection(CS);
+  end;
 end;
 
 procedure WebUI_ChatIsStreaming(E: PWebUIEvent);
 begin
-  webui_return_bool(E, FormChat.RichText.IsStreaming);
+  EnterCriticalSection(CS);
+  try
+    webui_return_bool(E, FormChat.RichText.IsStreaming);
+  finally
+    LeaveCriticalSection(CS);
+  end;
 end;
 
 procedure WebUI_ChatSendProc(S: String);
@@ -240,6 +265,7 @@ begin
   if not FileExists(Path) then
     Exit;
   Script := Satania.CreateEvilC;
+  EnterCriticalSection(CS);
   try
     try
       Script.Source := 'chat_message = ""' + ReadFileAsString(Path);
@@ -255,28 +281,41 @@ begin
       end;
     end;
   finally
-    Script.Free;
+    Script.Free;   
+    LeaveCriticalSection(CS);
   end;
 end;
 procedure WebUI_ChatServiceGetType(E: PWebUIEvent);
 begin
-  webui_return_string(E, PChar(WebUI_ChatServiceGetTypeProc));
+  EnterCriticalSection(CS);
+  try
+    webui_return_string(E, PChar(WebUI_ChatServiceGetTypeProc));
+  finally 
+    LeaveCriticalSection(CS);
+  end;
 end;
 
 procedure WebUI_ChatServiceGetSetting(E: PWebUIEvent);
 var
   S: String;
-begin
+begin        
+  EnterCriticalSection(CS);
   S := Satania.LocalFlagIni.ReadString('Flags', Save.Settings.LastServiceUsed, '☙❥');
   if S = '☙❥' then
     webui_return_string(E, '')
   else
     webui_return_string(E, PChar(S));
+  LeaveCriticalSection(CS);
 end;
 
 procedure WebUI_ChatServiceSetSetting(E: PWebUIEvent);
 begin
-  Satania.LocalFlagIni.WriteString('Flags', Save.Settings.LastServiceUsed, webui_get_string(E));
+  EnterCriticalSection(CS);
+  try
+    Satania.LocalFlagIni.WriteString('Flags', Save.Settings.LastServiceUsed, webui_get_string(E));
+  finally
+    LeaveCriticalSection(CS);
+  end;
 end;
 
 procedure WebUI_ShowWebUI;

@@ -138,6 +138,9 @@ uses
 
 { TFormChat }
 
+var
+  CS: TRTLCriticalSection;
+
 {$define unit_implmentation}
 {$I form.chat_webui.inc}
 {$undef unit_implmentation}
@@ -186,6 +189,7 @@ var
   I: Integer;
   CH: TChatHistoryRec;
 begin
+  EnterCriticalSection(CS);
   MemoChatLog.Blocks.Clear;
   MemoChatLog.Blocks.LockUpdate;
   ChatHistory.LoadFromFile(GetOSLocalDir + PATH_CHAT_HISTORY + Save.Settings.Skin + ' - ' + Save.Settings.LastServiceUsed + '.txt');
@@ -206,7 +210,8 @@ begin
   end;
   FIsWriteToHistoryLog := True;
   MemoChatLog.Blocks.UnLockUpdate;
-  Self.ScrollToBottom;
+  Self.ScrollToBottom; 
+  LeaveCriticalSection(CS);
 end;
 
 procedure TFormChat.FormCreate(Sender: TObject);
@@ -317,6 +322,7 @@ end;
 procedure TFormChat.EditChatKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
+  EnterCriticalSection(CS);
   Self.CalcHeights;
   if (Key = 13) and not (Shift = [ssShift]) and (FormChat.EditChat.Lines.Text<>'') then
   begin
@@ -326,6 +332,7 @@ begin
   begin
     Hide;
   end;
+  LeaveCriticalSection(CS);
 end;
 
 procedure TFormChat.EditChatKeyUp(Sender: TObject; var Key: Word;
@@ -614,6 +621,12 @@ begin
     SL.Free;
   end;
 end;
+
+initialization
+  InitCriticalSection(CS);
+
+finalization
+  DoneCriticalSection(CS);
 
 end.
 

@@ -48,7 +48,6 @@ object FormChat: TFormChat
   Position = poDefault
   ShowHint = True
   ShowInTaskBar = stAlways
-  LCLVersion = '3.99.0.0'
   OnCreate = FormCreate
   OnShow = FormShow
   object PageControl: TPageControl
