@@ -42,6 +42,7 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
+              <DebugInfoType Value="dsDwarf3"/>
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
             <Options>
@@ -55,8 +56,44 @@
           </Other>
         </CompilerOptions>
       </Item>
-      <SharedMatrixOptions Count="1">
-        <Item1 ID="959895603909" Modes="linux64-qt5" Type="IDEMacro" MacroName="LCLWidgetType" Value="qt5"/>
+      <Item Name="linux64-qt6">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="../satania-buddy"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);components/neural-api/neural;components/internettools;components/brookfreepascal/includes;forms"/>
+            <OtherUnitFiles Value="forms;utils;satania;states;components;components/synalist;components/typing-label/typinglabel;frames;components/internettools/internet;components/internettools/data;components/activex;components/csscontrols;com;components/cge-spine-mixer/src;components/JsonTools;components/SynFacilSyn;components/speech-to-text;components/pascal-webui/src;components/UnTerminal"/>
+            <UnitOutputDirectory Value="../lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="linux"/>
+            <Optimizations>
+              <OptimizationLevel Value="2"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf3"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dCASTLE_SLIM_NODES
+-dSATANIA_UI_QT6"/>
+          </Other>
+        </CompilerOptions>
+      </Item>
+      <SharedMatrixOptions Count="2">
+        <Item1 ID="192879225806" Modes="linux64-qt5" Type="IDEMacro" MacroName="LCLWidgetType" Value="qt5"/>
+        <Item2 ID="688197221949" Type="IDEMacro" MacroName="LCLWidgetType" Value="qt6"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
