@@ -7,4 +7,8 @@
 {$endif}
 {$macro on}
 {$define nl:=+ LineEnding +}
-{$define sataniaqt:= qt5}
+{$ifdef SATANIA_UI_QT6}
+  {$define sataniaqt:= qt6}
+{$else}
+  {$define sataniaqt:= qt5}
+{$endif}
