@@ -223,6 +223,12 @@ type
     property AllocatedMem: Int64 read FAllocatedMem write FAllocatedMem;
   end;
 
+  TSECallingConvention = (
+    seccAuto,
+    seccStdcall,
+    seccCdecl
+  );
+
   TSEAtomKind = (
     seakVoid,
     seakI8,
@@ -268,6 +274,7 @@ type
     Func: Pointer;
     Args: TSEAtomKindArray;
     Return: TSEAtomKind;
+    CallingConvention: TSECallingConvention;
   end;
   PSEFuncImportInfo = ^TSEFuncImportInfo;
 
@@ -530,7 +537,7 @@ type
     procedure RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);
     procedure RegisterFuncWithSElf(const Name: String; const Func: TSEFuncWithSelf; const ArgCount: Integer);
     function RegisterScriptFunc(const Name: String; const ArgCount: Integer): PSEFuncScriptInfo;
-    procedure RegisterImportFunc(const Name, ActualName, LibName: String; const Args: TSEAtomKindArray; const Return: TSEAtomKind);
+    procedure RegisterImportFunc(const Name, ActualName, LibName: String; const Args: TSEAtomKindArray; const Return: TSEAtomKind; const CC: TSECallingConvention = seccAuto);
     function Backup: TSECache;
     procedure Restore(const Cache: TSECache);
 
@@ -1318,8 +1325,7 @@ class function TBuiltInFunction.SEStringToBuffer(const VM: TSEVM; const Args: ar
 begin
   SEValidateType(@Args[0], sevkString, 1);
   GC.AllocBuffer(@Result, Length(Args[0].VarString^));
-  Move(Args[0].VarString^[1], Result.VarBuffer^.Base[1], Length(Args[0].VarString^));
-  Result.VarBuffer^.Ptr := PChar(Result.VarBuffer^.Base);
+  Move(Args[0].VarString^[1], PByte(Result.VarBuffer^.Ptr)[1], Length(Args[0].VarString^));
 end;
 
 class function TBuiltInFunction.SEBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -3249,6 +3255,7 @@ var
   ffiArgTypes: array [0..31] of pffi_type;
   ffiArgValues: array [0..31] of Pointer;
   ffiResultType: ffi_type;
+  ffiAbi: ffi_abi;
   {$endif}
 
   procedure PrintEvilScriptStackTrace(Message: String);
@@ -4150,7 +4157,17 @@ begin
                 ffiResultType := ffi_type_pointer;
               end;
           end;
-          if ffi_prep_cif(@ffiCif, ffi_abi({$ifdef WINDOWS}1{$else}2{$endif}), ArgCount, @ffiResultType, @ffiArgTypes[0]) <> FFI_OK then
+          case FuncImportInfo^.CallingConvention of
+            seccAuto:
+              ffiAbi := ffi_abi({$ifdef WINDOWS}1{$else}2{$endif});
+            {$ifdef CPUI386}
+            seccStdcall:
+              ffiAbi := FFI_STDCALL;    
+            seccCdecl:
+              ffiAbi := FFI_MS_CDECL;
+            {$endif}
+          end;
+          if ffi_prep_cif(@ffiCif, ffiAbi, ArgCount, @ffiResultType, @ffiArgTypes[0]) <> FFI_OK then
             raise Exception.Create('FFI status is not OK while calling external function "' + FuncImportInfo^.Name + '"');
           ffi_call(@ffiCif, ffi_fn(FuncImport), @ImportResult, @ffiArgValues[0]);
           if FuncImportInfo^.Return = seakF32 then
@@ -6760,12 +6777,26 @@ var
     procedure FuncImport(const Lib: String);
     var
       Token: TSEToken;
+      CC: TSECallingConvention = seccAuto;
       Name, ActualName: String;
       Return: TSEAtomKind;
       Args: TSEAtomKindArray;
     begin
       NextTokenExpected([tkFunctionDecl]);
       Token := NextTokenExpected([tkIdent]);
+      if PeekAtNextToken.Kind = tkIdent then
+      begin
+        // Calling convention
+        case Token.Value of
+          'stdcall':
+            CC := seccStdcall;
+          'cdecl':
+            CC := seccCdecl;
+          else
+            Error(Format('Unsupported calling convention "%s"', [Token.Value]), Token);
+        end;
+        Token := NextTokenExpected([tkIdent]);
+      end;
       Name := Token.Value;
 
       if FindFunc(Name) <> nil then
@@ -6791,7 +6822,7 @@ var
       end else
         ActualName := Name;
 
-      Self.RegisterImportFunc(Name, ActualName, Lib, Args, Return);
+      Self.RegisterImportFunc(Name, ActualName, Lib, Args, Return, CC);
     end;
 
   var
@@ -7741,7 +7772,7 @@ begin
   Self.FuncCurrent := Self.FuncScriptList.Count - 1;
 end;
 
-procedure TEvilC.RegisterImportFunc(const Name, ActualName, LibName: String; const Args: TSEAtomKindArray; const Return: TSEAtomKind);
+procedure TEvilC.RegisterImportFunc(const Name, ActualName, LibName: String; const Args: TSEAtomKindArray; const Return: TSEAtomKind; const CC: TSECallingConvention = seccAuto);
 var
   FuncImportInfo: TSEFuncImportInfo;
   Lib: TLibHandle;
@@ -7767,7 +7798,8 @@ begin
   FuncImportInfo.Args := Args;
   FuncImportInfo.Return := Return;
   FuncImportInfo.Name := Name;
-  FuncImportInfo.Func := nil;
+  FuncImportInfo.Func := nil;   
+  FuncImportInfo.CallingConvention := CC;
   if Lib <> 0 then
   begin
     FuncImportInfo.Func := GetProcAddress(Lib, ActualName);
