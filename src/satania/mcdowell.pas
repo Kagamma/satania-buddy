@@ -318,7 +318,9 @@ begin
   S.RegisterFunc('worker_exists', @SEWorkerExists, 1);
   S.RegisterFunc('worker_delete', @SEWorkerDelete, 1);     
   S.RegisterFunc('app_close_script_register', @SEAppCloseScriptRegister, 2);
-  S.RegisterFunc('app_close_script_unregister', @SEAppCloseScriptUnregister, 1);
+  S.RegisterFunc('app_close_script_unregister', @SEAppCloseScriptUnregister, 1);   
+  S.RegisterFunc('app_character_change_script_register', @SEAppCharacterChangeScriptRegister, 2);
+  S.RegisterFunc('app_character_change_script_unregister', @SEAppCharacterChangeScriptUnregister, 1);
   S.RegisterFunc('tool_evilc_editor', @SEToolEvilCEditor, 1);
   S.RegisterFunc('tool_hex_editor', @SEToolHexEditor, 1);
 end;
