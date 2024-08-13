@@ -470,7 +470,7 @@ import 'test.dll' {
   fn Add(i32, i32): i32
   fn AddDouble(f64, f64): f64
 }
-import 'user32.dll' fn MessageBox(i32, buffer, buffer, i32): void 'MessageBoxA' // Map MessageBoxA external function to MessageBox
+import 'user32.dll' fn MessageBox(i32, buffer, buffer, i32): i32 'MessageBoxA' // Map MessageBoxA external function to MessageBox
 
 MessageBox(0, 'Hello, World!', 'Message Box', 0) // Strings are automatically converted to null-terminated strings
 #+end_example
