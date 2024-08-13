@@ -43,7 +43,7 @@ type
     LastTimestamp: QWord;
   end;
   TSataniaBackgroundScriptDict = specialize TDictionary<String, TSataniaBackgroundScript>;  
-  TSataniaDestroyScriptDict = specialize TDictionary<String, String>;
+  TSataniaEventScriptDict = specialize TDictionary<String, String>;
 
   TSatania = class
   protected
@@ -77,7 +77,8 @@ type
     Name: String;
     Script: TEvilC;
     BackgroundScriptDict: TSataniaBackgroundScriptDict;
-    DestroyScriptDict: TSataniaDestroyScriptDict;
+    DestroyScriptDict: TSataniaEventScriptDict; // Scripts execute when the app is closed
+    ChangeCharacterScriptDict: TSataniaEventScriptDict; // Scripts execute when user change characters
     AnimTalkScriptList: TStringList; // List of possible scripts to execute during talking
     UsedRemindersList: TStringList;
     { Where we should move our touch panel to }
@@ -182,7 +183,8 @@ begin
   UsedRemindersList.Sorted := True;
   Script := TEvilC.Create;
   BackgroundScriptDict := TSataniaBackgroundScriptDict.Create;
-  DestroyScriptDict := TSataniaDestroyScriptDict.Create;
+  DestroyScriptDict := TSataniaEventScriptDict.Create;            
+  ChangeCharacterScriptDict := TSataniaEventScriptDict.Create;
   AnimTalkLoop := 'talk_loop';
   AnimTalkFinish := 'talk_finish';
   Self.AnimTalkScriptList := TStringList.Create;
@@ -192,7 +194,7 @@ begin
 end;
 
 destructor TSatania.Destroy;
-  procedure ExecuteDestroyScripts;
+  procedure ExecuteScripts;
   var
     Key: String;
     Script: TEvilC;
@@ -217,8 +219,9 @@ destructor TSatania.Destroy;
   end;
 
 begin
-  ExecuteDestroyScripts;
+  ExecuteScripts;
   DestroyScriptDict.Free;
+  ChangeCharacterScriptDict.Free;
   UsedRemindersList.Free;
   AnimTalkScriptList.Free;
   Script.Free;
@@ -330,9 +333,36 @@ procedure TSatania.SwitchCharacter(S: String);
 var
   RootPath,
   AvatarPath: String;
+
+  procedure ExecuteScripts;
+  var
+    Key: String;
+    Script: TEvilC;
+  begin
+    Writeln('Start executing change character scripts');
+    for Key in ChangeCharacterScriptDict.Keys do
+    begin
+      Writeln(' - Executing ', Key);
+      Script := TEvilC.Create;
+      Self.RegisterFuncs(Script, False);
+      Self.UpdateMeta(Script);
+      Script.Source := ChangeCharacterScriptDict[Key];
+      try
+        while not Script.IsDone do
+          Script.Exec;
+      except
+        on E: Exception do
+          Writeln(E.Message);
+      end;
+      Script.Free;
+    end;
+    ChangeCharacterScriptDict.Clear;
+  end;
+
 begin
   SataniaSketch.DeleteAll;
   Self.BackgroundScriptClearAll;
+  ExecuteScripts;
   FormChat.ComboBoxService.ItemIndex := 0;
   Save.Settings.Skin := S;
   (FormTouch as TFormTouch).TimerBlinking.Enabled := True;
@@ -380,6 +410,7 @@ var
   Ext: String;
   RM: TRemoveType = rtNone;
   ExposeTransforms: TStrings;
+
 begin
   Ext := LowerCase(ExtractFileExt(S));
   S := PATH_SPRITES + Save.Settings.Skin + '/' + S;

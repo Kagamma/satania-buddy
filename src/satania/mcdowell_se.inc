@@ -99,6 +99,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     function SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;         
     function SEAppCloseScriptRegister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEAppCloseScriptUnregister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEAppCharacterChangeScriptRegister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEAppCharacterChangeScriptUnregister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     function SEToolHexEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 {$endif}
@@ -1193,6 +1195,19 @@ begin
   if Self.DestroyScriptDict.ContainsKey(Args[0]) then
   begin
     Self.DestroyScriptDict.Remove(Args[0]);
+  end;
+end;    
+
+function TSatania.SEAppCharacterChangeScriptRegister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Self.ChangeCharacterScriptDict.AddOrSetValue(Args[0], Args[1]);
+end;
+
+function TSatania.SEAppCharacterChangeScriptUnregister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  if Self.ChangeCharacterScriptDict.ContainsKey(Args[0]) then
+  begin
+    Self.ChangeCharacterScriptDict.Remove(Args[0]);
   end;
 end;
 
