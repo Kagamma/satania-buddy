@@ -7653,6 +7653,12 @@ begin
   Exit(Self.VM.Stack[0])
 end;
 
+{
+  StackPtr:
+  - Return value (-1)
+  - Parameters (0..X)
+  - Variables (X+1..Y)
+}
 function TEvilC.ExecFuncOnly(const Name: String; const Args: array of TSEValue): TSEValue;
 var
   I: Integer;
