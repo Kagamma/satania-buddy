@@ -562,6 +562,10 @@ begin
 end;
 
 procedure TFormChat.StopGenerating;
+var
+  Path: String;
+  Script: TEvilC;
+  SL: TStrings;
 begin
   // Stop worker script
   Satania.WorkerDelete('___worker');
@@ -570,6 +574,27 @@ begin
   FormBubble.DisableStreaming;
   //
   MenuItemStopGenerating.Enabled := False;
+  // Execute _stop
+  Path := GetPhysFilePath('data/scripts/' + Save.Settings.Skin + '/services/' + Save.Settings.LastServiceUsed);
+  if not FileExists(Path) then
+    Exit;
+  Script := Satania.CreateEvilC;
+  SL := TStringList.Create;
+  try
+    try
+      SL.LoadFromFile(Path);
+      Script.Source := SL.Text;
+      Script.ExecFuncOnly('_stop', []);
+    except
+      on E: Exception do
+      begin
+        DumpExceptionCallStack(E);
+      end;
+    end;
+  finally
+    Script.Free;
+    SL.Free;
+  end;
 end;
 
 procedure TFormChat.SaveHistory(const HistoryText: String);
