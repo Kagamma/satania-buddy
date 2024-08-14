@@ -7670,7 +7670,7 @@ begin
   Self.VM.IsDone := False;
   Self.VM.WaitTime := 0;
   Self.VM.FramePtr := @Self.VM.Frame[0];
-  Self.VM.StackPtr := PSEValue(@Self.VM.Stack[0]) + 32;
+  Self.VM.StackPtr := PSEValue(@Self.VM.Stack[0]) + 8;
   Self.VM.FramePtr^.Stack := Self.VM.StackPtr;
   Self.VM.TrapPtr := @Self.VM.Trap[0];
   Dec(Self.VM.TrapPtr);
@@ -7679,13 +7679,13 @@ begin
     if Name = Self.FuncScriptList[I].Name then
     begin
       Self.VM.BinaryPtr := Self.FuncScriptList[I].BinaryPos; 
-      Self.VM.StackPtr := Self.VM.StackPtr + Self.FuncScriptList[I].VarCount;
+      Self.VM.StackPtr := Self.VM.StackPtr + Self.FuncScriptList[I].VarCount + 1;
       Break;
     end;
   end;
   if Self.VM.BinaryPtr <> 0 then
   begin
-    Stack := Self.VM.StackPtr - Length(Args);
+    Stack := PSEValue(@Self.VM.Stack[0]) + 8;
     for I := 0 to Length(Args) - 1 do
     begin
       Stack[I] := Args[I];
@@ -7709,7 +7709,7 @@ begin
   Self.VM.IsDone := False;
   Self.VM.WaitTime := 0;
   Self.VM.FramePtr := @Self.VM.Frame[0];
-  Self.VM.StackPtr := PSEValue(@Self.VM.Stack[0]) + 32;
+  Self.VM.StackPtr := PSEValue(@Self.VM.Stack[0]) + 8;
   Self.VM.FramePtr^.Stack := Self.VM.StackPtr;
   Self.VM.TrapPtr := @Self.VM.Trap[0];
   Dec(Self.VM.TrapPtr);
@@ -7718,13 +7718,13 @@ begin
     if Name = Self.FuncScriptList[I].Name then
     begin
       Self.VM.BinaryPtr := Self.FuncScriptList[I].BinaryPos;
-      Self.VM.StackPtr := Self.VM.StackPtr + Self.FuncScriptList[I].VarCount;
+      Self.VM.StackPtr := Self.VM.StackPtr + Self.FuncScriptList[I].VarCount + 1;
       Break;
     end;
   end;
   if Self.VM.BinaryPtr <> 0 then
   begin
-    Stack := Self.VM.StackPtr - Length(Args);
+    Stack := PSEValue(@Self.VM.Stack[0]) + 8;
     for I := 0 to Length(Args) - 1 do
     begin
       Stack[I] := Args[I];
