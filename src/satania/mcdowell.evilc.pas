@@ -19,6 +19,9 @@ unit Mcdowell.EvilC;
 {$if defined(CPU32) or defined(CPU64) or defined(SE_LIBFFI)}
   {$define SE_DYNLIBS}
 {$endif}
+// enable this if you have access to LCL's FileUtil
+{$define SE_HAS_FILEUTIL}
+// enable this if you want to print logs to terminal
 {$define SE_LOG}
 {$align 16}
 
@@ -26,7 +29,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr,
-  base64, FileUtil
+  base64{$ifdef SE_HAS_FILEUTIL}, FileUtil{$endif}
   {$ifdef SE_LIBFFI}, ffi{$endif}
   {$ifdef SE_STRING_UTF8},LazUTF8{$endif}{$ifdef SE_DYNLIBS}, dynlibs{$endif};
 
@@ -2098,10 +2101,12 @@ end;
 class function TBuiltInFunction.SEFileCopy(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := False;
+  {$ifdef SE_HAS_FILEUTIL}
   if FileExists(Args[0].VarString^) then
   begin
     Result := CopyFile(Args[0].VarString^, Args[1], [cffOverwriteFile], False);
   end;
+  {$endif}
 end;
 
 class function TBuiltInFunction.SEFileExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -2126,6 +2131,8 @@ var
   SL: TStringList;
   I: Integer;
 begin
+  Result := SENull;
+  {$ifdef SE_HAS_FILEUTIL}
   SL := TStringList.Create;
   try
     FindAllFiles(SL, Args[0], Args[1], Boolean(Round(Args[2].VarNumber)), Round(Args[3].VarNumber));
@@ -2135,6 +2142,7 @@ begin
   finally
     SL.Free;
   end;
+  {$endif}
 end;
 
 class function TBuiltInFunction.SEFileGetSize(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -2170,7 +2178,9 @@ end;
 
 class function TBuiltInFunction.SEDirectoryDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
+  {$ifdef SE_HAS_FILEUTIL}
   DeleteDirectory(Args[0], False);
+  {$endif}
   Result := SENull;
 end;
 
@@ -2178,7 +2188,9 @@ class function TBuiltInFunction.SEDirectoryFindAll(const VM: TSEVM; const Args: 
 var
   SL: TStringList;
   I: Integer;
-begin
+begin         
+  Result := SENull;
+  {$ifdef SE_HAS_FILEUTIL}
   SL := TStringList.Create;
   try
     FindAllDirectories(SL, Args[0], Args[1]);
@@ -2188,6 +2200,7 @@ begin
   finally
     SL.Free;
   end;
+  {$endif}
 end;
 
 class function TBuiltInFunction.SEDirectoryExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
