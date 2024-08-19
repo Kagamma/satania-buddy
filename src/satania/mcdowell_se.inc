@@ -446,7 +446,7 @@ end;
 
 function TSatania.SEChatBubbleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Result := FormBubble.KMemo.Text;
+  Result := FormBubble.FText;
 end;
 
 function TSatania.SEChatResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
