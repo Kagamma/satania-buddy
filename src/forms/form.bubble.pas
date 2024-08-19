@@ -49,9 +49,9 @@ type
     procedure TimerTimer(Sender: TObject);
   private
     FRichText: TSataniaRichText;
+    FText: String;
     FIsStartTalking: Boolean;     
     FIsStartTalkingAnimated: Boolean;
-    FText: String;
     FNumWordsDisplay: Single;
     FTypingSpeed: Single;
     FVisibleViaSize: Boolean;
@@ -66,6 +66,7 @@ type
     procedure DisableStreaming;
     procedure Streaming(S: String);
     procedure ApplySettings;
+    function GetCurrentText: String;
     property Text: String read FText write SetText;
     property TypingSpeed: Single read FTypingSpeed write SetTypingSpeed;
     property VisibleViaSize: Boolean read FVisibleViaSize write SetVisibleViaSize;
@@ -310,6 +311,11 @@ begin
     KMemo.Font.Quality := fqCleartype
   else
     KMemo.Font.Quality := fqDefault;
+end;
+
+function TFormBubble.GetCurrentText: String;
+begin
+  Result := Self.FRichText.GetCurrentText;
 end;
 
 end.
