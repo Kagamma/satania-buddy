@@ -60,6 +60,7 @@ type
     procedure Lex(const IsEmote: Boolean = True);
     procedure Parse(const Memo: TKMemo; const IsEmote: Boolean = True);
     procedure Reset;
+    function GetCurrentText: String;
 
     property Source: String read FSource write SetSource;
   end;
@@ -159,6 +160,7 @@ begin
       #10:
         begin
           Token.Kind := rtkNewLine;
+          Token.Value := C;
         end;
       '(':
         begin
@@ -166,6 +168,7 @@ begin
           begin
             Self.FState := rtsThink;
             Token.Kind := rtkState;
+            Token.Value := C;
             Token.State := Self.FState;
             Bracket := '(';
           end else
@@ -177,6 +180,7 @@ begin
           begin
             Self.FState := rtsNormal;
             Token.Kind := rtkState;
+            Token.Value := C;
             Token.State := Self.FState;
           end else
             goto LB_Other;
@@ -187,6 +191,7 @@ begin
           begin
             Self.FState := rtsThink;
             Token.Kind := rtkState;
+            Token.Value := C;
             Token.State := Self.FState;
             Bracket := '[';
           end else
@@ -198,6 +203,7 @@ begin
           begin
             Self.FState := rtsNormal;
             Token.Kind := rtkState;
+            Token.Value := C;
             Token.State := Self.FState;
           end else
             goto LB_Other;
@@ -211,6 +217,7 @@ begin
             else
               Self.FState := rtsNormal;
             Token.Kind := rtkState;
+            Token.Value := C;
             Token.State := Self.FState;
           end else
             goto LB_Other;
@@ -345,6 +352,18 @@ begin
     begin
       Writeln(E.Message);
     end;
+  end;
+end;
+
+function TSataniaRichText.GetCurrentText: String;
+var
+  I: Integer;
+  T: TRichTextToken;
+begin
+  for I := 0 to LastTokenPos do
+  begin
+    T := Self.TokenList[I];
+    Result := Result + T.Value;
   end;
 end;
 
