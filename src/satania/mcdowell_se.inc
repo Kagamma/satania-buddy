@@ -1148,6 +1148,8 @@ begin
   end;
   Item.IsPersistent := False;
   Item.Script := Self.CreateEvilC(True);
+  Item.Script.IncludePathList.Add(GetOSLocalDir);
+  Item.Script.IncludePathList.Add('data/scripts/libs/');
   Item.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
   Item.Script.IncludePathList.Add(GetOSLocalDir + 'data/scripts/' + Save.Settings.Skin + '/');
   Item.Script.Source := Args[1];

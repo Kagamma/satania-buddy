@@ -15,7 +15,10 @@ talk('Hello, World!')
 ** Language
 *** Include other scripts / libraries
 
-- The script engine will first look for scripts at the absolute path, and if no script is found there, it will search for scripts in the character's scripts directory.
+- The script engine will look for scripts in the following places:
+  + The absolute path.
+  + ~/data/scripts/libs~
+  + Character's ~scripts~ directory.
 
 #+begin_example
 using 'path/to/script.evil'

@@ -135,6 +135,8 @@ begin
     SL.Duplicates := dupIgnore;
     try
       Self.Script.IncludePathList.Clear;
+      Self.Script.IncludePathList.Add(GetOSLocalDir);
+      Self.Script.IncludePathList.Add('data/scripts/libs/');
       Self.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
       Self.Script.IncludePathList.Add(GetOSLocalDir + 'data/scripts/' + Save.Settings.Skin + '/');
       Self.Script.Source := ASource;
