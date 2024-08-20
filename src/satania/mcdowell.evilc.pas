@@ -755,22 +755,15 @@ var
   DynlibMap: TDynlibMap;
   VMList: TSEVMList;
   CS: TRTLCriticalSection;
+  FS: TFormatSettings;
 
 function PointStrToFloat(S: String): Double; inline;
-var
-  fS: TFormatSettings;
 begin
-  FS := FormatSettings;
-  fS.DecimalSeparator := '.';
   Result := StrToFloat(S, FS);
 end;
 
 function PointFloatToStr(X: Double): String; inline;
-var
-  FS: TFormatSettings;
 begin
-  FS := FormatSettings;
-  FS.DecimalSeparator := '.';
   Result := FloatToStr(X, FS);
 end;
 
@@ -7941,6 +7934,8 @@ end;
 
 initialization
   InitCriticalSection(CS);
+  FS := FormatSettings;
+  FS.DecimalSeparator := '.';
   SENull.Kind := sevkNull;
   SENull.Ref := 0;
   SENull.VarNumber := Floor(0);
