@@ -540,9 +540,9 @@ begin
   CSAction.Enter;
   try
     Self.Script.IncludePathList.Clear;
-    Self.Script.IncludePathList.Add('data/scripts/');
     Self.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
     Self.Script.IncludePathList.Add(GetOSLocalDir + 'data/scripts/' + Save.Settings.Skin + '/');
+    Self.Script.IncludePathList.Add('data/scripts/');
     Self.Script.IncludePathList.Add(GetOSLocalDir);
     case Typ of
       'chat':

@@ -16,8 +16,8 @@ talk('Hello, World!')
 *** Include other scripts / libraries
 
 - The script engine will look for scripts in the following places:
-  + ~/data/scripts~ directory.
   + Character's ~scripts~ directory.
+  + ~/data/scripts~ directory.
   + The absolute path, if all above fails.
 
 #+begin_example
