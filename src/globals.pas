@@ -125,6 +125,7 @@ type
     FSaturday,
     FSunday,
     FEnabled: Boolean;
+    FTag: String;
   public
     constructor Create;
   published
@@ -143,6 +144,7 @@ type
     property Saturday: Boolean read FSaturday write FSaturday default True;
     property Sunday: Boolean read FSunday write FSunday default True;
     property Enabled: Boolean read FEnabled write FEnabled default True;
+    property Tag: String read FTag write FTag;
   end;
 
   TSaveCollection = class(TCollection)

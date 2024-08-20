@@ -23,9 +23,9 @@ object FrameRemindersItem: TFrameRemindersItem
     ParentBackground = False
     TabOrder = 0
     object DateTimePicker: TDateTimePicker
-      Left = 48
+      Left = 47
       Height = 23
-      Top = 40
+      Top = 74
       Width = 178
       CenturyFrom = 1941
       MaxDate = 2958465
@@ -47,11 +47,11 @@ object FrameRemindersItem: TFrameRemindersItem
       MonthNames = 'Long'
     end
     object ComboBoxKind: TComboBox
-      Left = 48
-      Height = 27
-      Top = 9
+      Left = 47
+      Height = 23
+      Top = 43
       Width = 178
-      ItemHeight = 19
+      ItemHeight = 15
       ItemIndex = 0
       Items.Strings = (
         'Alarm'
@@ -65,21 +65,38 @@ object FrameRemindersItem: TFrameRemindersItem
     end
     object LabelAlarmType: TLabel
       Left = 9
-      Height = 19
-      Top = 9
-      Width = 35
+      Height = 15
+      Top = 43
+      Width = 24
       Caption = 'Type'
       ParentColor = False
       ParentFont = False
     end
     object LabelAlarmTime: TLabel
       Left = 9
-      Height = 19
-      Top = 39
-      Width = 35
+      Height = 15
+      Top = 73
+      Width = 26
       Caption = 'Time'
       ParentColor = False
       ParentFont = False
+    end
+    object LabelName: TLabel
+      Left = 8
+      Height = 15
+      Top = 11
+      Width = 32
+      Caption = 'Name'
+      ParentColor = False
+      ParentFont = False
+    end
+    object EditTag: TEdit
+      Left = 47
+      Height = 23
+      Top = 11
+      Width = 178
+      ParentFont = False
+      TabOrder = 2
     end
   end
   object Panel2: TPanel
@@ -94,10 +111,10 @@ object FrameRemindersItem: TFrameRemindersItem
     TabOrder = 1
     object CheckBoxEnable: TCheckBox
       Left = 8
-      Height = 25
+      Height = 19
       Hint = 'Enable'
       Top = 40
-      Width = 75
+      Width = 53
       Caption = 'Enable'
       Checked = True
       ParentFont = False
@@ -125,20 +142,20 @@ object FrameRemindersItem: TFrameRemindersItem
     end
   end
   object Panel3: TPanel
-    Left = 360
+    Left = 329
     Height = 188
     Top = 0
-    Width = 592
+    Width = 623
     Align = alClient
     ClientHeight = 188
-    ClientWidth = 592
+    ClientWidth = 623
     ParentBackground = False
     TabOrder = 2
     object MemoScript: TMemo
       Left = 1
       Height = 186
       Top = 1
-      Width = 590
+      Width = 621
       Align = alClient
       Font.Name = 'Consolas'
       Lines.Strings = (
@@ -158,19 +175,19 @@ object FrameRemindersItem: TFrameRemindersItem
     Left = 240
     Height = 188
     Top = 0
-    Width = 120
+    Width = 89
     Align = alLeft
     AutoSize = True
     ClientHeight = 188
-    ClientWidth = 120
+    ClientWidth = 89
     ParentBackground = False
     TabOrder = 3
     object CheckBoxMonday: TCheckBox
       Left = 5
-      Height = 25
+      Height = 19
       Hint = 'Monday'
-      Top = 30
-      Width = 110
+      Top = 24
+      Width = 79
       Align = alTop
       BorderSpacing.Left = 4
       BorderSpacing.Right = 4
@@ -182,10 +199,10 @@ object FrameRemindersItem: TFrameRemindersItem
     end
     object CheckBoxSaturday: TCheckBox
       Left = 5
-      Height = 25
+      Height = 19
       Hint = 'Saturday'
-      Top = 155
-      Width = 110
+      Top = 119
+      Width = 79
       Align = alTop
       BorderSpacing.Left = 4
       BorderSpacing.Right = 4
@@ -198,10 +215,10 @@ object FrameRemindersItem: TFrameRemindersItem
     end
     object CheckBoxFriday: TCheckBox
       Left = 5
-      Height = 25
+      Height = 19
       Hint = 'Friday'
-      Top = 130
-      Width = 110
+      Top = 100
+      Width = 79
       Align = alTop
       BorderSpacing.Left = 4
       BorderSpacing.Right = 4
@@ -213,10 +230,10 @@ object FrameRemindersItem: TFrameRemindersItem
     end
     object CheckBoxThursday: TCheckBox
       Left = 5
-      Height = 25
+      Height = 19
       Hint = 'Thursday'
-      Top = 105
-      Width = 110
+      Top = 81
+      Width = 79
       Align = alTop
       BorderSpacing.Left = 4
       BorderSpacing.Right = 4
@@ -228,10 +245,10 @@ object FrameRemindersItem: TFrameRemindersItem
     end
     object CheckBoxWednesday: TCheckBox
       Left = 5
-      Height = 25
+      Height = 19
       Hint = 'Wednesday'
-      Top = 80
-      Width = 110
+      Top = 62
+      Width = 79
       Align = alTop
       BorderSpacing.Left = 4
       BorderSpacing.Right = 4
@@ -243,10 +260,10 @@ object FrameRemindersItem: TFrameRemindersItem
     end
     object CheckBoxTuesday: TCheckBox
       Left = 5
-      Height = 25
+      Height = 19
       Hint = 'Tuesday'
-      Top = 55
-      Width = 110
+      Top = 43
+      Width = 79
       Align = alTop
       BorderSpacing.Left = 4
       BorderSpacing.Right = 4
@@ -260,10 +277,10 @@ object FrameRemindersItem: TFrameRemindersItem
     end
     object CheckBoxSunday: TCheckBox
       Left = 5
-      Height = 25
+      Height = 19
       Hint = 'Sunday'
       Top = 5
-      Width = 110
+      Width = 79
       Align = alTop
       BorderSpacing.Left = 4
       BorderSpacing.Top = 4

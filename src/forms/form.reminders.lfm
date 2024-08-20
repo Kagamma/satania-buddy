@@ -47,11 +47,12 @@ object FormReminders: TFormReminders
   }
   Position = poScreenCenter
   ShowHint = True
+  LCLVersion = '3.99.0.0'
   OnShow = FormShow
   object ScrollBoxReminders: TScrollBox
     Left = 8
-    Height = 510
-    Top = 8
+    Height = 479
+    Top = 39
     Width = 927
     HorzScrollBar.Page = 1
     VertScrollBar.Increment = 1
@@ -125,5 +126,16 @@ object FormReminders: TFormReminders
       TabOrder = 3
       OnClick = ButtonCancel1Click
     end
+  end
+  object EditSearch: TEdit
+    Left = 8
+    Height = 23
+    Top = 8
+    Width = 927
+    Align = alTop
+    BorderSpacing.Around = 8
+    TabOrder = 2
+    TextHint = 'Search by name...'
+    OnChange = EditSearchChange
   end
 end

@@ -3,6 +3,7 @@
 {"hash":4728973,"name":"tframeremindersitem.comboboxkind.text","sourcebytes":[65,108,97,114,109],"value":"Alarm"},
 {"hash":376933,"name":"tframeremindersitem.labelalarmtype.caption","sourcebytes":[84,121,112,101],"value":"Type"},
 {"hash":372789,"name":"tframeremindersitem.labelalarmtime.caption","sourcebytes":[84,105,109,101],"value":"Time"},
+{"hash":346165,"name":"tframeremindersitem.labelname.caption","sourcebytes":[78,97,109,101],"value":"Name"},
 {"hash":79984933,"name":"tframeremindersitem.checkboxenable.hint","sourcebytes":[69,110,97,98,108,101],"value":"Enable"},
 {"hash":79984933,"name":"tframeremindersitem.checkboxenable.caption","sourcebytes":[69,110,97,98,108,101],"value":"Enable"},
 {"hash":78392485,"name":"tframeremindersitem.buttondelete.hint","sourcebytes":[68,101,108,101,116,101],"value":"Delete"},

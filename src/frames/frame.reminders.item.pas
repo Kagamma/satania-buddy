@@ -43,7 +43,9 @@ type
     CheckBoxTuesday: TCheckBox;
     ComboBoxKind: TComboBox;
     DateTimePicker: TDateTimePicker;
+    EditTag: TEdit;
     LabelAlarmTime: TLabel;
+    LabelName: TLabel;
     LabelAlarmType: TLabel;
     MemoScript: TMemo;
     Panel1: TPanel;

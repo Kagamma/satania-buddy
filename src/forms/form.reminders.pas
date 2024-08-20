@@ -37,11 +37,13 @@ type
     ButtonAddNew1: TBitBtn;
     ButtonCancel1: TBitBtn;
     ButtonSave: TBitBtn;
+    EditSearch: TEdit;
     Panel1: TPanel;
     ScrollBoxReminders: TScrollBox;
     procedure ButtonCancel1Click(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
     procedure ButtonSaveClick(Sender: TObject);
+    procedure EditSearchChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ToolButtonAddNewClick(Sender: TObject);
   private
@@ -72,6 +74,7 @@ var
 begin
   Frame := TFrameRemindersItem.Create(Self);
   Frame.Name := GUIDName;
+  Frame.EditTag.Text := 'YouShouldRenameThis';
   Frame.ButtonDelete.OnClick := @DoDelete;
   Frame.DateTimePicker.Date := Now;
   Frame.DateTimePicker.Time := EncodeTime(0, 0, 0, 0);
@@ -123,9 +126,30 @@ begin
     Item.Sunday := Frame.CheckBoxSunday.Checked;
     Item.Name := GUIDName;
     Item.Script := Frame.MemoScript.Lines.Text;
+    Item.Tag := Frame.EditTag.Text;
     Save.SaveToFile('configs.json');
   end;
   Satania.UsedRemindersList.Clear;
+end;
+
+procedure TFormReminders.EditSearchChange(Sender: TObject);
+var
+  I: Integer;
+  S: String;
+  Frame: TFrameRemindersItem;
+begin
+  S := LowerCase(EditSearch.Text);
+  for I := 0 to ScrollBoxReminders.ControlCount - 1 do
+  begin
+    Frame := TFrameRemindersItem(ScrollBoxReminders.Controls[I]);
+    if (S = '') or (LowerCase(Frame.EditTag.Text).IndexOf(S) >= 0) then
+    begin
+      Frame.Show;
+    end else
+    begin
+      Frame.Hide;
+    end;
+  end;
 end;
 
 procedure TFormReminders.ButtonCancelClick(Sender: TObject);
@@ -195,6 +219,8 @@ begin
     Frame.CheckBoxFriday.Checked := Item.Friday;
     Frame.CheckBoxSaturday.Checked := Item.Saturday;
     Frame.CheckBoxSunday.Checked := Item.Sunday;
+
+    Frame.EditTag.Text := Item.Tag;
   end;
 end;
 

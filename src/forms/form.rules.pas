@@ -254,7 +254,7 @@ begin
   Frame := TFrameRulesItem.Create(Self);
   Frame.Name := GUIDName;
   Frame.ButtonDelete.OnClick := @DoDeleteRule;
-  Frame.EditTag.Text := 'YouShouldRenameThis_' + IntToStr(Random($FFFFFFFF));
+  Frame.EditTag.Text := 'YouShouldRenameThis';
   {$ifndef WINDOWS}
   Frame.EditResponse.Font.Name := 'Liberation Mono';
   Frame.EditResponse.Font.Quality := fqAntialiased;

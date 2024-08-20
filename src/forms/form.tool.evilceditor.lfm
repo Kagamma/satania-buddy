@@ -48,6 +48,7 @@ object FormEvilCEditor: TFormEvilCEditor
   Position = poDefaultPosOnly
   ShowHint = True
   ShowInTaskBar = stAlways
+  LCLVersion = '3.99.0.0'
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -80,7 +81,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator2: TToolButton
       Left = 101
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator2'
       Style = tbsSeparator
@@ -103,7 +104,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator1: TToolButton
       Left = 24
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator1'
       Style = tbsSeparator
@@ -117,7 +118,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator3: TToolButton
       Left = 209
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButtonSeparator3'
       Style = tbsSeparator
@@ -132,7 +133,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton2: TToolButton
       Left = 155
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButton2'
       Style = tbsSeparator
@@ -161,7 +162,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton3: TToolButton
       Left = 263
-      Height = 22
+      Height = 8
       Top = 2
       Caption = 'ToolButton3'
       Style = tbsSeparator
@@ -201,7 +202,7 @@ object FormEvilCEditor: TFormEvilCEditor
     TabOrder = 1
     OnKeyDown = EditorKeyDown
     Gutter.Color = 1644825
-    Gutter.Width = 61
+    Gutter.Width = 57
     Gutter.MouseActions = <>
     RightGutter.Width = 0
     RightGutter.MouseActions = <>
@@ -659,9 +660,11 @@ object FormEvilCEditor: TFormEvilCEditor
       object SynGutterMarks: TSynGutterMarks
         Width = 24
         MouseActions = <>
+        MaxExtraMarksColums = 0
+        Options = [sgmoDeDuplicateMarksOnOverflow]
       end
       object SynGutterLineNumber: TSynGutterLineNumber
-        Width = 21
+        Width = 17
         MouseActions = <>
         MarkupInfo.Background = 1644825
         MarkupInfo.Foreground = clGray
