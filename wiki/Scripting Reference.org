@@ -360,7 +360,7 @@ fn(n) { result = n + 1 }
 
 *** Self
 
-- The Evil script does not support true OOP. Instead, the "object instance" containing the callee will pass itself to the callee as ~self~.
+- Evil script does not support true OOP. Instead, "object instance" containing the callee will pass itself to callee as ~self~.
 - The main reason for this mechanism instead of true OOP is performance: This way it doesn't require a separate "method reference" type, which typically uses twice the memory (which result in additional memory allocations due to the way script engine keeps data), compared to a normal "function reference".
 - This has some limitations, for example a nested function will not see parent function's ~self~.
 
