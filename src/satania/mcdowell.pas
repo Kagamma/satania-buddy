@@ -539,11 +539,6 @@ procedure TSatania.Action(Typ, Message: String);
 begin
   CSAction.Enter;
   try
-    Self.Script.IncludePathList.Clear;
-    Self.Script.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
-    Self.Script.IncludePathList.Add(GetOSLocalDir + 'data/scripts/' + Save.Settings.Skin + '/');
-    Self.Script.IncludePathList.Add('data/scripts/');
-    Self.Script.IncludePathList.Add(GetOSLocalDir);
     case Typ of
       'chat':
         Talk(Message);
@@ -1123,6 +1118,11 @@ begin
   S.ConstMap.AddOrSetValue('name', Name);
   S.ConstMap.AddOrSetValue('username', Save.Settings.UserName);
   S.ConstMap.AddOrSetValue('character', Save.Settings.Skin);
+  //
+  S.IncludePathList.Add('data/scripts/' + Save.Settings.Skin + '/');
+  S.IncludePathList.Add(GetOSLocalDir + 'data/scripts/' + Save.Settings.Skin + '/');
+  S.IncludePathList.Add('data/scripts/');
+  S.IncludePathList.Add(GetOSLocalDir);
 end;
 
 procedure TSatania.CleanUpCache;
