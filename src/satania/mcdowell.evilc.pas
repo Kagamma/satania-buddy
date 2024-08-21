@@ -1505,7 +1505,7 @@ end;
 
 class function TBuiltInFunction.SENumber(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  Exit(PointStrToFloat(Args[0]));
+  Exit(PointStrToFloat(Trim(Args[0])));
 end;
 
 class function TBuiltInFunction.SEWait(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
