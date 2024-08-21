@@ -364,6 +364,7 @@ begin
   Satania.Talk(
     'Total Addressable Space: ' + IntToStr(HeapStatus.TotalAddrSpace div 1024) + ' KB' + #10 +
     'Total Allocated: ' + IntToStr(HeapStatus.TotalAllocated div 1024) + ' KB' + #10 +
+    'Evil Script Cache: ' + IntToStr(ScriptCacheMap.Count) + #10 +
     'Evil Script Memory Usage: ' + IntToStr(GC.AllocatedMem div 1024) + ' KB' + #10 +
     'Object Count: ' + IntToStr(GC.ValueList.Count - 1));
 end;
