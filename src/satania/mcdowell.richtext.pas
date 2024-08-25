@@ -94,6 +94,7 @@ constructor TSataniaRichText.Create;
 begin
   inherited;
   Self.TokenList := TRichTextTokenList.Create;
+  Self.TokenList.Capacity := 65536;
   Self.IsPerformance := True;
   Self.ColorItalicText := $808080;
   Self.ColorCodeBlockText := $071330;
@@ -256,102 +257,110 @@ var
   I, IMin, IMax: Integer;
   Token: TRichTextToken;
   TB: TKMemoTextBlock;
-  S: String;
+  SB: TStringBuilder;
 
   procedure AddText;
+  var
+    S: String;
   begin
+    S := SB.ToString;
     if (not IsPerformance) or (S = '') then Exit;
     TB := TKMemoTextBlock(Memo.Blocks[Memo.Blocks.Count - 1]);
     //
     if not (TB is TKMemoTextBlock) then Exit;
     TB.Text := TB.Text + S;
-    S := '';
+    SB.Clear;
   end;
 
 begin
+  SB := TStringBuilder.Create(1024);
   try
-    if (not Self.FIsLexed) or (Self.TokenList.Count = 0) then
-      Self.Lex(IsEmote);
-    if not Self.IsStreaming then
-    begin
-      IMin := 0;
-      IMax := Self.TokenList.Count - 1
-    end else
-    begin
-      IMin := Self.LastTokenPos;
-      IMax := Min(Self.NextTokenPos, Self.TokenList.Count - 1);
-    end;
-    for I := IMin to IMax do
-    begin
-      Token := Self.TokenList[I];
-      case Token.Kind of
-        rtkText:
-          begin
-            if (Self.LastKind = Token.Kind) and (Memo.Blocks.Count > 0) then
+    try
+      if (not Self.FIsLexed) or (Self.TokenList.Count = 0) then
+        Self.Lex(IsEmote);
+      if not Self.IsStreaming then
+      begin
+        IMin := 0;
+        IMax := Self.TokenList.Count - 1
+      end else
+      begin
+        IMin := Self.LastTokenPos;
+        IMax := Min(Self.NextTokenPos, Self.TokenList.Count - 1);
+      end;
+      for I := IMin to IMax do
+      begin
+        Token := Self.TokenList[I];
+        case Token.Kind of
+          rtkText:
             begin
-              TB := TKMemoTextBlock(Memo.Blocks[Memo.Blocks.Count - 1]);
-              if IsPerformance then
-                S := S + Token.Value
-              else
-                TB.Text := TB.Text + Token.Value;
-            end else
-            begin
-              AddText;
-              TB := Memo.Blocks.AddTextBlock(Token.Value);
-              TB.TextStyle.Font.Color := Memo.Font.Color;
-              TB.TextStyle.Font.Name := Memo.Font.Name;
-              TB.TextStyle.Font.Size := Memo.Font.Size;
-              TB.TextStyle.Font.Quality := Memo.Font.Quality;
+              if (Self.LastKind = Token.Kind) and (Memo.Blocks.Count > 0) then
+              begin
+                TB := TKMemoTextBlock(Memo.Blocks[Memo.Blocks.Count - 1]);
+                if IsPerformance then
+                  SB.Append(Token.Value)
+                else
+                  TB.Text := TB.Text + Token.Value;
+              end else
+              begin
+                AddText;
+                TB := Memo.Blocks.AddTextBlock(Token.Value);
+                TB.TextStyle.Font.Color := Memo.Font.Color;
+                TB.TextStyle.Font.Name := Memo.Font.Name;
+                TB.TextStyle.Font.Size := Memo.Font.Size;
+                TB.TextStyle.Font.Quality := Memo.Font.Quality;
+              end;
+              case Self.LastState of
+                rtsCode:
+                  begin
+                    TB.TextStyle.Font.Color := CColor(ColorCodeBlockText);
+                    {$ifdef WINDOWS}
+                    TB.TextStyle.Font.Name := 'Consolas';
+                    {$else}
+                    TB.TextStyle.Font.Name := 'Monospace';
+                    {$endif}
+                  end;
+                rtsThink:
+                  begin
+                    TB.TextStyle.Font.Color := CColor(ColorItalicText);
+                    TB.TextStyle.Font.Style := [fsItalic];
+                  end
+                else
+                  begin
+                    // Do nothing
+                  end;
+              end;
             end;
-            case Self.LastState of
-              rtsCode:
-                begin
-                  TB.TextStyle.Font.Color := CColor(ColorCodeBlockText);
-                  {$ifdef WINDOWS}
-                  TB.TextStyle.Font.Name := 'Consolas';
-                  {$else}
-                  TB.TextStyle.Font.Name := 'Monospace';
-                  {$endif}
-                end;
-              rtsThink:
-                begin
-                  TB.TextStyle.Font.Color := CColor(ColorItalicText);
-                  TB.TextStyle.Font.Style := [fsItalic];
-                end
-              else
-                begin
-                  // Do nothing
-                end;
-            end;
-          end;
-        rtkNewLine:
-          begin
-            AddText;
-            Memo.Blocks.AddParagraph;
-          end;
-        rtkState:
-          begin
-            if (Token.State = rtsCode) or ((Token.State = rtsNormal) and (Self.LastState = rtsCode)) then
+          rtkNewLine:
             begin
               AddText;
               Memo.Blocks.AddParagraph;
             end;
-            Self.LastState := Token.State;
-          end;
-        rtkEOS:
-          begin
-            AddText;
-            Exit;
-          end;
+          rtkState:
+            begin
+              if (Token.State = rtsCode) or ((Token.State = rtsNormal) and (Self.LastState = rtsCode)) then
+              begin
+                AddText;
+                Memo.Blocks.AddParagraph;
+              end;
+              Self.LastState := Token.State;
+            end;
+          rtkEOS:
+            begin
+              AddText;
+              Exit;
+            end;
+        end;
+        Self.LastKind := Token.Kind;
+        Self.LastTokenPos := I + 1;
       end;
-      Self.LastKind := Token.Kind;
-      Self.LastTokenPos := I + 1;
+    except
+      on E: Exception do
+      begin
+        Writeln(E.Message);
+      end;
     end;
-  except
-    on E: Exception do
-    begin
-      Writeln(E.Message);
-    end;
+  finally
+    SB.Free;
   end;
 end;
 
@@ -359,11 +368,18 @@ function TSataniaRichText.GetCurrentText: String;
 var
   I: Integer;
   T: TRichTextToken;
+  SB: TStringBuilder;
 begin
-  for I := 0 to LastTokenPos do
-  begin
-    T := Self.TokenList[I];
-    Result := Result + T.Value;
+  SB := TStringBuilder.Create(65536);
+  try
+    for I := 0 to LastTokenPos do
+    begin
+      T := Self.TokenList[I];
+      SB.Append(T.Value);
+    end;
+  finally
+    Result := SB.ToString;
+    SB.Free;
   end;
 end;
 
