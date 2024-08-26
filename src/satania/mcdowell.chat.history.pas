@@ -121,55 +121,76 @@ end;
 function TSataniaChatHistory.ToEdit: String;
 var
   CH: TChatHistoryRec;
-begin
-  Result := '';
-  for CH in ChatHistoryList do
-  begin
-    case CH.SenderType of
-      cseSatania:
-        Result := Result + #10 + Satania.Name + ': ';
-      cseUser:
-        Result := Result + #10 + Save.Settings.UserName + ': ';
-      else
-        Continue;
+  SB: TStringBuilder;
+begin  
+  SB := TStringBuilder.Create;
+  try
+    SB.Capacity := 65536;
+    for CH in ChatHistoryList do
+    begin
+      case CH.SenderType of
+        cseSatania:
+          SB.Append(#10 + Satania.Name + ': ');
+        cseUser:
+          SB.Append(#10 + Save.Settings.UserName + ': ');
+        else
+          Continue;
+      end;
+      SB.Append(CH.Message);
     end;
-    Result := Result + CH.Message;
+  finally
+    Result := Trim(SB.ToString);
+    SB.Free;
   end;
-  Result := Trim(Result);
 end;
 
 function TSataniaChatHistory.ToJSONString(const Start: Integer): String;
 var
   CH: TChatHistoryRec;
   I: Integer;
+  SB: TStringBuilder;
 begin
-  if ChatHistoryList.Count = 0 then
-    Exit('[]');
-  Result := '[';
-  for I := Start to ChatHistoryList.Count - 1 do
-  begin
-    CH := ChatHistoryList[I];
-    case CH.SenderType of
-      cseSatania:
-        Result := Result + '{"name":"' + StringToJSONString(Satania.Name) + '",';
-      cseUser:
-        Result := Result + '{"name":"' + StringToJSONString(Save.Settings.UserName) + '",';
-      cseSystem:
-        Result := Result + '{"name":"System",';
+  SB := TStringBuilder.Create;
+  try
+    SB.Capacity := 65536;
+    if ChatHistoryList.Count = 0 then
+      Exit('[]');
+    SB.Append('[');
+    for I := Start to ChatHistoryList.Count - 1 do
+    begin
+      CH := ChatHistoryList[I];
+      case CH.SenderType of
+        cseSatania:
+          SB.Append('{"name":"' + StringToJSONString(Satania.Name) + '",');
+        cseUser:
+          SB.Append('{"name":"' + StringToJSONString(Save.Settings.UserName) + '",');
+        cseSystem:
+          SB.Append('{"name":"System",');
+        else
+          begin
+            Continue;
+          end;
+      end;
+      SB.Append('"guid":"' + CH.GUID + '",');
+      SB.Append('"kind":' + IntToStr(Integer(CH.SenderType)) + ',');
+      SB.Append('"message":"' + StringToJSONString(CH.Message) + '"');
+      if I < ChatHistoryList.Count - 1 then
+        SB.Append('},')
       else
-        begin
-          Continue;
-        end;
-    end;                                                       
-    Result := Result + '"guid":"' + CH.GUID + '",';
-    Result := Result + '"kind":' + IntToStr(Integer(CH.SenderType)) + ',';
-    Result := Result + '"message":"' + StringToJSONString(CH.Message) + '"';
-    Result := Result + '},';
+        SB.Append('}');
+    end;
+    if SB.ToString = '[' then
+    begin
+      SB.Clear;
+      SB.Append('[]');
+    end else
+    begin
+      SB.Append(']');
+    end;
+  finally
+    Result := SB.ToString;
+    SB.Free;
   end;
-  if Result = '[' then
-    Result := '[]'
-  else
-    Result[Length(Result)] := ']';
 end;
 
 procedure TSataniaChatHistory.FromEdit(Source: String);
@@ -179,18 +200,19 @@ var
   Buffer: String;
   SataniaToken,
   UserToken: String;
+  WSource: WideString;
   I     : Integer;
 begin
   Buffer := '';
-  Source := Trim(Source);
+  WSource := Trim(UTF8Decode(Source));
   SataniaToken := Satania.Name + ': ';
   UserToken    := Save.Settings.UserName + ': ';
   Clear;
   CH.Message := '';
   CH.Time := '00:00:00';
-  for I := 1 to UTF8Length(Source) do
+  for I := 1 to Length(WSource) do
   begin
-    C := UTF8Copy(Source, I, 1);
+    C := UTF8Encode(WSource[I]);
     if C = #10 then
     begin
       CH.Message := CH.Message + Buffer + #10;
