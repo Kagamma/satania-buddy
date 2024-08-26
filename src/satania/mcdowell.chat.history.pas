@@ -200,7 +200,7 @@ var
   Buffer: String;
   SataniaToken,
   UserToken: String;
-  WSource: WideString;
+  WSource: UnicodeString;
   I     : Integer;
 begin
   Buffer := '';
