@@ -3002,7 +3002,8 @@ begin
           begin
             if Value.Value.VarPascalObject <> nil then
             begin
-              Value.Value.VarPascalObject^.Value.Free;
+              if Value.Value.VarPascalObject^.IsManaged then
+                Value.Value.VarPascalObject^.Value.Free;
               Self.FAllocatedMem := Self.FAllocatedMem - SizeOf(TSEPascalObject);
               Dispose(Value.Value.VarPascalObject);
             end;
