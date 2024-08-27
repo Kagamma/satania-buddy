@@ -116,7 +116,8 @@ type
     sevkBuffer,
     sevkPointer,
     sevkBoolean,
-    sevkFunction
+    sevkFunction,
+    sevkPascalObject
   );
   PSECommonString = ^String;
   TSEBuffer = record
@@ -175,6 +176,10 @@ type
           VarFuncKind: TSEFuncKind;
           VarFuncIndx: QWord;
         );
+      sevkPascalObject:
+        (
+          VarPascalObject: TObject;
+        );
   end;
   {$mode objfpc}
   TSEValueList = specialize TList<TSEValue>;
@@ -220,6 +225,7 @@ type
     procedure AllocBuffer(const PValue: PSEValue; const Size: Integer);
     procedure AllocMap(const PValue: PSEValue);
     procedure AllocString(const PValue: PSEValue; const S: String);
+    procedure AllocPascalObject(const PValue: PSEValue; const Obj: TObject);
     procedure Lock(const PValue: PSEValue);
     procedure Unlock(const PValue: PSEValue);
     property ValueList: TSEGCValueList read FValueList;
@@ -451,7 +457,7 @@ const
     'atom', 'import', 'do', 'try', 'catch', 'throw'
   );
   ValueKindNames: array[TSEValueKind] of String = (
-    'null', 'number', 'string', 'map', 'buffer', 'pointer', 'boolean', 'function'
+    'null', 'number', 'string', 'map', 'buffer', 'pointer', 'boolean', 'function', 'pascal object'
   );
 
 type
@@ -2986,6 +2992,13 @@ begin
               Value.Value.VarBuffer^.Base := '';
               Dispose(Value.Value.VarBuffer);
             end;
+          end;  
+        sevkPascalObject:
+          begin
+            if Value.Value.VarPascalObject <> nil then
+            begin
+              Value.Value.VarPascalObject.Free;
+            end;
           end;
       end;
       Value.Value.Kind := sevkNumber;
@@ -3133,6 +3146,16 @@ begin
   PValue^.VarString^ := S;
   PValue^.Size := Length(S);
   Self.FAllocatedMem := Self.FAllocatedMem + Length(PValue^.VarString^);
+  Self.AddToList(PValue);
+end;
+
+procedure  TSEGarbageCollector.AllocPascalObject(const PValue: PSEValue; const Obj: TObject);
+begin
+  PValue^.Kind := sevkPascalObject;
+  New(PValue^.VarString);
+  PValue^.VarPascalObject := Obj;
+  PValue^.Size := SizeOf(Obj);
+  Self.FAllocatedMem := PValue^.Size;
   Self.AddToList(PValue);
 end;
 
