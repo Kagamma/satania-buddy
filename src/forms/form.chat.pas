@@ -189,7 +189,6 @@ var
   I: Integer;
   CH: TChatHistoryRec;
 begin
-  EnterCriticalSection(CS);
   MemoChatLog.Blocks.Clear;
   MemoChatLog.Blocks.LockUpdate;
   ChatHistory.LoadFromFile(GetOSLocalDir + PATH_CHAT_HISTORY + Save.Settings.Skin + ' - ' + Save.Settings.LastServiceUsed + '.txt');
@@ -210,8 +209,7 @@ begin
   end;
   FIsWriteToHistoryLog := True;
   MemoChatLog.Blocks.UnLockUpdate;
-  Self.ScrollToBottom; 
-  LeaveCriticalSection(CS);
+  Self.ScrollToBottom;
 end;
 
 procedure TFormChat.FormCreate(Sender: TObject);
@@ -400,19 +398,24 @@ end;
 
 procedure TFormChat.ComboBoxServiceChange(Sender: TObject);
 begin
-  if Self.Visible then
-    EditChat.SetFocus;
-  if Self.ComboBoxService.ItemIndex > 0 then
-  begin
-    Self.ButtonOpenService.Enabled := True;
-    Save.Settings.LastServiceUsed := Self.ComboBoxService.Items[Self.ComboBoxService.ItemIndex];
-  end else
-  begin
-    Self.ButtonOpenService.Enabled := False;
-    Save.Settings.LastServiceUsed := 'None';
+  EnterCriticalSection(CS);
+  try
+    if Self.Visible then
+      EditChat.SetFocus;
+    if Self.ComboBoxService.ItemIndex > 0 then
+    begin
+      Self.ButtonOpenService.Enabled := True;
+      Save.Settings.LastServiceUsed := Self.ComboBoxService.Items[Self.ComboBoxService.ItemIndex];
+    end else
+    begin
+      Self.ButtonOpenService.Enabled := False;
+      Save.Settings.LastServiceUsed := 'None';
+    end;
+    Save.SaveToFile('configs.json');
+    Self.LoadChatHistoryFromFile;
+  finally
+    LeaveCriticalSection(CS);
   end;
-  Save.SaveToFile('configs.json');
-  Self.LoadChatHistoryFromFile;
 end;
 
 procedure TFormChat.ScrollToBottom;
@@ -537,23 +540,28 @@ begin
 end;
 
 procedure TFormChat.ApplySettings;
-begin
-  MemoChatLog.Font.Name := Save.Settings.ChatWindowFont;
-  MemoChatLog.Font.Size := Save.Settings.ChatWindowFontSize;
-  MemoChatLog.Font.Color := Save.Settings.ChatWindowColorNormalText;
-  MemoChatLog.Color := Save.Settings.ChatWindowColorBackground;  
-  MemoChatLog.Colors.BkGnd := Save.Settings.ChatWindowColorBackground;
-  if Save.Settings.ChatWindowClearType then
-    MemoChatLog.Font.Quality := fqCleartype
-  else
-    MemoChatLog.Font.Quality := fqDefault;
-  Self.RichText.ColorCodeBlockText := Save.Settings.ChatWindowColorCodeBlockText;
-  Self.RichText.ColorItalicText := Save.Settings.ChatWindowColorItalicText;
-  //MemoEdit.Color := Save.Settings.ChatWindowColorBackground;
-  //MemoEdit.Font.Color := Save.Settings.ChatWindowColorNormalText;
-  //LabelEditMode.Font.Color := Save.Settings.ChatWindowColorNormalText;
-  //Self.Color := Save.Settings.ChatWindowColorBackground;
-  LoadChatHistoryFromFile;
+begin  
+  EnterCriticalSection(CS);
+  try
+    MemoChatLog.Font.Name := Save.Settings.ChatWindowFont;
+    MemoChatLog.Font.Size := Save.Settings.ChatWindowFontSize;
+    MemoChatLog.Font.Color := Save.Settings.ChatWindowColorNormalText;
+    MemoChatLog.Color := Save.Settings.ChatWindowColorBackground;
+    MemoChatLog.Colors.BkGnd := Save.Settings.ChatWindowColorBackground;
+    if Save.Settings.ChatWindowClearType then
+      MemoChatLog.Font.Quality := fqCleartype
+    else
+      MemoChatLog.Font.Quality := fqDefault;
+    Self.RichText.ColorCodeBlockText := Save.Settings.ChatWindowColorCodeBlockText;
+    Self.RichText.ColorItalicText := Save.Settings.ChatWindowColorItalicText;
+    //MemoEdit.Color := Save.Settings.ChatWindowColorBackground;
+    //MemoEdit.Font.Color := Save.Settings.ChatWindowColorNormalText;
+    //LabelEditMode.Font.Color := Save.Settings.ChatWindowColorNormalText;
+    //Self.Color := Save.Settings.ChatWindowColorBackground;
+    LoadChatHistoryFromFile;
+  finally
+    LeaveCriticalSection(CS);
+  end;
 end;
 
 procedure TFormChat.ShowWebUI;
@@ -599,16 +607,26 @@ end;
 
 procedure TFormChat.SaveHistory(const HistoryText: String);
 begin
-  PageControl.PageIndex := 0;
-  ChatHistory.FromEdit(StringReplace(HistoryText, #13, '', [rfReplaceAll]));
-  LoadChatHistoryFromFile;
+  EnterCriticalSection(CS);
+  try
+    PageControl.PageIndex := 0;
+    ChatHistory.FromEdit(StringReplace(HistoryText, #13, '', [rfReplaceAll]));
+    LoadChatHistoryFromFile;
+  finally
+    LeaveCriticalSection(CS);
+  end;
 end;
 
 procedure TFormChat.ClearHistory;
 begin
-  MemoChatLog.Blocks.Clear;
-  ChatHistory.Clear;
-  LoadChatHistoryFromFile;
+  EnterCriticalSection(CS);
+  try
+    MemoChatLog.Blocks.Clear;
+    ChatHistory.Clear;
+    LoadChatHistoryFromFile;
+  finally
+    LeaveCriticalSection(CS);
+  end;
 end;
 
 procedure TFormChat.LoadGreeting;
