@@ -29,7 +29,8 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure LoadFromFile(const HistoryName: String);
+    procedure LoadFromFile(const HistoryName: String);  
+    procedure SaveAllMessages;
     procedure SaveLastestMessage;
     procedure Clear;
     function ToEdit: String;       
@@ -86,6 +87,28 @@ begin
   except
   end;
   CloseFile(F);
+end;
+
+procedure TSataniaChatHistory.SaveAllMessages;
+var
+  CH: TChatHistoryRec;
+  F: TextFile;
+begin
+  if ChatHistoryList.Count > 0 then
+  begin
+    AssignFile(F, Path);
+    Append(F);
+    for CH in ChatHistoryList do
+    begin
+      if CH.SenderType <> cseSystem then
+      begin
+        Writeln(F, CH.Time);
+        Writeln(F, Integer(CH.SenderType));
+        Writeln(F, StringsReplace(CH.Message, [#10#13, #10], ['\n', '\n'], [rfReplaceAll]));
+      end;
+    end;
+    CloseFile(F);
+  end;
 end;
 
 procedure TSataniaChatHistory.SaveLastestMessage;
@@ -226,7 +249,6 @@ begin
       begin
         CH.GUID := GUID;
         ChatHistoryList.Add(CH);
-        SaveLastestMessage;
         CH.Message := '';
       end;
       if Buffer = UserToken then
@@ -244,9 +266,9 @@ begin
     begin              
       CH.GUID := GUID;
       ChatHistoryList.Add(CH);
-      SaveLastestMessage;
     end;
   end;
+  SaveAllMessages;
 end;
 
 end.
