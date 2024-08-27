@@ -1335,7 +1335,7 @@ end;
 
 class function TBuiltInFunction.SEWBufferToString(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
-  WS: WideString;
+  WS: UnicodeString;
   S: String;
 begin
   SEValidateType(@Args[0], sevkBuffer, 1);
@@ -3233,7 +3233,7 @@ var
   AA: array[0..15] of PSEValue;
   TV, TV2: TSEValue;
   S, S1, S2: String;
-  WS, WS1, WS2: WideString;
+  WS, WS1, WS2: UnicodeString;
   FuncNativeInfo: PSEFuncNativeInfo;
   FuncScriptInfo: PSEFuncScriptInfo;
   FuncImportInfo: PSEFuncImportInfo;
@@ -3248,7 +3248,7 @@ var
   ImportBufferIndex: array [0..31] of QWord;
   ImportBufferData: array [0..8*31] of Byte;
   ImportBufferString: array [0..31] of String;
-  ImportBufferWideString: array [0..31] of WideString;
+  ImportBufferWideString: array [0..31] of UnicodeString;
   ImportResult: QWord;
   ImportResultD: TSENumber;
   ImportResultS: Single;
