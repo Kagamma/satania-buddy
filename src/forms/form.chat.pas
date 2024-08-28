@@ -320,7 +320,6 @@ end;
 procedure TFormChat.EditChatKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  EnterCriticalSection(CS);
   Self.CalcHeights;
   if (Key = 13) and not (Shift = [ssShift]) and (FormChat.EditChat.Lines.Text<>'') then
   begin
@@ -330,7 +329,6 @@ begin
   begin
     Hide;
   end;
-  LeaveCriticalSection(CS);
 end;
 
 procedure TFormChat.EditChatKeyUp(Sender: TObject; var Key: Word;
