@@ -3200,6 +3200,7 @@ begin
   SetLength(Self.Binaries, 1);
   Self.Binaries[0] := TSEBinary.Create;
   Self.ConstStrings := TStringList.Create;
+  Self.ConstStrings.Capacity := 64;
 end;
 
 destructor TSEVM.Destroy;
