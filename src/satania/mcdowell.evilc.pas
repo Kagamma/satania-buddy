@@ -465,7 +465,7 @@ const
     'atom', 'import', 'do', 'try', 'catch', 'throw'
   );
   ValueKindNames: array[TSEValueKind] of String = (
-    'null', 'number', 'string', 'map', 'buffer', 'pointer', 'boolean', 'function', 'pascal object'
+    'null', 'number', 'string', 'map', 'buffer', 'pointer', 'boolean', 'function', 'pasobject'
   );
 
 type
