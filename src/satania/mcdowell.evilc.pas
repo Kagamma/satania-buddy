@@ -41,7 +41,8 @@ type
   TSENumber = Double;
 
   TSEOpcode = (
-    opPushConst,
+    opPushConst, 
+    opPushConstString,
     opPushGlobalVar,
     opPushLocalVar,
     opPushArrayPop,
@@ -355,6 +356,7 @@ type
     Stack: array of TSEValue;
     Frame: array of TSEFrame;
     Trap: array of TSETrap;
+    ConstStrings: TStringList;
     CodePtr: Integer;
     StackPtr: PSEValue;
     BinaryPtr: Integer;
@@ -382,6 +384,7 @@ type
     LineOfCodeList: TSELineOfCodeList;
     FuncScriptList: TSEFuncScriptList;
     FuncImportList: TSEFuncImportList;
+    ConstStrings: TStringList;
   end;
   TSECacheMapAncestor = specialize TDictionary<String, TSECache>;
   TSECacheMap = class(TSECacheMapAncestor)
@@ -3094,31 +3097,10 @@ begin
       Mark(P);
       Inc(P);
     end;
-    for J := 0 to High(VM.Binaries) do
-    begin
-      Binary := VM.Binaries[J];
-      for K := 0 to Binary.Count - 1 do
-      begin
-        P := Binary.Ptr(K);
-        Mark(P);
-      end;
-    end;
     for Key in VM.Parent.ConstMap.Keys do
     begin
       V := VM.Parent.ConstMap[Key];
       Mark(@V);
-    end;
-  end;
-  for Cache in ScriptCacheMap.Values do
-  begin;
-    for J := 0 to High(Cache.Binaries) do
-    begin
-      Binary := Cache.Binaries[J];
-      for K := 0 to Binary.Count - 1 do
-      begin
-        P := Binary.Ptr(K);
-        Mark(P);
-      end;
     end;
   end;
   for V in ScriptVarMap.Values do
@@ -3217,6 +3199,7 @@ begin
   VMList.Add(Self);
   SetLength(Self.Binaries, 1);
   Self.Binaries[0] := TSEBinary.Create;
+  Self.ConstStrings := TStringList.Create;
 end;
 
 destructor TSEVM.Destroy;
@@ -3227,6 +3210,7 @@ begin
     FreeAndNil(Self.Binaries[I]);
   if VMList <> nil then
     VMList.Delete(VMList.IndexOf(Self));
+  Self.ConstStrings.Free;
   inherited;
 end;
 
@@ -3472,7 +3456,8 @@ var
 label
   CallScript, CallNative, CallImport
   {$ifdef SE_COMPUTED_GOTO},
-  labelPushConst,
+  labelPushConst,    
+  labelPushConstString,
   labelPushGlobalVar,
   labelPushLocalVar,
   labelPushArrayPop,
@@ -3526,7 +3511,8 @@ label
 {$ifdef SE_COMPUTED_GOTO}
 var
   DispatchTable: array[TSEOpcode] of Pointer = (
-    @labelPushConst,
+    @labelPushConst,   
+    @labelPushConstString,
     @labelPushGlobalVar,
     @labelPushLocalVar,
     @labelPushArrayPop,
@@ -3804,6 +3790,12 @@ begin
       {$ifdef SE_COMPUTED_GOTO}labelPushConst{$else}opPushConst{$endif}:
         begin
           Push(BinaryLocal.Ptr(CodePtrLocal + 1)^);
+          Inc(CodePtrLocal, 2);
+          DispatchGoto;
+        end;        
+      {$ifdef SE_COMPUTED_GOTO}labelPushConstString{$else}opPushConstString{$endif}:
+        begin
+          Push(Self.ConstStrings[Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer)]);
           Inc(CodePtrLocal, 2);
           DispatchGoto;
         end;
@@ -5854,14 +5846,24 @@ var
   begin
     if not CanEmit then
       Exit(Self.Binary.Count);
-    OpcodeInfo.Op := TSEOpcode(Integer(Data[0].VarPointer));
     OpcodeInfo.Pos := Self.Binary.Count;
     OpcodeInfo.Size := Length(Data);
     OpcodeInfo.Binary := Self.Binary;
     Self.OpcodeInfoList.Add(OpcodeInfo);
-    for I := Low(Data) to High(Data) do
+    if (Integer(Data[0].VarPointer) = Integer(opPushConst)) and (Data[1].Kind = sevkString) then
     begin
-      Self.Binary.Add(Data[I]);
+      // TODO: We have leftover TSEValue with string type here, this should be organized better someday.
+      OpcodeInfo.Op := opPushConstString;
+      Self.Binary.Add(Pointer(opPushConstString));
+      Self.Binary.Add(Pointer(Self.VM.ConstStrings.Count));
+      Self.VM.ConstStrings.Add(Data[1].VarString^);
+    end else
+    begin
+      OpcodeInfo.Op := TSEOpcode(Integer(Data[0].VarPointer));
+      for I := Low(Data) to High(Data) do
+      begin
+        Self.Binary.Add(Data[I]);
+      end;
     end;
     Exit(Self.Binary.Count);
   end;
@@ -7653,6 +7655,7 @@ begin
   Self.VM.Reset;
 
   Self.VM.BinaryClear;
+  Self.VM.ConstStrings.Clear;
   Self.VM.IsDone := True;
   Self.Vm.IsPaused := False;
   Self.BinaryPos := 0;
@@ -7861,6 +7864,7 @@ begin
   Result.FuncScriptList := TSEFuncScriptList.Create;
   Result.FuncImportList := TSEFuncImportList.Create;
   Result.GlobalVarSymbols := TStringList.Create;
+  Result.ConstStrings := TStringList.Create;
   SetLength(Result.Binaries, Length(Self.VM.Binaries));
   for J := 0 to High(Self.VM.Binaries) do
   begin
@@ -7888,7 +7892,8 @@ begin
     Result.FuncImportList.Add(Self.FuncImportList[I]);
   end;
   Result.GlobalVarSymbols.Assign(Self.GlobalVarSymbols);
-  Result.GlobalVarCount := Self.GlobalVarCount;
+  Result.GlobalVarCount := Self.GlobalVarCount; 
+  Result.ConstStrings.Assign(Self.VM.ConstStrings);
 end;
 
 procedure TEvilC.Restore(const Cache: TSECache);
@@ -7921,7 +7926,8 @@ begin
   for I := 0 to Cache.FuncImportList.Count - 1 do
     Self.FuncImportList.Add(Cache.FuncImportList[I]);
   Self.GlobalVarSymbols.Assign(Cache.GlobalVarSymbols);
-  Self.GlobalVarCount := Cache.GlobalVarCount;
+  Self.GlobalVarCount := Cache.GlobalVarCount; 
+  Self.VM.ConstStrings.Assign(Cache.ConstStrings);
   Self.IsParsed := True;
 end;
 
@@ -7940,6 +7946,7 @@ begin
     Cache.FuncScriptList.Free;
     Cache.FuncImportList.Free;
     Cache.GlobalVarSymbols.Free;
+    Cache.ConstStrings.Free;
     Self.Remove(AName);
   except
   end;
@@ -7960,6 +7967,7 @@ begin
     Cache.FuncScriptList.Free;
     Cache.FuncImportList.Free;
     Cache.GlobalVarSymbols.Free;
+    Cache.ConstStrings.Free;
   end;
   inherited;
 end;
