@@ -614,7 +614,7 @@ begin
     begin
       Len := Length(HttpResponse.Data);
       GC.AllocBuffer(@Buf, Len);
-      Move(HttpResponse.Data[1], Buf.VarBuffer^.Base[1], Len);
+      Move(HttpResponse.Data[1], Buf.VarBuffer^.Ptr^, Len);
       SEMapSet(Result, 'data', Buf);
     end else
       SEMapSet(Result, 'data', HttpResponse.Data);
