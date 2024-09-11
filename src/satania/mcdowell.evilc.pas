@@ -2956,7 +2956,7 @@ var
 begin
   Ticks := GetTickCount64 - Self.FTicks;
   if (Ticks > 1000 * 60 * 2) or
-    ((Self.FAllocatedMem > Self.CeilMem) and (Ticks > 1000 * 5)) then
+    ((Self.FAllocatedMem > Self.CeilMem) and (Ticks > 1000 * 2)) then
   begin
     Self.GC;
     Self.FTicks := GetTickCount64;
