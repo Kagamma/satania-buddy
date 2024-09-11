@@ -1070,7 +1070,7 @@ end;
 class function TBuiltInFunction.SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   SEValidateType(@Args[0], sevkBuffer, 1);
-  Result := MemSize(Args[0].VarBuffer^.Base) - 16;
+  Result := SESize(Args[0]);
 end;
 
 class function TBuiltInFunction.SEBufferCopy(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
