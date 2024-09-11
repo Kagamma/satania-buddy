@@ -1092,7 +1092,7 @@ function TSatania.SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue)
 var
   S: String;
 begin
-  SEValidateType(@Args[0], sevkString, 1);
+  SEValidateType(@Args[0], sevkString, 1, {$I %CURRENTROUTINE%});
   S := LocalFlagIni.ReadString('Flags', Args[0], '☙❥');
   if S = '☙❥' then
     Result := SENull
@@ -1102,8 +1102,8 @@ end;
 
 function TSatania.SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin           
-  SEValidateType(@Args[0], sevkString, 1);
-  SEValidateType(@Args[1], sevkString, 2);
+  SEValidateType(@Args[0], sevkString, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkString, 2, {$I %CURRENTROUTINE%});
   LocalFlagIni.WriteString('Flags', Args[0], Args[1]);
   Result := SENull;
 end;

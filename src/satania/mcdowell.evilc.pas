@@ -564,7 +564,7 @@ type
 
 function SEValueToText(const Value: TSEValue; const IsRoot: Boolean = True): String;
 function SESize(constref Value: TSEValue): Cardinal; inline;
-procedure SEValidateType(V: PSEValue; Expected: TSEValueKind; At: DWord); inline;
+procedure SEValidateType(V: PSEValue; Expected: TSEValueKind; At: DWord; const FuncName: String); inline;
 procedure SEMapDelete(constref V: TSEValue; constref I: Integer); inline; overload;
 procedure SEMapDelete(constref V: TSEValue; constref S: String); inline; overload;
 procedure SEMapDelete(constref V, I: TSEValue); inline; overload;
@@ -832,7 +832,7 @@ begin
   {$endif}
 end;
 
-procedure SEValidateType(V: PSEValue; Expected: TSEValueKind; At: DWord); inline;
+procedure SEValidateType(V: PSEValue; Expected: TSEValueKind; At: DWord; const FuncName: String); inline;
 var
   S1, S2: String;
 begin
@@ -840,7 +840,7 @@ begin
   begin
     WriteStr(S1, Expected);
     WriteStr(S2, V^.Kind);
-    raise Exception.Create(Format('Parameter #%d: Expected %s, got %s', [At, S1, S2]));
+    raise Exception.Create(Format('[%s] Parameter #%d: Expected %s, got %s', [FuncName, At, S1, S2]));
   end;
 end;
 
@@ -1063,93 +1063,93 @@ end;
 
 class function TBuiltInFunction.SEBufferCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkNumber, 1);
+  SEValidateType(@Args[0], sevkNumber, 1, {$I %CURRENTROUTINE%});
   GC.AllocBuffer(@Result, Round(Args[0].VarNumber));
 end;
 
 class function TBuiltInFunction.SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Result := SESize(Args[0]);
 end;
 
 class function TBuiltInFunction.SEBufferCopy(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
-  SEValidateType(@Args[1], sevkBuffer, 2);
-  SEValidateType(@Args[2], sevkNumber, 3);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkBuffer, 2, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[2], sevkNumber, 3, {$I %CURRENTROUTINE%});
   Move(Args[1].VarBuffer^.Ptr^, Args[0].VarBuffer^.Ptr^, Round(Args[2].VarNumber));
   Result := Args[0];
 end;
 
 class function TBuiltInFunction.SEBufferFillU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
-  SEValidateType(@Args[1], sevkNumber, 2);
-  SEValidateType(@Args[2], sevkNumber, 3);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkNumber, 2, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[2], sevkNumber, 3, {$I %CURRENTROUTINE%});
   FillChar(Args[0].VarBuffer^.Ptr^, Round(Args[2].VarNumber), Byte(Round(Args[1].VarNumber)));
   Result := Args[0];
 end;
 
 class function TBuiltInFunction.SEBufferFillU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
-  SEValidateType(@Args[1], sevkNumber, 2);
-  SEValidateType(@Args[2], sevkNumber, 3);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkNumber, 2, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[2], sevkNumber, 3, {$I %CURRENTROUTINE%});
   FillWord(Args[0].VarBuffer^.Ptr^, Round(Args[2].VarNumber), Word(Round(Args[1].VarNumber)));
   Result := Args[0];
 end;
 
 class function TBuiltInFunction.SEBufferFillU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
-  SEValidateType(@Args[1], sevkNumber, 2);
-  SEValidateType(@Args[2], sevkNumber, 3);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkNumber, 2, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[2], sevkNumber, 3, {$I %CURRENTROUTINE%});
   FillDWord(Args[0].VarBuffer^.Ptr^, Round(Args[2].VarNumber), DWord(Round(Args[1].VarNumber)));
   Result := Args[0];
 end;
 
 class function TBuiltInFunction.SEBufferFillU64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
-  SEValidateType(@Args[1], sevkNumber, 2);
-  SEValidateType(@Args[2], sevkNumber, 3);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkNumber, 2, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[2], sevkNumber, 3, {$I %CURRENTROUTINE%});
   FillQWord(Args[0].VarBuffer^.Ptr^, Round(Args[2].VarNumber), QWord(Round(Args[1].VarNumber)));
   Result := Args[0];
 end;
 
 class function TBuiltInFunction.SEBufferFillI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
-  SEValidateType(@Args[1], sevkNumber, 2);
-  SEValidateType(@Args[2], sevkNumber, 3);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkNumber, 2, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[2], sevkNumber, 3, {$I %CURRENTROUTINE%});
   FillChar(Args[0].VarBuffer^.Ptr^, Round(Args[2].VarNumber), ShortInt(Round(Args[1].VarNumber)));
   Result := Args[0];
 end;
 
 class function TBuiltInFunction.SEBufferFillI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
-  SEValidateType(@Args[1], sevkNumber, 2);
-  SEValidateType(@Args[2], sevkNumber, 3);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkNumber, 2, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[2], sevkNumber, 3, {$I %CURRENTROUTINE%});
   FillWord(Args[0].VarBuffer^.Ptr^, Round(Args[2].VarNumber), SmallInt(Round(Args[1].VarNumber)));
   Result := Args[0];
 end;
 
 class function TBuiltInFunction.SEBufferFillI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
-  SEValidateType(@Args[1], sevkNumber, 2);
-  SEValidateType(@Args[2], sevkNumber, 3);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkNumber, 2, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[2], sevkNumber, 3, {$I %CURRENTROUTINE%});
   FillDWord(Args[0].VarBuffer^.Ptr^, Round(Args[2].VarNumber), LongInt(Round(Args[1].VarNumber)));
   Result := Args[0];
 end;
 
 class function TBuiltInFunction.SEBufferFillI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
-  SEValidateType(@Args[1], sevkNumber, 2);
-  SEValidateType(@Args[2], sevkNumber, 3);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkNumber, 2, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[2], sevkNumber, 3, {$I %CURRENTROUTINE%});
   FillQWord(Args[0].VarBuffer^.Ptr^, Round(Args[2].VarNumber), Int64(Round(Args[1].VarNumber)));
   Result := Args[0];
 end;
@@ -1158,9 +1158,9 @@ class function TBuiltInFunction.SEBufferFillF32(const VM: TSEVM; const Args: arr
 var
   V: Single;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
-  SEValidateType(@Args[1], sevkNumber, 2);
-  SEValidateType(@Args[2], sevkNumber, 3);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkNumber, 2, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[2], sevkNumber, 3, {$I %CURRENTROUTINE%});
   V := Args[1].VarNumber;
   FillDWord(Args[0].VarBuffer^.Ptr^, Round(Args[2].VarNumber), DWord((@V)^));
   Result := Args[0];
@@ -1170,9 +1170,9 @@ class function TBuiltInFunction.SEBufferFillF64(const VM: TSEVM; const Args: arr
 var
   V: Double;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
-  SEValidateType(@Args[1], sevkNumber, 2);
-  SEValidateType(@Args[2], sevkNumber, 3);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkNumber, 2, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[2], sevkNumber, 3, {$I %CURRENTROUTINE%});
   V := Args[1].VarNumber;
   FillQWord(Args[0].VarBuffer^.Ptr^, Round(Args[2].VarNumber), QWord((@V)^));
   Result := Args[0];
@@ -1180,91 +1180,91 @@ end;
 
 class function TBuiltInFunction.SEBufferGetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Result.Kind := sevkNumber;
   Result.VarNumber := Byte((Args[0].VarBuffer^.Ptr)^);
 end;
 
 class function TBuiltInFunction.SEBufferGetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Result.Kind := sevkNumber;
   Result.VarNumber := Word((Args[0].VarBuffer^.Ptr)^);
 end;
 
 class function TBuiltInFunction.SEBufferGetU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Result.Kind := sevkNumber;
   Result.VarNumber := LongWord((Args[0].VarBuffer^.Ptr)^);
 end;
 
 class function TBuiltInFunction.SEBufferGetU64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Result.Kind := sevkNumber;
   Result.VarNumber := QWord((Args[0].VarBuffer^.Ptr)^);
 end;
 
 class function TBuiltInFunction.SEBufferGetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Result.Kind := sevkNumber;
   Result.VarNumber := ShortInt((Args[0].VarBuffer^.Ptr)^);
 end;
 
 class function TBuiltInFunction.SEBufferGetI16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Result.Kind := sevkNumber;
   Result.VarNumber := SmallInt((Args[0].VarBuffer^.Ptr)^);
 end;
 
 class function TBuiltInFunction.SEBufferGetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Result.Kind := sevkNumber;
   Result.VarNumber := LongInt((Args[0].VarBuffer^.Ptr)^);
 end;
 
 class function TBuiltInFunction.SEBufferGetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Result.Kind := sevkNumber;
   Result.VarNumber := Int64((Args[0].VarBuffer^.Ptr)^);
 end;
 
 class function TBuiltInFunction.SEBufferGetF32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Result.Kind := sevkNumber;
   Result.VarNumber := TSENumber(Single((Args[0].VarBuffer^.Ptr)^));
 end;
 
 class function TBuiltInFunction.SEBufferGetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Result.Kind := sevkNumber;
   Result.VarNumber := TSENumber((Args[0].VarBuffer^.Ptr)^);
 end;
 
 class function TBuiltInFunction.SEBufferSetU8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Byte(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
   Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetU16(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Word(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
   Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetU32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   case Args[1].Kind of
     sevkBuffer:
       LongWord(Args[0].VarBuffer^.Ptr^) := LongWord(Args[1].VarBuffer^.Ptr);
@@ -1276,7 +1276,7 @@ end;
 
 class function TBuiltInFunction.SEBufferSetU64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   case Args[1].Kind of
     sevkBuffer:
       QWord(Args[0].VarBuffer^.Ptr^) := QWord(Args[1].VarBuffer^.Ptr);
@@ -1288,7 +1288,7 @@ end;
 
 class function TBuiltInFunction.SEBufferSetI8(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   ShortInt(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
   Result := SENull;
 end;
@@ -1297,7 +1297,7 @@ class function TBuiltInFunction.SEBufferSetI16(const VM: TSEVM; const Args: arra
 var
   P: Pointer;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   P := Pointer(Round(Args[0].VarNumber));
   SmallInt(P^) := Round(Args[1].VarNumber);
   Result := SENull;
@@ -1305,35 +1305,35 @@ end;
 
 class function TBuiltInFunction.SEBufferSetI32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   LongInt(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
   Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetI64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Int64(Args[0].VarBuffer^.Ptr^) := Round(Args[1].VarNumber);
   Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetF32(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   Single(Args[0].VarBuffer^.Ptr^) := Single(Args[1].VarNumber);
   Result := SENull;
 end;
 
 class function TBuiltInFunction.SEBufferSetF64(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   TSENumber(Args[0].VarBuffer^.Ptr^) := Args[1];
   Result := SENull;
 end;
 
 class function TBuiltInFunction.SEStringToBuffer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  SEValidateType(@Args[0], sevkString, 1);
+  SEValidateType(@Args[0], sevkString, 1, {$I %CURRENTROUTINE%});
   GC.AllocBuffer(@Result, Length(Args[0].VarString^));
   Move(Args[0].VarString^[1], PByte(Result.VarBuffer^.Ptr)[1], Length(Args[0].VarString^));
 end;
@@ -1342,7 +1342,7 @@ class function TBuiltInFunction.SEBufferToString(const VM: TSEVM; const Args: ar
 var
   S: String;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   S := PChar(Args[0].VarBuffer^.Ptr);
   GC.AllocString(@Result, S);
 end;
@@ -1352,7 +1352,7 @@ var
   WS: UnicodeString;
   S: String;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
   WS := PWideChar(Args[0].VarBuffer^.Ptr);
   S := UTF8Encode(WS);
   GC.AllocString(@Result, S);
@@ -1363,7 +1363,7 @@ var
   I: Integer;
   Size: QWord;
 begin
-  SEValidateType(@Args[0], sevkMap, 1);
+  SEValidateType(@Args[0], sevkMap, 1, {$I %CURRENTROUTINE%});
   Size := SESize(Args[0]);
   GC.AllocBuffer(@Result, Size * 4);
   for I := 0 to Size - 1 do
@@ -1377,7 +1377,7 @@ var
   I: Integer;
   Size: QWord;
 begin
-  SEValidateType(@Args[0], sevkMap, 1);
+  SEValidateType(@Args[0], sevkMap, 1, {$I %CURRENTROUTINE%});
   Size := SESize(Args[0]);
   GC.AllocBuffer(@Result, Size * 8);
   for I := 0 to Size - 1 do
@@ -1391,8 +1391,8 @@ var
   I: Integer;
   Size: QWord;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
-  SEValidateType(@Args[1], sevkNumber, 2);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkNumber, 2, {$I %CURRENTROUTINE%});
   Size := Round(Args[1].VarNumber);
   GC.AllocMap(@Result);
   TSEValueMap(Result.VarMap).List.Count := Size;
@@ -1407,8 +1407,8 @@ var
   I: Integer;
   Size: QWord;
 begin
-  SEValidateType(@Args[0], sevkBuffer, 1);
-  SEValidateType(@Args[1], sevkNumber, 2);
+  SEValidateType(@Args[0], sevkBuffer, 1, {$I %CURRENTROUTINE%});
+  SEValidateType(@Args[1], sevkNumber, 2, {$I %CURRENTROUTINE%});
   Size := Round(Args[1].VarNumber);
   GC.AllocMap(@Result);
   TSEValueMap(Result.VarMap).List.Count := Size;
