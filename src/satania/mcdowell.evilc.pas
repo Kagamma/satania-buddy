@@ -29,6 +29,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr,
+  fpjson, jsonparser,
   base64{$ifdef SE_HAS_FILEUTIL}, FileUtil{$endif}
   {$ifdef SE_LIBFFI}, ffi{$endif}
   {$ifdef SE_STRING_UTF8},LazUTF8{$endif}{$ifdef SE_DYNLIBS}, dynlibs{$endif};
@@ -761,6 +762,9 @@ type
 
     class function SEBase64Encode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBase64Decode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+
+    class function SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   end;
 
   TDynlibMap = specialize TDictionary<String, TLibHandle>;
@@ -2223,6 +2227,215 @@ end;
 class function TBuiltInFunction.SEBase64Decode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Result := DecodeStringBase64(Args[0]);
+end;
+
+class function TBuiltInFunction.SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+  procedure QueryForObject(out R: TSEValue; Data: TJSONData); forward;
+
+  procedure QueryForArray(out R: TSEValue; Data: TJSONData);
+  var
+    I: Integer;
+    D: TJSONData;
+    Name: String;
+    V: TSEValue;
+  begin
+    GC.AllocMap(@R);
+    for I := 0 to Data.Count - 1 do
+    begin
+      D := Data.Items[I];
+      case D.JSONType of
+        jtArray:
+          begin
+            QueryForArray(V, D);
+            SEMapSet(R, I, V);
+          end;
+        jtString:
+          begin
+            SEMapSet(R, I, D.AsString);
+          end;
+        jtNumber:
+          begin
+            SEMapSet(R, I, D.AsFloat);
+          end;
+        jtBoolean:
+          begin
+            SEMapSet(R, I, D.AsBoolean);
+          end;
+        jtNull:
+          begin
+            SEMapSet(R, I, SENull);
+          end;
+        jtObject:
+          begin
+            QueryForObject(V, D);
+            SEMapSet(R, I, V);
+          end;
+      end;
+    end;
+  end;
+
+  procedure QueryForObject(out R: TSEValue; Data: TJSONData);
+  var
+    I: Integer;
+    D: TJSONData;
+    V: TSEValue;
+    Name: String;
+  begin
+    GC.AllocMap(@R);
+    for I := 0 to Data.Count - 1 do
+    begin
+      Name := TJSONObject(Data).Names[I];
+      D := Data.FindPath(Name);
+      case D.JSONType of
+        jtArray:
+          begin
+            QueryForArray(V, D);
+            SEMapSet(R, Name, V);
+          end;
+        jtString:
+          begin
+            SEMapSet(R, Name, D.AsString);
+          end;
+        jtNumber:
+          begin
+            SEMapSet(R, Name, D.AsFloat);
+          end;
+        jtBoolean:
+          begin
+            SEMapSet(R, Name, D.AsBoolean);
+          end;
+        jtNull:
+          begin
+            SEMapSet(R, Name, SENull);
+          end;
+        jtObject:
+          begin
+            QueryForObject(V, D);
+            SEMapSet(R, Name, V);
+          end;
+      end;
+    end;
+  end;
+
+var
+  Json: TJSONData;
+  ErrorStr: String = '';
+begin
+  SEValidateType(@Args[0], sevkString, 1, {$I %CURRENTROUTINE%});
+  Result := SENull;
+  Json := GetJSON(Args[0].VarString^);
+  try
+    try
+      if Json.JSONType = jtArray then
+        QueryForArray(Result, Json)
+      else
+        QueryForObject(Result, Json);
+    except
+      on E: Exception do
+      begin
+        ErrorStr := E.Message;
+      end;
+    end;
+  finally
+    Json.Free;
+    if ErrorStr <> '' then
+      raise Exception.Create(ErrorStr);
+  end;
+end;
+
+class function TBuiltInFunction.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+
+  procedure DecodeJSONArray(SB: TStringBuilder; const Map: TSEValue); forward;
+  procedure DecodeJSONObject(SB: TStringBuilder; const Map: TSEValue); forward;
+
+  procedure Decide(SB: TStringBuilder; const Map: TSEValue);
+  begin
+    if SEMapIsValidArray(Map) then
+      DecodeJSONArray(SB, Map)
+    else
+      DecodeJSONObject(SB, Map);
+  end;
+
+  procedure DecodeJSONArray(SB: TStringBuilder; const Map: TSEValue);
+  var
+    I: Integer = 0;
+    V: TSEValue;
+  begin
+    SB.Append('[');
+    for I := 0 to TSEValueMap(Map.VarMap).List.Count - 1 do
+    begin
+      if (I > 0) then
+        SB.Append(',');
+      V := SEMapGet(Map, I);
+      case V.Kind of
+        sevkString:
+          SB.Append('"' + StringToJSONString(V.VarString^) + '"');
+        sevkNumber:
+          SB.Append(PointFloatToStr(V.VarNumber));
+        sevkBoolean:
+          SB.Append(BoolToStr(Boolean(Round(V.VarNumber)), 'true', 'false'));
+        sevkMap:
+          begin
+            Decide(SB, V);
+          end;
+        sevkNull:
+          SB.Append('null');
+        else
+          begin
+            raise Exception.Create(Format('Array element "%d" with type "%s" is not a valid JSON value!', [I, ValueKindNames[V.Kind]]))
+          end;
+      end;
+    end;
+    SB.Append(']');
+  end;
+
+  procedure DecodeJSONObject(SB: TStringBuilder; const Map: TSEValue);
+  var
+    I: Integer = 0;
+    V: TSEValue;
+    Key: String;
+  begin
+    SB.Append('{');
+    for Key in TSEValueMap(Map.VarMap).Keys do
+    begin
+      if (I > 0) then
+        SB.Append(',');
+      SB.Append('"' + StringToJSONString(Key) + '":');
+      V := SEMapGet(Map, Key);
+      case V.Kind of
+        sevkString:
+          SB.Append('"' + StringToJSONString(V.VarString^) + '"');
+        sevkNumber:
+          SB.Append(PointFloatToStr(V.VarNumber));
+        sevkBoolean:
+          SB.Append(BoolToStr(Boolean(Round(V.VarNumber)), 'true', 'false'));
+        sevkMap:
+          begin
+            Decide(SB, V);
+          end;
+        sevkNull:
+          SB.Append('null');
+        else
+          begin
+            raise Exception.Create(Format('Key "%s" with type "%s" is not a valid JSON value!', [Key, ValueKindNames[V.Kind]]))
+          end;
+      end;
+      Inc(I);
+    end;
+    SB.Append('}');
+  end;
+
+var
+  SB: TStringBuilder;
+begin
+  SB := TStringBuilder.Create;
+  try
+    if Args[0].Kind = sevkMap then
+      Decide(SB, Args[0]);
+    Result := SB.ToString;
+  finally
+    SB.Free;
+  end;
 end;
 
 function TSEOpcodeInfoList.Ptr(const P: Integer): PSEOpcodeInfo; inline;
@@ -5023,6 +5236,8 @@ begin
   Self.RegisterFunc('fs_directory_exists', @TBuiltInFunction(nil).SEDirectoryExists, 1);
   Self.RegisterFunc('base64_encode', @TBuiltInFunction(nil).SEBase64Encode, 1);
   Self.RegisterFunc('base64_decode', @TBuiltInFunction(nil).SEBase64Decode, 1);
+  Self.RegisterFunc('json_parse', @TBuiltInFunction(nil).SEJSONParse, 1);
+  Self.RegisterFunc('json_stringify', @TBuiltInFunction(nil).SEJSONStringify, 1);
   Self.RegisterFunc('assert', @TBuiltInFunction(nil).SEAssert, 2);
   Self.RegisterFunc('chr', @TBuiltInFunction(nil).SEChar, 1);
   Self.RegisterFunc('ord', @TBuiltInFunction(nil).SEOrd, 1);

@@ -306,8 +306,6 @@ begin
   S.RegisterFunc('clipboard_get', @SEClipboardGet, 0);
   S.RegisterFunc('clipboard_to_file', @SEClipboardToFile, 1);
   S.RegisterFunc('fs_directory_config_get', @SEDirectoryGetConfig, 0);
-  S.RegisterFunc('json_parse', @SEJSONParse, 1);
-  S.RegisterFunc('json_stringify', @SEJSONStringify, 1);
   S.RegisterFunc('sprite_other_create', @SESketchCreate, 1);
   S.RegisterFunc('sprite_other_render', @SESketchLoadFromText, 3);
   S.RegisterFunc('sprite_other_exists', @SESketchExists, 1);
