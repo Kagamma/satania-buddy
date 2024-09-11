@@ -122,7 +122,7 @@ type
   );
   PSECommonString = ^String;
   TSEBuffer = record
-    Base: RawByteString;
+    Base: Pointer;
     Ptr: Pointer;
   end;
   PSEBuffer = ^TSEBuffer; 
@@ -908,7 +908,7 @@ begin
         Result := 'buffer@' + IntToStr(QWord(Value.VarBuffer^.Ptr));
         if Value.VarBuffer^.Base <> nil then
         begin
-          Result := Result + ' <' + IntToStr(Length(Value.VarBuffer^.Base) - 16) + ' bytes>';
+          Result := Result + ' <' + IntToStr(MemSize(Value.VarBuffer^.Base) - 16) + ' bytes>';
         end;
       end
     else
@@ -928,7 +928,7 @@ begin
       end;
     sevkBuffer:
       begin
-        Result := Length(Value.VarBuffer^.Base) - 16;
+        Result := MemSize(Value.VarBuffer^.Base) - 16;
       end;
     else
       Result := Value.Size;
@@ -1070,7 +1070,7 @@ end;
 class function TBuiltInFunction.SEBufferLength(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   SEValidateType(@Args[0], sevkBuffer, 1);
-  Result := Length(Args[0].VarBuffer^.Base) - 16;
+  Result := MemSize(Args[0].VarBuffer^.Base) - 16;
 end;
 
 class function TBuiltInFunction.SEBufferCopy(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -2995,9 +2995,9 @@ begin
           begin
             if Value.Value.VarBuffer <> nil then
             begin
-              MS := Length(Value.Value.VarBuffer^.Base) - 16;
+              MS := MemSize(Value.Value.VarBuffer^.Base) - 16;
               Self.FAllocatedMem := Self.FAllocatedMem - MS;
-              Value.Value.VarBuffer^.Base := '';
+              FreeMem(Value.Value.VarBuffer^.Base);
               Dispose(Value.Value.VarBuffer);
             end;
           end;  
@@ -3114,8 +3114,8 @@ procedure TSEGarbageCollector.AllocBuffer(const PValue: PSEValue; const Size: In
 begin
   PValue^.Kind := sevkBuffer;
   New(PValue^.VarBuffer);
-  SetLength(PValue^.VarBuffer^.Base, Size + 16);
-  PValue^.VarBuffer^.Ptr := Pointer(QWord(@PValue^.VarBuffer^.Base[1]) + QWord(@PValue^.VarBuffer^.Base[1]) mod 16);
+  GetMem(PValue^.VarBuffer^.Base, Size + 16);
+  PValue^.VarBuffer^.Ptr := Pointer(QWord(PValue^.VarBuffer^.Base) + QWord(PValue^.VarBuffer^.Base) mod 16);
   PValue^.Size := Size;
   Self.FAllocatedMem := Self.FAllocatedMem + Size;
   Self.AddToList(PValue);
