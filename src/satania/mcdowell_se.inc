@@ -971,6 +971,7 @@ var
   Json: TJsonNode;
   ErrorStr: String = '';
 begin
+  SEValidateType(@Args[0], sevkString, 1, {$I %CURRENTROUTINE%});
   Result := SENull;
   Json := TJsonNode.Create;
   try
