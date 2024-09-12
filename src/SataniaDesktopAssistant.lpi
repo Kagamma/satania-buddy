@@ -469,6 +469,9 @@
       <SmartLinkUnit Value="True"/>
       <TargetCPU Value="x86_64"/>
       <TargetOS Value="win64"/>
+      <Optimizations>
+        <OptimizationLevel Value="3"/>
+      </Optimizations>
     </CodeGeneration>
     <Linking>
       <Debugging>
@@ -478,17 +481,7 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dCASTLE_SLIM_NODES
--dCASTLE_NO_FORCE_DEDICATED_GPU
-
--OoREMOVEEMPTYPROCS
--OoSTACKFRAME
--OoTAILREC
--OoCSE
--OoCONSTPROP
-
--OoDFA
--OoUSELOADMODIFYSTORE
--OoLOOPUNROLL"/>
+-dCASTLE_NO_FORCE_DEDICATED_GPU"/>
     </Other>
   </CompilerOptions>
   <Debugging>

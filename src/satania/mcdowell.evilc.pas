@@ -22,15 +22,18 @@ unit Mcdowell.EvilC;
 // enable this if you have access to LCL's FileUtil
 {$define SE_HAS_FILEUTIL}
 // enable this if you want to print logs to terminal
-{$define SE_LOG}
+{$define SE_LOG}           
+// enable this if you need json support
+{.$define SE_HAS_JSON}
 {$align 16}
 
 interface
 
 uses
   SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr,
-  fpjson, jsonparser,
-  base64{$ifdef SE_HAS_FILEUTIL}, FileUtil{$endif}
+  base64
+  {$ifdef SE_HAS_JSON}, fpjson, jsonparser{$endif}
+  {$ifdef SE_HAS_FILEUTIL}, FileUtil{$endif}
   {$ifdef SE_LIBFFI}, ffi{$endif}
   {$ifdef SE_STRING_UTF8},LazUTF8{$endif}{$ifdef SE_DYNLIBS}, dynlibs{$endif};
 
@@ -763,8 +766,10 @@ type
     class function SEBase64Encode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEBase64Decode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 
+    {$ifdef SE_HAS_JSON}
     class function SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    {$endif}
   end;
 
   TDynlibMap = specialize TDictionary<String, TLibHandle>;
@@ -2229,6 +2234,7 @@ begin
   Result := DecodeStringBase64(Args[0]);
 end;
 
+{$ifdef SE_HAS_JSON}
 class function TBuiltInFunction.SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
   procedure QueryForObject(out R: TSEValue; Data: TJSONData); forward;
 
@@ -2437,6 +2443,7 @@ begin
     SB.Free;
   end;
 end;
+{$endif}
 
 function TSEOpcodeInfoList.Ptr(const P: Integer): PSEOpcodeInfo; inline;
 begin
@@ -5236,8 +5243,10 @@ begin
   Self.RegisterFunc('fs_directory_exists', @TBuiltInFunction(nil).SEDirectoryExists, 1);
   Self.RegisterFunc('base64_encode', @TBuiltInFunction(nil).SEBase64Encode, 1);
   Self.RegisterFunc('base64_decode', @TBuiltInFunction(nil).SEBase64Decode, 1);
+  {$ifdef SE_HAS_JSON}
   Self.RegisterFunc('json_parse', @TBuiltInFunction(nil).SEJSONParse, 1);
   Self.RegisterFunc('json_stringify', @TBuiltInFunction(nil).SEJSONStringify, 1);
+  {$endif}
   Self.RegisterFunc('assert', @TBuiltInFunction(nil).SEAssert, 2);
   Self.RegisterFunc('chr', @TBuiltInFunction(nil).SEChar, 1);
   Self.RegisterFunc('ord', @TBuiltInFunction(nil).SEOrd, 1);
