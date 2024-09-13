@@ -6277,6 +6277,8 @@ var
         OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushConst]);
         if (OpInfoPrev1 <> nil) and (OpInfoPrev1 <> nil) and SameKind then
         begin
+          if (OpInfoPrev1^.Binary <> Pointer(Self.Binary)) or (OpInfoPrev2^.Binary <> Pointer(Self.Binary)) then
+            Exit;
           Result := True;
           case Op of
             opOperatorAdd:
