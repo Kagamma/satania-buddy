@@ -948,7 +948,7 @@ begin
       S := StringReplace(S, ExtractFileExt(S), '', [rfReplaceAll]);
       MenuItem := TMenuItem.Create(FormMain);
       MenuItem.Caption := S;
-      MenuItem.Enabled := not Self.Script.IsPaused;
+      MenuItem.Enabled := not FormAsk.Visible;
       MenuItem.OnClick := @FormMain.DoExecuteScriptFromMenuGlobal;
       MenuItem.ImageIndex := 2;
       FormMain.MenuItemActions.Add(MenuItem);
@@ -970,7 +970,7 @@ begin
       S := StringReplace(S, ExtractFileExt(S), '', [rfReplaceAll]);
       MenuItem := TMenuItem.Create(FormMain);
       MenuItem.Caption := S;      
-      MenuItem.Enabled := not Self.Script.IsPaused;
+      MenuItem.Enabled := not FormAsk.Visible;
       MenuItem.OnClick := @FormMain.DoExecuteScriptFromMenuLocal;
       MenuItem.ImageIndex := 2;
       FormMain.MenuItemActions.Add(MenuItem);

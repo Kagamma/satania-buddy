@@ -175,6 +175,7 @@ uses
   Utils.Coords,
   form.touch,
   form.chat,
+  form.ask,
   form.Bubble,
   form.reminders,
   form.settings,
@@ -476,7 +477,7 @@ begin
     begin
       MenuItem := TMenuItem.Create(Self);
       MenuItem.Caption := ExtractFileName(Characters[I]);
-      MenuItem.Enabled := not Satania.Script.IsPaused;
+      MenuItem.Enabled := not FormAsk.Visible;
       if MenuItem.Caption = Save.Settings.Skin then
         MenuItem.Checked := True;
       MenuItem.OnClick := @Self.DoSwitchCharacterFromMenu;
