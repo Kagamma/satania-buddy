@@ -379,11 +379,6 @@ fn obj_create() {
   ]
 }
 
-another_obj = [
-  hello: hello,
-  name: 'Gabriel',
-]
-
 obj = obj_create()
 obj.name = 'Satania'
 writeln(obj.hello()) // obj will be passed to hello() as "self"
