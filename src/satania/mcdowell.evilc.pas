@@ -6275,7 +6275,7 @@ var
         if (PushConstCount < 2) or (IsTailed) then Exit;
         OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
         OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushConst]);
-        if (OpInfoPrev1 <> nil) and (OpInfoPrev1 <> nil) and SameKind then
+        if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) and SameKind then
         begin
           if (OpInfoPrev1^.Binary <> Pointer(Self.Binary)) or (OpInfoPrev2^.Binary <> Pointer(Self.Binary)) then
             Exit;
