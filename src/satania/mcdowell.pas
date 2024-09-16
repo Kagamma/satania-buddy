@@ -835,8 +835,11 @@ begin
           BackgroundScript.LastTimestamp := GetTickCount64;
           Self.BackgroundScriptDict[Key] := BackgroundScript;
           try
-            BackgroundScript.Script.OptimizeAsserts := not Save.Settings.DeveloperMode;
-            BackgroundScript.Script.Exec;
+            if not Self.Script.IsPaused then
+            begin
+              BackgroundScript.Script.OptimizeAsserts := not Save.Settings.DeveloperMode;
+              BackgroundScript.Script.Exec;
+            end;
           except
             // Make sure runtime doesnt get blocked when an error occurs in background script
             on E: Exception do
@@ -945,6 +948,7 @@ begin
       S := StringReplace(S, ExtractFileExt(S), '', [rfReplaceAll]);
       MenuItem := TMenuItem.Create(FormMain);
       MenuItem.Caption := S;
+      MenuItem.Enabled := not Self.Script.IsPaused;
       MenuItem.OnClick := @FormMain.DoExecuteScriptFromMenuGlobal;
       MenuItem.ImageIndex := 2;
       FormMain.MenuItemActions.Add(MenuItem);
@@ -965,7 +969,8 @@ begin
       S := ExtractFileName(ScriptFiles[I]);
       S := StringReplace(S, ExtractFileExt(S), '', [rfReplaceAll]);
       MenuItem := TMenuItem.Create(FormMain);
-      MenuItem.Caption := S;
+      MenuItem.Caption := S;      
+      MenuItem.Enabled := not Self.Script.IsPaused;
       MenuItem.OnClick := @FormMain.DoExecuteScriptFromMenuLocal;
       MenuItem.ImageIndex := 2;
       FormMain.MenuItemActions.Add(MenuItem);

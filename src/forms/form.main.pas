@@ -476,6 +476,7 @@ begin
     begin
       MenuItem := TMenuItem.Create(Self);
       MenuItem.Caption := ExtractFileName(Characters[I]);
+      MenuItem.Enabled := not Satania.Script.IsPaused;
       if MenuItem.Caption = Save.Settings.Skin then
         MenuItem.Checked := True;
       MenuItem.OnClick := @Self.DoSwitchCharacterFromMenu;
