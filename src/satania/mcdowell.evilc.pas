@@ -3232,7 +3232,7 @@ begin
             end;
           end;
       end;
-      Value.Value.Kind := sevkNumber;
+      Value.Value.Kind := sevkNull;
       Self.FValueList[I] := Value;
       Self.FValueAvailStack.Push(I);
     end;
