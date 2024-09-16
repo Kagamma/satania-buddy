@@ -27,7 +27,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
   SynEdit, SynEditMarkupSpecialLine, SynCompletion,
-  LCLTranslator, lclintf, Menus,
+  LCLTranslator, lclintf, Menus, AnchorDocking,
   Mcdowell.EvilC, Types, LCLType, ExtCtrls, SynFacilHighlighter, SynFacilBasic,
   SynEditTypes;
 
@@ -229,7 +229,7 @@ end;
 
 procedure TFormEvilCEditor.MenuItemShowDebuggerClick(Sender: TObject);
 begin
-  FormStackViewer.Show;
+  DockMaster.MakeDockable(FormStackViewer);
 end;
 
 procedure TFormEvilCEditor.SynCompletionBeforeExecute(

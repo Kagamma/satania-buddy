@@ -5,13 +5,14 @@ object FormMain: TFormMain
   Width = 2000
   BorderStyle = bsNone
   Caption = 'FormMain'
-  ClientHeight = 1061
+  ClientHeight = 1100
   ClientWidth = 2000
   FormStyle = fsSystemStayOnTop
   PopupMenu = TrayMenu
   Position = poDefault
   ShowHint = True
   ShowInTaskBar = stNever
+  LCLVersion = '3.99.0.0'
   Scaled = False
   Visible = True
   WindowState = wsMaximized

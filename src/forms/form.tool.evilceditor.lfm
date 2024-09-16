@@ -660,6 +660,8 @@ object FormEvilCEditor: TFormEvilCEditor
       object SynGutterMarks: TSynGutterMarks
         Width = 24
         MouseActions = <>
+        MaxExtraMarksColums = 0
+        Options = [sgmoDeDuplicateMarksOnOverflow]
       end
       object SynGutterLineNumber: TSynGutterLineNumber
         Width = 17

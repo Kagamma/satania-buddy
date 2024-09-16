@@ -316,7 +316,7 @@ end;
 
 procedure TFormMain.MenuItemDebuggerClick(Sender: TObject);
 begin
-  FormStackViewer.Show;
+  DockMaster.MakeDockable(FormStackViewer);
 end;
 
 procedure TFormMain.MenuItemEditorClick(Sender: TObject);
