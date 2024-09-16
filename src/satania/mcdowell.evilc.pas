@@ -6167,7 +6167,7 @@ var
       OpInfoPrev1,
       OpInfoPrev2: PSEOpcodeInfo;
 
-      function PeekAtPrevOp(const Ind: Integer): PSEOpcodeInfo; inline;
+      function PeekAtPrevOp(const Ind: Integer): PSEOpcodeInfo;
       var
         I: Integer;
       begin
@@ -6178,7 +6178,7 @@ var
           Result := nil;
       end;
 
-      function PeekAtPrevOpExpected(const Ind: Integer; const Expected: TSEOpcodes): PSEOpcodeInfo; inline;
+      function PeekAtPrevOpExpected(const Ind: Integer; const Expected: TSEOpcodes): PSEOpcodeInfo;
       var
         Op: TSEOpcode;
       begin
@@ -6190,7 +6190,7 @@ var
         Result := nil;
       end;
 
-      function OpToOp2(const Op: TSEOpcode): TSEOpcode; inline;
+      function OpToOp2(const Op: TSEOpcode): TSEOpcode;
       begin
         case Op of
           opOperatorAdd:
@@ -6204,7 +6204,7 @@ var
         end;
       end;
 
-      function PeepholeOptimization: Boolean; inline;
+      function PeepholeOptimization: Boolean;
       var
         A, B: TSEValue;
         I: Integer;
@@ -6256,15 +6256,15 @@ var
         end;
       end;
 
-      function ConstantFoldingOptimization: Boolean; inline;
-        function SameKind: Boolean; inline;
+      function ConstantFoldingOptimization: Boolean;
+        function SameKind: Boolean;
         begin
           V2 := Self.Binary[Self.Binary.Count - 1];
           V1 := Self.Binary[Self.Binary.Count - 3];
           Result := V1.Kind = V2.Kind;
         end;
 
-        procedure Pop2; inline;
+        procedure Pop2;
         begin
           Self.Binary.DeleteRange(Self.Binary.Count - 4, 4);
           Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
@@ -6277,6 +6277,8 @@ var
         OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushConst]);
         if (OpInfoPrev1 <> nil) and (OpInfoPrev1 <> nil) and SameKind then
         begin
+          if (OpInfoPrev1^.Binary <> Pointer(Self.Binary)) or (OpInfoPrev2^.Binary <> Pointer(Self.Binary)) then
+            Exit;
           Result := True;
           case Op of
             opOperatorAdd:
