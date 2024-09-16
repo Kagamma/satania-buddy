@@ -334,7 +334,7 @@ type
   TSEVarMap = TSEConstMap;
   TSEListStack = specialize TStack<TList>;
   TSEScopeStack = specialize TStack<Integer>;
-  TIntegerList = specialize TList<Integer>;
+  TSEIntegerList = specialize TList<Integer>;
   TSEFrame = record
     Code: Integer;
     Stack: PSEValue;
@@ -520,7 +520,7 @@ type
     IncludeList: TStrings;
     TokenList: TSETokenList;
     OpcodeInfoList: TSEOpcodeInfoList;
-    LocalVarCountList: TIntegerList;
+    LocalVarCountList: TSEIntegerList;
     GlobalVarCount: Integer;
     GlobalVarSymbols: TStrings;
     VarList: TSEIdentList;
@@ -5097,7 +5097,7 @@ begin
   Self.IncludeList := TStringList.Create;
   Self.IncludePathList := TStringList.Create;
   Self.CurrentFileList := TStringList.Create;
-  Self.LocalVarCountList := TIntegerList.Create;
+  Self.LocalVarCountList := TSEIntegerList.Create;
   //
   Self.OptimizeAsserts := True;
   Self.OptimizeConstantFolding := True;
