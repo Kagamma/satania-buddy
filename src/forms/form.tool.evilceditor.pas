@@ -36,6 +36,7 @@ type
   { TFormEvilCEditor }
 
   TFormEvilCEditor = class(TForm)
+    MenuItemShowDisassembler: TMenuItem;
     MenuItemShowDebugger: TMenuItem;
     MenuItemEnableAssertions: TMenuItem;
     MenuItemEditorCut: TMenuItem;
@@ -74,6 +75,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MenuItemShowDisassemblerClick(Sender: TObject);
     procedure MenuItemEditorCopyClick(Sender: TObject);
     procedure MenuItemEditorCutClick(Sender: TObject);
     procedure MenuItemEditorPasteClick(Sender: TObject);
@@ -105,6 +107,7 @@ type
     ErrorPos: TPoint;
     SearchText: String;
     WorkingFile: String;
+    FormDisAsm: TFormEvilCEditor;
     procedure LoadFromFile(const AFileName: String);
   end;
 
@@ -303,6 +306,26 @@ end;
 procedure TFormEvilCEditor.FormShow(Sender: TObject);
 begin
   BringToFront;
+end;
+
+procedure TFormEvilCEditor.MenuItemShowDisassemblerClick(Sender: TObject);
+var
+  S: String;
+begin
+  try
+    Self.Script.Source := Editor.Lines.Text;
+    Self.Script.Lex;
+    Self.Script.Parse;
+    SEDisAsm(Self.Script.VM, S);
+    if FormDisAsm = nil then
+    begin
+      FormDisAsm := TFormEvilCEditor.Create(Self);
+    end;
+    DockMaster.MakeDockable(FormDisAsm);
+    FormDisAsm.Editor.Text := S;
+  except
+    // There will be errors, obviously. We just need to ignore it
+  end;
 end;
 
 procedure TFormEvilCEditor.EditorSpecialLineColors(Sender: TObject;

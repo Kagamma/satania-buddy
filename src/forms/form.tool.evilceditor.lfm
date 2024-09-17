@@ -48,7 +48,6 @@ object FormEvilCEditor: TFormEvilCEditor
   Position = poDefaultPosOnly
   ShowHint = True
   ShowInTaskBar = stAlways
-  LCLVersion = '3.99.0.0'
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -81,7 +80,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator2: TToolButton
       Left = 101
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator2'
       Style = tbsSeparator
@@ -104,7 +103,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator1: TToolButton
       Left = 24
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator1'
       Style = tbsSeparator
@@ -118,7 +117,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButtonSeparator3: TToolButton
       Left = 209
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButtonSeparator3'
       Style = tbsSeparator
@@ -133,7 +132,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton2: TToolButton
       Left = 155
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButton2'
       Style = tbsSeparator
@@ -162,7 +161,7 @@ object FormEvilCEditor: TFormEvilCEditor
     end
     object ToolButton3: TToolButton
       Left = 263
-      Height = 8
+      Height = 22
       Top = 2
       Caption = 'ToolButton3'
       Style = tbsSeparator
@@ -186,7 +185,7 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   inline Editor: TSynEdit
     Left = 0
-    Height = 613
+    Height = 614
     Top = 26
     Width = 675
     Align = alClient
@@ -695,8 +694,8 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   object StatusBar: TStatusBar
     Left = 0
-    Height = 24
-    Top = 639
+    Height = 23
+    Top = 640
     Width = 675
     Panels = <    
       item
@@ -767,6 +766,10 @@ object FormEvilCEditor: TFormEvilCEditor
     object MenuItemShowDebugger: TMenuItem
       Caption = 'Gab Watcher'
       OnClick = MenuItemShowDebuggerClick
+    end
+    object MenuItemShowDisassembler: TMenuItem
+      Caption = 'Assembler'
+      OnClick = MenuItemShowDisassemblerClick
     end
   end
 end
