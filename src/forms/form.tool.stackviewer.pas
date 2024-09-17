@@ -171,7 +171,7 @@ procedure TFormStackViewer.GatherStackTraceInfo(Message: String; StackTraceArray
     I, C: Integer;
     S: String;
   begin
-    if StackNode^.Name.IndexOf('___') = 0 then
+    if (not Root) and (StackNode^.Name.IndexOf('___') = 0) then
       Exit;
     S := StackNode^.Value;
     C := Length(S);
