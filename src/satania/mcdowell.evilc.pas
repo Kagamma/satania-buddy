@@ -6163,22 +6163,8 @@ var
   end;
 
   function CreateConstString(const S: String): Integer; inline;
-  var
-    I: Integer;
   begin
-    if Length(S) <= 20 then
-    begin
-      for I := 0 to Self.VM.ConstStrings.Count - 1 do
-      begin
-        if S = Self.VM.ConstStrings[I] then
-        begin
-          Result := I;
-          Exit;
-        end;
-      end;
-    end;
-    Result := Self.VM.ConstStrings.Count;
-    Self.VM.ConstStrings.Add(S);
+    Result := Self.VM.ConstStrings.Add(S);
   end;
 
   procedure Rewind(const StartAddr, Count: Integer); inline;
