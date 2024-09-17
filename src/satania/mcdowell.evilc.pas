@@ -1118,7 +1118,7 @@ begin
       else
         SB.Append('--- @main ---'#10);
       I := 0;
-      while I < Binary.Count - 1 do
+      while I <= Binary.Count - 1 do
       begin
         Op := TSEOpcode(QWord(Binary[I].VarPointer));
         System.WriteStr(S, Op);
