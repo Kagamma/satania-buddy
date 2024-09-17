@@ -1672,7 +1672,10 @@ begin
   GC.AllocMap(@Result);
   while I < Length(Args) - 1 do
   begin
-    SEMapSet(Result, Args[I].VarString^, Args[I + 1]);
+    if Args[I].Kind = sevkString then
+      SEMapSet(Result, Args[I].VarString^, Args[I + 1])
+    else
+      SEMapSet(Result, Round(Args[I].VarNumber), Args[I + 1]);
     Inc(I, 2);
   end;
 end;
@@ -7625,7 +7628,7 @@ var
           Inc(ArgCount, 2);
         end else
         begin
-          Emit([Pointer(opPushConst), IntToStr(I)]);
+          Emit([Pointer(opPushConst), I]);
           ParseExpr;
           Inc(ArgCount, 2);
           Inc(I);
