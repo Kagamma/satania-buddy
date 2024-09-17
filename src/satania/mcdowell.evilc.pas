@@ -6162,7 +6162,7 @@ var
     Self.VarList.Add(Result);
   end;
 
-  function CreateConstString(const S: String): Integer;
+  function CreateConstString(const S: String): Integer; inline;
   var
     I: Integer;
   begin
@@ -6295,7 +6295,7 @@ var
       OpInfoPrev1,
       OpInfoPrev2: PSEOpcodeInfo;
 
-      function PeekAtPrevOp(const Ind: Integer): PSEOpcodeInfo;
+      function PeekAtPrevOp(const Ind: Integer): PSEOpcodeInfo; inline;
       var
         I: Integer;
       begin
@@ -6306,7 +6306,7 @@ var
           Result := nil;
       end;
 
-      function PeekAtPrevOpExpected(const Ind: Integer; const Expected: TSEOpcodes): PSEOpcodeInfo;
+      function PeekAtPrevOpExpected(const Ind: Integer; const Expected: TSEOpcodes): PSEOpcodeInfo; inline;
       var
         Op: TSEOpcode;
       begin
@@ -6318,7 +6318,7 @@ var
         Result := nil;
       end;
 
-      function OpToOp2(const Op: TSEOpcode): TSEOpcode;
+      function OpToOp2(const Op: TSEOpcode): TSEOpcode; inline;
       begin
         case Op of
           opOperatorAdd:
@@ -6385,14 +6385,14 @@ var
       end;
 
       function ConstantFoldingNumberOptimization: Boolean;
-        function SameKind: Boolean;
+        function SameKind: Boolean; inline;
         begin
           V2 := Self.Binary[Self.Binary.Count - 1];
           V1 := Self.Binary[Self.Binary.Count - 3];
           Result := V1.Kind = V2.Kind;
         end;
 
-        procedure Pop2;
+        procedure Pop2; inline;
         begin
           Self.Binary.DeleteRange(Self.Binary.Count - 4, 4);
           Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
@@ -6513,14 +6513,14 @@ var
       function ConstantFoldingStringOptimization: Boolean;
       var
         S1, S2: String;
-        function SameKind: Boolean;
+        function SameKind: Boolean; inline;
         begin
           S2 := Self.VM.ConstStrings[Integer(Self.Binary[Self.Binary.Count - 1].VarPointer)];
           S1 := Self.VM.ConstStrings[Integer(Self.Binary[Self.Binary.Count - 3].VarPointer)];
           Result := True;
         end;
 
-        procedure Pop2;
+        procedure Pop2; inline;
         begin
           Self.Binary.DeleteRange(Self.Binary.Count - 4, 4);
           Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
