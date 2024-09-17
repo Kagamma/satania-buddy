@@ -1122,7 +1122,7 @@ begin
       begin
         Op := TSEOpcode(QWord(Binary[I].VarPointer));
         System.WriteStr(S, Op);
-        SB.Append(S);
+        SB.Append(IntToStr(I) + ': ' + S);
         for K := 1 to OpcodeSizes[Op] - 1 do
         begin
           SB.Append(' ' + SEValueToText(Binary[I + K]));
