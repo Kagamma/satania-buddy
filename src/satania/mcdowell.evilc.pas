@@ -1133,8 +1133,19 @@ begin
         Inc(I, OpcodeSizes[Op]);
       end;
       SB.Append(#10);
+    end;  
+    SB.Append('--- STRING DATA ---'#10);
+    for I := 0 to VM.ConstStrings.Count - 1 do
+    begin
+      S := VM.ConstStrings[I];
+      if Length(S) > 255 then
+      begin
+        SetLength(S, 252);
+        S := S + '...';
+      end;
+      SB.Append(Format('%d: %s'#10, [I, S]));
     end;
-  finally 
+  finally
     Res := SB.ToString;
     SB.Free;
   end;
