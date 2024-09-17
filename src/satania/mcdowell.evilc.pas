@@ -318,6 +318,7 @@ type
   TSEBinaryAncestor = specialize TList<TSEValue>;
   TSEBinary = class(TSEBinaryAncestor)
   public
+    BinaryName: String;
     function Ptr(const P: Integer): PSEValue;
   end;
 
@@ -471,6 +472,59 @@ const
   ValueKindNames: array[TSEValueKind] of String = (
     'null', 'number', 'string', 'map', 'buffer', 'pointer', 'boolean', 'function', 'pasobject'
   );
+  OpcodeSizes: array[TSEOpcode] of Byte = (
+    2, // opPushConst, 
+    2, // opPushConstString,
+    2, // opPushGlobalVar,
+    3, // opPushLocalVar,
+    1, // opPushArrayPop,
+    1, // opPopConst,
+    1, // opPopFrame,
+    2, // opAssignGlobalVar,
+    3, // opAssignGlobalArray,
+    3, // opAssignLocalVar,
+    4, // opAssignLocalArray,
+    2, // opJumpEqual,
+    2, // opJumpUnconditional,
+    2, // opJumpEqualOrGreater,
+    2, // opJumpEqualOrLesser,
+
+    4, // opOperatorAdd2,
+    4, // opOperatorSub2,
+    4, // opOperatorMul2,
+    4, // opOperatorDiv2,
+
+    1, // opOperatorAdd,
+    1, // opOperatorSub,
+    1, // opOperatorMul,
+    1, // opOperatorDiv,
+    1, // opOperatorMod,
+    1, // opOperatorPow,
+    1, // opOperatorNegative,
+    1, // opOperatorLesser,
+    1, // opOperatorLesserOrEqual,
+    1, // opOperatorGreater,
+    1, // opOperatorGreaterOrEqual,
+    1, // opOperatorEqual,
+    1, // opOperatorNotEqual,
+    1, // opOperatorAnd,
+    1, // opOperatorOr,
+    1, // opOperatorXor,
+    1, // opOperatorNot,
+    1, // opOperatorShiftLeft,
+    1, // opOperatorShiftRight,
+
+    4, // opCallRef,
+    4, // opCallNative,
+    4, // opCallScript,
+    4, // opCallImport,
+    1, // opYield,
+    1, // opHlt,
+
+    2, // opPushTrap,
+    1, // opPopTrap,
+    1  // opThrow
+  );
 
 type
   TSEIdentKind = (
@@ -579,6 +633,7 @@ procedure SEMapSet(constref V: TSEValue; constref I: Integer; const A: TSEValue)
 procedure SEMapSet(constref V: TSEValue; constref S: String; const A: TSEValue); inline; overload;
 procedure SEMapSet(constref V, I: TSEValue; const A: TSEValue); inline; overload;
 function SEMapIsValidArray(constref V: TSEValue): Boolean; inline;
+procedure SEDisAsm(const VM: TSEVM; var Res: String);
 
 operator := (V: TSENumber) R: TSEValue;
 operator := (V: String) R: TSEValue;
@@ -919,6 +974,10 @@ begin
         begin
           Result := Result + ' <' + IntToStr(MemSize(Value.VarBuffer^.Base) - 16) + ' bytes>';
         end;
+      end;
+    sevkPointer:
+      begin
+        Result := IntToStr(Integer(Value.VarPointer));
       end
     else
       Result := Value;
@@ -1039,6 +1098,46 @@ begin
   if V.Kind <> sevkMap then
     Exit(False);
   Result := TSEValueMap(V.VarMap).IsValidArray;
+end;
+
+procedure SEDisAsm(const VM: TSEVM; var Res: String);
+var
+  I, J, K: Integer;
+  SB: TStringBuilder;
+  Binary: TSEBinary;
+  Op: TSEOpcode;
+  S: String;
+begin
+  SB := TStringBuilder.Create;
+  try
+    for J := 0 to Length(VM.Binaries) - 1 do
+    begin
+      Binary := VM.Binaries[J];
+      if J > 0 then
+        SB.Append(Format('--- @%d (%s) ---'#10, [J - 1, Binary.BinaryName]))
+      else
+        SB.Append('--- @main ---'#10);
+      I := 0;
+      while I < Binary.Count - 1 do
+      begin
+        Op := TSEOpcode(QWord(Binary[I].VarPointer));
+        System.WriteStr(S, Op);
+        SB.Append(S);
+        for K := 1 to OpcodeSizes[Op] - 1 do
+        begin
+          SB.Append(' ' + SEValueToText(Binary[I + K]));
+          if K < OpcodeSizes[Op] - 1 then
+            SB.Append(',');
+        end;
+        SB.Append(#10);
+        Inc(I, OpcodeSizes[Op]);
+      end;
+      SB.Append(#10);
+    end;
+  finally 
+    Res := SB.ToString;
+    SB.Free;
+  end;
 end;
 
 function SEClone(constref V: TSEValue): TSEValue;
@@ -6074,7 +6173,6 @@ var
     OpcodeInfo.Pos := Self.Binary.Count;
     OpcodeInfo.Size := Length(Data);
     OpcodeInfo.Binary := Self.Binary;
-    Self.OpcodeInfoList.Add(OpcodeInfo);
     if (Integer(Data[0].VarPointer) = Integer(opPushConst)) and (Data[1].Kind = sevkString) then
     begin
       // TODO: We have leftover TSEValue with string type here, this should be organized better someday.
@@ -6089,7 +6187,8 @@ var
       begin
         Self.Binary.Add(Data[I]);
       end;
-    end;
+    end;     
+    Self.OpcodeInfoList.Add(OpcodeInfo);
     Exit(Self.Binary.Count);
   end;
 
@@ -6256,7 +6355,7 @@ var
         end;
       end;
 
-      function ConstantFoldingOptimization: Boolean;
+      function ConstantFoldingNumberOptimization: Boolean;
         function SameKind: Boolean;
         begin
           V2 := Self.Binary[Self.Binary.Count - 1];
@@ -6382,18 +6481,55 @@ var
         end;
       end;
 
-    begin
-      Op := TSEOpcode(Integer(Data[0].VarPointer));
-      if Op = opPushConst then
+      function ConstantFoldingStringOptimization: Boolean;
+      var
+        S1, S2: String;
+        function SameKind: Boolean;
+        begin
+          S2 := Self.VM.ConstStrings[Integer(Self.Binary[Self.Binary.Count - 1].VarPointer)];
+          S1 := Self.VM.ConstStrings[Integer(Self.Binary[Self.Binary.Count - 3].VarPointer)];
+          Result := True;
+        end;
+
+        procedure Pop2;
+        begin
+          Self.Binary.DeleteRange(Self.Binary.Count - 4, 4);
+          Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
+          Dec(PushConstCount);
+        end;
       begin
-        Emit(Data);
-        Inc(PushConstCount)
-      end else
-      if Self.OptimizePeephole and PeepholeOptimization then
-      else
-      if Self.OptimizeConstantFolding and ConstantFoldingOptimization then
-      else
-        Emit(Data);
+        Result := False;
+        if (PushConstCount < 2) or (IsTailed) or (Op <> opOperatorAdd) then Exit;
+        OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConstString]);
+        OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushConstString]);
+        if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) and SameKind then
+        begin
+          if (OpInfoPrev1^.Binary <> Pointer(Self.Binary)) or (OpInfoPrev2^.Binary <> Pointer(Self.Binary)) then
+            Exit;
+          Result := True;
+          Pop2;
+          Emit([Pointer(opPushConstString), Pointer(Self.VM.ConstStrings.Count)]);
+          Self.VM.ConstStrings.Add(S1 + S2);
+        end;
+      end;
+
+    begin
+      try
+        Op := TSEOpcode(Integer(Data[0].VarPointer));
+        if Op = opPushConst then
+        begin
+          Emit(Data);
+          Inc(PushConstCount)
+        end else
+        if Self.OptimizePeephole and PeepholeOptimization then
+        else
+        if Self.OptimizeConstantFolding and (ConstantFoldingNumberOptimization or ConstantFoldingStringOptimization) then
+        else
+          Emit(Data);
+      except
+        on E: Exception do
+          raise Exception.Create(Format('Error while performing optimization! (%s)', [E.Message]));
+      end;
     end;
 
     procedure BinaryOp(const Op: TSEOpcode; const Func: TProc); inline;
@@ -8037,6 +8173,7 @@ var
 begin
   SetLength(Self.VM.Binaries, Length(Self.VM.Binaries) + 1);
   Self.VM.Binaries[Length(Self.VM.Binaries) - 1] := TSEBinary.Create;
+  Self.VM.Binaries[Length(Self.VM.Binaries) - 1].BinaryName := Name;
   FuncScriptInfo.ArgCount := ArgCount;
   FuncScriptInfo.BinaryPos := Length(Self.VM.Binaries) - 1;
   FuncScriptInfo.Name := Name;
