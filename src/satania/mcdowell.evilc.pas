@@ -6162,6 +6162,25 @@ var
     Self.VarList.Add(Result);
   end;
 
+  function CreateConstString(const S: String): Integer;
+  var
+    I: Integer;
+  begin
+    if Length(S) <= 20 then
+    begin
+      for I := 0 to Self.VM.ConstStrings.Count - 1 do
+      begin
+        if S = Self.VM.ConstStrings[I] then
+        begin
+          Result := I;
+          Exit;
+        end;
+      end;
+    end;
+    Result := Self.VM.ConstStrings.Count;
+    Self.VM.ConstStrings.Add(S);
+  end;
+
   procedure Rewind(const StartAddr, Count: Integer); inline;
   var
     Addr, I: Integer;
@@ -6189,8 +6208,7 @@ var
       // TODO: We have leftover TSEValue with string type here, this should be organized better someday.
       OpcodeInfo.Op := opPushConstString;
       Self.Binary.Add(Pointer(opPushConstString));
-      Self.Binary.Add(Pointer(Self.VM.ConstStrings.Count));
-      Self.VM.ConstStrings.Add(Data[1].VarString^);
+      Self.Binary.Add(Pointer(CreateConstString(Data[1].VarString^)));
     end else
     begin
       OpcodeInfo.Op := TSEOpcode(Integer(Data[0].VarPointer));
@@ -6519,8 +6537,7 @@ var
             Exit;
           Result := True;
           Pop2;
-          Emit([Pointer(opPushConstString), Pointer(Self.VM.ConstStrings.Count)]);
-          Self.VM.ConstStrings.Add(S1 + S2);
+          Emit([Pointer(opPushConstString), Pointer(CreateConstString(S1 + S2))]);
         end;
       end;
 
