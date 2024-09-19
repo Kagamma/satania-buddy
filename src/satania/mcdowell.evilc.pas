@@ -8071,7 +8071,7 @@ begin
     Self.Parse;
   end;
   Self.VM.Exec;
-  Exit(Self.VM.Stack[0])
+  Exit(Self.VM.Global[0])
 end;
 
 {
