@@ -3330,7 +3330,8 @@ begin
             begin
               MS := MemSize(Value.Value.VarBuffer^.Base) - 16;
               Self.FAllocatedMem := Self.FAllocatedMem - MS;
-              FreeMem(Value.Value.VarBuffer^.Base);
+              if Value.Value.VarBuffer^.Base <> nil then
+                FreeMem(Value.Value.VarBuffer^.Base);
               Dispose(Value.Value.VarBuffer);
             end;
           end;  
