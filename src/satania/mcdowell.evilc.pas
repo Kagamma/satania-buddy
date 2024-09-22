@@ -2636,7 +2636,7 @@ begin
   else
     if (V1.Kind = sevkBuffer) and (V2.Kind in [sevkNumber, sevkBoolean]) then
     begin
-      GC.AllocBuffer(@Temp, 1);
+      GC.AllocBuffer(@Temp, 0);
       Temp.VarBuffer^.Ptr := Pointer(QWord(V1.VarBuffer^.Ptr) + Round(V2.VarNumber));
       R := Temp;
     end;
@@ -2659,7 +2659,7 @@ begin
       end;
     sevkBuffer:
       begin
-        GC.AllocBuffer(@Temp, 1);
+        GC.AllocBuffer(@Temp, 0);
         Temp.VarBuffer^.Ptr := Pointer(QWord(V1.VarBuffer^.Ptr) - Round(V2.VarNumber));
         R := Temp;
       end;
@@ -3002,7 +3002,7 @@ begin
       end;
     sevkBuffer:
       begin
-        GC.AllocBuffer(@R, 1);
+        GC.AllocBuffer(@R, 0);
         R.VarBuffer^.Ptr := Pointer(QWord(V1.VarBuffer^.Ptr) + Round(V2.VarNumber));
       end;
     sevkPointer:
@@ -3013,7 +3013,7 @@ begin
   end else
     if (V1.Kind = sevkBuffer) and (V2.Kind in [sevkNumber, sevkBoolean]) then
     begin
-      GC.AllocBuffer(@R, 1);
+      GC.AllocBuffer(@R, 0);
       R.VarBuffer^.Ptr := V1.VarBuffer^.Ptr + Pointer(Round(V2.VarNumber));
     end;
 end;
@@ -3037,7 +3037,7 @@ begin
       end;
     sevkBuffer:
       begin
-        GC.AllocBuffer(@R, 1);
+        GC.AllocBuffer(@R, 0);
         R.VarBuffer^.Ptr := Pointer(QWord(V1.VarBuffer^.Ptr) - Round(V2.VarNumber));
       end;
   end;
@@ -3448,8 +3448,15 @@ procedure TSEGarbageCollector.AllocBuffer(const PValue: PSEValue; const Size: In
 begin
   PValue^.Kind := sevkBuffer;
   New(PValue^.VarBuffer);
-  GetMem(PValue^.VarBuffer^.Base, Size + 16);
-  PValue^.VarBuffer^.Ptr := Pointer(QWord(PValue^.VarBuffer^.Base) + QWord(PValue^.VarBuffer^.Base) mod 16);
+  if Size > 0 then
+  begin
+    GetMem(PValue^.VarBuffer^.Base, Size + 16);
+    PValue^.VarBuffer^.Ptr := Pointer(QWord(PValue^.VarBuffer^.Base) + QWord(PValue^.VarBuffer^.Base) mod 16);
+  end else
+  begin
+    PValue^.VarBuffer^.Base := nil;
+    PValue^.VarBuffer^.Ptr := nil;
+  end;
   PValue^.Size := Size;
   Self.FAllocatedMem := Self.FAllocatedMem + Size;
   Self.AddToList(PValue);
