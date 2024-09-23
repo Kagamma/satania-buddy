@@ -3361,7 +3361,7 @@ procedure TSEGarbageCollector.GC;
     Key: String;
     I: Integer;
   begin
-    if (PValue^.Kind <> sevkMap) and (PValue^.Kind <> sevkString) and (PValue^.Kind <> sevkBuffer) then
+    if (PValue^.Kind <> sevkMap) and (PValue^.Kind <> sevkString) and (PValue^.Kind <> sevkBuffer) and (PValue^.Kind <> sevkPascalObject) then
       Exit;
     Value := Self.FValueList[PValue^.Ref];
     if not Value.Garbage then
