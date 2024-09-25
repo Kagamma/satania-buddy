@@ -3328,10 +3328,12 @@ begin
           begin
             if Value.Value.VarBuffer <> nil then
             begin
-              MS := MemSize(Value.Value.VarBuffer^.Base) - 16;
-              Self.FAllocatedMem := Self.FAllocatedMem - MS;
               if Value.Value.VarBuffer^.Base <> nil then
+              begin
+                MS := MemSize(Value.Value.VarBuffer^.Base) - 16;
+                Self.FAllocatedMem := Self.FAllocatedMem - MS;
                 FreeMem(Value.Value.VarBuffer^.Base);
+              end;
               Dispose(Value.Value.VarBuffer);
             end;
           end;  
@@ -3451,13 +3453,13 @@ begin
   if Size > 0 then
   begin
     GetMem(PValue^.VarBuffer^.Base, Size + 16);
-    PValue^.VarBuffer^.Ptr := Pointer(QWord(PValue^.VarBuffer^.Base) + QWord(PValue^.VarBuffer^.Base) mod 16);
+    PValue^.VarBuffer^.Ptr := Pointer(QWord(PValue^.VarBuffer^.Base) + QWord(PValue^.VarBuffer^.Base) mod 16);   
+    PValue^.Size := Size;
   end else
   begin
     PValue^.VarBuffer^.Base := nil;
     PValue^.VarBuffer^.Ptr := nil;
   end;
-  PValue^.Size := Size;
   Self.FAllocatedMem := Self.FAllocatedMem + Size;
   Self.AddToList(PValue);
 end;
