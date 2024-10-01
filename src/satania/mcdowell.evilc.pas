@@ -6905,6 +6905,7 @@ var
     Token: TSEToken;
     ArgCount: Integer = 1;
     RewindCount: Integer;
+    This: PSEIdent;
   begin
     RewindCount := Self.Binary.Count - RewindStartAdd;
     NextTokenExpected([tkBracketOpen]);
@@ -6923,7 +6924,13 @@ var
     if ThisRefIdent <> nil then
       EmitPushVar(ThisRefIdent^)
     else
-      Emit([Pointer(opPushConst), SENull]);
+    begin
+      This := FindVar('self');
+      if (This <> nil) and (This^.Local > 0) then
+        EmitPushVar(This^)
+      else
+        Emit([Pointer(opPushConst), SENull]);
+    end;
     // Push map to stack
     Rewind(RewindStartAdd, RewindCount);
     EmitPushVar(Ident);
@@ -6935,6 +6942,7 @@ var
     Token: TSEToken;
     ArgCount: Integer = 1;
     RewindCount: Integer;
+    This: PSEIdent;
   begin
     RewindCount := Self.Binary.Count - RewindStartAdd;
     NextTokenExpected([tkBracketOpen]);
@@ -6953,7 +6961,13 @@ var
     if ThisRefIdent <> nil then
       EmitPushVar(ThisRefIdent^)
     else
-      Emit([Pointer(opPushConst), SENull]);
+    begin
+      This := FindVar('self');
+      if (This <> nil) and (This^.Local > 0) then
+        EmitPushVar(This^)
+      else
+        Emit([Pointer(opPushConst), SENull]);
+    end;
     // Func def already exists in stack, rewind to access it
     Rewind(RewindStartAdd, RewindCount);
     Emit([Pointer(opCallRef), Pointer(0), Pointer(ArgCount), Pointer(0)]);
@@ -6963,6 +6977,7 @@ var
   var
     Token: TSEToken;
     ArgCount: Integer = 1;
+    This: PSEIdent;
   begin
     NextTokenExpected([tkBracketOpen]);
     // Allocate stack for result
@@ -6977,7 +6992,11 @@ var
       Token := NextTokenExpected([tkComma, tkBracketClose]);
     end;
     // Allocate stack for this
-    Emit([Pointer(opPushConst), SENull]);
+    This := FindVar('self');
+    if (This <> nil) and (This^.Local > 0) then
+      EmitPushVar(This^)
+    else
+      Emit([Pointer(opPushConst), SENull]);
     // We now push func def to stack
     EmitPushVar(FindVar(Name)^);
     Emit([Pointer(opCallRef), Pointer(0), Pointer(ArgCount), Pointer(0)]);
@@ -6992,6 +7011,7 @@ var
     DefinedArgCount: Integer;
     ArgCount: Integer = 0;
     Token: TSEToken;
+    This: PSEIdent;
   begin
     FuncNativeInfo := FindFuncNative(Name, Ind);
     if FuncNativeInfo <> nil then
@@ -7041,7 +7061,11 @@ var
     end else
     if FuncScriptInfo <> nil then
     begin
-      Emit([Pointer(opPushConst), SENull]); // this
+      This := FindVar('self');
+      if (This <> nil) and (This^.Local > 0) then
+        EmitPushVar(This^)
+      else
+        Emit([Pointer(opPushConst), SENull]); // this
       Inc(ArgCount);
       Emit([Pointer(opCallScript), Pointer(Ind), Pointer(ArgCount), Pointer(0)])
     end
