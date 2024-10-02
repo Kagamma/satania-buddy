@@ -978,7 +978,11 @@ begin
     sevkPointer:
       begin
         Result := IntToStr(Integer(Value.VarPointer));
-      end
+      end;  
+    sevkPascalObject:
+      begin
+        Result := 'pasobject@' + IntToStr(QWord(Value.VarPascalObject^.Value));
+      end;
     else
       Result := Value;
   end;
