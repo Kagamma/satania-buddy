@@ -45,14 +45,14 @@ object FormEvilCEditor: TFormEvilCEditor
     0000000000000000000000000000000000000000000000000000000000000000
     0000
   }
-  Position = poDefaultPosOnly
-  ShowHint = True
-  ShowInTaskBar = stAlways
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
+  Position = poDefaultPosOnly
+  ShowHint = True
+  ShowInTaskBar = stAlways
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
@@ -185,7 +185,7 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   inline Editor: TSynEdit
     Left = 0
-    Height = 614
+    Height = 613
     Top = 26
     Width = 675
     Align = alClient
@@ -694,8 +694,8 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   object StatusBar: TStatusBar
     Left = 0
-    Height = 23
-    Top = 640
+    Height = 24
+    Top = 639
     Width = 675
     Panels = <    
       item
@@ -738,6 +738,7 @@ object FormEvilCEditor: TFormEvilCEditor
   end
   object SynCompletion: TSynCompletion
     OnBeforeExecute = SynCompletionBeforeExecute
+    OnPaintItem = SynCompletionPaintItem
     ItemList.Strings = (
       ''
     )

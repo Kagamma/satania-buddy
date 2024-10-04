@@ -540,10 +540,11 @@ object FormStackViewer: TFormStackViewer
     0000000000000000000000000000000000000000000000000000000000000000
     0000
   }
-  PopupMenu = PopupMenuTree
-  ShowHint = True
   OnDestroy = FormDestroy
   OnShow = FormShow
+  PopupMenu = PopupMenuTree
+  ShowHint = True
+  LCLVersion = '3.2.0.0'
   object Panel: TPanel
     Left = 0
     Height = 40

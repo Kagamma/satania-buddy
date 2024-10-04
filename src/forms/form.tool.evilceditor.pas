@@ -84,6 +84,8 @@ type
     procedure SynCompletionBeforeExecute(ASender: TSynBaseCompletion;
       var ACurrentString: String; var APosition: Integer; var AnX,
       AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
+    function SynCompletionPaintItem(const AKey: string; ACanvas: TCanvas; X,
+      Y: integer; Selected: boolean; Index: integer): boolean;
     procedure ToolButtonFindClick(Sender: TObject);
     procedure ToolButtonHelpClick(Sender: TObject);
     procedure ToolButtonNewClick(Sender: TObject);
@@ -119,6 +121,7 @@ uses
   Globals,
   Math,
   Mcdowell.Data,
+  Form.Main,
   Form.Tool.StackViewer,
   Mcdowell;
 
@@ -131,7 +134,8 @@ var
   S: String;
   Token: TSEToken;
 begin
-  Self.SynCompletion.ItemList.Clear;
+  Self.SynCompletion.ItemList.Clear;    
+  Self.SynCompletion.ItemList.BeginUpdate;
   SL := TStringList.Create;
   try
     SL.Sorted := True;
@@ -190,7 +194,8 @@ begin
       Self.SynCompletion.ItemList.Add(S);
     end;
   finally
-    SL.Free;
+    SL.Free;    
+    Self.SynCompletion.ItemList.EndUpdate;
   end;
 end;
 
@@ -241,6 +246,14 @@ procedure TFormEvilCEditor.SynCompletionBeforeExecute(
   var AnResult: TOnBeforeExeucteFlags);
 begin
   Self.GenerateAutoComplete(Editor.Lines.Text);
+end;
+
+function TFormEvilCEditor.SynCompletionPaintItem(const AKey: string;
+  ACanvas: TCanvas; X, Y: integer; Selected: boolean; Index: integer): boolean;
+begin
+  if Pos('()', AKey) <> 0 then
+    FormMain.ImageList.Draw(ACanvas, X, Y, 39);
+  ACanvas.TextOut(X + 18, Y, AKey);
 end;
 
 procedure TFormEvilCEditor.ToolButtonFindClick(Sender: TObject);
