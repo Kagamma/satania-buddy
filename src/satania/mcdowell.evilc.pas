@@ -8156,7 +8156,7 @@ begin
       Stack[I] := Args[I];
     end;
     Self.VM.Exec;
-    Exit(Self.VM.StackPtr[-1]);
+    Exit(Stack[-1]);
   end else
     Exit(SENull);
 end;
@@ -8193,7 +8193,7 @@ begin
       Stack[I] := Args[I];
     end;
     Self.VM.Exec;
-    Exit(Self.VM.StackPtr[-1]);
+    Exit(Stack[-1]);
   end else
     Exit(SENull);
 end;
