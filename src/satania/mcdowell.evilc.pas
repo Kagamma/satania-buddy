@@ -12,25 +12,34 @@ unit Mcdowell.EvilC;
 {$define SE_STRING_UTF8}
 // use computed goto instead of case of
 {$ifndef AARCH64}
-  {$define SE_COMPUTED_GOTO}
+  {$ifndef WASI}
+    {$define SE_COMPUTED_GOTO}
+  {$endif}
 {$endif}
 // enable this if you want to use libffi to handle dynamic function calls
-{$define SE_LIBFFI}
+{.$define SE_LIBFFI}
 {$if defined(CPU32) or defined(CPU64) or defined(SE_LIBFFI)}
-  {$define SE_DYNLIBS}
+  {$ifndef WASI}
+    {$define SE_DYNLIBS}
+  {$endif}
 {$endif}
 // enable this if you have access to LCL's FileUtil
 {$define SE_HAS_FILEUTIL}
 // enable this if you want to print logs to terminal
-{$define SE_LOG}           
+{.$define SE_LOG}
 // enable this if you need json support
-{.$define SE_HAS_JSON}
+{$define SE_HAS_JSON}
+// enable this if you want to include this incastle game engine's profiler report
+{.$define SE_PROFILER}
 {$align 16}
 
 interface
 
 uses
   SysUtils, Classes, Generics.Collections, StrUtils, Types, DateUtils, RegExpr,
+  {$ifdef SE_PROFILER}
+  CastleTimeUtils,
+  {$endif}
   base64
   {$ifdef SE_HAS_JSON}, fpjson, jsonparser{$endif}
   {$ifdef SE_HAS_FILEUTIL}, FileUtil{$endif}
@@ -45,7 +54,7 @@ type
   TSENumber = Double;
 
   TSEOpcode = (
-    opPushConst, 
+    opPushConst,
     opPushConstString,
     opPushGlobalVar,
     opPushLocalVar,
@@ -129,7 +138,7 @@ type
     Base: Pointer;
     Ptr: Pointer;
   end;
-  PSEBuffer = ^TSEBuffer; 
+  PSEBuffer = ^TSEBuffer;
   TSEPascalObject = record
     Value: TObject;
     IsManaged: Boolean;
@@ -473,7 +482,7 @@ const
     'null', 'number', 'string', 'map', 'buffer', 'pointer', 'boolean', 'function', 'pasobject'
   );
   OpcodeSizes: array[TSEOpcode] of Byte = (
-    2, // opPushConst, 
+    2, // opPushConst,
     2, // opPushConstString,
     2, // opPushGlobalVar,
     3, // opPushLocalVar,
@@ -565,6 +574,7 @@ type
     procedure SetSource(V: String);
     function InternalIdent: String;
   public
+    Owner: TObject;
     OptimizePeephole,         // True = enable peephole optimization, default is true
     OptimizeConstantFolding,  // True = enable constant folding optimization, default is true
     OptimizeAsserts: Boolean; // True = ignore assert, default is true
@@ -597,7 +607,7 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure AddDefaultConsts;
-    function IsWaited: Boolean;
+    function IsWaited: Boolean; inline;
     function GetIsPaused: Boolean;
     procedure SetIsPaused(V: Boolean);
     function IsYielded: Boolean;
@@ -755,7 +765,7 @@ type
     class function SECos(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SETan(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SECot(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SESqrt(const VM: TSEVM; const Args: array of TSEValue): TSEValue;   
+    class function SESqrt(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEAbs(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEFrac(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SERange(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -769,7 +779,7 @@ type
     class function SEStringInsert(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringConcat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    class function SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
+    class function SEStringReplace(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringReplaceIgnoreCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringFormat(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringUpperCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -978,7 +988,7 @@ begin
     sevkPointer:
       begin
         Result := IntToStr(Integer(Value.VarPointer));
-      end;  
+      end;
     sevkPascalObject:
       begin
         Result := 'pasobject@' + IntToStr(QWord(Value.VarPascalObject^.Value));
@@ -1137,7 +1147,7 @@ begin
         Inc(I, OpcodeSizes[Op]);
       end;
       SB.Append(#10);
-    end;  
+    end;
     SB.Append('--- STRING DATA ---'#10);
     for I := 0 to VM.ConstStrings.Count - 1 do
     begin
@@ -1626,7 +1636,7 @@ end;
 
 class function TBuiltInFunction.SESet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
-  EnterCriticalSection(CS);  
+  EnterCriticalSection(CS);
   try
     ScriptVarMap.AddOrSetValue(Args[0].VarString^, Args[1]);
     Result := SENull;
@@ -1887,7 +1897,7 @@ var
 begin
   S := StringReplace(Args[0], Args[1], Args[2], [rfReplaceAll]);
   Result := S;
-end;       
+end;
 
 class function TBuiltInFunction.SEStringReplaceIgnoreCase(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 var
@@ -1994,7 +2004,7 @@ end;
 class function TBuiltInFunction.SESqrt(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Exit(Sqrt(TSENumber(Args[0])));
-end;     
+end;
 
 class function TBuiltInFunction.SEAbs(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
@@ -2190,7 +2200,7 @@ begin
       if SizeToRead > 0 then
       begin
         GC.AllocBuffer(@Result, SizeToRead);
-        FS.Position := Args[1];
+        FS.Position := Round(Args[1]);
         FS.Read(Result.VarBuffer^.Ptr^, SizeToRead);
       end;
     end;
@@ -2321,7 +2331,7 @@ class function TBuiltInFunction.SEDirectoryFindAll(const VM: TSEVM; const Args: 
 var
   SL: TStringList;
   I: Integer;
-begin         
+begin
   Result := SENull;
   {$ifdef SE_HAS_FILEUTIL}
   SL := TStringList.Create;
@@ -3340,7 +3350,7 @@ begin
               end;
               Dispose(Value.Value.VarBuffer);
             end;
-          end;  
+          end;
         sevkPascalObject:
           begin
             if Value.Value.VarPascalObject <> nil then
@@ -3457,7 +3467,7 @@ begin
   if Size > 0 then
   begin
     GetMem(PValue^.VarBuffer^.Base, Size + 16);
-    PValue^.VarBuffer^.Ptr := Pointer(QWord(PValue^.VarBuffer^.Base) + QWord(PValue^.VarBuffer^.Base) mod 16);   
+    PValue^.VarBuffer^.Ptr := Pointer(QWord(PValue^.VarBuffer^.Base) + QWord(PValue^.VarBuffer^.Base) mod 16);
     PValue^.Size := Size;
   end else
   begin
@@ -3562,7 +3572,7 @@ begin
   inherited;
 end;
 
-function TSEVM.IsWaited: Boolean;
+function TSEVM.IsWaited: Boolean; inline;
 begin
   Exit(GetTickCount64 < Self.WaitTime);
 end;
@@ -3804,7 +3814,7 @@ var
 label
   CallScript, CallNative, CallImport
   {$ifdef SE_COMPUTED_GOTO},
-  labelPushConst,    
+  labelPushConst,
   labelPushConstString,
   labelPushGlobalVar,
   labelPushLocalVar,
@@ -3859,7 +3869,7 @@ label
 {$ifdef SE_COMPUTED_GOTO}
 var
   DispatchTable: array[TSEOpcode] of Pointer = (
-    @labelPushConst,   
+    @labelPushConst,
     @labelPushConstString,
     @labelPushGlobalVar,
     @labelPushLocalVar,
@@ -4140,7 +4150,7 @@ begin
           Push(BinaryLocal.Ptr(CodePtrLocal + 1)^);
           Inc(CodePtrLocal, 2);
           DispatchGoto;
-        end;        
+        end;
       {$ifdef SE_COMPUTED_GOTO}labelPushConstString{$else}opPushConstString{$endif}:
         begin
           Push(Self.ConstStrings[Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer)]);
@@ -4298,7 +4308,7 @@ begin
           ArgCount := Integer(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer);
           FuncScriptInfo := Self.Parent.FuncScriptList.Ptr(Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer));
           Inc(Self.FramePtr);
-          if Self.FramePtr >= @Self.Frame[Self.FrameSize] then
+          if Self.FramePtr > @Self.Frame[Self.FrameSize - 1] then
             raise Exception.Create('Too much recursion');
           Self.FramePtr^.Stack := StackPtrLocal - ArgCount;
           StackPtrLocal := StackPtrLocal + FuncScriptInfo^.VarCount;
@@ -4540,7 +4550,7 @@ begin
               ffiAbi := ffi_abi({$ifdef WINDOWS}1{$else}2{$endif});
             {$ifdef CPUI386}
             seccStdcall:
-              ffiAbi := FFI_STDCALL;    
+              ffiAbi := FFI_STDCALL;
             seccCdecl:
               ffiAbi := FFI_MS_CDECL;
             {$endif}
@@ -5305,7 +5315,7 @@ begin
   Self.RegisterFunc('string_find', @TBuiltInFunction(nil).SEStringFind, 2);
   Self.RegisterFunc('string_delete', @TBuiltInFunction(nil).SEStringDelete, 3);
   Self.RegisterFunc('string_insert', @TBuiltInFunction(nil).SEStringInsert, 3);
-  Self.RegisterFunc('string_replace', @TBuiltInFunction(nil).SEStringReplace, 3);   
+  Self.RegisterFunc('string_replace', @TBuiltInFunction(nil).SEStringReplace, 3);
   Self.RegisterFunc('string_replace_ignorecase', @TBuiltInFunction(nil).SEStringReplaceIgnoreCase, 3);
   Self.RegisterFunc('string_uppercase', @TBuiltInFunction(nil).SEStringUpperCase, 1);
   Self.RegisterFunc('string_lowercase', @TBuiltInFunction(nil).SEStringLowerCase, 1);
@@ -5345,7 +5355,7 @@ begin
   Self.RegisterFunc('cos', @TBuiltInFunction(nil).SECos, 1);
   Self.RegisterFunc('tan', @TBuiltInFunction(nil).SETan, 1);
   Self.RegisterFunc('cot', @TBuiltInFunction(nil).SECot, 1);
-  Self.RegisterFunc('sqrt', @TBuiltInFunction(nil).SESqrt, 1);  
+  Self.RegisterFunc('sqrt', @TBuiltInFunction(nil).SESqrt, 1);
   Self.RegisterFunc('abs', @TBuiltInFunction(nil).SEAbs, 1);
   Self.RegisterFunc('frac', @TBuiltInFunction(nil).SEFrac, 1);
   Self.RegisterFunc('mem_object_count', @TBuiltInFunction(nil).SEGCObjectCount, 0);
@@ -6219,7 +6229,7 @@ var
       begin
         Self.Binary.Add(Data[I]);
       end;
-    end;     
+    end;
     Self.OpcodeInfoList.Add(OpcodeInfo);
     Exit(Self.Binary.Count);
   end;
@@ -8102,14 +8112,23 @@ end;
 
 function TEvilC.Exec: TSEValue;
 begin
-  if not Self.IsLex then
-    Self.Lex;
-  if not Self.IsParsed then
-  begin
-    Self.Parse;
+  {$ifdef SE_PROFILER}
+  FrameProfiler.Start('TEvilC.Exec');
+  {$endif}
+  try
+    if not Self.IsLex then
+      Self.Lex;
+    if not Self.IsParsed then
+    begin
+      Self.Parse;
+    end;
+    Self.VM.Exec;
+    Exit(Self.VM.Global[0]);
+  finally
+    {$ifdef SE_PROFILER}
+    FrameProfiler.Stop('TEvilC.Exec');
+    {$endif}
   end;
-  Self.VM.Exec;
-  Exit(Self.VM.Global[0])
 end;
 
 {
@@ -8143,7 +8162,7 @@ begin
   begin
     if Name = Self.FuncScriptList[I].Name then
     begin
-      Self.VM.BinaryPtr := Self.FuncScriptList[I].BinaryPos; 
+      Self.VM.BinaryPtr := Self.FuncScriptList[I].BinaryPos;
       Self.VM.StackPtr := Self.VM.StackPtr + Self.FuncScriptList[I].VarCount + 1;
       Break;
     end;
@@ -8166,36 +8185,61 @@ var
   I: Integer;
   Stack: PSEValue;
 begin
-  Self.VM.CodePtr := 0;
-  Self.VM.BinaryPtr := 0;
-  Self.VM.IsPaused := False;
-  Self.VM.IsDone := False;
-  Self.VM.WaitTime := 0;
-  Self.VM.FramePtr := @Self.VM.Frame[0];
-  Self.VM.StackPtr := PSEValue(@Self.VM.Stack[0]) + 8;
-  Self.VM.FramePtr^.Stack := Self.VM.StackPtr;
-  Self.VM.TrapPtr := @Self.VM.Trap[0];
-  Dec(Self.VM.TrapPtr);
-  for I := 0 to Self.FuncScriptList.Count - 1 do
-  begin
-    if Name = Self.FuncScriptList[I].Name then
+  {$ifdef SE_PROFILER}
+  FrameProfiler.Start('TEvilC.ExecFunc');
+  {$endif}
+  try
+    Result := SENull;
+    if Self.VM.IsPaused or Self.VM.IsWaited or Self.VM.IsYielded then
     begin
-      Self.VM.BinaryPtr := Self.FuncScriptList[I].BinaryPos;
-      Self.VM.StackPtr := Self.VM.StackPtr + Self.FuncScriptList[I].VarCount + 1;
-      Break;
+      Stack := PSEValue(@Self.VM.Stack[0]) + 8;
+      for I := 0 to Self.FuncScriptList.Count - 1 do
+      begin
+        if Name = Self.FuncScriptList[I].Name then
+        begin
+          Self.VM.Exec;
+          if Self.VM.IsDone then
+            Exit(Stack[-1]);
+        end;
+      end;
+    end else
+    begin
+      Self.VM.CodePtr := 0;
+      Self.VM.BinaryPtr := 0;
+      Self.VM.IsPaused := False;
+      Self.VM.IsDone := False;
+      Self.VM.WaitTime := 0;
+      Self.VM.FramePtr := @Self.VM.Frame[0];
+      Self.VM.StackPtr := PSEValue(@Self.VM.Stack[0]) + 8;
+      Self.VM.FramePtr^.Stack := Self.VM.StackPtr;
+      Self.VM.TrapPtr := @Self.VM.Trap[0];
+      Dec(Self.VM.TrapPtr);
+      for I := 0 to Self.FuncScriptList.Count - 1 do
+      begin
+        if Name = Self.FuncScriptList[I].Name then
+        begin
+          Self.VM.BinaryPtr := Self.FuncScriptList[I].BinaryPos;
+          Self.VM.StackPtr := Self.VM.StackPtr + Self.FuncScriptList[I].VarCount + 1;
+          Break;
+        end;
+      end;
+      if Self.VM.BinaryPtr <> 0 then
+      begin
+        Stack := PSEValue(@Self.VM.Stack[0]) + 8;
+        for I := 0 to Length(Args) - 1 do
+        begin
+          Stack[I] := Args[I];
+        end;
+        Self.VM.Exec;
+        if Self.VM.IsDone then
+          Exit(Stack[-1]);
+      end;
     end;
+  finally
+    {$ifdef SE_PROFILER}
+    FrameProfiler.Stop('TEvilC.ExecFunc');
+    {$endif}
   end;
-  if Self.VM.BinaryPtr <> 0 then
-  begin
-    Stack := PSEValue(@Self.VM.Stack[0]) + 8;
-    for I := 0 to Length(Args) - 1 do
-    begin
-      Stack[I] := Args[I];
-    end;
-    Self.VM.Exec;
-    Exit(Stack[-1]);
-  end else
-    Exit(SENull);
 end;
 
 procedure TEvilC.RegisterFunc(const Name: String; const Func: TSEFunc; const ArgCount: Integer);
@@ -8253,7 +8297,7 @@ begin
       Writeln(' - The library not exists in root directory');
     {$endif}
     Lib := LoadLibrary(LibName);
-    DynlibMap.Add(LibName, Lib); 
+    DynlibMap.Add(LibName, Lib);
     {$ifdef SE_LOG}
     Writeln(' - Library''s pointer: ', QWord(Lib));
     {$endif}
@@ -8262,7 +8306,7 @@ begin
   FuncImportInfo.Args := Args;
   FuncImportInfo.Return := Return;
   FuncImportInfo.Name := Name;
-  FuncImportInfo.Func := nil;   
+  FuncImportInfo.Func := nil;
   FuncImportInfo.CallingConvention := CC;
   if Lib <> 0 then
   begin
@@ -8309,7 +8353,7 @@ begin
     Result.FuncImportList.Add(Self.FuncImportList[I]);
   end;
   Result.GlobalVarSymbols.Assign(Self.GlobalVarSymbols);
-  Result.GlobalVarCount := Self.GlobalVarCount; 
+  Result.GlobalVarCount := Self.GlobalVarCount;
   Result.ConstStrings.Assign(Self.VM.ConstStrings);
 end;
 
@@ -8343,7 +8387,7 @@ begin
   for I := 0 to Cache.FuncImportList.Count - 1 do
     Self.FuncImportList.Add(Cache.FuncImportList[I]);
   Self.GlobalVarSymbols.Assign(Cache.GlobalVarSymbols);
-  Self.GlobalVarCount := Cache.GlobalVarCount; 
+  Self.GlobalVarCount := Cache.GlobalVarCount;
   Self.VM.ConstStrings.Assign(Cache.ConstStrings);
   Self.IsParsed := True;
 end;
