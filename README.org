@@ -7,7 +7,7 @@ Download page: https://kgm.itch.io/satania-buddy
 
 ** Current features:
 
-- AI backend integration: ChatGPT, KoboldCPP, Oobabooga, WolframAlpha.
+- AI backend integration: ChatGPT, KoboldCPP, WolframAlpha.
 - Customizable commands, based on a simple rule-based chat system.
 - Alarms & Reminders.
 - Speech recognizing.
