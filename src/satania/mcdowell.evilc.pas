@@ -17,7 +17,7 @@ unit Mcdowell.EvilC;
   {$endif}
 {$endif}
 // enable this if you want to use libffi to handle dynamic function calls
-{.$define SE_LIBFFI}
+{$define SE_LIBFFI}
 {$if defined(CPU32) or defined(CPU64) or defined(SE_LIBFFI)}
   {$ifndef WASI}
     {$define SE_DYNLIBS}
@@ -26,7 +26,7 @@ unit Mcdowell.EvilC;
 // enable this if you have access to LCL's FileUtil
 {$define SE_HAS_FILEUTIL}
 // enable this if you want to print logs to terminal
-{.$define SE_LOG}
+{$define SE_LOG}
 // enable this if you need json support
 {$define SE_HAS_JSON}
 // enable this if you want to include this incastle game engine's profiler report
@@ -629,6 +629,8 @@ type
     property IsPaused: Boolean read GetIsPaused write SetIsPaused;
     property Source: String read FSource write SetSource;
   end;
+
+  TScriptEngine = TEvilC;
 
 function SEValueToText(const Value: TSEValue; const IsRoot: Boolean = True): String;
 function SESize(constref Value: TSEValue): Cardinal; inline;
