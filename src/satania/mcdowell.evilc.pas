@@ -28,7 +28,7 @@ unit Mcdowell.EvilC;
 // enable this if you want to print logs to terminal
 {$define SE_LOG}
 // enable this if you need json support
-{$define SE_HAS_JSON}
+{.$define SE_HAS_JSON}
 // enable this if you want to include this incastle game engine's profiler report
 {.$define SE_PROFILER}
 {$align 16}
@@ -75,6 +75,7 @@ type
     opOperatorMul2,
     opOperatorDiv2,
 
+    opOperatorInc,
     opOperatorAdd,
     opOperatorSub,
     opOperatorMul,
@@ -459,6 +460,7 @@ type
     tkIn,
     tkTo,
     tkDownto,
+    tkStep,
     tkReturn,
     tkAtom,
     tkImport,
@@ -475,7 +477,7 @@ const
     '>', '<=', '>=', '{', '}', ':', '(', ')', 'neg', 'number', 'string',
     ',', 'if', 'switch', 'case', 'default', 'identity', 'function', 'fn', 'variable', 'const',
     'unknown', 'else', 'while', 'break', 'continue', 'yield',
-    '[', ']', 'and', 'or', 'xor', 'not', 'for', 'in', 'to', 'downto', 'return',
+    '[', ']', 'and', 'or', 'xor', 'not', 'for', 'in', 'to', 'downto', 'step', 'return',
     'atom', 'import', 'do', 'try', 'catch', 'throw'
   );
   ValueKindNames: array[TSEValueKind] of String = (
@@ -503,6 +505,7 @@ const
     4, // opOperatorMul2,
     4, // opOperatorDiv2,
 
+    2, // opOperatorInc,
     1, // opOperatorAdd,
     1, // opOperatorSub,
     1, // opOperatorMul,
@@ -790,6 +793,9 @@ type
     class function SEStringTrim(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringTrimLeft(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEStringTrimRight(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringExtractName(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringExtractPath(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    class function SEStringExtractExt(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseOutQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
     class function SEEaseInOutQuad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
@@ -1983,6 +1989,21 @@ begin
   Result := TrimRight(Args[0]);
 end;
 
+class function TBuiltInFunction.SEStringExtractName(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := ExtractFileName(Args[0].VarString^);
+end;
+
+class function TBuiltInFunction.SEStringExtractPath(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := ExtractFilePath(Args[0].VarString^);
+end;
+
+class function TBuiltInFunction.SEStringExtractExt(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+begin
+  Result := ExtractFileExt(Args[0].VarString^);
+end;
+
 class function TBuiltInFunction.SESin(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
 begin
   Exit(Sin(TSENumber(Args[0])));
@@ -2202,7 +2223,7 @@ begin
       if SizeToRead > 0 then
       begin
         GC.AllocBuffer(@Result, SizeToRead);
-        FS.Position := Round(Args[1]);
+        FS.Position := Round(Args[1].VarNumber);
         FS.Read(Result.VarBuffer^.Ptr^, SizeToRead);
       end;
     end;
@@ -3837,6 +3858,7 @@ label
   labelOperatorMul2,
   labelOperatorDiv2,
 
+  labelOperatorInc,
   labelOperatorAdd,
   labelOperatorSub,
   labelOperatorMul,
@@ -3892,6 +3914,7 @@ var
     @labelOperatorMul2,
     @labelOperatorDiv2,
 
+    @labelOperatorInc,
     @labelOperatorAdd,
     @labelOperatorSub,
     @labelOperatorMul,
@@ -3946,6 +3969,14 @@ begin
       {$ifndef SE_COMPUTED_GOTO}
       case TSEOpcode(Integer(BinaryLocal.Ptr(CodePtrLocal)^.VarPointer)) of
       {$endif}
+      {$ifdef SE_COMPUTED_GOTO}labelOperatorInc{$else}opOperatorInc{$endif}:
+        begin
+          A := Pop;
+          A^.VarNumber := A^.VarNumber + BinaryLocal.Ptr(CodePtrLocal + 1)^.VarNumber;
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal, 2);
+          DispatchGoto;
+        end;
       {$ifdef SE_COMPUTED_GOTO}labelOperatorAdd{$else}opOperatorAdd{$endif}:
         begin
           B := Pop;
@@ -5326,6 +5357,9 @@ begin
   Self.RegisterFunc('string_trim', @TBuiltInFunction(nil).SEStringTrim, 1);
   Self.RegisterFunc('string_trim_left', @TBuiltInFunction(nil).SEStringTrimLeft, 1);
   Self.RegisterFunc('string_trim_right', @TBuiltInFunction(nil).SEStringTrimRight, 1);
+  Self.RegisterFunc('string_extract_name', @TBuiltInFunction(nil).SEStringExtractName, 1);
+  Self.RegisterFunc('string_extract_path', @TBuiltInFunction(nil).SEStringExtractPath, 1);
+  Self.RegisterFunc('string_extract_ext', @TBuiltInFunction(nil).SEStringExtractExt, 1);
   Self.RegisterFunc('lerp', @TBuiltInFunction(nil).SELerp, 3);
   Self.RegisterFunc('slerp', @TBuiltInFunction(nil).SESLerp, 3);
   Self.RegisterFunc('write', @TBuiltInFunction(nil).SEWrite, -1);
@@ -5929,6 +5963,8 @@ begin
               Token.Kind := tkDo;
             'downto':
               Token.Kind := tkDownto;
+            'step':
+              Token.Kind := tkStep;
             'while':
               Token.Kind := tkWhile;
             'switch':
@@ -6890,28 +6926,29 @@ var
         Token := PeekAtNextToken;
         case Token.Kind of
           tkEqual:
-            BinaryOp(opOperatorEqual, @Expr);
+            BinaryOp(opOperatorEqual, @Bitwise);
           tkNotEqual:
-            BinaryOp(opOperatorNotEqual, @Expr);
+            BinaryOp(opOperatorNotEqual, @Bitwise);
           tkGreater:
-            BinaryOp(opOperatorGreater, @Expr);
+            BinaryOp(opOperatorGreater, @Bitwise);
           tkGreaterOrEqual:
-            BinaryOp(opOperatorGreaterOrEqual, @Expr);
+            BinaryOp(opOperatorGreaterOrEqual, @Bitwise);
           tkSmaller:
-            BinaryOp(opOperatorLesser, @Expr);
+            BinaryOp(opOperatorLesser, @Bitwise);
           tkSmallerOrEqual:
-            BinaryOp(opOperatorLesserOrEqual, @Expr);
+            BinaryOp(opOperatorLesserOrEqual, @Bitwise);
           tkAnd:
-            BinaryOp(opOperatorAnd, @Expr);
+            BinaryOp(opOperatorAnd, @Bitwise);
           tkOr:
-            BinaryOp(opOperatorOr, @Expr);
+            BinaryOp(opOperatorOr, @Bitwise);
           tkXor:
-            BinaryOp(opOperatorXor, @Expr);
+            BinaryOp(opOperatorXor, @Bitwise);
           else
             Exit;
         end;
       end;
     end;
+
   begin
     Logic;
   end;
@@ -7444,11 +7481,14 @@ var
     I: Integer;
     Token: TSEToken;
     VarIdent,
+    VarHiddenTargetIdent,
     VarHiddenCountIdent,
     VarHiddenArrayIdent: TSEIdent;
+    VarHiddenTargetName,
     VarHiddenCountName,
     VarHiddenArrayName: String;
     Ind: Integer;
+    Step: Single = 1;
   begin
     ContinueList := TList.Create;
     BreakList := TList.Create;
@@ -7467,25 +7507,42 @@ var
       end;
       Token := NextTokenExpected([tkEqual, tkIn, tkComma]);
 
+      VarHiddenTargetName := '___t' + VarIdent.Name;
+      Token.Value := VarHiddenTargetName;
+      VarHiddenTargetIdent := CreateIdent(ikVariable, Token, True);
+
       if Token.Kind = tkEqual then
       begin
+
         ParseExpr;
         EmitAssignVar(VarIdent);
 
         Token := NextTokenExpected([tkTo, tkDownto]);
+
+        ParseExpr;
+
+        if PeekAtNextToken.Kind = tkStep then
+        begin
+          NextToken;
+          Step := PointStrToFloat(NextTokenExpected([tkNumber]).Value);
+        end;
+
+        if Token.Kind = tkDownto then
+        begin
+          Step := -Step;
+        end;
+        Emit([Pointer(opOperatorInc), Step]);
+        EmitAssignVar(VarHiddenTargetIdent);
+
         StartBlock := Self.Binary.Count;
         EmitPushVar(VarIdent);
-        ParseExpr;
+        EmitPushVar(VarHiddenTargetIdent);
         if Token.Kind = tkTo then
         begin
-          Emit([Pointer(opPushConst), 1]);
-          Emit([Pointer(opOperatorAdd)]);
           JumpEnd := Emit([Pointer(opJumpEqualOrGreater), Pointer(0)]);
         end else
         if Token.Kind = tkDownto then
         begin
-          Emit([Pointer(opPushConst), 1]);
-          Emit([Pointer(opOperatorSub)]);
           JumpEnd := Emit([Pointer(opJumpEqualOrLesser), Pointer(0)]);
         end;
 
@@ -7493,16 +7550,7 @@ var
 
         ContinueBlock := Self.Binary.Count;
         EmitPushVar(VarIdent);
-        if Token.Kind = tkTo then
-        begin
-          Emit([Pointer(opPushConst), 1]);
-          Emit([Pointer(opOperatorAdd)]);
-        end else
-        if Token.Kind = tkDownto then
-        begin
-          Emit([Pointer(opPushConst), 1]);
-          Emit([Pointer(opOperatorSub)]);
-        end;
+        Emit([Pointer(opOperatorInc), Step]);
         EmitAssignVar(VarIdent);
         JumpBlock := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
         EndBLock := JumpBlock;
@@ -7527,10 +7575,12 @@ var
         Emit([Pointer(opPushConst), 0]);
         EmitAssignVar(VarHiddenCountIdent);
 
-        StartBlock := Self.Binary.Count;
-
         EmitPushVar(VarHiddenArrayIdent);
         Emit([Pointer(opCallNative), FindFuncNative('length', Ind), Pointer(1), Pointer(0)]);
+        EmitAssignVar(VarHiddenTargetIdent);
+
+        StartBlock := Self.Binary.Count;
+        EmitPushVar(VarHiddenTargetIdent);
         EmitPushVar(VarHiddenCountIdent);
         JumpEnd := Emit([Pointer(opJumpEqualOrLesser), Pointer(0)]);
 
@@ -7543,8 +7593,7 @@ var
 
         ContinueBlock := Self.Binary.Count;
         EmitPushVar(VarHiddenCountIdent);
-        Emit([Pointer(opPushConst), 1]);
-        Emit([Pointer(opOperatorAdd)]);
+        Emit([Pointer(opOperatorInc), 1]);
         EmitAssignVar(VarHiddenCountIdent);
         JumpBlock := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
         EndBLock := JumpBlock;

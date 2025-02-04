@@ -218,6 +218,17 @@ for i = 4 downto 0 {
     continue
   break
 }
+
+For loop can accept floating point numbers, and step is not necessary 1:
+
+for i = 0 to 4.2 step 0.2 {
+  writeln(i)
+}
+
+for i = 4 downto 0 step 0.5 {
+  writeln(i)
+}
+
 #+end_example
 
 *** For-in block
