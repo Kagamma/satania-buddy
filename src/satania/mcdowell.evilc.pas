@@ -7417,14 +7417,13 @@ var
       begin
         OpCount := Self.OpcodeInfoList.Count;
         ParseExpr;
-        if ((Self.OpcodeInfoList.Count - OpCount) = 1) and (Self.OpcodeInfoList[OpCount].Op = opPushConst) then
+        if ((Self.OpcodeInfoList.Count - OpCount) = 1) and
+           (Self.OpcodeInfoList[OpCount].Op = opPushConst) and
+           (Self.Binary[Self.OpcodeInfoList[OpCount].Pos + 1].VarNumber <> 0) then
         begin
-          if Self.Binary[Self.OpcodeInfoList[OpCount].Pos + 1].VarNumber <> 0 then
-          begin
-            Self.Binary.DeleteRange(Self.Binary.Count - 2, 2);
-            Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
-            IsComparison := False;
-          end;
+          Self.Binary.DeleteRange(Self.Binary.Count - 2, 2);
+          Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
+          IsComparison := False;
         end else
         begin
           Emit([Pointer(opPushConst), False]);
@@ -7475,14 +7474,13 @@ var
       begin
         OpCount := Self.OpcodeInfoList.Count;
         ParseExpr;
-        if ((Self.OpcodeInfoList.Count - OpCount) = 1) and (Self.OpcodeInfoList[OpCount].Op = opPushConst) then
+        if ((Self.OpcodeInfoList.Count - OpCount) = 1) and
+           (Self.OpcodeInfoList[OpCount].Op = opPushConst) and
+           (Self.Binary[Self.OpcodeInfoList[OpCount].Pos + 1].VarNumber <> 0) then
         begin
-          if Self.Binary[Self.OpcodeInfoList[OpCount].Pos + 1].VarNumber <> 0 then
-          begin
-            Self.Binary.DeleteRange(Self.Binary.Count - 2, 2);
-            Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
-            IsComparison := False;
-          end;
+          Self.Binary.DeleteRange(Self.Binary.Count - 2, 2);
+          Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
+          IsComparison := False;
         end else
         begin
           Emit([Pointer(opPushConst), False]);
