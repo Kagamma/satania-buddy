@@ -5996,6 +5996,7 @@ begin
             else
               Token.Kind := tkIdent;
           end;
+          C := #32;
         end;
       else
         Error('Unhandled symbol ' + C);
@@ -7403,6 +7404,8 @@ var
     BreakList,
     ContinueList: TList;
     I: Integer;
+    IsComparison: Boolean = True;
+    OpCount: Integer;
   begin
     ContinueList := TList.Create;
     BreakList := TList.Create;
@@ -7410,9 +7413,24 @@ var
       ContinueStack.Push(ContinueList);
       BreakStack.Push(BreakList);
       StartBlock := Self.Binary.Count;
-      ParseExpr;
-      Emit([Pointer(opPushConst), False]);
-      JumpEnd := Emit([Pointer(opJumpEqual), Pointer(0)]);
+      if IsComparison then
+      begin
+        OpCount := Self.OpcodeInfoList.Count;
+        ParseExpr;
+        if ((Self.OpcodeInfoList.Count - OpCount) = 1) and (Self.OpcodeInfoList[OpCount].Op = opPushConst) then
+        begin
+          if Self.Binary[Self.OpcodeInfoList[OpCount].Pos + 1].VarNumber <> 0 then
+          begin
+            Self.Binary.DeleteRange(Self.Binary.Count - 2, 2);
+            Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
+            IsComparison := False;
+          end;
+        end else
+        begin
+          Emit([Pointer(opPushConst), False]);
+          JumpEnd := Emit([Pointer(opJumpEqual), Pointer(0)]);
+        end;
+      end;
       ParseBlock;
       JumpBlock := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
       EndBlock := Self.Binary.Count;
@@ -7423,7 +7441,8 @@ var
       for I := 0 to BreakList.Count - 1 do
         Patch(Integer(BreakList[I]), Pointer(EndBlock));
       Patch(JumpBlock - 1, Pointer(StartBlock));
-      Patch(JumpEnd - 1, Pointer(EndBlock));
+      if IsComparison then
+        Patch(JumpEnd - 1, Pointer(EndBlock));
     finally
       ContinueList.Free;
       BreakList.Free;
@@ -7440,6 +7459,8 @@ var
     BreakList,
     ContinueList: TList;
     I: Integer;
+    IsComparison: Boolean = True;
+    OpCount: Integer;
   begin
     ContinueList := TList.Create;
     BreakList := TList.Create;
@@ -7450,9 +7471,24 @@ var
       ParseBlock;
       ContinueBlock := Self.Binary.Count;
       NextTokenExpected([tkWhile]);
-      ParseExpr;
-      Emit([Pointer(opPushConst), False]);
-      JumpEnd := Emit([Pointer(opJumpEqual), Pointer(0)]);
+      if IsComparison then
+      begin
+        OpCount := Self.OpcodeInfoList.Count;
+        ParseExpr;
+        if ((Self.OpcodeInfoList.Count - OpCount) = 1) and (Self.OpcodeInfoList[OpCount].Op = opPushConst) then
+        begin
+          if Self.Binary[Self.OpcodeInfoList[OpCount].Pos + 1].VarNumber <> 0 then
+          begin
+            Self.Binary.DeleteRange(Self.Binary.Count - 2, 2);
+            Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
+            IsComparison := False;
+          end;
+        end else
+        begin
+          Emit([Pointer(opPushConst), False]);
+          JumpEnd := Emit([Pointer(opJumpEqual), Pointer(0)]);
+        end;
+      end;
       JumpBlock := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
       EndBlock := Self.Binary.Count;
       ContinueList := ContinueStack.Pop;
@@ -7462,7 +7498,8 @@ var
       for I := 0 to BreakList.Count - 1 do
         Patch(Integer(BreakList[I]), Pointer(EndBlock));
       Patch(JumpBlock - 1, Pointer(StartBlock));
-      Patch(JumpEnd - 1, Pointer(EndBlock));
+      if IsComparison then
+        Patch(JumpEnd - 1, Pointer(EndBlock));
     finally
       ContinueList.Free;
       BreakList.Free;
@@ -8507,3 +8544,4 @@ finalization
   ScriptCacheMap.Free;
 
 end.
+
