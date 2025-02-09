@@ -26,7 +26,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  FileUtil, CopyDir,
+  FileUtil, CopyDir, fpjson,
   ExtCtrls, Buttons, Spin, MaskEdit, Menus, CastleApplicationProperties,
   Types, LCLTranslator, IniFiles, LCLIntf, WebUI;
 
@@ -492,6 +492,8 @@ var
   CurrentSkinName, NewSkinName: String;
   I: Integer;
   CD: TCopyDir;
+  SL: TStringList;
+  MetaFilePath: String;
 begin
   if InputQuery('Clone to new character, locate in "' + GetOSLocalDir + '"', 'Character''s directory name:', False, NewSkinName) then
   begin
@@ -519,6 +521,16 @@ begin
     CD.Free;  
     MessageDlg('', 'Character cloned!', mtInformation, [mbOk], 0);
     ComboBoxSkin.Items.Add(NewSkinName);
+    // Write a new meta file
+    MetaFilePath := GetPhysDirPath('data/scripts/' + CurrentSkinName + '/meta.json');
+    DeleteFile(MetaFilePath);
+    SL := TStringList.Create;
+    try
+      SL.Add('{"name":"' + StringToJSONString(CurrentSkinName) + '"}');
+      SL.SaveToFile(MetaFilePath);
+    finally
+      SL.Free;
+    end;
   end;
 end;
 
