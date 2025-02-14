@@ -909,6 +909,12 @@ begin
   Result := 'linux';
   {$elseif defined(DARWIN)}
   Result := 'darwin';
+  {$elseif defined(FREEBSD)}
+  Result := 'freebsd';
+  {$elseif defined(WASI)}
+  Result := 'wasi';
+  {$elseif defined(GO32v2)}
+  Result := 'dos';
   {$else}
   Result := 'unknown';
   {$endif}
@@ -5734,7 +5740,10 @@ begin
           begin
             PC := Self.Source[Pos - 1];
             NC := PeekAtNextChar;
-            if ((PC = ' ') or (PC = '(') or (PC = '=') or (PC = ',')) and (NC <> ' ') then
+            if ((PC = ' ') or (PC = '(') or (PC = '=') or (PC = ',') or (PC = '[') or
+                (PC = '+') or (PC = '*') or (PC = '/') or (PC = '^') or (PC = '&') or
+                (PC = '|') or (PC = '~') or (PC = '!'))
+              and (NC <> ' ') then
               Token.Kind := tkNegative;
           end;
         end;
@@ -7417,7 +7426,8 @@ var
       begin
         OpCount := Self.OpcodeInfoList.Count;
         ParseExpr;
-        if ((Self.OpcodeInfoList.Count - OpCount) = 1) and
+        if (Self.OptimizePeephole) and
+           ((Self.OpcodeInfoList.Count - OpCount) = 1) and
            (Self.OpcodeInfoList[OpCount].Op = opPushConst) and
            (Self.Binary[Self.OpcodeInfoList[OpCount].Pos + 1].VarNumber <> 0) then
         begin
@@ -7474,7 +7484,8 @@ var
       begin
         OpCount := Self.OpcodeInfoList.Count;
         ParseExpr;
-        if ((Self.OpcodeInfoList.Count - OpCount) = 1) and
+        if (Self.OptimizePeephole) and
+           ((Self.OpcodeInfoList.Count - OpCount) = 1) and
            (Self.OpcodeInfoList[OpCount].Op = opPushConst) and
            (Self.Binary[Self.OpcodeInfoList[OpCount].Pos + 1].VarNumber <> 0) then
         begin
@@ -8008,8 +8019,7 @@ var
             Emit([Pointer(opHlt)])
           else
           begin
-            List := ReturnStack.Peek;
-            List.Add(Pointer(Emit([Pointer(opJumpUnconditional), Pointer(0)]) - 1));
+            Emit([Pointer(opPopFrame)])
           end;
         end;
       tkFunctionDecl:
