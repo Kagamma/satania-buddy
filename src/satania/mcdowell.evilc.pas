@@ -4061,7 +4061,10 @@ begin
       {$ifdef SE_COMPUTED_GOTO}labelOperatorInc{$else}opOperatorInc{$endif}:
         begin
           A := Pop;
-          A^.VarNumber := A^.VarNumber + BinaryLocal.Ptr(CodePtrLocal + 1)^.VarNumber;
+          if A^.Kind = sevkNumber then
+            A^.VarNumber := A^.VarNumber + BinaryLocal.Ptr(CodePtrLocal + 1)^.VarNumber
+          else
+            SEValueAdd(A^, A^, BinaryLocal.Ptr(CodePtrLocal + 1)^);
           Inc(StackPtrLocal);
           Inc(CodePtrLocal, 2);
           DispatchGoto;
@@ -6577,6 +6580,7 @@ var
                 OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushConst]);
                 if OpInfoPrev1 = nil then
                   OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushLocalVar]);
+                // TODO: Handle opPushArrayPop
                 if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
                 begin
                   A := Self.Binary[OpInfoPrev2^.Pos + 1];
