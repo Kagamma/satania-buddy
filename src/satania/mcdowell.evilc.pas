@@ -6554,6 +6554,8 @@ var
               OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar]);
               if OpInfoPrev2 = nil then
                 OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushLocalVar]);
+              if OpInfoPrev2 = nil then
+                OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushArrayPop]);
               if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
               begin
                 A := Self.Binary[OpInfoPrev1^.Pos + 1];
