@@ -19,95 +19,95 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
 {$ifdef unit_protected}
-    function SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESpriteLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESpriteVisibleSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESpriteVisibleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESpritePositionSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SELog(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEStreamEnable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEStreamDisable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEStream(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEStreamPositionGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEAsk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEAnswer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEProcessRun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEProcessPipeGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEProcessPipeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEProcessTerminate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsAnimationPlaying(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEAnimationExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEStopAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEStopAllAnimations(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEStartAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESetAnimationSpeed(const VM: TSEVM; const Args: array of TSEValue): TSEValue; 
-    function SEIsRules(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsSoW(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsLewd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsSilent(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsSpeechToText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESchemeLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;     
-    function SESchemeExecute(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEDelta(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SELoadEmails(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEGetUnseenEmailCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEGetEmailSender(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEGetEmailSubject(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEGetEmailBody(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsEmailLoading(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsEmailSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsEmailConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEIsEmailSMTPConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEEmailSMTPSend(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESchemeDefault(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESoundPlay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEChatBubbleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEChatResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEChatHistoryGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLGetProgress(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLProcess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLEncode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEURLDecode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SENumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEMonthsToNumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEReminderCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEReminderTodayGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEClipboardGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEClipboardToFile(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEDirectoryGetConfig(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESketchCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESketchLoadFromText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESketchExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESketchClear(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEWorkerCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEWorkerSetPersistent(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;         
-    function SEAppCloseScriptRegister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEAppCloseScriptUnregister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEAppCharacterChangeScriptRegister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEAppCharacterChangeScriptUnregister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SEToolHexEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SESpriteTalkSet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESpriteLoad(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESpriteScaleGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESpriteVisibleSet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESpriteVisibleGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESpritePositionSet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SETalk(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SELog(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEStreamEnable(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEStreamDisable(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEStream(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEStreamPositionGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEAsk(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEAnswer(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SENotify(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEProcessRun(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEProcessPipeGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEProcessPipeSet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEProcessTerminate(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEIsAnimationPlaying(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEAnimationExists(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEStopAnimation(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEStopAllAnimations(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEStartAnimation(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESetAnimationSpeed(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue; 
+    function SEIsRules(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEIsSoW(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEIsLewd(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEIsSilent(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEIsSpeechToText(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESchemeLoad(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;     
+    function SESchemeExecute(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEDelta(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SELoadEmails(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEGetUnseenEmailCount(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEGetEmailSender(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEGetEmailSubject(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEGetEmailBody(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEIsEmailLoading(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEIsEmailSuccess(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEIsEmailConfigured(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEIsEmailSMTPConfigured(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEEmailSMTPSend(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESchemeDefault(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESoundPlay(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEOpenURL(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEChatModeSet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEChatBubbleGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEChatResultGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEChatHistoryGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEURLFetch(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEURLUpload(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEURLIsSuccess(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEURLGetProgress(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEURLGetResult(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEURLProcess(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEURLEncode(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEURLDecode(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SENumbers(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEMonthsToNumbers(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEReminderCreate(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEReminderTodayGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEClipboardGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEClipboardToFile(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEDirectoryGetConfig(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEJSONParse(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEJSONStringify(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SELocalFlagGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SELocalFlagSet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESketchCreate(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESketchLoadFromText(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESketchExists(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESketchClear(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESketchClearAll(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEWorkerCreate(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEWorkerSetPersistent(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEWorkerExists(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEWorkerDelete(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;         
+    function SEAppCloseScriptRegister(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEAppCloseScriptUnregister(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEAppCharacterChangeScriptRegister(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEAppCharacterChangeScriptUnregister(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEToolEvilCEditor(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SEToolHexEditor(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 {$endif}
 
 {$ifdef unit_implementation}
 
-function TSatania.SETalk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SETalk(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Key: String;
 begin
@@ -117,7 +117,7 @@ begin
   Result := SENull;
 end;
 
-function TSatania.SELog(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SELog(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   S: String;
 begin
@@ -127,33 +127,33 @@ begin
   Result := SENull;
 end;
 
-function TSatania.SEStreamEnable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEStreamEnable(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   FormChat.EnableStreaming;
   FormBubble.EnableStreaming;
   Result := SENull;
 end;
 
-function TSatania.SEStreamDisable(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEStreamDisable(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   FormChat.DisableStreaming;
   FormBubble.DisableStreaming;
   Result := SENull;
 end;
 
-function TSatania.SEStream(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEStream(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   FormChat.Streaming(Args[0].VarString^);
   FormBubble.Streaming(Args[0].VarString^);
   Result := SENull;
 end;
 
-function TSatania.SEStreamPositionGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEStreamPositionGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := FormChat.RichText.TokenList[FormChat.RichText.LastTokenPos].Pos;
 end;
 
-function TSatania.SEAsk(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEAsk(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   I: Integer;
 begin
@@ -167,7 +167,7 @@ begin
   end;
   FormAsk.WindowState := wsNormal;
   Ask(SEValueToText(Args[1]));
-  if Length(Args) = 4 then
+  if ArgCount = 4 then
   begin
     FormAsk.Width := Args[2];
     FormAsk.Height := Args[3];
@@ -180,7 +180,7 @@ begin
   Result := SENull;
 end;
 
-function TSatania.SEAnswer(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEAnswer(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   I: Integer;
 begin
@@ -195,13 +195,13 @@ begin
   FormAsk.IsAnswerText := False;
 end;
 
-function TSatania.SENotify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SENotify(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Notify(Name, SEValueToText(Args[0]));
   Result := SENull;
 end;
 
-function TSatania.SEProcessRun(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEProcessRun(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   T: TSataniaExecNonBlockThread;
 begin
@@ -212,7 +212,7 @@ begin
   Result := T.Key;
 end;
 
-function TSatania.SEProcessTerminate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEProcessTerminate(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Thread: TSataniaExecNonBlockThread;
 begin
@@ -223,7 +223,7 @@ begin
   end;
 end;
 
-function TSatania.SEProcessPipeGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEProcessPipeGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Info: TNonBlockProcessRec;
 begin
@@ -252,7 +252,7 @@ begin
   end;
 end;
 
-function TSatania.SEProcessPipeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEProcessPipeSet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Info: TNonBlockProcessRec;
 begin
@@ -267,20 +267,20 @@ begin
   end;
 end;
 
-function TSatania.SESpriteLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESpriteLoad(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   LoadModel(Args[0]);
   Result := SENull;
 end;
 
-function TSatania.SESpriteTalkSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESpriteTalkSet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   I: Integer;
 begin
   AnimTalkLoop := Args[0];
   AnimTalkFinish := Args[1];
   Self.AnimTalkScriptList.Clear;
-  if Length(Args) = 3 then
+  if ArgCount = 3 then
   begin
     for I := 0 to SESize(Args[2]) - 1 do
     begin
@@ -289,7 +289,7 @@ begin
   end;
 end;
 
-function TSatania.SEIsAnimationPlaying(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEIsAnimationPlaying(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   TimeSensor: TTimeSensorNode;
 begin
@@ -306,100 +306,100 @@ begin
   end;
 end;
 
-function TSatania.SEStartAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEStartAnimation(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   StartAnimation(Args[0], Boolean(Round(Args[1].VarNumber)));
   Result := SENull;
 end;
 
-function TSatania.SESetAnimationSpeed(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESetAnimationSpeed(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   SetAnimationSpeed(Args[0], Args[1].VarNumber);
   Result := SENull;
 end;
 
-function TSatania.SEAnimationExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEAnimationExists(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := AnimationExists(Args[0]);
 end;
 
-function TSatania.SEStopAnimation(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEStopAnimation(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   StopAnimation(Args[0]);
   Result := SENull;
 end;
 
-function TSatania.SEStopAllAnimations(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEStopAllAnimations(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   StopAllAnimations;
   Result := SENull;
 end;
 
-function TSatania.SESchemeLoad(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESchemeLoad(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Satania.ActionFromFile(Args[0]);
   Result := SENull;
 end;
 
-function TSatania.SESchemeExecute(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESchemeExecute(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Satania.Action('script', Args[0]);
   Result := SENull;
 end;
 
-function TSatania.SEDelta(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEDelta(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := Delta;
   Result := SENull;
 end;
 
-function TSatania.SELoadEmails(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SELoadEmails(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   SataniaIMAP.GetMessages;
   Result := SENull;
 end;
 
-function TSatania.SEGetUnseenEmailCount(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEGetUnseenEmailCount(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := SataniaIMAP.MailList.Count;
 end;
 
-function TSatania.SEGetEmailSender(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEGetEmailSender(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := SataniaIMAP.MailList[Round(Args[0].VarNumber)].Sender;
 end;
 
-function TSatania.SEGetEmailSubject(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEGetEmailSubject(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := SataniaIMAP.MailList[Round(Args[0].VarNumber)].Subject;
 end;
 
-function TSatania.SEGetEmailBody(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEGetEmailBody(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := SataniaIMAP.MailList[Round(Args[0].VarNumber)].Body;
 end;
 
-function TSatania.SEIsEmailLoading(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEIsEmailLoading(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := SataniaIMAP.IsRunning;
 end;
 
-function TSatania.SEIsEmailSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEIsEmailSuccess(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := SataniaIMAP.IsSuccess;
 end;
 
-function TSatania.SEIsEmailConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEIsEmailConfigured(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := SataniaIMAP.IsEmailConfigured;
 end;
 
-function TSatania.SEIsEmailSMTPConfigured(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEIsEmailSMTPConfigured(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := TSataniaSMTP.IsEmailConfigured;
 end;
 
-function TSatania.SEEmailSMTPSend(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEEmailSMTPSend(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   SataniaSMTP: TSataniaSMTP;
   I: Integer;
@@ -417,12 +417,12 @@ begin
   SataniaSMTP.Start;
 end;
 
-function TSatania.SESchemeDefault(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESchemeDefault(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := Save.Settings.DefaultEvilScheme;
 end;
 
-function TSatania.SESoundPlay(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESoundPlay(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   B: TSataniaSoundBehavior;
 begin
@@ -432,30 +432,30 @@ begin
   Result := SENull;
 end;
 
-function TSatania.SEOpenURL(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEOpenURL(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   OpenURL(Args[0]);
   Result := SENull;
 end;
 
-function TSatania.SEChatModeSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEChatModeSet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   ChatMode := Round(Args[0].VarNumber);
   Result := SENull;
 end;
 
-function TSatania.SEChatBubbleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEChatBubbleGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := FormBubble.GetCurrentText;
 end;
 
-function TSatania.SEChatResultGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEChatResultGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := ChatResult;
   ChatResult := '';
 end;
 
-function TSatania.SEChatHistoryGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEChatHistoryGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   I: Integer;
   CH: TChatHistoryRec;
@@ -480,38 +480,38 @@ begin
   end;
 end;    
 
-function TSatania.SEIsRules(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEIsRules(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := Save.Settings.Rules
 end;
 
-function TSatania.SEIsSoW(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEIsSoW(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := Save.SitOnWindow
 end;
 
-function TSatania.SEIsLewd(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEIsLewd(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := Save.Settings.Lewd;
 end;
 
-function TSatania.SEIsSilent(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEIsSilent(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := Save.Silent
 end;
 
-function TSatania.SEIsSpeechToText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEIsSpeechToText(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := Save.SpeechToText
 end;
 
-function TSatania.SESpriteScaleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESpriteScaleGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   SetScale(Args[0].VarNumber);
   Result := SENull;
 end;
 
-function TSatania.SESpriteVisibleSet(const VM: TSEVM  ; const Args: array of TSEValue): TSEValue;
+function TSatania.SESpriteVisibleSet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   if Args[0].VarNumber = 0 then
     SetVisible(False)
@@ -520,22 +520,23 @@ begin
   Result := SENull;
 end;
 
-function TSatania.SESpriteVisibleGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESpriteVisibleGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := Sprite.Visible;
 end;
 
-function TSatania.SESpritePositionSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESpritePositionSet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   SetPosition(Round(Args[0].VarNumber), Round(Args[1].VarNumber));
   Result := SENull;
 end;
 
-function TSatania.SEURLFetch(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEURLFetch(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Thread: TSataniaHttpThread;
   I: Integer;
   S: String;
+  A: TSEValue;
 begin
   Thread := TSataniaHttpThread.Create(True, GUID);
   Thread.FreeOnTerminate := True;
@@ -548,7 +549,10 @@ begin
     end;
   case Args[3].Kind of
     sevkMap:
-      Thread.FormData.Text := SEJSONStringify(VM, [Args[3]]);
+      begin
+        A := Args[3];
+        Thread.FormData.Text := SEJSONStringify(VM, @A, 1);
+      end;
     sevkString:
       Thread.FormData.Text := Args[3];
   end;
@@ -556,17 +560,21 @@ begin
   Result := Thread.Key;
 end;
 
-function TSatania.SEURLUpload(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEURLUpload(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Thread: TSataniaHttpThread;
+  A: TSEValue;
 begin
   Thread := TSataniaHttpThread.Create(True, GUID);
   Thread.FreeOnTerminate := True;
   Thread.URL := Args[0];
   Thread.Method := 'POST';
   case Args[2].Kind of
-    sevkMap:
-      Thread.FormData.Text := SEJSONStringify(VM, [Args[2]]);
+    sevkMap:  
+      begin
+        A := Args[2];
+        Thread.FormData.Text := SEJSONStringify(VM, @A, 1);
+      end;
     sevkString:
       Thread.FormData.Text := Args[2];
   end;
@@ -576,7 +584,7 @@ begin
   Result := Thread.Key;
 end;
 
-function TSatania.SEURLIsSuccess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEURLIsSuccess(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   if ThreadDict.ContainsKey(Args[0]) then
     Result := False
@@ -584,7 +592,7 @@ begin
     Result := True;
 end;
 
-function TSatania.SEURLGetProgress(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEURLGetProgress(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Thread: TSataniaHttpThread;
 begin
@@ -597,7 +605,7 @@ begin
   end;
 end;
 
-function TSatania.SEURLGetResult(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEURLGetResult(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   HttpResponse: THttpResponseRec;
   Buf, Headers: TSEValue;
@@ -610,7 +618,7 @@ begin
     GC.AllocMap(@Headers);
     HttpResponse := RunHttpResultList[Args[0].VarString^];
     SEMapSet(Result, 'status', HttpResponse.Status);
-    if (HttpResponse.IsBinary) or ((Length(Args) > 1) and (Args[1] = True)) then
+    if (HttpResponse.IsBinary) or ((ArgCount > 1) and (Args[1] = True)) then
     begin
       Len := Length(HttpResponse.Data);
       GC.AllocBuffer(@Buf, Len);
@@ -630,7 +638,7 @@ begin
   end;
 end;
 
-function TSatania.SEURLProcess(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEURLProcess(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   X: IXQValue;
   SL: TStrings;
@@ -651,7 +659,7 @@ begin
   end;
 end;
 
-function TSatania.SEURLEncode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEURLEncode(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
   // https://wiki.freepascal.org/URL_encoding/decoding
   function EncodeUrl(const url: string): string;
   var
@@ -689,7 +697,7 @@ begin
   Result := EncodeUrl(Args[0]);
 end;
 
-function TSatania.SEURLDecode(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEURLDecode(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
   // https://wiki.freepascal.org/URL_encoding/decoding
   function DecodeUrl(const url: string): string;
   var
@@ -735,7 +743,7 @@ begin
   Result := DecodeUrl(Args[0]);
 end;
 
-function TSatania.SENumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SENumbers(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   A: TDoubleDynArray;
   I: Integer;
@@ -748,7 +756,7 @@ begin
   end;
 end;
 
-function TSatania.SEMonthsToNumbers(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEMonthsToNumbers(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   A: TDoubleDynArray;
   I: Integer;
@@ -761,7 +769,7 @@ begin
   end;
 end;
 
-function TSatania.SEReminderCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEReminderCreate(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Reminder: TReminderCollectionItem;
   DD, TT: TDateTime;
@@ -784,7 +792,7 @@ begin
   Result := SENull;
 end;
 
-function TSatania.SEReminderTodayGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEReminderTodayGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Reminder: TReminderCollectionItem;
   Count, I, J: Integer;
@@ -819,7 +827,7 @@ begin
   end;
 end;
 
-function TSatania.SEClipboardGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEClipboardGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   if Clipboard.HasFormat(PredefinedClipboardFormat(pcfText)) then
     Result := StringReplace(Clipboard.AsText, 'file://', '', [rfReplaceAll])
@@ -827,7 +835,7 @@ begin
     Result := SENull;
 end;
 
-function TSatania.SEClipboardToFile(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEClipboardToFile(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   S, Ext: String;
   Jpeg: TJPEGImage;
@@ -876,12 +884,12 @@ begin
   end;
 end;
 
-function TSatania.SEDirectoryGetConfig(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEDirectoryGetConfig(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := GetOSLocalDir;
 end;
 
-function TSatania.SEJSONParse(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEJSONParse(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
   procedure QueryForObject(out R: TSEValue; Data: TJsonNode); forward;
 
   procedure QueryForArray(out R: TSEValue; Data: TJsonNode);
@@ -994,7 +1002,7 @@ begin
   end;
 end;
 
-function TSatania.SEJSONStringify(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEJSONStringify(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 
   procedure DecodeJSONArray(SB: TStringBuilder; const Map: TSEValue); forward;
   procedure DecodeJSONObject(SB: TStringBuilder; const Map: TSEValue); forward;
@@ -1089,7 +1097,7 @@ begin
   end;
 end;
 
-function TSatania.SELocalFlagGet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SELocalFlagGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   S: String;
 begin
@@ -1101,7 +1109,7 @@ begin
     Result := S;
 end;
 
-function TSatania.SELocalFlagSet(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SELocalFlagSet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin           
   SEValidateType(@Args[0], sevkString, 1, {$I %CURRENTROUTINE%});
   SEValidateType(@Args[1], sevkString, 2, {$I %CURRENTROUTINE%});
@@ -1109,33 +1117,33 @@ begin
   Result := SENull;
 end;
 
-function TSatania.SESketchCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESketchCreate(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := SataniaSketch.CreateSketch(Args[0]);
 end;
 
-function TSatania.SESketchLoadFromText(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESketchLoadFromText(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := SataniaSketch.LoadFromText(Args[0], Args[1], Args[2]);
 end;
 
-function TSatania.SESketchExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESketchExists(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := SataniaSketch.Find(Args[0]);
 end;
 
-function TSatania.SESketchClear(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESketchClear(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := SataniaSketch.Delete(Args[0]);
 end;
 
-function TSatania.SESketchClearAll(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SESketchClearAll(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   SataniaSketch.DeleteAll;
   Result := SENull;
 end;
 
-function TSatania.SEWorkerCreate(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEWorkerCreate(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Item: TSataniaBackgroundScript;
   Key, ConstKey: String;
@@ -1150,12 +1158,12 @@ begin
   Item.IsPersistent := False;
   Item.Script := Self.CreateEvilC(True);
   Item.Script.Source := Args[1];
-  if Length(Args) >= 3 then
+  if ArgCount >= 3 then
     Item.Interval := Round(Args[2].VarNumber * 1000)
   else
     Item.Interval := 0;
   Item.LastTimestamp := GetTickCount64;
-  if Length(Args) >= 4 then
+  if ArgCount >= 4 then
   begin
     for ConstKey in TSEValueMap(Args[3].VarMap).Keys do
       Item.Script.ConstMap.AddOrSetValue(ConstKey, SEMapGet(Args[3], ConstKey));
@@ -1164,7 +1172,7 @@ begin
   Result := Key;
 end;
 
-function TSatania.SEWorkerSetPersistent(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEWorkerSetPersistent(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Item: TSataniaBackgroundScript;
 begin
@@ -1173,23 +1181,23 @@ begin
   Self.BackgroundScriptDict[Args[0]] := Item;
 end;
 
-function TSatania.SEWorkerExists(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEWorkerExists(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Result := Self.BackgroundScriptDict.ContainsKey(Args[0]);
 end;
 
-function TSatania.SEWorkerDelete(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEWorkerDelete(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Self.WorkerDelete(Args[0]);
   Result := SENull;
 end;
 
-function TSatania.SEAppCloseScriptRegister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEAppCloseScriptRegister(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Self.DestroyScriptDict.AddOrSetValue(Args[0], Args[1]);
 end;
 
-function TSatania.SEAppCloseScriptUnregister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEAppCloseScriptUnregister(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   if Self.DestroyScriptDict.ContainsKey(Args[0]) then
   begin
@@ -1197,12 +1205,12 @@ begin
   end;
 end;    
 
-function TSatania.SEAppCharacterChangeScriptRegister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEAppCharacterChangeScriptRegister(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Self.ChangeCharacterScriptDict.AddOrSetValue(Args[0], Args[1]);
 end;
 
-function TSatania.SEAppCharacterChangeScriptUnregister(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEAppCharacterChangeScriptUnregister(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   if Self.ChangeCharacterScriptDict.ContainsKey(Args[0]) then
   begin
@@ -1210,7 +1218,7 @@ begin
   end;
 end;
 
-function TSatania.SEToolEvilCEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEToolEvilCEditor(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Frm: TFormEvilCEditor;
 begin
@@ -1220,7 +1228,7 @@ begin
   Result := SENull;
 end;
 
-function TSatania.SEToolHexEditor(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSatania.SEToolHexEditor(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   FormHexEditor.Show;
   FormHexEditor.LoadFromFile(Args[0]);

@@ -278,8 +278,8 @@ type
     destructor Destroy; override;
     procedure SaveToFile(FileName: String);
     procedure LoadFromFile(FileName: String);
-    function SEGetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
-    function SESetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+    function SEGetFlag(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    function SESetFlag(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
   published
     property Flags: TSaveCollection read FFlags;
     property Reminders: TSaveCollection read FReminders;
@@ -469,7 +469,7 @@ begin
   end;
 end;
 
-function TSave.SEGetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSave.SEGetFlag(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Flag: TSaveFlagCollectionItem;
 begin
@@ -481,7 +481,7 @@ begin
     Result := SENull;
 end;
 
-function TSave.SESetFlag(const VM: TSEVM; const Args: array of TSEValue): TSEValue;
+function TSave.SESetFlag(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 var
   Flag: TSaveFlagCollectionItem;
 begin            

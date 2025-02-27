@@ -559,8 +559,14 @@ begin
 end;
 
 procedure TSatania.Worker(const AKey, AScript: String; const ATime: Single; const AArgs: TSEValue);
+var
+  A: array[0..3] of TSEValue;
 begin
-  Self.SEWorkerCreate(nil, [AKey, AScript, ATime, AArgs]);
+  A[0] := AKey;     
+  A[1] := AScript;
+  A[2] := ATime;
+  A[3] := AArgs;
+  Self.SEWorkerCreate(nil, @A[0], 4);
 end;
 
 procedure TSatania.WorkerDelete(const AKey: String);
@@ -1077,6 +1083,7 @@ var
   MetaPath: String;
   IsNamed: Boolean = False;
   I: Integer;
+  A: TSEValue;
 begin
   S.ConstMap.Clear;
   S.AddDefaultConsts;
@@ -1112,12 +1119,18 @@ begin
     Json.Free;
     // Create a new meta constant and map meta data there
     if JsonString = '' then
-      S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))
-    else
-      S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, [JsonString]));
+    begin
+      A := '{ "name": "' + Name + '" }';
+      S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, @A, 1))
+    end else
+    begin
+      A := JsonString;
+      S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, @A, 1));
+    end;
   end else
   begin
-    S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, ['{ "name": "' + Name + '" }']))
+    A := '{ "name": "' + Name + '" }';
+    S.ConstMap.AddOrSetValue('meta', SEJSONParse(nil, @A, 1))
   end;
   S.ConstMap.AddOrSetValue('charname', Name);
   S.ConstMap.AddOrSetValue('name', Name);
