@@ -70,6 +70,11 @@ type
     opJumpEqualOrGreater,
     opJumpEqualOrLesser,
 
+    opOperatorAdd1,
+    opOperatorSub1,
+    opOperatorMul1,
+    opOperatorDiv1,
+
     opOperatorAdd2,
     opOperatorSub2,
     opOperatorMul2,
@@ -229,9 +234,12 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure ToMap;
-    procedure Set2(const Key: String; const AValue: TSEValue);
-    procedure Del2(const Key: String);
-    function Get2(const Key: String): TSEValue;
+    procedure Set2(const Key: String; const AValue: TSEValue); overload; inline;
+    procedure Set2(const Index: Int64; const AValue: TSEValue); overload; inline;
+    function Get2(const Key: String): TSEValue; overload; inline;
+    function Get2(const Index: Int64): TSEValue; overload; inline;
+    procedure Del2(const Key: String); overload; inline;
+    procedure Del2(const Index: Int64); overload; inline;
     property List: TSEValueList read FList;
     property IsValidArray: Boolean read FIsValidArray;
   end;
@@ -518,10 +526,15 @@ const
     2, // opJumpEqualOrGreater,
     2, // opJumpEqualOrLesser,
 
-    4, // opOperatorAdd2,
-    4, // opOperatorSub2,
-    4, // opOperatorMul2,
-    4, // opOperatorDiv2,
+    3, // opOperatorAdd1,
+    3, // opOperatorSub1,
+    3, // opOperatorMul1,
+    3, // opOperatorDiv1,
+
+    5, // opOperatorAdd2,
+    5, // opOperatorSub2,
+    5, // opOperatorMul2,
+    5, // opOperatorDiv2,
 
     2, // opOperatorInc,
     1, // opOperatorAdd,
@@ -566,6 +579,9 @@ type
     Kind: TSEIdentKind;
     Addr: Integer;
     IsUsed: Boolean;
+    IsAssigned: Boolean;
+    IsConst: Boolean;
+    ConstValue: TSEValue;
     Local: Integer;
     Ln: Integer;
     Col: Integer;
@@ -646,6 +662,11 @@ type
     procedure RegisterImportFunc(const Name, ActualName, LibName: String; const Args: TSEAtomKindArray; const Return: TSEAtomKind; const CC: TSECallingConvention = seccAuto);
     function Backup: TSECache;
     procedure Restore(const Cache: TSECache);
+    function FindFunc(const Name: String): Pointer; inline; overload;
+    function FindFuncNative(const Name: String; var Ind: Integer): PSEFuncNativeInfo; inline;
+    function FindFuncScript(const Name: String; var Ind: Integer): PSEFuncScriptInfo; inline;
+    function FindFuncImport(const Name: String; var Ind: Integer): PSEFuncImportInfo; inline;
+    function FindFunc(const Name: String; var Kind: TSEFuncKind; var Ind: Integer): Pointer; inline; overload;
 
     property IsPaused: Boolean read GetIsPaused write SetIsPaused;
     property Source: String read FSource write SetSource;
@@ -1049,7 +1070,7 @@ end;
 
 procedure SEMapDelete(constref V: TSEValue; constref I: Integer); inline; overload;
 begin
-  TSEValueMap(V.VarMap).Del2(IntToStr(I));
+  TSEValueMap(V.VarMap).Del2(I);
 end;
 
 procedure SEMapDelete(constref V: TSEValue; constref S: String); inline; overload;
@@ -1058,19 +1079,15 @@ begin
 end;
 
 procedure SEMapDelete(constref V, I: TSEValue); inline; overload;
-var
-  S: String;
 begin
   case I.Kind of
     sevkString:
       begin
-        S := I.VarString^;
-        TSEValueMap(V.VarMap).Del2(S);
+        TSEValueMap(V.VarMap).Del2(I.VarString^);
       end;
     sevkNumber, sevkBoolean:
       begin
-        S := IntToStr(Round(I.VarNumber));
-        TSEValueMap(V.VarMap).Del2(S);
+        TSEValueMap(V.VarMap).Del2(Round(I.VarNumber));
       end;
   end;
 end;
@@ -1078,7 +1095,7 @@ end;
 function SEMapGet(constref V: TSEValue; constref I: Integer): TSEValue; inline; overload;
 begin
   try
-    Result := TSEValueMap(V.VarMap).Get2(IntToStr(I));
+    Result := TSEValueMap(V.VarMap).Get2(I);
   except
     Result := SENull;
   end;
@@ -1094,19 +1111,20 @@ begin
 end;
 
 function SEMapGet(constref V, I: TSEValue): TSEValue; inline; overload;
-var
-  S: String;
 begin
   try
     case I.Kind of
       sevkString:
-        S := I.VarString^;
+        begin
+          Result := TSEValueMap(V.VarMap).Get2(I.VarString^);
+        end;
       sevkNumber, sevkBoolean:
-        S := IntToStr(Round(I.VarNumber));
+        begin
+          Result := TSEValueMap(V.VarMap).Get2(Round(I.VarNumber));
+        end;
       else
         Exit(SENull);
     end;
-    Result := TSEValueMap(V.VarMap).Get2(S);
   except
     Result := SENull;
   end;
@@ -1114,7 +1132,7 @@ end;
 
 procedure SEMapSet(constref V: TSEValue; constref I: Integer; const A: TSEValue); inline; overload;
 begin
-  TSEValueMap(V.VarMap).Set2(IntToStr(I), A);
+  TSEValueMap(V.VarMap).Set2(I, A);
 end;
 
 procedure SEMapSet(constref V: TSEValue; constref S: String; const A: TSEValue); inline; overload;
@@ -1128,13 +1146,12 @@ var
 begin
   case I.Kind of
     sevkString:
-      S := I.VarString^;
+      TSEValueMap(V.VarMap).Set2(I.VarString^, A);
     sevkNumber, sevkBoolean:
-      S := IntToStr(Round(I.VarNumber));
+      TSEValueMap(V.VarMap).Set2(Round(I.VarNumber), A);
     else
       Exit;
   end;
-  TSEValueMap(V.VarMap).Set2(S, A);
 end;
 
 function SEMapIsValidArray(constref V: TSEValue): Boolean; inline;
@@ -3323,6 +3340,27 @@ begin
   end;
 end;
 
+procedure TSEValueMap.Set2(const Index: Int64; const AValue: TSEValue);
+var
+  I: Integer;
+begin
+  if Self.FIsValidArray and (Index >= 0) then
+  begin
+    GC.AllocatedMem := GC.AllocatedMem - Self.FList.Count * SizeOf(TSEValue);
+    if Index > Self.FList.Count - 1 then
+      Self.FList.Count := Index + 1;
+    Self.FList[Index] := AValue;
+    GC.AllocatedMem := GC.AllocatedMem + Self.FList.Count * SizeOf(TSEValue);
+  end else
+  begin
+    Self.ToMap;
+  end;
+  if not Self.IsValidArray then
+  begin
+    Self.AddOrSetValue(IntToStr(Index), AValue);
+  end;
+end;
+
 procedure TSEValueMap.Del2(const Key: String);
 var
   Index: Integer;
@@ -3342,6 +3380,21 @@ begin
   end;
 end;
 
+procedure TSEValueMap.Del2(const Index: Int64);
+begin
+  if Self.FIsValidArray and (Index >= 0) then
+  begin
+    if Index <= Self.FList.Count - 1 then
+    begin
+      Self.FList.Delete(Index);
+      GC.AllocatedMem := GC.AllocatedMem - SizeOf(TSEValue);
+    end;
+  end else
+  begin
+    Self.Remove(IntToStr(Index));
+  end;
+end;
+
 function TSEValueMap.Get2(const Key: String): TSEValue;
 var
   Index: Integer;
@@ -3357,6 +3410,20 @@ begin
   end else
   begin
     Result := Self[Key];
+  end;
+end;
+
+function TSEValueMap.Get2(const Index: Int64): TSEValue;
+begin
+  if Self.FIsValidArray and (Index >= 0) then
+  begin
+    if Index <= Self.FList.Count - 1 then
+      Result := Self.FList[Index]
+    else
+      Result := SENull;
+  end else
+  begin
+    Result := Self[IntToStr(Index)];
   end;
 end;
 
@@ -3729,7 +3796,7 @@ var
   CodePtrLocal: Integer;
   StackPtrLocal: PSEValue;
   BinaryPtrLocal: Integer;
-  BinaryLocal: TSEBinary;
+  BinaryLocal: PSEValue;
   MMXCount, RegCount: QWord;
   ImportBufferIndex: array [0..31] of QWord;
   ImportBufferData: array [0..8*31] of Byte;
@@ -3739,7 +3806,6 @@ var
   ImportResultD: TSENumber;
   ImportResultS: Single;
   FuncImport, P, PP, PC: Pointer;
-  BinaryLocalCountMinusOne: Integer;
   LineOfCode: TSELineOfCode;
   StackModulo: QWord;
   {$ifdef SE_LIBFFI}
@@ -3899,7 +3965,7 @@ var
         Self.BinaryPtr := BinaryPtrLocal;
         Exit;
       end;
-      P := DispatchTable[TSEOpcode(Integer(BinaryLocal.Ptr(CodePtrLocal)^.VarPointer))];
+      P := DispatchTable[TSEOpcode(Integer(BinaryLocal[CodePtrLocal].VarPointer))];
       asm
         jmp P;
       end
@@ -3913,7 +3979,7 @@ var
         Self.BinaryPtr := BinaryPtrLocal;
         Exit;
       end;
-      P := DispatchTable[TSEOpcode(Integer(BinaryLocal.Ptr(CodePtrLocal)^.VarPointer))];
+      P := DispatchTable[TSEOpcode(Integer(BinaryLocal[CodePtrLocal].VarPointer))];
       asm
         b P;
       end
@@ -3941,6 +4007,11 @@ label
   labelJumpUnconditional,
   labelJumpEqualOrGreater,
   labelJumpEqualOrLesser,
+
+  labelOperatorAdd1,
+  labelOperatorSub1,
+  labelOperatorMul1,
+  labelOperatorDiv1,
 
   labelOperatorAdd2,
   labelOperatorSub2,
@@ -3998,6 +4069,11 @@ var
     @labelJumpEqualOrGreater,
     @labelJumpEqualOrLesser,
 
+    @labelOperatorAdd1,
+    @labelOperatorSub1,
+    @labelOperatorMul1,
+    @labelOperatorDiv1,
+
     @labelOperatorAdd2,
     @labelOperatorSub2,
     @labelOperatorMul2,
@@ -4046,8 +4122,7 @@ begin
   CodePtrLocal := Self.CodePtr;
   StackPtrLocal := Self.StackPtr;
   BinaryPtrLocal := Self.BinaryPtr;
-  BinaryLocal := Self.Binaries[Self.BinaryPtr];
-  BinaryLocalCountMinusOne := BinaryLocal.Count - 1;
+  BinaryLocal := Self.Binaries[Self.BinaryPtr].Ptr(0);
   GC.CheckForGC;
 
   while True do
@@ -4056,15 +4131,15 @@ begin
     while True do
     begin
       {$ifndef SE_COMPUTED_GOTO}
-      case TSEOpcode(Integer(BinaryLocal.Ptr(CodePtrLocal)^.VarPointer)) of
+      case TSEOpcode(Integer(BinaryLocal[CodePtrLocal].VarPointer)) of
       {$endif}
       {$ifdef SE_COMPUTED_GOTO}labelOperatorInc{$else}opOperatorInc{$endif}:
         begin
           A := Pop;
           if A^.Kind = sevkNumber then
-            A^.VarNumber := A^.VarNumber + BinaryLocal.Ptr(CodePtrLocal + 1)^.VarNumber
+            A^.VarNumber := A^.VarNumber + BinaryLocal[CodePtrLocal + 1].VarNumber
           else
-            SEValueAdd(A^, A^, BinaryLocal.Ptr(CodePtrLocal + 1)^);
+            SEValueAdd(A^, A^, BinaryLocal[CodePtrLocal + 1]);
           Inc(StackPtrLocal);
           Inc(CodePtrLocal, 2);
           DispatchGoto;
@@ -4225,72 +4300,148 @@ begin
           Inc(CodePtrLocal);
           DispatchGoto;
         end;
+      {$ifdef SE_COMPUTED_GOTO}labelOperatorAdd1{$else}opOperatorAdd1{$endif}:
+        begin
+          A := Pop;
+          P := BinaryLocal[CodePtrLocal + 2].VarPointer;
+          if P = Pointer($FFFFFFFF) then
+            B := GetGlobal(BinaryLocal[CodePtrLocal + 1])
+          else
+            B := GetLocal(BinaryLocal[CodePtrLocal + 1], Integer(P));
+          SEValueAdd(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal, 3);
+          DispatchGoto;
+        end;
+      {$ifdef SE_COMPUTED_GOTO}labelOperatorSub1{$else}opOperatorSub1{$endif}:
+        begin
+          A := Pop;
+          P := BinaryLocal[CodePtrLocal + 2].VarPointer;
+          if P = Pointer($FFFFFFFF) then
+            B := GetGlobal(BinaryLocal[CodePtrLocal + 1])
+          else
+            B := GetLocal(BinaryLocal[CodePtrLocal + 1], Integer(P));
+          SEValueSub(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal, 3);
+          DispatchGoto;
+        end;
+      {$ifdef SE_COMPUTED_GOTO}labelOperatorMul1{$else}opOperatorMul1{$endif}:
+        begin
+          A := Pop;
+          P := BinaryLocal[CodePtrLocal + 2].VarPointer;
+          if P = Pointer($FFFFFFFF) then
+            B := GetGlobal(BinaryLocal[CodePtrLocal + 1])
+          else
+            B := GetLocal(BinaryLocal[CodePtrLocal + 1], Integer(P));
+          SEValueMul(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal, 3);
+          DispatchGoto;
+        end;
+      {$ifdef SE_COMPUTED_GOTO}labelOperatorDiv1{$else}opOperatorDiv1{$endif}:
+        begin
+          A := Pop;
+          P := BinaryLocal[CodePtrLocal + 2].VarPointer;
+          if P = Pointer($FFFFFFFF) then
+            B := GetGlobal(BinaryLocal[CodePtrLocal + 1])
+          else
+            B := GetLocal(BinaryLocal[CodePtrLocal + 1], Integer(P));
+          SEValueDiv(StackPtrLocal^, A^, B^);
+          Inc(StackPtrLocal);
+          Inc(CodePtrLocal, 3);
+          DispatchGoto;
+        end;
       {$ifdef SE_COMPUTED_GOTO}labelOperatorAdd2{$else}opOperatorAdd2{$endif}:
         begin
-          P := BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer;
+          P  := BinaryLocal[CodePtrLocal + 3].VarPointer;
+          PP := BinaryLocal[CodePtrLocal + 4].VarPointer;
           if P = Pointer($FFFFFFFF) then
-            SEValueAdd(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
+            A := GetGlobal(BinaryLocal[CodePtrLocal + 1])
           else
-            SEValueAdd(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Integer(P))^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^, Integer(P))^);
+            A := GetLocal(BinaryLocal[CodePtrLocal + 1], Integer(P));
+          if PP = Pointer($FFFFFFFF) then
+            B := GetGlobal(BinaryLocal[CodePtrLocal + 2])
+          else
+            B := GetLocal(BinaryLocal[CodePtrLocal + 2], Integer(P));
+          SEValueAdd(StackPtrLocal^, A^, B^);
           Inc(StackPtrLocal);
-          Inc(CodePtrLocal, 4);
+          Inc(CodePtrLocal, 5);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelOperatorSub2{$else}opOperatorSub2{$endif}:
         begin
-          P := BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer;
+          P  := BinaryLocal[CodePtrLocal + 3].VarPointer;
+          PP := BinaryLocal[CodePtrLocal + 4].VarPointer;
           if P = Pointer($FFFFFFFF) then
-            SEValueSub(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
+            A := GetGlobal(BinaryLocal[CodePtrLocal + 1])
           else
-            SEValueSub(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Integer(P))^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^, Integer(P))^);
+            A := GetLocal(BinaryLocal[CodePtrLocal + 1], Integer(P));
+          if PP = Pointer($FFFFFFFF) then
+            B := GetGlobal(BinaryLocal[CodePtrLocal + 2])
+          else
+            B := GetLocal(BinaryLocal[CodePtrLocal + 2], Integer(P));
+          SEValueSub(StackPtrLocal^, A^, B^);
           Inc(StackPtrLocal);
-          Inc(CodePtrLocal, 4);
+          Inc(CodePtrLocal, 5);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelOperatorMul2{$else}opOperatorMul2{$endif}:
         begin
-          P := BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer;
+          P  := BinaryLocal[CodePtrLocal + 3].VarPointer;
+          PP := BinaryLocal[CodePtrLocal + 4].VarPointer;
           if P = Pointer($FFFFFFFF) then
-            SEValueMul(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
+            A := GetGlobal(BinaryLocal[CodePtrLocal + 1])
           else
-            SEValueMul(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Integer(P))^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^, Integer(P))^);
+            A := GetLocal(BinaryLocal[CodePtrLocal + 1], Integer(P));
+          if PP = Pointer($FFFFFFFF) then
+            B := GetGlobal(BinaryLocal[CodePtrLocal + 2])
+          else
+            B := GetLocal(BinaryLocal[CodePtrLocal + 2], Integer(P));
+          SEValueMul(StackPtrLocal^, A^, B^);
           Inc(StackPtrLocal);
-          Inc(CodePtrLocal, 4);
+          Inc(CodePtrLocal, 5);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelOperatorDiv2{$else}opOperatorDiv2{$endif}:
         begin
-          P := BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer;
+          P  := BinaryLocal[CodePtrLocal + 3].VarPointer;
+          PP := BinaryLocal[CodePtrLocal + 4].VarPointer;
           if P = Pointer($FFFFFFFF) then
-            SEValueDiv(StackPtrLocal^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^, GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 2)^)^)
+            A := GetGlobal(BinaryLocal[CodePtrLocal + 1])
           else
-            SEValueDiv(StackPtrLocal^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Integer(P))^, GetLocal(BinaryLocal.Ptr(CodePtrLocal + 2)^, Integer(P))^);
+            A := GetLocal(BinaryLocal[CodePtrLocal + 1], Integer(P));
+          if PP = Pointer($FFFFFFFF) then
+            B := GetGlobal(BinaryLocal[CodePtrLocal + 2])
+          else
+            B := GetLocal(BinaryLocal[CodePtrLocal + 2], Integer(P));
+          SEValueDiv(StackPtrLocal^, A^, B^);
           Inc(StackPtrLocal);
-          Inc(CodePtrLocal, 4);
+          Inc(CodePtrLocal, 5);
           DispatchGoto;
         end;
 
       {$ifdef SE_COMPUTED_GOTO}labelPushConst{$else}opPushConst{$endif}:
         begin
-          Push(BinaryLocal.Ptr(CodePtrLocal + 1)^);
+          Push(BinaryLocal[CodePtrLocal + 1]);
           Inc(CodePtrLocal, 2);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelPushConstString{$else}opPushConstString{$endif}:
         begin
-          Push(Self.ConstStrings[Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer)]);
+          Push(Self.ConstStrings[Integer(BinaryLocal[CodePtrLocal + 1].VarPointer)]);
           Inc(CodePtrLocal, 2);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelPushGlobalVar{$else}opPushGlobalVar{$endif}:
         begin
-          Push(GetGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^)^);
+          Push(GetGlobal(BinaryLocal[CodePtrLocal + 1])^);
           Inc(CodePtrLocal, 2);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelPushLocalVar{$else}opPushLocalVar{$endif}:
         begin
-          Push(GetLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Integer(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer))^);
+          Push(GetLocal(BinaryLocal[CodePtrLocal + 1], Integer(BinaryLocal[CodePtrLocal + 2].VarPointer))^);
           Inc(CodePtrLocal, 3);
           DispatchGoto;
         end;
@@ -4324,14 +4475,14 @@ begin
           B := Pop;
           A := Pop;
           if SEValueEqual(A^, B^) then
-            CodePtrLocal := Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer)
+            CodePtrLocal := Integer(BinaryLocal[CodePtrLocal + 1].VarPointer)
           else
             Inc(CodePtrLocal, 2);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelJumpUnconditional{$else}opJumpUnconditional{$endif}:
         begin
-          CodePtrLocal := Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer);
+          CodePtrLocal := Integer(BinaryLocal[CodePtrLocal + 1].VarPointer);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelJumpEqualOrGreater{$else}opJumpEqualOrGreater{$endif}:
@@ -4339,7 +4490,7 @@ begin
           B := Pop;
           A := Pop;
           if SEValueGreaterOrEqual(A^, B^) then
-            CodePtrLocal := Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer)
+            CodePtrLocal := Integer(BinaryLocal[CodePtrLocal + 1].VarPointer)
           else
             Inc(CodePtrLocal, 2);
           DispatchGoto;
@@ -4349,7 +4500,7 @@ begin
           B := Pop;
           A := Pop;
           if SEValueLesserOrEqual(A^, B^) then
-            CodePtrLocal := Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer)
+            CodePtrLocal := Integer(BinaryLocal[CodePtrLocal + 1].VarPointer)
           else
             Inc(CodePtrLocal, 2);
           DispatchGoto;
@@ -4365,7 +4516,7 @@ begin
               end;
             sevkMap:
               begin
-                DeepCount := Integer(BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer);
+                DeepCount := Integer(BinaryLocal[CodePtrLocal + 3].VarPointer);
                 if DeepCount = 0 then
                   raise Exception.Create('Not a function reference');
                 StackPtrLocal := StackPtrLocal - DeepCount;
@@ -4381,7 +4532,7 @@ begin
             else
               raise Exception.Create('Not a function reference');
           end;
-          BinaryLocal.Ptr(CodePtrLocal + 1)^ := Pointer(A^.VarFuncIndx);
+          BinaryLocal[CodePtrLocal + 1] := Pointer(A^.VarFuncIndx);
           case A^.VarFuncKind of
             sefkScript:
               begin
@@ -4399,7 +4550,7 @@ begin
                 if DeepCount > 1 then
                   (StackPtrLocal - 1)^ := TV2;
                 This := Pop^;
-                Dec(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer); // ArgCount contains this, so we minus it by 1
+                Dec(BinaryLocal[CodePtrLocal + 2].VarPointer); // ArgCount contains this, so we minus it by 1
                 goto CallNative;
               end;
           end;
@@ -4407,9 +4558,8 @@ begin
       {$ifdef SE_COMPUTED_GOTO}labelCallNative{$else}opCallNative{$endif}:
         begin
         CallNative:
-          GC.CheckForGC;
-          FuncNativeInfo := PSEFuncNativeInfo(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer);
-          ArgCount := Integer(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer);
+          FuncNativeInfo := PSEFuncNativeInfo(BinaryLocal[CodePtrLocal + 1].VarPointer);
+          ArgCount := Integer(BinaryLocal[CodePtrLocal + 2].VarPointer);
           StackPtrLocal := StackPtrLocal - ArgCount;
           if FuncNativeInfo^.Kind = sefnkNormal then
             TV := TSEFunc(FuncNativeInfo^.Func)(Self, StackPtrLocal, ArgCount)
@@ -4426,9 +4576,8 @@ begin
       {$ifdef SE_COMPUTED_GOTO}labelCallScript{$else}opCallScript{$endif}:
         begin
         CallScript:
-          GC.CheckForGC;
-          ArgCount := Integer(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer);
-          FuncScriptInfo := Self.Parent.FuncScriptList.Ptr(Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer));
+          ArgCount := Integer(BinaryLocal[CodePtrLocal + 2].VarPointer);
+          FuncScriptInfo := Self.Parent.FuncScriptList.Ptr(Integer(BinaryLocal[CodePtrLocal + 1].VarPointer));
           Inc(Self.FramePtr);
           if Self.FramePtr > @Self.Frame[Self.FrameSize - 1] then
             raise Exception.Create('Too much recursion');
@@ -4439,14 +4588,13 @@ begin
           StackPtrLocal := StackPtrLocal + FuncScriptInfo^.VarCount;
           CodePtrLocal := 0;
           BinaryPtrLocal := FuncScriptInfo^.BinaryPos;
-          BinaryLocal := Self.Binaries[BinaryPtrLocal];
+          BinaryLocal := Self.Binaries[BinaryPtrLocal].Ptr(0);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelCallImport{$else}opCallImport{$endif}:
         begin
         CallImport:
-          GC.CheckForGC;
-          FuncImportInfo := Self.Parent.FuncImportList.Ptr(Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer));
+          FuncImportInfo := Self.Parent.FuncImportList.Ptr(Integer(BinaryLocal[CodePtrLocal + 1].VarPointer));
           FuncImport := FuncImportInfo^.Func;
           if FuncImport = nil then
             raise Exception.Create(Format('Function "%s" is null', [FuncImportInfo^.Name]));
@@ -5032,10 +5180,11 @@ begin
         end;
       {$ifdef SE_COMPUTED_GOTO}labelPopFrame{$else}opPopFrame{$endif}:
         begin
+          GC.CheckForGC;
           CodePtrLocal := Self.FramePtr^.Code;
           StackPtrLocal := Self.FramePtr^.Stack;
           BinaryPtrLocal := Self.FramePtr^.Binary;
-          BinaryLocal := Self.Binaries[BinaryPtrLocal];
+          BinaryLocal := Self.Binaries[BinaryPtrLocal].Ptr(0);
           Dec(Self.FramePtr);
           if Self.FramePtr < @Self.Frame[0] then
             Break;
@@ -5043,22 +5192,22 @@ begin
         end;
       {$ifdef SE_COMPUTED_GOTO}labelAssignGlobalVar{$else}opAssignGlobalVar{$endif}:
         begin
-          AssignGlobal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Pop);
+          AssignGlobal(BinaryLocal[CodePtrLocal + 1], Pop);
           Inc(CodePtrLocal, 2);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelAssignLocalVar{$else}opAssignLocalVar{$endif}:
         begin
-          AssignLocal(BinaryLocal.Ptr(CodePtrLocal + 1)^, Integer(BinaryLocal.Ptr(CodePtrLocal + 2)^.VarPointer), Pop);
+          AssignLocal(BinaryLocal[CodePtrLocal + 1], Integer(BinaryLocal[CodePtrLocal + 2].VarPointer), Pop);
           Inc(CodePtrLocal, 3);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelAssignGlobalArray{$else}opAssignGlobalArray{$endif}:
         begin
-          A := BinaryLocal.Ptr(CodePtrLocal + 1);
+          A := @BinaryLocal[CodePtrLocal + 1];
           V := GetGlobalInt(Integer(A^));
           B := Pop;
-          ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
+          ArgCount := BinaryLocal[CodePtrLocal + 2];
           if ArgCount = 1 then
             C := Pop
           else
@@ -5080,12 +5229,10 @@ begin
                 if V^.Kind = sevkString then
                 begin
                   {$ifdef SE_STRING_UTF8}
-                    S1 := V^.VarString^;
                     S2 := B^.VarString^;
-                    UTF8Delete(S1, Integer(C^) + 1, 1);
+                    UTF8Delete(V^.VarString^, Integer(C^) + 1, 1);
                     S := UTF8Copy(S2, 1, 1);
-                    UTF8Insert(S, S1, Integer(C^) + 1);
-                    V^.VarString^ := S1;
+                    UTF8Insert(S, V^.VarString^, Integer(C^) + 1);
                   {$else}
                     V^.VarString^[Integer(C^) + 1] := B^.VarString^[1];
                   {$endif}
@@ -5104,11 +5251,9 @@ begin
                 if V^.Kind = sevkString then
                 begin
                   {$ifdef SE_STRING_UTF8}
-                    S1 := V^.VarString^;
-                    UTF8Delete(S1, Integer(C^) + 1, 1);
+                    UTF8Delete(V^.VarString^, Integer(C^) + 1, 1);
                     S := Char(Round(B^.VarNumber));
-                    UTF8Insert(S, S1, Integer(C^) + 1);
-                    V^.VarString^ := S1;
+                    UTF8Insert(S, V^.VarString^, Integer(C^) + 1);
                   {$else}
                     V^.VarString^[Integer(C^) + 1] := Char(Round(B^.VarNumber));
                   {$endif}
@@ -5134,11 +5279,11 @@ begin
         end;
       {$ifdef SE_COMPUTED_GOTO}labelAssignLocalArray{$else}opAssignLocalArray{$endif}:
         begin
-          A := BinaryLocal.Ptr(CodePtrLocal + 1);
-          J := Integer(BinaryLocal.Ptr(CodePtrLocal + 3)^.VarPointer);
+          A := @BinaryLocal[CodePtrLocal + 1];
+          J := Integer(BinaryLocal[CodePtrLocal + 3].VarPointer);
           V := GetLocalInt(Integer(A^), J);
           B := Pop;
-          ArgCount := BinaryLocal.Ptr(CodePtrLocal + 2)^;
+          ArgCount := BinaryLocal[CodePtrLocal + 2];
           if ArgCount = 1 then
             C := Pop
           else
@@ -5244,7 +5389,7 @@ begin
           Self.TrapPtr^.FramePtr := Self.FramePtr;
           Self.TrapPtr^.Stack := StackPtrLocal;
           Self.TrapPtr^.Binary := BinaryPtrLocal;
-          Self.TrapPtr^.CatchCode := Integer(BinaryLocal.Ptr(CodePtrLocal + 1)^.VarPointer);
+          Self.TrapPtr^.CatchCode := Integer(BinaryLocal[CodePtrLocal + 1].VarPointer);
           Inc(CodePtrLocal, 2);
           DispatchGoto;
         end;
@@ -5265,7 +5410,7 @@ begin
             CodePtrLocal := Self.TrapPtr^.CatchCode;
             StackPtrLocal := Self.TrapPtr^.Stack;
             BinaryPtrLocal := Self.TrapPtr^.Binary;
-            BinaryLocal := Self.Binaries[BinaryPtrLocal];
+            BinaryLocal := Self.Binaries[BinaryPtrLocal].Ptr(0);
             Push(TV);
             Dec(Self.TrapPtr);
           end;
@@ -5321,7 +5466,7 @@ begin
         CodePtrLocal := Self.TrapPtr^.CatchCode;
         StackPtrLocal := Self.TrapPtr^.Stack;
         BinaryPtrLocal := Self.FramePtr^.Binary;
-        BinaryLocal := Self.Binaries[BinaryPtrLocal];
+        BinaryLocal := Self.Binaries[BinaryPtrLocal].Ptr(0);
         Push(E.Message);
         Dec(Self.TrapPtr);
         DispatchGoto;
@@ -6061,6 +6206,8 @@ begin
               Token.Kind := tkSwitch;
             'case':
               Token.Kind := tkCase;
+            'const':
+              Token.Kind := tkConst;
             'default':
               Token.Kind := tkDefault;
             'continue':
@@ -6097,6 +6244,96 @@ EndLabel:
   Self.IsLex := True;
 end;
 
+function TEvilC.FindFunc(const Name: String): Pointer; inline; overload;
+var
+  I: Integer;
+begin
+  for I := Self.FuncScriptList.Count - 1 downto 0 do
+  begin
+    Result := Self.FuncScriptList.Ptr(I);
+    if PSEFuncScriptInfo(Result)^.Name = Name then
+      Exit(Result);
+  end;
+  for I := Self.FuncImportList.Count - 1 downto 0 do
+  begin
+    Result := Self.FuncImportList.Ptr(I);
+    if PSEFuncImportInfo(Result)^.Name = Name then
+      Exit(Result);
+  end;
+  for I := Self.FuncNativeList.Count - 1 downto 0 do
+  begin
+    Result := Self.FuncNativeList.Ptr(I);
+    if PSEFuncNativeInfo(Result)^.Name = Name then
+      Exit(Result);
+  end;
+  Exit(nil);
+end;
+
+function TEvilC.FindFuncNative(const Name: String; var Ind: Integer): PSEFuncNativeInfo; inline;
+var
+  I: Integer;
+begin
+  for I := Self.FuncNativeList.Count - 1 downto 0 do
+  begin
+    Result := Self.FuncNativeList.Ptr(I);
+    if Result^.Name = Name then
+    begin
+      Ind := I;
+      Exit(Result);
+    end;
+  end;
+  Exit(nil);
+end;
+
+function TEvilC.FindFuncScript(const Name: String; var Ind: Integer): PSEFuncScriptInfo; inline;
+var
+  I: Integer;
+begin
+  for I := Self.FuncScriptList.Count - 1 downto 0 do
+  begin
+    Result := Self.FuncScriptList.Ptr(I);
+    if Result^.Name = Name then
+    begin
+      Ind := I;
+      Exit(Result);
+    end;
+  end;
+  Exit(nil);
+end;
+
+function TEvilC.FindFuncImport(const Name: String; var Ind: Integer): PSEFuncImportInfo; inline;
+var
+  I: Integer;
+begin
+  for I := Self.FuncImportList.Count - 1 downto 0 do
+  begin
+    Result := Self.FuncImportList.Ptr(I);
+    if Result^.Name = Name then
+    begin
+      Ind := I;
+      Exit(Result);
+    end;
+  end;
+  Exit(nil);
+end;
+
+function TEvilC.FindFunc(const Name: String; var Kind: TSEFuncKind; var Ind: Integer): Pointer; inline; overload;
+begin
+  Result := FindFuncScript(Name, Ind);
+  if Result = nil then
+  begin
+    Result := FindFuncNative(Name, Ind);
+    if Result = nil then
+    begin
+      Result := FindFuncImport(Name, Ind);
+      if Result <> nil then
+        Kind := sefkImport;
+    end else
+      Kind := sefkNative;
+  end else
+    Kind := sefkScript;
+end;
+
 procedure TEvilC.Parse;
 var
   Pos: Integer = -1;
@@ -6115,96 +6352,6 @@ var
       raise Exception.CreateFmt('[%d:%d] %s', [Token.Ln, Token.Col, S])
     else
       raise Exception.CreateFmt('[%s:%d:%d] %s', [Token.BelongedFileName, Token.Ln, Token.Col, S]);
-  end;
-
-  function FindFunc(const Name: String): Pointer; inline; overload;
-  var
-    I: Integer;
-  begin
-    for I := Self.FuncScriptList.Count - 1 downto 0 do
-    begin
-      Result := Self.FuncScriptList.Ptr(I);
-      if PSEFuncScriptInfo(Result)^.Name = Name then
-        Exit(Result);
-    end;
-    for I := Self.FuncImportList.Count - 1 downto 0 do
-    begin
-      Result := Self.FuncImportList.Ptr(I);
-      if PSEFuncImportInfo(Result)^.Name = Name then
-        Exit(Result);
-    end;
-    for I := Self.FuncNativeList.Count - 1 downto 0 do
-    begin
-      Result := Self.FuncNativeList.Ptr(I);
-      if PSEFuncNativeInfo(Result)^.Name = Name then
-        Exit(Result);
-    end;
-    Exit(nil);
-  end;
-
-  function FindFuncNative(const Name: String; var Ind: Integer): PSEFuncNativeInfo; inline;
-  var
-    I: Integer;
-  begin
-    for I := Self.FuncNativeList.Count - 1 downto 0 do
-    begin
-      Result := Self.FuncNativeList.Ptr(I);
-      if Result^.Name = Name then
-      begin
-        Ind := I;
-        Exit(Result);
-      end;
-    end;
-    Exit(nil);
-  end;
-
-  function FindFuncScript(const Name: String; var Ind: Integer): PSEFuncScriptInfo; inline;
-  var
-    I: Integer;
-  begin
-    for I := Self.FuncScriptList.Count - 1 downto 0 do
-    begin
-      Result := Self.FuncScriptList.Ptr(I);
-      if Result^.Name = Name then
-      begin
-        Ind := I;
-        Exit(Result);
-      end;
-    end;
-    Exit(nil);
-  end;
-
-  function FindFuncImport(const Name: String; var Ind: Integer): PSEFuncImportInfo; inline;
-  var
-    I: Integer;
-  begin
-    for I := Self.FuncImportList.Count - 1 downto 0 do
-    begin
-      Result := Self.FuncImportList.Ptr(I);
-      if Result^.Name = Name then
-      begin
-        Ind := I;
-        Exit(Result);
-      end;
-    end;
-    Exit(nil);
-  end;
-
-  function FindFunc(const Name: String; var Kind: TSEFuncKind; var Ind: Integer): Pointer; inline; overload;
-  begin
-    Result := FindFuncScript(Name, Ind);
-    if Result = nil then
-    begin
-      Result := FindFuncNative(Name, Ind);
-      if Result = nil then
-      begin
-        Result := FindFuncImport(Name, Ind);
-        if Result <> nil then
-          Kind := sefkImport;
-      end else
-        Kind := sefkNative;
-    end else
-      Kind := sefkScript;
   end;
 
   function FindVar(const Name: String): PSEIdent; inline;
@@ -6291,7 +6438,7 @@ var
     Error(Format('Expected %s but got "%s"', [TokenTypeString(Expected), TokenNames[Result.Kind]]), Result);
   end;
 
-  function CreateIdent(const Kind: TSEIdentKind; const Token: TSEToken; const IsUsed: Boolean = False): TSEIdent; inline;
+  function CreateIdent(const Kind: TSEIdentKind; const Token: TSEToken; const IsUsed: Boolean; const IsConst: Boolean): TSEIdent; inline;
   begin
     if Kind = ikVariable then
     begin
@@ -6306,6 +6453,9 @@ var
     Result.Name := Token.Value;
     Result.Local := Self.FuncTraversal;
     Result.IsUsed := IsUsed;
+    Result.IsConst := IsConst;
+    Result.ConstValue := SENull;
+    Result.IsAssigned := False;
     if Result.Local > 0 then
     begin
       Result.Addr := Self.LocalVarCountList.Last;
@@ -6442,6 +6592,7 @@ var
     TProc = TSENestedProc;
   var
     PushConstCount: Integer = 0;
+    OpCountStart: Integer;
     IsTailed: Boolean = False;
 
     procedure Logic; forward;
@@ -6476,6 +6627,20 @@ var
         Result := nil;
       end;
 
+      function OpToOp1(const Op: TSEOpcode): TSEOpcode; inline;
+      begin
+        case Op of
+          opOperatorAdd:
+            Result := opOperatorAdd1;
+          opOperatorSub:
+            Result := opOperatorSub1;
+          opOperatorMul:
+            Result := opOperatorMul1;
+          opOperatorDiv:
+            Result := opOperatorDiv1;
+        end;
+      end;
+
       function OpToOp2(const Op: TSEOpcode): TSEOpcode; inline;
       begin
         case Op of
@@ -6490,9 +6655,9 @@ var
         end;
       end;
 
-      function PeepholeOptimization: Boolean;
+      function PeepholeOp1Optimization: Boolean;
       var
-        A, B: TSEValue;
+        A: TSEValue;
         I: Integer;
         P: Pointer;
       begin
@@ -6504,39 +6669,67 @@ var
           opOperatorDiv:
             begin
               OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushGlobalVar]);
+              if OpInfoPrev1 = nil then
+                OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushLocalVar]);
+              if (OpInfoPrev1 <> nil) then
+              begin
+                if OpInfoPrev1^.Binary <> Pointer(Self.Binary) then
+                  Exit;
+                if PeekAtPrevOpExpected(0, [opPushLocalVar]) <> nil then
+                  P := Self.Binary[OpInfoPrev1^.Pos + 2].VarPointer
+                else
+                  P := Pointer($FFFFFFFF);
+                A := Self.Binary[OpInfoPrev1^.Pos + 1];
+                Op := OpToOp1(Op);
+                Self.Binary.DeleteRange(Self.Binary.Count - OpInfoPrev1^.Size, OpInfoPrev1^.Size);
+                Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
+                Emit([Pointer(Integer(Op)), A.VarPointer, Pointer(P)]);
+                Result := True;
+                PushConstCount := 0;
+              end;
+            end;
+        end;
+      end;
+
+      function PeepholeOp2Optimization: Boolean;
+      var
+        A, B: TSEValue;
+        I: Integer;
+        P, PP: Pointer;
+      begin
+        Result := False;
+        case Op of
+          opOperatorAdd,
+          opOperatorSub,
+          opOperatorMul,
+          opOperatorDiv:
+            begin
+              OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushGlobalVar]);
+              if OpInfoPrev1 = nil then
+                OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushLocalVar]);
               OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar]);
+              if OpInfoPrev2 = nil then
+                OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar]);
               if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
               begin
                 if (OpInfoPrev1^.Binary <> Pointer(Self.Binary)) or (OpInfoPrev2^.Binary <> Pointer(Self.Binary)) then
                   Exit;
+                if PeekAtPrevOpExpected(0, [opPushLocalVar]) <> nil then
+                  PP:= Self.Binary[OpInfoPrev1^.Pos + 2].VarPointer
+                else
+                  PP := Pointer($FFFFFFFF);
+                if PeekAtPrevOpExpected(1, [opPushLocalVar]) <> nil then
+                  P := Self.Binary[OpInfoPrev2^.Pos + 2].VarPointer
+                else
+                  P := Pointer($FFFFFFFF);
                 B := Self.Binary[OpInfoPrev1^.Pos + 1];
                 A := Self.Binary[OpInfoPrev2^.Pos + 1];
                 Op := OpToOp2(Op);
-                Self.Binary.DeleteRange(Self.Binary.Count - 4, 4);
+                Self.Binary.DeleteRange(Self.Binary.Count - (OpInfoPrev1^.Size + OpInfoPrev2^.Size), OpInfoPrev1^.Size + OpInfoPrev2^.Size);
                 Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
-                Emit([Pointer(Integer(Op)), A.VarPointer, B.VarPointer, Pointer($FFFFFFFF)]);
+                Emit([Pointer(Integer(Op)), A.VarPointer, B.VarPointer, Pointer(P), Pointer(PP)]);
                 Result := True;
                 PushConstCount := 0;
-              end else
-              begin
-                OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushLocalVar]);
-                OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushLocalVar]);
-                if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
-                begin
-                  if (OpInfoPrev1^.Binary <> Pointer(Self.Binary)) or (OpInfoPrev2^.Binary <> Pointer(Self.Binary)) then
-                    Exit;
-                  if Self.Binary[OpInfoPrev1^.Pos + 2].VarPointer <> Self.Binary[OpInfoPrev2^.Pos + 2].VarPointer then
-                    Exit;
-                  P := Self.Binary[OpInfoPrev1^.Pos + 2].VarPointer;
-                  B := Self.Binary[OpInfoPrev1^.Pos + 1];
-                  A := Self.Binary[OpInfoPrev2^.Pos + 1];
-                  Op := OpToOp2(Op);
-                  Self.Binary.DeleteRange(Self.Binary.Count - 6, 6);
-                  Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
-                  Emit([Pointer(Integer(Op)), A.VarPointer, B.VarPointer, Pointer(P)]);
-                  Result := True;
-                  PushConstCount := 0;
-                end;
               end;
             end;
         end;
@@ -6762,7 +6955,7 @@ var
           Emit(Data);
           Inc(PushConstCount)
         end else
-        if Self.OptimizePeephole and (PeepholeIncOptimization or PeepholeOptimization) then
+        if Self.OptimizePeephole and (PeepholeIncOptimization or PeepholeOp2Optimization or PeepholeOp1Optimization) then
         else
         if Self.OptimizeConstantFolding and (ConstantFoldingNumberOptimization or ConstantFoldingStringOptimization) then
         else
@@ -6838,7 +7031,7 @@ var
               begin
                 FuncRefToken.Value := '___f' + Self.InternalIdent;
                 FuncRefToken.Kind := tkIdent;
-                FuncRefIdent := CreateIdent(ikVariable, FuncRefToken, True);
+                FuncRefIdent := CreateIdent(ikVariable, FuncRefToken, True, False);
               end;
               IsFirst := False;
               EmitAssignVar(FuncRefIdent);
@@ -6897,34 +7090,40 @@ var
                   begin
                     Ident := FindVar(Token.Value);
                     Ident^.IsUsed := True;
-                    RewindStartAddr := Self.Binary.Count;
-                    case PeekAtNextToken.Kind of
-                      tkSquareBracketOpen:
-                        begin
-                          PushConstCount := 0;
-                          IsTailed := True;
-                          NextToken;
+                    if Ident^.IsConst and (Ident^.ConstValue.Kind <> sevkNull) then
+                    begin
+                      EmitExpr([Pointer(opPushConst), Ident^.ConstValue]);
+                    end else
+                    begin
+                      RewindStartAddr := Self.Binary.Count;
+                      case PeekAtNextToken.Kind of
+                        tkSquareBracketOpen:
+                          begin
+                            PushConstCount := 0;
+                            IsTailed := True;
+                            NextToken;
+                            EmitPushVar(Ident^);
+                            ParseExpr;
+                            Emit([Pointer(opPushArrayPop)]);
+                            NextTokenExpected([tkSquareBracketClose]);
+                            Tail;
+                            FuncTail;
+                          end;
+                        tkDot:
+                          begin
+                            PushConstCount := 0;
+                            IsTailed := True;
+                            NextToken;
+                            Token2 := NextTokenExpected([tkIdent]);
+                            EmitPushVar(Ident^);
+                            EmitExpr([Pointer(opPushConst), Token2.Value]);
+                            Emit([Pointer(opPushArrayPop)]);
+                            Tail;
+                            FuncTail;
+                          end;
+                        else
                           EmitPushVar(Ident^);
-                          ParseExpr;
-                          Emit([Pointer(opPushArrayPop)]);
-                          NextTokenExpected([tkSquareBracketClose]);
-                          Tail;
-                          FuncTail;
-                        end;
-                      tkDot:
-                        begin
-                          PushConstCount := 0;
-                          IsTailed := True;
-                          NextToken;
-                          Token2 := NextTokenExpected([tkIdent]);
-                          EmitPushVar(Ident^);
-                          EmitExpr([Pointer(opPushConst), Token2.Value]);
-                          Emit([Pointer(opPushArrayPop)]);
-                          Tail;
-                          FuncTail;
-                        end;
-                      else
-                        EmitPushVar(Ident^);
+                      end;
                     end;
                   end;
                 end;
@@ -6958,7 +7157,7 @@ var
                   begin
                     FuncRefToken.Value := '___f' + Self.InternalIdent;
                     FuncRefToken.Kind := tkIdent;
-                    FuncRefIdent := CreateIdent(ikVariable, FuncRefToken, True);
+                    FuncRefIdent := CreateIdent(ikVariable, FuncRefToken, True, False);
                     EmitAssignVar(FuncRefIdent);
                     RewindStartAddr := Self.Binary.Count;
                     EmitPushVar(FuncRefIdent);
@@ -7112,6 +7311,7 @@ var
     end;
 
   begin
+    OpCountStart := Self.OpcodeInfoList.Count;
     Logic;
   end;
 
@@ -7323,14 +7523,14 @@ var
 
       TokenResult.Value := 'result';
       TokenResult.Kind := tkIdent;
-      CreateIdent(ikVariable, TokenResult, True);
+      CreateIdent(ikVariable, TokenResult, True, False);
 
       NextTokenExpected([tkBracketOpen]);
       repeat
         if PeekAtNextToken.Kind = tkIdent then
         begin
           Token := NextTokenExpected([tkIdent]);
-          CreateIdent(ikVariable, Token);
+          CreateIdent(ikVariable, Token, False, False);
           Inc(ArgCount);
         end;
         Token := NextTokenExpected([tkComma, tkBracketClose]);
@@ -7338,7 +7538,7 @@ var
 
       Token.Value := 'self';
       Token.Kind := tkIdent;
-      CreateIdent(ikVariable, Token, True);
+      CreateIdent(ikVariable, Token, True, False);
 
       Func^.ArgCount := ArgCount;
       for I := 0 to VarSymbols.Count - 1 do
@@ -7698,7 +7898,7 @@ var
       // FIXME: tkVariable?
       if Token.Kind = tkIdent then
       begin
-        VarIdent := CreateIdent(ikVariable, Token, True);
+        VarIdent := CreateIdent(ikVariable, Token, True, False);
       end else
       begin
         VarIdent := FindVar(Token.Value)^;
@@ -7707,7 +7907,7 @@ var
 
       VarHiddenTargetName := '___t' + VarIdent.Name;
       Token.Value := VarHiddenTargetName;
-      VarHiddenTargetIdent := CreateIdent(ikVariable, Token, True);
+      VarHiddenTargetIdent := CreateIdent(ikVariable, Token, True, False);
 
       if Token.Kind = tkEqual then
       begin
@@ -7763,9 +7963,9 @@ var
           VarHiddenCountName := '___c' + VarIdent.Name;
         VarHiddenArrayName := '___a' + VarIdent.Name;
         Token.Value := VarHiddenCountName;
-        VarHiddenCountIdent := CreateIdent(ikVariable, Token, True);
+        VarHiddenCountIdent := CreateIdent(ikVariable, Token, True, False);
         Token.Value := VarHiddenArrayName;
-        VarHiddenArrayIdent := CreateIdent(ikVariable, Token, True);
+        VarHiddenArrayIdent := CreateIdent(ikVariable, Token, True, False);
 
         ParseExpr;
 
@@ -7854,7 +8054,7 @@ var
   begin
     Token.Kind := tkIdent;
     Token.Value := '___s' + Self.InternalIdent;
-    VarHiddenIdent := CreateIdent(ikVariable, Token, True);
+    VarHiddenIdent := CreateIdent(ikVariable, Token, True, False);
 
     ParseExpr;
     EmitAssignVar(VarHiddenIdent);
@@ -7948,7 +8148,7 @@ var
       begin
         FuncRefToken.Value := '___f' + Self.InternalIdent;
         FuncRefToken.Kind := tkIdent;
-        FuncRefIdent := CreateIdent(ikVariable, FuncRefToken, True);
+        FuncRefIdent := CreateIdent(ikVariable, FuncRefToken, True, False);
       end;
       EmitAssignVar(FuncRefIdent);
       RewindStartAddr := Self.Binary.Count;
@@ -7991,6 +8191,8 @@ var
     VarEndTokenPos: Integer;
   begin
     Ident := FindVar(Name);
+    if Ident^.IsAssigned and Ident^.IsConst then
+      Error(Format('Cannot reassign value to constant "%s"', [Name]), PeekAtNextToken);
     RewindStartAddr := Self.Binary.Count;
     VarStartTokenPos := Pos;
     while PeekAtNextToken.Kind in [tkSquareBracketOpen, tkDot] do
@@ -8062,6 +8264,7 @@ var
           ParseAssignTail;
         end;
     end;
+    Ident^.IsAssigned := True;
   end;
 
   procedure ParseTrap;
@@ -8087,7 +8290,7 @@ var
     PVarIdent := FindVar(Token.Value);
     if PVarIdent = nil then
     begin
-      VarIdent := CreateIdent(ikVariable, Token, True);
+      VarIdent := CreateIdent(ikVariable, Token, True, False);
       EmitAssignVar(VarIdent);
     end else
       EmitAssignVar(PVarIdent^);
@@ -8106,6 +8309,62 @@ var
     Emit([Pointer(opThrow)]);
   end;
 
+  procedure ParseIdent(const Token: TSEToken; const IsConst: Boolean);
+  var
+    OpCountBefore,
+    OpCountAfter: Integer;
+    Ident: TSEIdent;
+  begin
+    case IdentifyIdent(Token.Value) of
+      tkUnknown:
+        begin
+          NextToken;
+          CreateIdent(ikVariable, Token, False, IsConst);
+          OpCountBefore := Self.OpcodeInfoList.Count;
+          ParseVarAssign(Token.Value, True);
+          OpCountAfter := Self.OpcodeInfoList.Count;
+          if (IsConst) and
+            (Self.OptimizePeephole) and
+            ((OpCountAfter - OpCountBefore) = 2) and
+            (Self.OpcodeInfoList[OpCountAfter - 2].Op = opPushConst) and
+            ((Self.OpcodeInfoList[OpCountAfter - 1].Op = opAssignLocalVar) or (Self.OpcodeInfoList[OpCountAfter - 1].Op = opAssignGlobalVar)) and
+            (Self.Binary[Self.OpcodeInfoList[OpCountAfter - 2].Pos + 1].Kind = sevkNumber) then
+          begin
+            Ident := Self.VarList[Self.VarList.Count - 1];
+            Ident.ConstValue := Self.Binary[Self.OpcodeInfoList[OpCountAfter - 2].Pos + 1];
+            Self.VarList[Self.VarList.Count - 1] := Ident;
+            if Self.OpcodeInfoList[OpCountAfter - 1].Op = opAssignLocalVar then
+              Self.Binary.DeleteRange(Self.Binary.Count - 5, 5)
+            else
+              Self.Binary.DeleteRange(Self.Binary.Count - 4, 4);
+            Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
+          end;
+        end;
+      tkVariable:
+        begin
+          NextToken;
+          if PeekAtNextToken.Kind = tkBracketOpen then // Likely function ref
+          begin
+            ParseFuncRefCallByName(Token.Value);
+            ParseAssignTail;
+          end else
+            ParseVarAssign(Token.Value);
+        end;
+      tkFunction:
+        begin
+          if Self.OptimizeAsserts and (Token.Value = 'assert') then
+            CanEmit := False;
+          NextToken;
+          ParseFuncCall(Token.Value);
+          ParseAssignTail;
+          if Self.OptimizeAsserts and (Token.Value = 'assert') then
+            CanEmit := True;
+        end;
+      else
+        Error('Invalid statement', Token);
+    end;
+  end;
+
   procedure ParseBlock(const IsCase: Boolean = False);
   var
     Token: TSEToken;
@@ -8115,6 +8374,12 @@ var
   begin
     Token := PeekAtNextToken;
     case Token.Kind of
+      tkConst:
+        begin
+          NextToken;
+          Token := PeekAtNextTokenExpected([tkIdent]);
+          ParseIdent(Token, True);
+        end;
       tkIf:
         begin
           NextToken;
@@ -8241,36 +8506,7 @@ var
         end;
       tkIdent:
         begin
-          case IdentifyIdent(Token.Value) of
-            tkUnknown:
-              begin
-                NextToken;
-                CreateIdent(ikVariable, Token);
-                ParseVarAssign(Token.Value, True);
-              end;
-            tkVariable:
-              begin
-                NextToken;
-                if PeekAtNextToken.Kind = tkBracketOpen then // Likely function ref
-                begin
-                  ParseFuncRefCallByName(Token.Value);
-                  ParseAssignTail;
-                end else
-                  ParseVarAssign(Token.Value);
-              end;
-            tkFunction:
-              begin
-                if Self.OptimizeAsserts and (Token.Value = 'assert') then
-                  CanEmit := False;
-                NextToken;
-                ParseFuncCall(Token.Value);
-                ParseAssignTail;
-                if Self.OptimizeAsserts and (Token.Value = 'assert') then
-                  CanEmit := True;
-              end;
-            else
-              Error('Invalid statement', Token);
-          end;
+          ParseIdent(Token, False);
         end;
       tkImport:
         begin
@@ -8704,4 +8940,5 @@ finalization
   ScriptCacheMap.Free;
 
 end.
+
 
