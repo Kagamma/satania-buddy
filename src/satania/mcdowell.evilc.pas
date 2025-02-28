@@ -9005,7 +9005,6 @@ begin
 end;
 
 initialization
-  Writeln(SizeOf(TSEValue));
   InitCriticalSection(CS);
   FS := FormatSettings;
   FS.DecimalSeparator := '.';
