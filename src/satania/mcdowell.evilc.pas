@@ -29,7 +29,7 @@ unit Mcdowell.EvilC;
 {$define SE_LOG}
 // enable this if you need json support
 {.$define SE_HAS_JSON}
-// enable this if you want to include this incastle game engine's profiler report
+// enable this if you want to include this in castle game engine's profiler report
 {.$define SE_PROFILER}
 {$align 16}
 {$packenum 4}
@@ -366,6 +366,23 @@ type
     function Ptr(const P: Integer): PSEValue;
   end;
 
+  TSESymbolKind = (
+    sesConst
+  );
+
+  TSESymbol = record
+    Name: String;
+    Kind: TSESymbolKind;
+    Binary: Integer;
+    Code: Integer;
+  end;
+  PSESymbol = ^TSESymbol;
+  TSESymbolListAncestor = specialize TList<TSESymbol>;
+  TSESymbolList = class(TSESymbolListAncestor)
+  public
+    function Ptr(const P: Integer): PSESymbol;
+  end;
+
   TSELineOfCode = record
     BinaryCount: Integer;
     BinaryPtr: Integer;
@@ -417,6 +434,7 @@ type
     Parent: TEvilC;
     Binaries: array of TSEBinary;
     WaitTime: LongWord;
+    SymbolList: TSESymbolList;
 
     constructor Create;
     destructor Destroy; override;
@@ -434,6 +452,7 @@ type
     FuncScriptList: TSEFuncScriptList;
     FuncImportList: TSEFuncImportList;
     ConstStrings: TStringList;
+    SymbolList: TSESymbolList;
   end;
   TSECacheMapAncestor = specialize TDictionary<String, TSECache>;
   TSECacheMap = class(TSECacheMapAncestor)
@@ -478,6 +497,7 @@ type
     tkFunctionDecl,
     tkVariable,
     tkConst,
+    tkLocal,
     tkUnknown,
     tkElse,
     tkWhile,
@@ -509,7 +529,7 @@ const
   TokenNames: array[TSETokenKind] of String = (
     'EOF', '.', '+', '-', '*', 'div', 'mod', '^', '<<', '>>', 'operator assign', '=', '!=', '<',
     '>', '<=', '>=', '{', '}', ':', '(', ')', 'neg', 'number', 'string',
-    ',', 'if', 'switch', 'case', 'default', 'identity', 'function', 'fn', 'variable', 'const',
+    ',', 'if', 'switch', 'case', 'default', 'identity', 'function', 'fn', 'variable', 'const', 'local',
     'unknown', 'else', 'while', 'break', 'continue', 'yield',
     '[', ']', 'and', 'or', 'xor', 'not', 'for', 'in', 'to', 'downto', 'step', 'return',
     'atom', 'import', 'do', 'try', 'catch', 'throw'
@@ -522,7 +542,7 @@ const
     2, // opPushConstString,
     2, // opPushGlobalVar,
     3, // opPushLocalVar,
-    1, // opPushArrayPop,
+    2, // opPushArrayPop,
     1, // opPopConst,
     1, // opPopFrame,
     2, // opAssignGlobalVar,
@@ -680,6 +700,7 @@ type
     function FindFuncScript(const Name: String; var Ind: Integer): PSEFuncScriptInfo; inline;
     function FindFuncImport(const Name: String; var Ind: Integer): PSEFuncImportInfo; inline;
     function FindFunc(const Name: String; var Kind: TSEFuncKind; var Ind: Integer): Pointer; inline; overload;
+    procedure PatchSymbols;
 
     property IsPaused: Boolean read GetIsPaused write SetIsPaused;
     property Source: String read FSource write SetSource;
@@ -2750,6 +2771,11 @@ begin
   Result := @FItems[P];
 end;
 
+function TSESymbolList.Ptr(const P: Integer): PSESymbol; inline;
+begin
+  Result := @FItems[P];
+end;
+
 // ----- Fast inline TSEValue operations -----
 
 procedure SEValueAdd(out R: TSEValue; constref V1, V2: TSEValue); inline; overload;
@@ -3752,6 +3778,7 @@ begin
   Self.Binaries[0] := TSEBinary.Create;
   Self.ConstStrings := TStringList.Create;
   Self.ConstStrings.Capacity := 64;
+  Self.SymbolList := TSESymbolList.Create;
 end;
 
 destructor TSEVM.Destroy;
@@ -3763,6 +3790,7 @@ begin
   if VMList <> nil then
     VMList.Delete(VMList.IndexOf(Self));
   Self.ConstStrings.Free;
+  Self.SymbolList.Free;
   inherited;
 end;
 
@@ -4475,7 +4503,9 @@ begin
         end;
       {$ifdef SE_COMPUTED_GOTO}labelPushArrayPop{$else}opPushArrayPop{$endif}:
         begin
-          A := Pop;
+          A := @BinaryLocal[CodePtrLocal + 1];
+          if A^.Kind = sevkNull then
+            A := Pop;
           B := Pop;
           case B^.Kind of
             sevkString:
@@ -4489,7 +4519,7 @@ begin
             else
               Push(0);
           end;
-          Inc(CodePtrLocal);
+          Inc(CodePtrLocal, 2);
           DispatchGoto;
         end;
       {$ifdef SE_COMPUTED_GOTO}labelPopConst{$else}opPopConst{$endif}:
@@ -6236,6 +6266,8 @@ begin
               Token.Kind := tkCase;
             'const':
               Token.Kind := tkConst;
+            'local':
+              Token.Kind := tkLocal;
             'default':
               Token.Kind := tkDefault;
             'continue':
@@ -6382,7 +6414,7 @@ var
       raise Exception.CreateFmt('[%s:%d:%d] %s', [Token.BelongedFileName, Token.Ln, Token.Col, S]);
   end;
 
-  function FindVar(const Name: String): PSEIdent; inline;
+  function FindVar(const Name: String; const IsSameLocal: Boolean = False): PSEIdent; inline;
   var
     I: Integer;
   begin
@@ -6390,9 +6422,21 @@ var
     begin
       Result := Self.VarList.Ptr(I);
       if Result^.Name = Name then
-        Exit(Result);
+        if (not IsSameLocal) or (IsSameLocal and (Result^.Local = Self.FuncTraversal)) then
+          Exit(Result);
     end;
     Exit(nil);
+  end;
+
+  procedure AddSymbol(Kind: TSESymbolKind; Name: String; Code: Integer);
+  var
+    Symbol: TSESymbol;
+  begin
+    Symbol.Binary := Self.BinaryPos;
+    Symbol.Code := Code;
+    Symbol.Kind := Kind;
+    Symbol.Name := Name;
+    Self.VM.SymbolList.Add(Symbol);
   end;
 
   function PeekAtNextToken: TSEToken; inline;
@@ -6464,6 +6508,40 @@ var
       if Kind = Result.Kind then
         Exit;
     Error(Format('Expected %s but got "%s"', [TokenTypeString(Expected), TokenNames[Result.Kind]]), Result);
+  end;
+
+  function PeekAtPrevOp(const Ind: Integer): PSEOpcodeInfo; inline;
+  var
+    I: Integer;
+  begin
+    I := Self.OpcodeInfoList.Count - 1 - Ind;
+    if I >= 0 then
+      Result := Self.OpcodeInfoList.Ptr(I)
+    else
+      Result := nil;
+  end;
+
+  function PeekAtPrevOpExpected(const Ind: Integer; const Expected: TSEOpcodes): PSEOpcodeInfo; inline;
+  var
+    Op: TSEOpcode;
+  begin
+    Result := PeekAtPrevOp(Ind);
+    if Result <> nil then
+      for Op in Expected do
+        if Op = Result^.Op then
+          Exit;
+    Result := nil;
+  end;
+
+  procedure DeleteOps(const Count: Integer);
+  var
+    I: Integer;
+    Size: Integer = 0;
+  begin
+    for I := Self.OpcodeInfoList.Count - Count - 1 to Count - 1 do
+      Size := Size + Self.OpcodeInfoList.Ptr(I)^.Size;
+    Self.Binary.DeleteRange(Self.Binary.Count - Size, Size);
+    Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - Count, Count);
   end;
 
   function CreateIdent(const Kind: TSEIdentKind; const Token: TSEToken; const IsUsed: Boolean; const IsConst: Boolean): TSEIdent; inline;
@@ -6605,9 +6683,9 @@ var
     Exit(Addr + I + 1);
   end;
 
-  function IdentifyIdent(const Ident: String): TSETokenKind; inline;
+  function IdentifyIdent(const Ident: String; const IsLocal: Boolean = False): TSETokenKind; inline;
   begin
-    if FindVar(Ident) <> nil then
+    if FindVar(Ident, IsLocal) <> nil then
       Exit(tkVariable);
     if FindFunc(Ident) <> nil then
       Exit(tkFunction);
@@ -6623,6 +6701,278 @@ var
   procedure ParseArrayAssign; forward;
   procedure ParseFuncAnonDecl; forward;
 
+  function OpToOp1(const Op: TSEOpcode): TSEOpcode; inline;
+  begin
+    case Op of
+      opOperatorAdd:
+        Result := opOperatorAdd1;
+      opOperatorSub:
+        Result := opOperatorSub1;
+      opOperatorMul:
+        Result := opOperatorMul1;
+      opOperatorDiv:
+        Result := opOperatorDiv1;
+    end;
+  end;
+
+  function OpToOp2(const Op: TSEOpcode): TSEOpcode; inline;
+  begin
+    case Op of
+      opOperatorAdd:
+        Result := opOperatorAdd2;
+      opOperatorSub:
+        Result := opOperatorSub2;
+      opOperatorMul:
+        Result := opOperatorMul2;
+      opOperatorDiv:
+        Result := opOperatorDiv2;
+    end;
+  end;
+
+  function PeepholeArrayAssignOptimization: Boolean;
+  var
+    A: TSEValue;
+    Size,
+    I: Integer;
+    P: Pointer;
+    OpInfoPrev1,
+    OpInfoPrev2: PSEOpcodeInfo;
+  begin
+    Result := False;
+    if not Self.OptimizePeephole then
+      Exit;
+    OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushArrayPop]);
+    OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushConst]);
+    if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
+    begin
+      Size := OpInfoPrev1^.Size + OpInfoPrev2^.Size;
+      A := Self.Binary[OpInfoPrev2^.Pos + 1];
+      Self.Binary.DeleteRange(Self.Binary.Count - Size, Size);
+      Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
+      Emit([Pointer(opPushArrayPop), A]);
+      Result := True;
+    end;
+  end;
+
+  function PeepholeIncOptimization: Boolean;
+  var
+    A: TSEValue;
+    Size,
+    I: Integer;
+    P: Pointer;
+    VarBase, VarAddr, VarBasePush, VarBaseAddr: Pointer;
+    OpInfoPrev1,
+    OpInfoPrev2,
+    OpInfoPrev3: PSEOpcodeInfo;
+  begin
+    Result := False;
+    if not Self.OptimizePeephole then
+      Exit;
+    OpInfoPrev1 := PeekAtPrevOpExpected(0, [opAssignGlobalVar, opAssignLocalVar]);
+    OpInfoPrev2 := PeekAtPrevOpExpected(1, [opOperatorAdd0]);
+    OpInfoPrev3 := PeekAtPrevOpExpected(2, [opPushGlobalVar, opPushLocalVar]);
+    if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) and (OpInfoPrev3 <> nil) then
+    begin
+      VarBase := Self.Binary[OpInfoPrev1^.Pos + 1];
+      VarBasePush := Self.Binary[OpInfoPrev3^.Pos + 1];
+      if VarBasePush <> VarBase then
+        Exit;
+
+      if OpInfoPrev1^.Op = opAssignLocalVar then
+        VarAddr := Self.Binary[OpInfoPrev1^.Pos + 2]
+      else
+        VarAddr := Pointer($FFFFFFFF);
+      if OpInfoPrev3^.Op = opPushLocalVar then
+        VarBaseAddr := Self.Binary[OpInfoPrev3^.Pos + 2]
+      else
+        VarBaseAddr := Pointer($FFFFFFFF);
+      if VarBaseAddr <> VarAddr then
+        Exit;
+
+      A := Self.Binary[OpInfoPrev2^.Pos + 1];
+      if OpInfoPrev2^.Op = opOperatorSub then
+        A := -A;
+      Size := OpInfoPrev1^.Size + OpInfoPrev2^.Size + OpInfoPrev3^.Size;;
+      Self.Binary.DeleteRange(Self.Binary.Count - Size, Size);
+      Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 3, 3);
+      Emit([Pointer(opOperatorInc), VarBase, VarAddr, A]);
+      Result := True;
+    end;
+  end;
+
+  function PeepholeOp0Optimization(Op: TSEOpcode): Boolean;
+  var
+    A, B: TSEValue;
+    I: Integer;
+    P: Pointer;
+    OpInfoPrev1,
+    OpInfoPrev2: PSEOpcodeInfo;
+  begin
+    Result := False;
+    if not Self.OptimizePeephole then
+      Exit;
+    case Op of
+      opOperatorAdd,
+      opOperatorSub:
+        begin
+          OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
+          OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar, opPushLocalVar, opPushArrayPop]);
+          if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
+          begin
+            A := Self.Binary[OpInfoPrev1^.Pos + 1];
+            if A.Kind <> sevkNumber then
+              Exit;
+            Self.Binary.DeleteRange(Self.Binary.Count - 2, 2);
+            Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
+            if Op = opOperatorAdd then
+              Emit([Pointer(Integer(opOperatorAdd0)), A.VarNumber])
+            else
+              Emit([Pointer(Integer(opOperatorAdd0)), -A.VarNumber]);
+            Result := True;
+          end else
+          begin
+            if Op <> opOperatorAdd then
+              Exit;
+            OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushGlobalVar, opPushLocalVar]);
+            OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushConst]);
+            // TODO: Handle opPushArrayPop
+            if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
+            begin
+              A := Self.Binary[OpInfoPrev2^.Pos + 1];
+              if A.Kind <> sevkNumber then
+                Exit;
+              Self.Binary.DeleteRange(Self.Binary.Count - (OpInfoPrev1^.Size + OpInfoPrev2^.Size), 2);
+              Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 1);
+              Emit([Pointer(Integer(opOperatorAdd0)), A.VarNumber]);
+              Result := True;
+            end;
+          end;
+        end;
+      opOperatorMul:
+        begin
+          OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
+          OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar, opPushLocalVar, opPushArrayPop]);
+          if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
+          begin
+            A := Self.Binary[OpInfoPrev1^.Pos + 1];
+            if A.Kind <> sevkNumber then
+              Exit;
+            Self.Binary.DeleteRange(Self.Binary.Count - 2, 2);
+            Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
+            Emit([Pointer(Integer(opOperatorMul0)), A.VarNumber]);
+            Result := True;
+          end else
+          begin
+            OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushGlobalVar, opPushLocalVar]);
+            OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushConst]);
+            if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
+            begin
+              A := Self.Binary[OpInfoPrev2^.Pos + 1];
+              if A.Kind <> sevkNumber then
+                Exit;
+              Self.Binary.DeleteRange(Self.Binary.Count - (OpInfoPrev1^.Size + OpInfoPrev2^.Size), 2);
+              Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 1);
+              Emit([Pointer(Integer(opOperatorMul0)), A.VarNumber]);
+              Result := True;
+            end;
+          end;
+        end;
+      opOperatorDiv:
+        begin
+          OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
+          OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar, opPushLocalVar, opPushArrayPop]);
+          if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
+          begin
+            A := Self.Binary[OpInfoPrev1^.Pos + 1];
+            if A.Kind <> sevkNumber then
+              Exit;
+            Self.Binary.DeleteRange(Self.Binary.Count - 2, 2);
+            Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
+            Emit([Pointer(Integer(opOperatorDiv0)), A.VarNumber]);
+            Result := True;
+          end;
+        end;
+    end;
+  end;
+
+  function PeepholeOp1Optimization(Op: TSEOpcode): Boolean;
+  var
+    A: TSEValue;
+    I: Integer;
+    P: Pointer;
+    OpInfoPrev1,
+    OpInfoPrev2: PSEOpcodeInfo;
+  begin
+    Result := False;
+    if not Self.OptimizePeephole then
+      Exit;
+    case Op of
+      opOperatorAdd,
+      opOperatorSub,
+      opOperatorMul,
+      opOperatorDiv:
+        begin
+          OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushGlobalVar, opPushLocalVar]);
+          if (OpInfoPrev1 <> nil) then
+          begin
+            if OpInfoPrev1^.Op = opPushLocalVar then
+              P := Self.Binary[OpInfoPrev1^.Pos + 2].VarPointer
+            else
+              P := Pointer($FFFFFFFF);
+            A := Self.Binary[OpInfoPrev1^.Pos + 1];
+            Op := OpToOp1(Op);
+            Self.Binary.DeleteRange(Self.Binary.Count - OpInfoPrev1^.Size, OpInfoPrev1^.Size);
+            Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
+            Emit([Pointer(Integer(Op)), A.VarPointer, Pointer(P)]);
+            Result := True;
+          end;
+        end;
+    end;
+  end;
+
+  function PeepholeOp2Optimization(Op: TSEOpcode): Boolean;
+  var
+    A, B: TSEValue;
+    I: Integer;
+    P, PP: Pointer;
+    OpInfoPrev1,
+    OpInfoPrev2: PSEOpcodeInfo;
+  begin
+    Result := False;
+    if not Self.OptimizePeephole then
+      Exit;
+    case Op of
+      opOperatorAdd,
+      opOperatorSub,
+      opOperatorMul,
+      opOperatorDiv:
+        begin
+          OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushGlobalVar, opPushLocalVar]);
+          OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar, opPushLocalVar]);
+          if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
+          begin
+            if (OpInfoPrev1^.Binary <> Pointer(Self.Binary)) or (OpInfoPrev2^.Binary <> Pointer(Self.Binary)) then
+              Exit;
+            if OpInfoPrev1^.Op = opPushLocalVar then
+              PP:= Self.Binary[OpInfoPrev1^.Pos + 2].VarPointer
+            else
+              PP := Pointer($FFFFFFFF);
+            if OpInfoPrev2^.Op = opPushLocalVar then
+              P := Self.Binary[OpInfoPrev2^.Pos + 2].VarPointer
+            else
+              P := Pointer($FFFFFFFF);
+            B := Self.Binary[OpInfoPrev1^.Pos + 1];
+            A := Self.Binary[OpInfoPrev2^.Pos + 1];
+            Op := OpToOp2(Op);
+            Self.Binary.DeleteRange(Self.Binary.Count - (OpInfoPrev1^.Size + OpInfoPrev2^.Size), OpInfoPrev1^.Size + OpInfoPrev2^.Size);
+            Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
+            Emit([Pointer(Integer(Op)), A.VarPointer, B.VarPointer, Pointer(P), Pointer(PP)]);
+            Result := True;
+          end;
+        end;
+    end;
+  end;
+
   procedure ParseExpr;
   type
     TProc = TSENestedProc;
@@ -6637,253 +6987,12 @@ var
     var
       Op: TSEOpcode;
       V1, V2, V: TSEValue;
-      OpInfoPrev1,
-      OpInfoPrev2: PSEOpcodeInfo;
-
-      function PeekAtPrevOp(const Ind: Integer): PSEOpcodeInfo; inline;
-      var
-        I: Integer;
-      begin
-        I := Self.OpcodeInfoList.Count - 1 - Ind;
-        if I >= 0 then
-          Result := Self.OpcodeInfoList.Ptr(I)
-        else
-          Result := nil;
-      end;
-
-      function PeekAtPrevOpExpected(const Ind: Integer; const Expected: TSEOpcodes): PSEOpcodeInfo; inline;
-      var
-        Op: TSEOpcode;
-      begin
-        Result := PeekAtPrevOp(Ind);
-        if Result <> nil then
-          for Op in Expected do
-            if Op = Result^.Op then
-              Exit;
-        Result := nil;
-      end;
-
-      function OpToOp1(const Op: TSEOpcode): TSEOpcode; inline;
-      begin
-        case Op of
-          opOperatorAdd:
-            Result := opOperatorAdd1;
-          opOperatorSub:
-            Result := opOperatorSub1;
-          opOperatorMul:
-            Result := opOperatorMul1;
-          opOperatorDiv:
-            Result := opOperatorDiv1;
-        end;
-      end;
-
-      function OpToOp2(const Op: TSEOpcode): TSEOpcode; inline;
-      begin
-        case Op of
-          opOperatorAdd:
-            Result := opOperatorAdd2;
-          opOperatorSub:
-            Result := opOperatorSub2;
-          opOperatorMul:
-            Result := opOperatorMul2;
-          opOperatorDiv:
-            Result := opOperatorDiv2;
-        end;
-      end;
-
-      function PeepholeOp1Optimization: Boolean;
-      var
-        A: TSEValue;
-        I: Integer;
-        P: Pointer;
-      begin
-        Result := False;
-        case Op of
-          opOperatorAdd,
-          opOperatorSub,
-          opOperatorMul,
-          opOperatorDiv:
-            begin
-              OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushGlobalVar]);
-              if OpInfoPrev1 = nil then
-                OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushLocalVar]);
-              if (OpInfoPrev1 <> nil) then
-              begin
-                if OpInfoPrev1^.Binary <> Pointer(Self.Binary) then
-                  Exit;
-                if PeekAtPrevOpExpected(0, [opPushLocalVar]) <> nil then
-                  P := Self.Binary[OpInfoPrev1^.Pos + 2].VarPointer
-                else
-                  P := Pointer($FFFFFFFF);
-                A := Self.Binary[OpInfoPrev1^.Pos + 1];
-                Op := OpToOp1(Op);
-                Self.Binary.DeleteRange(Self.Binary.Count - OpInfoPrev1^.Size, OpInfoPrev1^.Size);
-                Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
-                Emit([Pointer(Integer(Op)), A.VarPointer, Pointer(P)]);
-                Result := True;
-                PushConstCount := 0;
-              end;
-            end;
-        end;
-      end;
-
-      function PeepholeOp2Optimization: Boolean;
-      var
-        A, B: TSEValue;
-        I: Integer;
-        P, PP: Pointer;
-      begin
-        Result := False;
-        case Op of
-          opOperatorAdd,
-          opOperatorSub,
-          opOperatorMul,
-          opOperatorDiv:
-            begin
-              OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushGlobalVar]);
-              if OpInfoPrev1 = nil then
-                OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushLocalVar]);
-              OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar]);
-              if OpInfoPrev2 = nil then
-                OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushLocalVar]);
-              if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
-              begin
-                if (OpInfoPrev1^.Binary <> Pointer(Self.Binary)) or (OpInfoPrev2^.Binary <> Pointer(Self.Binary)) then
-                  Exit;
-                if PeekAtPrevOpExpected(0, [opPushLocalVar]) <> nil then
-                  PP:= Self.Binary[OpInfoPrev1^.Pos + 2].VarPointer
-                else
-                  PP := Pointer($FFFFFFFF);
-                if PeekAtPrevOpExpected(1, [opPushLocalVar]) <> nil then
-                  P := Self.Binary[OpInfoPrev2^.Pos + 2].VarPointer
-                else
-                  P := Pointer($FFFFFFFF);
-                B := Self.Binary[OpInfoPrev1^.Pos + 1];
-                A := Self.Binary[OpInfoPrev2^.Pos + 1];
-                Op := OpToOp2(Op);
-                Self.Binary.DeleteRange(Self.Binary.Count - (OpInfoPrev1^.Size + OpInfoPrev2^.Size), OpInfoPrev1^.Size + OpInfoPrev2^.Size);
-                Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 2);
-                Emit([Pointer(Integer(Op)), A.VarPointer, B.VarPointer, Pointer(P), Pointer(PP)]);
-                Result := True;
-                PushConstCount := 0;
-              end;
-            end;
-        end;
-      end;
-
-      function PeepholeOp0Optimization: Boolean;
-      var
-        A, B: TSEValue;
-        I: Integer;
-        P: Pointer;
-      begin
-        Result := False;
-        case Op of
-          opOperatorAdd,
-          opOperatorSub:
-            begin
-              OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
-              OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar]);
-              if OpInfoPrev2 = nil then
-                OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushLocalVar]);
-              if OpInfoPrev2 = nil then
-                OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushArrayPop]);
-              if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
-              begin
-                A := Self.Binary[OpInfoPrev1^.Pos + 1];
-                if A.Kind <> sevkNumber then
-                  Exit;
-                Self.Binary.DeleteRange(Self.Binary.Count - 2, 2);
-                Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
-                if Op = opOperatorAdd then
-                  Emit([Pointer(Integer(opOperatorAdd0)), A.VarNumber])
-                else
-                  Emit([Pointer(Integer(opOperatorAdd0)), -A.VarNumber]);
-                Result := True;
-                PushConstCount := 0;
-              end else
-              begin
-                if Op <> opOperatorAdd then
-                  Exit;
-                OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushGlobalVar]);
-                OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushConst]);
-                if OpInfoPrev1 = nil then
-                  OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushLocalVar]);
-                // TODO: Handle opPushArrayPop
-                if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
-                begin
-                  A := Self.Binary[OpInfoPrev2^.Pos + 1];
-                  if A.Kind <> sevkNumber then
-                    Exit;
-                  Self.Binary.DeleteRange(Self.Binary.Count - (OpInfoPrev1^.Size + OpInfoPrev2^.Size), 2);
-                  Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 1);
-                  Emit([Pointer(Integer(opOperatorAdd0)), A.VarNumber]);
-                  Result := True;
-                  PushConstCount := 0;
-                end;
-              end;
-            end;
-          opOperatorMul:
-            begin
-              OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
-              OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar]);
-              if OpInfoPrev2 = nil then
-                OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushLocalVar]);
-              if OpInfoPrev2 = nil then
-                OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushArrayPop]);
-              if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
-              begin
-                A := Self.Binary[OpInfoPrev1^.Pos + 1];
-                if A.Kind <> sevkNumber then
-                  Exit;
-                Self.Binary.DeleteRange(Self.Binary.Count - 2, 2);
-                Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
-                Emit([Pointer(Integer(opOperatorMul0)), A.VarNumber]);
-                Result := True;
-                PushConstCount := 0;
-              end else
-              begin
-                OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushGlobalVar]);
-                OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushConst]);
-                if OpInfoPrev1 = nil then
-                  OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushLocalVar]);
-                if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
-                begin
-                  A := Self.Binary[OpInfoPrev2^.Pos + 1];
-                  if A.Kind <> sevkNumber then
-                    Exit;
-                  Self.Binary.DeleteRange(Self.Binary.Count - (OpInfoPrev1^.Size + OpInfoPrev2^.Size), 2);
-                  Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 2, 1);
-                  Emit([Pointer(Integer(opOperatorMul0)), A.VarNumber]);
-                  Result := True;
-                  PushConstCount := 0;
-                end;
-              end;
-            end;
-          opOperatorDiv:
-            begin
-              OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
-              OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar]);
-              if OpInfoPrev2 = nil then
-                OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushLocalVar]);
-              if OpInfoPrev2 = nil then
-                OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushArrayPop]);
-              if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
-              begin
-                A := Self.Binary[OpInfoPrev1^.Pos + 1];
-                if A.Kind <> sevkNumber then
-                  Exit;
-                Self.Binary.DeleteRange(Self.Binary.Count - 2, 2);
-                Self.OpcodeInfoList.DeleteRange(Self.OpcodeInfoList.Count - 1, 1);
-                Emit([Pointer(Integer(opOperatorDiv0)), A.VarNumber]);
-                Result := True;
-                PushConstCount := 0;
-              end;
-            end;
-        end;
-      end;
 
       function ConstantFoldingNumberOptimization: Boolean;
+      var
+        OpInfoPrev1,
+        OpInfoPrev2: PSEOpcodeInfo;
+
         function SameKind: Boolean; inline;
         begin
           V2 := Self.Binary[Self.Binary.Count - 1];
@@ -7012,6 +7121,8 @@ var
       function ConstantFoldingStringOptimization: Boolean;
       var
         S1, S2: String;
+        OpInfoPrev1,
+        OpInfoPrev2: PSEOpcodeInfo;
         function SameKind: Boolean; inline;
         begin
           S2 := Self.VM.ConstStrings[Integer(Self.Binary[Self.Binary.Count - 1].VarPointer)];
@@ -7048,7 +7159,8 @@ var
           Emit(Data);
           Inc(PushConstCount)
         end else
-        if Self.OptimizePeephole and (PeepholeOp0Optimization or PeepholeOp2Optimization or PeepholeOp1Optimization) then
+        if (PeepholeOp0Optimization(Op) or PeepholeOp2Optimization(Op) or PeepholeOp1Optimization(Op)) then
+          PushConstCount := 0
         else
         if Self.OptimizeConstantFolding and (ConstantFoldingNumberOptimization or ConstantFoldingStringOptimization) then
         else
@@ -7079,7 +7191,8 @@ var
             NextToken;
             ParseExpr;
             NextTokenExpected([tkSquareBracketClose]);
-            EmitExpr([Pointer(opPushArrayPop)]);
+            EmitExpr([Pointer(opPushArrayPop), SENull]);
+            PeepholeArrayAssignOptimization;
             Tail;
           end;
         tkDot:
@@ -7088,8 +7201,7 @@ var
             IsTailed := True;
             NextToken;
             Token := NextTokenExpected([tkIdent]);
-            EmitExpr([Pointer(opPushConst), Token.Value]);
-            EmitExpr([Pointer(opPushArrayPop)]);
+            EmitExpr([Pointer(opPushArrayPop), Token.Value]);
             Tail;
           end;
       end;
@@ -7197,7 +7309,8 @@ var
                             NextToken;
                             EmitPushVar(Ident^);
                             ParseExpr;
-                            Emit([Pointer(opPushArrayPop)]);
+                            Emit([Pointer(opPushArrayPop), SENull]);
+                            PeepholeArrayAssignOptimization;
                             NextTokenExpected([tkSquareBracketClose]);
                             Tail;
                             FuncTail;
@@ -7209,8 +7322,7 @@ var
                             NextToken;
                             Token2 := NextTokenExpected([tkIdent]);
                             EmitPushVar(Ident^);
-                            EmitExpr([Pointer(opPushConst), Token2.Value]);
-                            Emit([Pointer(opPushArrayPop)]);
+                            Emit([Pointer(opPushArrayPop), Token2.Value]);
                             Tail;
                             FuncTail;
                           end;
@@ -7224,6 +7336,7 @@ var
                 begin
                   NextToken;
                   EmitExpr([Pointer(opPushConst), Self.ConstMap[Token.Value]]);
+                  AddSymbol(sesConst, Token.Value, Self.Binary.Count - 1);
                 end;
               tkFunction:
                 begin
@@ -8071,7 +8184,8 @@ var
 
         EmitPushVar(VarHiddenArrayIdent);
         EmitPushVar(VarHiddenCountIdent);
-        Emit([Pointer(opPushArrayPop)]);
+        Emit([Pointer(opPushArrayPop), SENull]);
+        PeepholeArrayAssignOptimization;
         EmitAssignVar(VarIdent);
 
         ParseBlock;
@@ -8246,14 +8360,14 @@ var
               NextToken;
               ParseExpr;
               NextTokenExpected([tkSquareBracketClose]);
-              Emit([Pointer(opPushArrayPop)]);
+              Emit([Pointer(opPushArrayPop), SENull]);
+              PeepholeArrayAssignOptimization;
             end;
           tkDot:
             begin
               NextToken;
               Token := NextTokenExpected([tkIdent]);
-              Emit([Pointer(opPushConst), Token.Value]);
-              Emit([Pointer(opPushArrayPop)]);
+              Emit([Pointer(opPushArrayPop), Token.Value]);
             end;
         end;
       end;
@@ -8327,19 +8441,26 @@ var
           begin
             case Token.Value of
               '+':
-                Emit([Pointer(opOperatorAdd)]);
+                if not (PeepholeOp0Optimization(opOperatorAdd) or PeepholeOp2Optimization(opOperatorAdd) or PeepholeOp1Optimization(opOperatorAdd)) then
+                  Emit([Pointer(opOperatorAdd)]);
               '-':
-                Emit([Pointer(opOperatorSub)]);
+                if not (PeepholeOp0Optimization(opOperatorSub) or PeepholeOp2Optimization(opOperatorSub) or PeepholeOp1Optimization(opOperatorSub)) then
+                  Emit([Pointer(opOperatorSub)]);
               '*':
-                Emit([Pointer(opOperatorMul)]);
+                if not (PeepholeOp0Optimization(opOperatorMul) or PeepholeOp2Optimization(opOperatorMul) or PeepholeOp1Optimization(opOperatorMul)) then
+                  Emit([Pointer(opOperatorMul)]);
               '/':
-                Emit([Pointer(opOperatorDiv)]);
+                if not (PeepholeOp0Optimization(opOperatorDiv) or PeepholeOp2Optimization(opOperatorDiv) or PeepholeOp1Optimization(opOperatorDiv)) then
+                  Emit([Pointer(opOperatorDiv)]);
             end;
           end;
           if ArgCount > 0 then
             EmitAssignArray(Ident^, ArgCount)
           else
+          begin
             EmitAssignVar(Ident^);
+            PeepholeIncOptimization;
+          end;
         end;
       tkBracketOpen:
         begin
@@ -8394,13 +8515,13 @@ var
     Emit([Pointer(opThrow)]);
   end;
 
-  procedure ParseIdent(const Token: TSEToken; const IsConst: Boolean);
+  procedure ParseIdent(const Token: TSEToken; const IsConst, IsLocal: Boolean);
   var
     OpCountBefore,
     OpCountAfter: Integer;
     Ident: TSEIdent;
   begin
-    case IdentifyIdent(Token.Value) of
+    case IdentifyIdent(Token.Value, IsLocal) of
       tkUnknown:
         begin
           NextToken;
@@ -8452,6 +8573,7 @@ var
 
   procedure ParseBlock(const IsCase: Boolean = False);
   var
+    IsConst: Boolean = False;
     Token: TSEToken;
     Ident: TSEIdent;
     List: TList;
@@ -8463,7 +8585,18 @@ var
         begin
           NextToken;
           Token := PeekAtNextTokenExpected([tkIdent]);
-          ParseIdent(Token, True);
+          ParseIdent(Token, True, False);
+        end;
+      tkLocal:
+        begin
+          NextToken;
+          if PeekAtNextToken.Kind = tkConst then
+          begin
+            IsConst := True;
+            NextToken;
+          end;
+          Token := PeekAtNextTokenExpected([tkIdent]);
+          ParseIdent(Token, IsConst, True);
         end;
       tkIf:
         begin
@@ -8591,7 +8724,7 @@ var
         end;
       tkIdent:
         begin
-          ParseIdent(Token, False);
+          ParseIdent(Token, False, False);
         end;
       tkImport:
         begin
@@ -8898,6 +9031,7 @@ begin
   Result.FuncImportList := TSEFuncImportList.Create;
   Result.GlobalVarSymbols := TStringList.Create;
   Result.ConstStrings := TStringList.Create;
+  Result.SymbolList := TSESymbolList.Create;
   SetLength(Result.Binaries, Length(Self.VM.Binaries));
   for J := 0 to High(Self.VM.Binaries) do
   begin
@@ -8924,6 +9058,10 @@ begin
   begin
     Result.FuncImportList.Add(Self.FuncImportList[I]);
   end;
+  for I := 0 to Self.VM.SymbolList.Count - 1 do
+  begin
+    Result.SymbolList.Add(Self.VM.SymbolList[I]);
+  end;
   Result.GlobalVarSymbols.Assign(Self.GlobalVarSymbols);
   Result.GlobalVarCount := Self.GlobalVarCount;
   Result.ConstStrings.Assign(Self.VM.ConstStrings);
@@ -8936,6 +9074,7 @@ var
   FuncScriptInfo: TSEFuncScriptInfo;
 begin
   Self.VM.BinaryClear;
+  Self.VM.SymbolList.Clear;
   Self.LineOfCodeList.Clear;
   Self.GlobalVarSymbols.Clear;
   for I := 0 to Cache.LineOfCodeList.Count - 1 do
@@ -8958,10 +9097,31 @@ begin
   end;
   for I := 0 to Cache.FuncImportList.Count - 1 do
     Self.FuncImportList.Add(Cache.FuncImportList[I]);
+  for I := 0 to Cache.SymbolList.Count - 1 do
+    Self.VM.SymbolList.Add(Cache.SymbolList[I]);
   Self.GlobalVarSymbols.Assign(Cache.GlobalVarSymbols);
   Self.GlobalVarCount := Cache.GlobalVarCount;
   Self.VM.ConstStrings.Assign(Cache.ConstStrings);
   Self.IsParsed := True;
+end;
+
+procedure TEvilC.PatchSymbols;
+var
+  I: Integer;
+  P: PSESymbol;
+  Bin: TSEBinary;
+begin
+  for I := 0 to Self.VM.SymbolList - 1 do
+  begin
+    P := Self.VM.SymbolList.Ptr(I);
+    case P^.Kind of
+      sesConst:
+        begin
+          Bin := Self.VM.Binaries[P^.Binary];
+          Bin[P^.Code] := Self.ConstMap[P^.Name];
+        end;
+    end;
+  end;
 end;
 
 procedure TSECacheMap.ClearSingle(const AName: String);
@@ -8980,6 +9140,7 @@ begin
     Cache.FuncImportList.Free;
     Cache.GlobalVarSymbols.Free;
     Cache.ConstStrings.Free;
+    Cache.SymbolList.Free;
     Self.Remove(AName);
   except
   end;
@@ -9001,6 +9162,7 @@ begin
     Cache.FuncImportList.Free;
     Cache.GlobalVarSymbols.Free;
     Cache.ConstStrings.Free;
+    Cache.SymbolList.Free;
   end;
   inherited;
 end;
