@@ -115,6 +115,8 @@ type
     opCallImport,
     opYield,
     opHlt,
+    opWait,
+    opWaiting,
 
     opPushTrap,
     opPopTrap,
@@ -415,6 +417,7 @@ type
   TEvilC = class;
   TSEVM = class
   public
+    WaitTime: QWord;
     IsPaused: Boolean;
     IsDone: Boolean;
     IsYielded: Boolean;
@@ -433,7 +436,6 @@ type
     TrapSize: Integer;
     Parent: TEvilC;
     Binaries: array of TSEBinary;
-    WaitTime: LongWord;
     SymbolList: TSESymbolList;
 
     constructor Create;
@@ -504,6 +506,7 @@ type
     tkBreak,
     tkContinue,
     tkYield,
+    tkWait,
     tkSquareBracketOpen,
     tkSquareBracketClose,
     tkAnd,
@@ -530,7 +533,7 @@ const
     'EOF', '.', '+', '-', '*', 'div', 'mod', '^', '<<', '>>', 'operator assign', '=', '!=', '<',
     '>', '<=', '>=', '{', '}', ':', '(', ')', 'neg', 'number', 'string',
     ',', 'if', 'switch', 'case', 'default', 'identity', 'function', 'fn', 'variable', 'const', 'local',
-    'unknown', 'else', 'while', 'break', 'continue', 'yield',
+    'unknown', 'else', 'while', 'break', 'continue', 'yield', 'wait',
     '[', ']', 'and', 'or', 'xor', 'not', 'for', 'in', 'to', 'downto', 'step', 'return',
     'atom', 'import', 'do', 'try', 'catch', 'throw'
   );
@@ -596,6 +599,8 @@ const
     4, // opCallImport,
     1, // opYield,
     1, // opHlt,
+    1, // opWait,
+    1, // opWaiting,
 
     2, // opPushTrap,
     1, // opPopTrap,
@@ -829,7 +834,6 @@ type
     class function SESet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
     class function SEString(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
     class function SENumber(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
-    class function SEWait(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
     class function SELength(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
     class function SEMapCreate(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
     class function SEMapKeyDelete(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
@@ -1809,12 +1813,6 @@ end;
 class function TBuiltInFunction.SENumber(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
 begin
   Exit(PointStrToFloat(Trim(Args[0])));
-end;
-
-class function TBuiltInFunction.SEWait(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
-begin
-  VM.WaitTime := GetTickCount64 + Round(Args[0].VarNumber * 1000);
-  Result := SENull;
 end;
 
 class function TBuiltInFunction.SELength(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
@@ -4228,13 +4226,6 @@ var
 {$ifdef SE_COMPUTED_GOTO}
   {$if defined(CPUX86_64) or defined(CPUi386)}
     {$define DispatchGoto :=
-      if Self.IsPaused or Self.IsWaited then
-      begin
-        Self.CodePtr := CodePtrLocal;
-        Self.StackPtr := StackPtrLocal;
-        Self.BinaryPtr := BinaryPtrLocal;
-        Exit;
-      end;
       P := DispatchTable[TSEOpcode(Integer(BinaryLocal[CodePtrLocal].VarPointer))];
       asm
         jmp P;
@@ -4242,13 +4233,6 @@ var
     }
   {$elseif defined(CPUARM) or defined(CPUAARCH64)}
     {$define DispatchGoto :=
-      if Self.IsPaused or Self.IsWaited then
-      begin
-        Self.CodePtr := CodePtrLocal;
-        Self.StackPtr := StackPtrLocal;
-        Self.BinaryPtr := BinaryPtrLocal;
-        Exit;
-      end;
       P := DispatchTable[TSEOpcode(Integer(BinaryLocal[CodePtrLocal].VarPointer))];
       asm
         b P;
@@ -4320,6 +4304,8 @@ label
   labelCallImport,
   labelYield,
   labelHlt,
+  labelWait,
+  labelWaiting,
   labelPushTrap,
   labelPopTrap,
   labelThrow
@@ -4386,6 +4372,8 @@ var
     @labelCallImport,
     @labelYield,
     @labelHlt,
+    @labelWait,
+    @labelWaiting,
 
     @labelPushTrap,
     @labelPopTrap,
@@ -5106,6 +5094,22 @@ begin
           CallImportFunc;
           DispatchGoto;
         end;
+      {$ifdef SE_COMPUTED_GOTO}labelWait{$else}opWait{$endif}:
+        begin
+          Self.WaitTime := GetTickCount64 + Round(Pop^.VarNumber * 1000);
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
+      {$ifdef SE_COMPUTED_GOTO}labelWaiting{$else}opWaiting{$endif}:
+        begin
+          Self.CodePtr := CodePtrLocal;
+          Self.StackPtr := StackPtrLocal;
+          Self.BinaryPtr := BinaryPtrLocal;
+          if IsWaited then
+            Break;
+          Inc(CodePtrLocal);
+          DispatchGoto;
+        end;
       {$ifndef SE_COMPUTED_GOTO}
       end;
       if Self.IsPaused or Self.IsWaited then
@@ -5167,8 +5171,6 @@ begin
   Self.CodePtr := CodePtrLocal;
   Self.StackPtr := StackPtrLocal;
   Self.BinaryPtr := BinaryPtrLocal;
-  Self.IsDone := True;
-  Self.Parent.IsDone := True;
 end;
 
 constructor TEvilC.Create;
@@ -5250,7 +5252,6 @@ begin
   Self.RegisterFunc('set', @TBuiltInFunction(nil).SESet, 2);
   Self.RegisterFunc('string', @TBuiltInFunction(nil).SEString, 1);
   Self.RegisterFunc('number', @TBuiltInFunction(nil).SENumber, 1);
-  Self.RegisterFunc('wait', @TBuiltInFunction(nil).SEWait, 1);
   Self.RegisterFunc('length', @TBuiltInFunction(nil).SELength, 1);
   Self.RegisterFunc('map_create', @TBuiltInFunction(nil).SEMapCreate, -1);
   Self.RegisterFunc('___map_create', @TBuiltInFunction(nil).SEMapCreate, -1);
@@ -5614,6 +5615,17 @@ begin
                     NextChar;
                     Token.Value := Token.Value + #9;
                   end else
+                  if (C = 'x') or (C = 'u') then
+                  begin
+                    NextChar;
+                    if not (PeekAtNextChar in ['0'..'9', 'A'..'F', 'a'..'f']) then
+                      Error('Invalid number');
+                    while PeekAtNextChar in ['0'..'9', 'A'..'F', 'a'..'f'] do
+                    begin
+                      Token.Value := Token.Value + NextChar;
+                    end;
+                    Token.Value := UTF8Encode(UnicodeChar(Hex2Dec64(Token.Value)));
+                  end else
                   if C <> #0 then
                   begin
                     Token.Value := Token.Value + NextChar;
@@ -5908,6 +5920,8 @@ begin
               Token.Kind := tkBreak;
             'yield':
               Token.Kind := tkYield;
+            'wait':
+              Token.Kind := tkWait;
             'return':
               Token.Kind := tkReturn;
             'fn':
@@ -6448,7 +6462,13 @@ var
       opOperatorSub:
         begin
           OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
-          OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar, opPushLocalVar, opPushArrayPop, opCallScript, opCallNative, opCallImport]);
+          OpInfoPrev2 := PeekAtPrevOpExpected(1, [
+            opPushGlobalVar, opPushLocalVar, opPushArrayPop,
+            opOperatorAdd0, opOperatorMul0, opOperatorDiv0,
+            opOperatorAdd1, opOperatorSub1, opOperatorMul1, opOperatorDiv1,
+            opOperatorAdd2, opOperatorSub2, opOperatorMul2, opOperatorDiv2,
+            opCallScript, opCallNative, opCallImport
+          ]);
           if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
           begin
             A := Self.Binary[OpInfoPrev1^.Pos + 1];
@@ -6483,7 +6503,13 @@ var
       opOperatorMul:
         begin
           OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
-          OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar, opPushLocalVar, opPushArrayPop, opCallScript, opCallNative, opCallImport]);
+          OpInfoPrev2 := PeekAtPrevOpExpected(1, [
+            opPushGlobalVar, opPushLocalVar, opPushArrayPop,
+            opOperatorAdd0, opOperatorMul0, opOperatorDiv0,
+            opOperatorAdd1, opOperatorSub1, opOperatorMul1, opOperatorDiv1,
+            opOperatorAdd2, opOperatorSub2, opOperatorMul2, opOperatorDiv2,
+            opCallScript, opCallNative, opCallImport
+          ]);
           if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
           begin
             A := Self.Binary[OpInfoPrev1^.Pos + 1];
@@ -6512,7 +6538,13 @@ var
       opOperatorDiv:
         begin
           OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
-          OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar, opPushLocalVar, opPushArrayPop, opCallScript, opCallNative, opCallImport]);
+          OpInfoPrev2 := PeekAtPrevOpExpected(1, [
+            opPushGlobalVar, opPushLocalVar,
+            opOperatorAdd0, opOperatorMul0, opOperatorDiv0,
+            opOperatorAdd1, opOperatorSub1, opOperatorMul1, opOperatorDiv1,
+            opOperatorAdd2, opOperatorSub2, opOperatorMul2, opOperatorDiv2,
+            opPushArrayPop, opCallScript, opCallNative, opCallImport
+          ]);
           if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
           begin
             A := Self.Binary[OpInfoPrev1^.Pos + 1];
@@ -6603,6 +6635,37 @@ var
           end;
         end;
     end;
+  end;
+
+  function PeepholeOpXOptimization(Op: TSEOpcode): Boolean;
+  var
+    IsOptimized: Boolean;
+  begin
+    Result := False;
+    repeat
+      IsOptimized := False;
+      IsOptimized := PeepholeOp0Optimization(Op);
+      if IsOptimized then
+      begin
+        Result := True;
+        Op := PeekAtPrevOp(0)^.Op;
+        continue;
+      end;
+      IsOptimized := PeepholeOp2Optimization(Op);
+      if IsOptimized then
+      begin
+        Result := True;
+        Op := PeekAtPrevOp(0)^.Op;
+        continue;
+      end;
+      IsOptimized := PeepholeOp1Optimization(Op);
+      if IsOptimized then
+      begin
+        Result := True;
+        Op := PeekAtPrevOp(0)^.Op;
+        continue;
+      end;
+    until not IsOptimized;
   end;
 
   procedure ParseExpr;
@@ -6791,7 +6854,7 @@ var
           Emit(Data);
           Inc(PushConstCount)
         end else
-        if (PeepholeOp0Optimization(Op) or PeepholeOp2Optimization(Op) or PeepholeOp1Optimization(Op)) then
+        if (PeepholeOp0Optimization(Op) or PeepholeOpXOptimization(Op)) then
           PushConstCount := 0
         else
         if Self.OptimizeConstantFolding and (ConstantFoldingNumberOptimization or ConstantFoldingStringOptimization) then
@@ -8073,16 +8136,16 @@ var
           begin
             case Token.Value of
               '+':
-                if not (PeepholeOp0Optimization(opOperatorAdd) or PeepholeOp2Optimization(opOperatorAdd) or PeepholeOp1Optimization(opOperatorAdd)) then
+                if not PeepholeOpXOptimization(opOperatorAdd) then
                   Emit([Pointer(opOperatorAdd)]);
               '-':
-                if not (PeepholeOp0Optimization(opOperatorSub) or PeepholeOp2Optimization(opOperatorSub) or PeepholeOp1Optimization(opOperatorSub)) then
+                if not PeepholeOpXOptimization(opOperatorSub) then
                   Emit([Pointer(opOperatorSub)]);
               '*':
-                if not (PeepholeOp0Optimization(opOperatorMul) or PeepholeOp2Optimization(opOperatorMul) or PeepholeOp1Optimization(opOperatorMul)) then
+                if not PeepholeOpXOptimization(opOperatorMul) then
                   Emit([Pointer(opOperatorMul)]);
               '/':
-                if not (PeepholeOp0Optimization(opOperatorDiv) or PeepholeOp2Optimization(opOperatorDiv) or PeepholeOp1Optimization(opOperatorDiv)) then
+                if not PeepholeOpXOptimization(opOperatorDiv) then
                   Emit([Pointer(opOperatorDiv)]);
             end;
           end;
@@ -8320,6 +8383,14 @@ var
             NextTokenExpected([tkBracketClose]);
           end;
           Emit([Pointer(opYield)]);
+        end;
+      tkWait:
+        begin
+          NextToken;
+          NextTokenExpected([tkBracketOpen]);
+          ParseExpr;
+          NextTokenExpected([tkBracketClose]);
+          Emit([Pointer(opWait), Pointer(opWaiting)]);
         end;
       tkColon:
         begin
