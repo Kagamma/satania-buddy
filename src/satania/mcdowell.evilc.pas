@@ -3838,24 +3838,8 @@ var
   StackPtrLocal: PSEValue;
   BinaryPtrLocal: Integer;
   BinaryLocal: PSEValue;
-  RegCount, MMXCount: Integer;
-  ImportBufferIndex: array [0..31] of QWord;
-  ImportBufferData: array [0..8*31] of Byte;
-  ImportBufferString: array [0..31] of String;
-  ImportBufferWideString: array [0..31] of UnicodeString;
-  ImportResult: QWord;
-  ImportResultD: TSENumber;
-  ImportResultS: Single;
   FuncImport, P, PP, PC: Pointer;
   LineOfCode: TSELineOfCode;
-  StackModulo: QWord;
-  {$ifdef SE_LIBFFI}
-  ffiCif: ffi_cif;
-  ffiArgTypes: array [0..31] of pffi_type;
-  ffiArgValues: array [0..31] of Pointer;
-  ffiResultType: ffi_type;
-  ffiAbi: ffi_abi;
-  {$endif}
 
   procedure PrintEvilScriptStackTrace(Message: String);
 
@@ -4010,6 +3994,235 @@ var
       Self.Global[Integer(I)] := Value^
     else
       ((Self.FramePtr - Integer(F))^.Stack + Integer(I))^ := Value^;
+  end;
+
+  procedure CallImportFunc;
+  var
+    I: Integer;
+    ImportBufferIndex: array [0..31] of QWord;
+    ImportBufferData: array [0..8*31] of Byte;
+    ImportBufferString: array [0..31] of String;
+    ImportBufferWideString: array [0..31] of UnicodeString;
+    ImportResult: QWord;
+    ImportResultD: TSENumber;
+    ImportResultS: Single;
+    ArgCountStack, ArgCount, ArgSize: Integer;
+    FuncImport, P, PP: Pointer;
+    {$ifdef SE_LIBFFI}
+    ffiCif: ffi_cif;
+    ffiArgTypes: array [0..31] of pffi_type;
+    ffiArgValues: array [0..31] of Pointer;
+    ffiResultType: ffi_type;
+    ffiAbi: ffi_abi;
+    {$endif}
+  begin
+    FuncImportInfo := Self.Parent.FuncImportList.Ptr(Integer(BinaryLocal[CodePtrLocal + 1].VarPointer));
+    {$ifndef SE_LIBFFI}
+      raise Exception.Create('You need to enable SE_LIBFFI in order to call external function "' + FuncImportInfo^.Name + '"');
+    {$else}
+    FuncImport := FuncImportInfo^.Func;
+    if FuncImport = nil then
+      raise Exception.Create(Format('Function "%s" is null', [FuncImportInfo^.Name]));
+    ArgCount := Length(FuncImportInfo^.Args);
+    ArgSize := ArgCount * 8;
+
+    for I := ArgCount - 1 downto 0 do
+    begin
+      case FuncImportInfo^.Args[I] of
+        seakI8:
+          begin
+            Int64((@ImportBufferData[I * 8])^) := ShortInt(Round(Pop^.VarNumber));
+            ffiArgTypes[I] := @ffi_type_sint8;
+            ffiArgValues[I] := @ImportBufferData[I * 8];
+          end;
+        seakI16:
+          begin
+            Int64((@ImportBufferData[I * 8])^) := SmallInt(Round(Pop^.VarNumber));
+            ffiArgTypes[I] := @ffi_type_sint16;
+            ffiArgValues[I] := @ImportBufferData[I * 8];
+          end;
+        seakI32:
+          begin
+            Int64((@ImportBufferData[I * 8])^) := LongInt(Round(Pop^.VarNumber));
+            ffiArgTypes[I] := @ffi_type_sint32;
+            ffiArgValues[I] := @ImportBufferData[I * 8];
+          end;
+        seakI64:
+          begin
+            Int64((@ImportBufferData[I * 8])^) := Int64(Round(Pop^.VarNumber));
+            ffiArgTypes[I] := @ffi_type_sint64;
+            ffiArgValues[I] := @ImportBufferData[I * 8];
+          end;
+        seakU8:
+          begin
+            QWord((@ImportBufferData[I * 8])^) := Byte(Round(Pop^.VarNumber));
+            ffiArgTypes[I] := @ffi_type_uint8;
+            ffiArgValues[I] := @ImportBufferData[I * 8];
+          end;
+        seakU16:
+          begin
+            QWord((@ImportBufferData[I * 8])^) := Word(Round(Pop^.VarNumber));
+            ffiArgTypes[I] := @ffi_type_uint16;
+            ffiArgValues[I] := @ImportBufferData[I * 8];
+          end;
+        seakU32:
+          begin
+            QWord((@ImportBufferData[I * 8])^) := LongWord(Round(Pop^.VarNumber));
+            ffiArgTypes[I] := @ffi_type_uint32;
+            ffiArgValues[I] := @ImportBufferData[I * 8];
+          end;
+        seakU64:
+          begin
+            QWord((@ImportBufferData[I * 8])^) := QWord(Round(Pop^.VarNumber));
+            ffiArgTypes[I] := @ffi_type_uint64;
+            ffiArgValues[I] := @ImportBufferData[I * 8];
+          end;
+        seakF32:
+          begin
+            Single((@ImportBufferData[I * 8])^) := Single(Pop^.VarNumber);
+            ffiArgTypes[I] := @ffi_type_float;
+            ffiArgValues[I] := @ImportBufferData[I * 8];
+          end;
+        seakF64:
+          begin
+            TSENumber((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
+            ffiArgTypes[I] := @ffi_type_double;
+            ffiArgValues[I] := @ImportBufferData[I * 8];
+          end;
+        seakBuffer:
+          begin
+            A := Pop;
+            if A^.Kind = sevkString then
+            begin
+              ImportBufferString[I] := A^.VarString^ + #0;
+              PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferString[I]);
+            end else
+            if A^.Kind = sevkBuffer then
+              PChar((@ImportBufferData[I * 8])^) := PChar(A^.VarBuffer^.Ptr)
+            else
+              QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
+            ffiArgTypes[I] := @ffi_type_pointer;
+            ffiArgValues[I] := @ImportBufferData[I * 8];
+          end;
+        seakWBuffer:
+          begin
+            A := Pop;
+            if A^.Kind = sevkString then
+            begin
+              ImportBufferWideString[I] := UTF8Decode(A^.VarString^ + #0);
+              PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferWideString[I]);
+            end else
+            if A^.Kind = sevkBuffer then
+              PWideChar((@ImportBufferData[I * 8])^) := PWideChar(A^.VarBuffer^.Ptr)
+            else
+              QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
+            ffiArgTypes[I] := @ffi_type_pointer;
+            ffiArgValues[I] := @ImportBufferData[I * 8];
+          end;
+      end;
+    end;
+    case FuncImportInfo^.Return of
+      seakI8:
+        begin
+          ffiResultType := ffi_type_sint8;
+        end;
+      seakI16:
+        begin
+          ffiResultType := ffi_type_sint16;
+        end;
+      seakI32:
+        begin
+          ffiResultType := ffi_type_sint32;
+        end;
+      seakI64:
+        begin
+          ffiResultType := ffi_type_sint64;
+        end;
+      seakU8:
+        begin
+          ffiResultType := ffi_type_uint8;
+        end;
+      seakU16:
+        begin
+          ffiResultType := ffi_type_uint16;
+        end;
+      seakU32:
+        begin
+          ffiResultType := ffi_type_uint32;
+        end;
+      seakU64:
+        begin
+          ffiResultType := ffi_type_uint64;
+        end;
+      seakF32:
+        begin
+          ffiResultType := ffi_type_float;
+        end;
+      seakF64:
+        begin
+          ffiResultType := ffi_type_double;
+        end;
+      seakBuffer, seakWBuffer:
+        begin
+          ffiResultType := ffi_type_pointer;
+        end;
+    end;
+    case FuncImportInfo^.CallingConvention of
+      seccAuto:
+        ffiAbi := FFI_DEFAULT_ABI;
+      {$ifdef CPUI386}
+      seccStdcall:
+        ffiAbi := FFI_STDCALL;
+      seccCdecl:
+        ffiAbi := FFI_MS_CDECL;
+      {$endif}
+      else
+        ffiAbi := FFI_DEFAULT_ABI;
+    end;
+    I := Integer(ffi_prep_cif(@ffiCif, ffiAbi, ArgCount, @ffiResultType, @ffiArgTypes[0]));
+    if I <> Integer(FFI_OK) then
+      raise Exception.Create('FFI status is not OK (' + IntToStr(I) + ') while calling external function "' + FuncImportInfo^.Name + '"');
+    ffi_call(@ffiCif, ffi_fn(FuncImport), @ImportResult, @ffiArgValues[0]);
+    if FuncImportInfo^.Return = seakF32 then
+      ImportResultS := PSingle(@ImportResult)^
+    else
+    if FuncImportInfo^.Return = seakF64 then
+      ImportResultD := PDouble(@ImportResult)^;
+
+    case FuncImportInfo^.Return of
+      seakI8, seakI16, seakI32:
+        begin
+          TV := Int64(LongInt(ImportResult));
+        end;
+      seakI64:
+        begin
+          TV := Int64(ImportResult);
+        end;
+      seakU8, seakU16, seakU32:
+        begin
+          TV := QWord(LongWord(ImportResult));
+        end;
+      seakU64:
+        begin
+          TV := QWord(ImportResult);
+        end;
+      seakBuffer, seakWBuffer:
+        begin
+          GC.AllocBuffer(@TV, 0);
+          TV.VarBuffer^.Ptr := Pointer(QWord(ImportResult));
+        end;
+      seakF32:
+        begin
+          TV := ImportResultS;
+        end;
+      seakF64:
+        begin
+          TV := ImportResultD;
+        end;
+    end;
+    Push(TV);
+    Inc(CodePtrLocal, 4);
+    {$endif}
   end;
 
 {$ifdef SE_COMPUTED_GOTO}
@@ -4276,7 +4489,7 @@ begin
         begin
           B := Pop;
           A := Pop;
-          Push(A^ - B^ * Int(TSENumber(A^ / B^)));
+          Push(A^.VarNumber - B^.VarNumber * Int(TSENumber(A^.VarNumber / B^.VarNumber)));
           Inc(CodePtrLocal);
           DispatchGoto;
         end;
@@ -4649,593 +4862,6 @@ begin
           BinaryLocal := Self.Binaries[BinaryPtrLocal].Ptr(0);
           DispatchGoto;
         end;
-      {$ifdef SE_COMPUTED_GOTO}labelCallImport{$else}opCallImport{$endif}:
-        begin
-        CallImport:
-          FuncImportInfo := Self.Parent.FuncImportList.Ptr(Integer(BinaryLocal[CodePtrLocal + 1].VarPointer));
-          FuncImport := FuncImportInfo^.Func;
-          if FuncImport = nil then
-            raise Exception.Create(Format('Function "%s" is null', [FuncImportInfo^.Name]));
-          ArgCount := Length(FuncImportInfo^.Args);
-          ArgSize := ArgCount * 8;
-          RegCount := 0;
-          {$ifdef LINUX}
-          MMXCount := 0;
-          {$endif}
-
-          for I := ArgCount - 1 downto 0 do
-          begin
-            case FuncImportInfo^.Args[I] of
-              seakI8:
-                begin
-                  Int64((@ImportBufferData[I * 8])^) := ShortInt(Round(Pop^.VarNumber));
-                  {$ifdef SE_LIBFFI}
-                  ffiArgTypes[I] := @ffi_type_sint8;
-                  ffiArgValues[I] := @ImportBufferData[I * 8];
-                  {$else}
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
-                  {$endif}
-                end;
-              seakI16:
-                begin
-                  Int64((@ImportBufferData[I * 8])^) := SmallInt(Round(Pop^.VarNumber));
-                  {$ifdef SE_LIBFFI}
-                  ffiArgTypes[I] := @ffi_type_sint16;
-                  ffiArgValues[I] := @ImportBufferData[I * 8];
-                  {$else}
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
-                  {$endif}
-                end;
-              seakI32:
-                begin
-                  Int64((@ImportBufferData[I * 8])^) := LongInt(Round(Pop^.VarNumber));
-                  {$ifdef SE_LIBFFI}
-                  ffiArgTypes[I] := @ffi_type_sint32;
-                  ffiArgValues[I] := @ImportBufferData[I * 8];
-                  {$else}
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
-                  {$endif}
-                end;
-              seakI64:
-                begin
-                  Int64((@ImportBufferData[I * 8])^) := Int64(Round(Pop^.VarNumber));
-                  {$ifdef SE_LIBFFI}
-                  ffiArgTypes[I] := @ffi_type_sint64;
-                  ffiArgValues[I] := @ImportBufferData[I * 8];
-                  {$else}
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
-                  {$endif}
-                end;
-              seakU8:
-                begin
-                  QWord((@ImportBufferData[I * 8])^) := Byte(Round(Pop^.VarNumber));
-                  {$ifdef SE_LIBFFI}
-                  ffiArgTypes[I] := @ffi_type_uint8;
-                  ffiArgValues[I] := @ImportBufferData[I * 8];
-                  {$else}
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
-                  {$endif}
-                end;
-              seakU16:
-                begin
-                  QWord((@ImportBufferData[I * 8])^) := Word(Round(Pop^.VarNumber));
-                  {$ifdef SE_LIBFFI}
-                  ffiArgTypes[I] := @ffi_type_uint16;
-                  ffiArgValues[I] := @ImportBufferData[I * 8];
-                  {$else}
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
-                  {$endif}
-                end;
-              seakU32:
-                begin
-                  QWord((@ImportBufferData[I * 8])^) := LongWord(Round(Pop^.VarNumber));
-                  {$ifdef SE_LIBFFI}
-                  ffiArgTypes[I] := @ffi_type_uint32;
-                  ffiArgValues[I] := @ImportBufferData[I * 8];
-                  {$else}
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
-                  {$endif}
-                end;
-              seakU64:
-                begin
-                  QWord((@ImportBufferData[I * 8])^) := QWord(Round(Pop^.VarNumber));
-                  {$ifdef SE_LIBFFI}
-                  ffiArgTypes[I] := @ffi_type_uint64;
-                  ffiArgValues[I] := @ImportBufferData[I * 8];
-                  {$else}
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
-                  {$endif}
-                end;
-              seakF32:
-                begin
-                  Single((@ImportBufferData[I * 8])^) := Single(Pop^.VarNumber);
-                  {$ifdef SE_LIBFFI}
-                  ffiArgTypes[I] := @ffi_type_float;
-                  ffiArgValues[I] := @ImportBufferData[I * 8];
-                  {$else}
-                    ImportBufferIndex[I] := 2;
-                    {$ifdef WINDOWS}
-                    Inc(RegCount);
-                    {$else}
-                    Inc(MMXCount);
-                    {$endif}
-                  {$endif}
-                end;
-              seakF64:
-                begin
-                  TSENumber((@ImportBufferData[I * 8])^) := Pop^.VarNumber;
-                  {$ifdef SE_LIBFFI}
-                  ffiArgTypes[I] := @ffi_type_double;
-                  ffiArgValues[I] := @ImportBufferData[I * 8];
-                  {$else}
-                    ImportBufferIndex[I] := 1;
-                    {$ifdef WINDOWS}
-                    Inc(RegCount);
-                    {$else}
-                    Inc(MMXCount);
-                    {$endif}
-                  {$endif}
-                end;
-              seakBuffer:
-                begin
-                  A := Pop;
-                  if A^.Kind = sevkString then
-                  begin
-                    ImportBufferString[I] := A^.VarString^ + #0;
-                    PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferString[I]);
-                  end else
-                  if A^.Kind = sevkBuffer then
-                    PChar((@ImportBufferData[I * 8])^) := PChar(A^.VarBuffer^.Ptr)
-                  else
-                    QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
-                  {$ifdef SE_LIBFFI}
-                  ffiArgTypes[I] := @ffi_type_pointer;
-                  ffiArgValues[I] := @ImportBufferData[I * 8];
-                  {$else}
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
-                  {$endif}
-                end;
-              seakWBuffer:
-                begin
-                  A := Pop;
-                  if A^.Kind = sevkString then
-                  begin
-                    ImportBufferWideString[I] := UTF8Decode(A^.VarString^ + #0);
-                    PChar((@ImportBufferData[I * 8])^) := PChar(ImportBufferWideString[I]);
-                  end else
-                  if A^.Kind = sevkBuffer then
-                    PWideChar((@ImportBufferData[I * 8])^) := PWideChar(A^.VarBuffer^.Ptr)
-                  else
-                    QWord((@ImportBufferData[I * 8])^) := Round(A^.VarNumber);
-                  {$ifdef SE_LIBFFI}
-                  ffiArgTypes[I] := @ffi_type_pointer;
-                  ffiArgValues[I] := @ImportBufferData[I * 8];
-                  {$else}
-                  ImportBufferIndex[I] := 0;
-                  Inc(RegCount);
-                  {$endif}
-                end;
-            end;
-          end;
-        {$ifdef SE_LIBFFI}
-          case FuncImportInfo^.Return of
-            seakI8:
-              begin
-                ffiResultType := ffi_type_sint8;
-              end;
-            seakI16:
-              begin
-                ffiResultType := ffi_type_sint16;
-              end;
-            seakI32:
-              begin
-                ffiResultType := ffi_type_sint32;
-              end;
-            seakI64:
-              begin
-                ffiResultType := ffi_type_sint64;
-              end;
-            seakU8:
-              begin
-                ffiResultType := ffi_type_uint8;
-              end;
-            seakU16:
-              begin
-                ffiResultType := ffi_type_uint16;
-              end;
-            seakU32:
-              begin
-                ffiResultType := ffi_type_uint32;
-              end;
-            seakU64:
-              begin
-                ffiResultType := ffi_type_uint64;
-              end;
-            seakF32:
-              begin
-                ffiResultType := ffi_type_float;
-              end;
-            seakF64:
-              begin
-                ffiResultType := ffi_type_double;
-              end;
-            seakBuffer, seakWBuffer:
-              begin
-                ffiResultType := ffi_type_pointer;
-              end;
-          end;
-          case FuncImportInfo^.CallingConvention of
-            seccAuto:
-              ffiAbi := ffi_abi({$ifdef WINDOWS}1{$else}2{$endif});
-            {$ifdef CPUI386}
-            seccStdcall:
-              ffiAbi := FFI_STDCALL;
-            seccCdecl:
-              ffiAbi := FFI_MS_CDECL;
-            {$endif}
-          end;
-          if ffi_prep_cif(@ffiCif, ffiAbi, ArgCount, @ffiResultType, @ffiArgTypes[0]) <> FFI_OK then
-            raise Exception.Create('FFI status is not OK while calling external function "' + FuncImportInfo^.Name + '"');
-          ffi_call(@ffiCif, ffi_fn(FuncImport), @ImportResult, @ffiArgValues[0]);
-          if FuncImportInfo^.Return = seakF32 then
-            ImportResultS := PSingle(@ImportResult)^
-          else
-          if FuncImportInfo^.Return = seakF64 then
-            ImportResultD := PDouble(@ImportResult)^;
-        {$else}
-          P := @ImportBufferData[0];
-          PP := @ImportBufferIndex[0];
-          {$if defined(WINDOWS)}
-          ArgCountStack := Max(0, Int64(RegCount) - 4);
-          {$elseif defined(LINUX)}
-          ArgCountStack := Max(0, Int64(MMXCount) - 8) + Max(0, Int64(RegCount) - 6);
-          {$endif}
-          {$ifdef CPUX86_64}
-          {$if defined(WINDOWS)}
-            asm
-              xor  rdx,rdx
-              mov  rax,rsp
-              mov  rbx,16
-              div  rbx
-              mov  StackModulo,rdx
-              sub  esp,StackModulo
-
-              xor  rax,rax
-              mov  eax,ArgCount
-              mov  r10,rax
-
-              xor  rax,rax
-              mov  eax,ArgSize
-              mov  r14,rax
-
-              mov  rbx,P
-              add  rbx,r14
-              mov  rax,PP
-              add  rax,r14
-              mov  r12,RegCount
-            @Loop:
-              sub  rax,8
-              sub  rbx,8
-              mov  r13,[rbx]
-              mov  r14,[rax]
-            @LoopReg:
-                cmp  r12,4
-                jle  @LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
-              // Push to stack
-                push r13 // Always push ...
-                jmp  @LoopRegFinishAlloc
-              @LoopRegAlloc:
-                cmp  r14,1 // MMX?
-                je   @LoopMMX
-                cmp  r14,2 // MMX 32bit?
-                je   @LoopMMX32
-
-                cmp  r12,1
-                je   @AllocRCX
-                cmp  r12,2
-                je   @AllocRDX
-                cmp  r12,3
-                je   @AllocR8
-              // R9
-                mov  r9,r13
-                jmp  @LoopRegFinishAlloc
-              @AllocRCX:
-                mov  rcx,r13
-                jmp  @LoopRegFinishAlloc
-              @AllocRDX:
-                mov  rdx,r13
-                jmp  @LoopRegFinishAlloc
-              @AllocR8:
-                mov  r8,r13
-                jmp  @LoopRegFinishAlloc
-
-              @LoopMMX:
-                cmp  r12,1
-                je   @AllocMMX0
-                cmp  r12,2
-                je   @AllocMMX1
-                cmp  r12,3
-                je   @AllocMMX2
-              // MMX3
-                movsd xmm3,[rbx]
-                jmp  @LoopRegFinishAlloc
-              @AllocMMX0:
-                movsd xmm0,[rbx]
-                jmp  @LoopRegFinishAlloc
-              @AllocMMX1:
-                movsd xmm1,[rbx]
-                jmp  @LoopRegFinishAlloc
-              @AllocMMX2:
-                movsd xmm2,[rbx]
-                jmp  @LoopRegFinishAlloc
-
-              @LoopMMX32:
-                cmp  r12,1
-                je   @AllocMMX032
-                cmp  r12,2
-                je   @AllocMMX132
-                cmp  r12,3
-                je   @AllocMMX232
-              // MMX3
-                movss xmm3,[rbx]
-                jmp  @LoopRegFinishAlloc
-              @AllocMMX032:
-                movss xmm0,[rbx]
-                jmp  @LoopRegFinishAlloc
-              @AllocMMX132:
-                movss xmm1,[rbx]
-                jmp  @LoopRegFinishAlloc
-              @AllocMMX232:
-                movss xmm2,[rbx]
-
-              @LoopRegFinishAlloc:
-                dec  r12
-            @LoopFinishAlloc:
-              dec  r10
-              cmp  r10,0 // Still have arguments to take care of?
-              jne  @Loop
-            @FinishLoop:
-              sub  rsp,32
-              call [FuncImport]
-              mov  ImportResult,rax
-              movsd ImportResultD,xmm0
-              movss ImportResultS,xmm0
-              xor  rax,rax
-              mov  eax,ArgCountStack
-              mov  ecx,8
-              mul  ecx
-              add  rsp,rax
-              add  rsp,32
-              add  rsp,StackModulo
-            end ['rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'xmm0', 'xmm1', 'xmm2', 'xmm3'];
-          {$elseif defined(LINUX)}
-            asm
-              xor  rdx,rdx
-              mov  rax,rsp
-              mov  rbx,16
-              div  rbx
-              mov  StackModulo,rdx
-              sub  esp,StackModulo
-
-              xor  rax,rax
-              mov  eax,ArgCount
-              mov  r10,rax
-
-              xor  rax,rax
-              mov  eax,ArgSize
-              mov  r14,rax
-
-              mov  rbx,P
-              add  rbx,r14
-              mov  rax,PP
-              add  rax,r14
-              mov  r11,MMXCount
-              mov  r12,RegCount
-            @Loop:
-              sub  rax,8
-              sub  rbx,8
-              mov  r13,[rbx]
-              mov  r14,[rax]
-              cmp  r14,0 // Reg?
-              je   @LoopReg
-              cmp  r14,2 // MMX 32bit?
-              je   @LoopMMX32
-            @LoopMMX:
-                cmp  r11,8
-                jle  @LoopMMXAlloc // Lower or equal: Register allocation, Higher: Push to stack
-              // Push to stack
-                push r13
-                jmp  @LoopMMXFinishAlloc
-              @LoopMMXAlloc:
-                cmp  r11,1
-                je   @AllocMMX0
-                cmp  r11,2
-                je   @AllocMMX1
-                cmp  r11,3
-                je   @AllocMMX2
-                cmp  r11,4
-                je   @AllocMMX3
-                cmp  r11,5
-                je   @AllocMMX4
-                cmp  r11,6
-                je   @AllocMMX5
-                cmp  r11,7
-                je   @AllocMMX6
-              // MMX7
-                movsd xmm7,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX6:
-                movsd xmm6,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX5:
-                movsd xmm5,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX4:
-                movsd xmm4,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX3:
-                movsd xmm3,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX2:
-                movsd xmm2,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX1:
-                movsd xmm1,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX0:
-                movsd xmm0,[rbx]
-                jmp  @LoopMMXFinishAlloc
-
-            @LoopMMX32:
-                cmp  r11,8
-                jle  @LoopMMXAlloc32 // Lower or equal: Register allocation, Higher: Push to stack
-              // Push to stack
-                push r13
-                jmp  @LoopMMXFinishAlloc
-              @LoopMMXAlloc32:
-                cmp  r11,1
-                je   @AllocMMX032
-                cmp  r11,2
-                je   @AllocMMX132
-                cmp  r11,3
-                je   @AllocMMX232
-                cmp  r11,4
-                je   @AllocMMX332
-                cmp  r11,5
-                je   @AllocMMX432
-                cmp  r11,6
-                je   @AllocMMX532
-                cmp  r11,7
-                je   @AllocMMX632
-              // MMX7
-                movss xmm7,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX632:
-                movss xmm6,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX532:
-                movss xmm5,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX432:
-                movss xmm4,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX332:
-                movss xmm3,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX232:
-                movss xmm2,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX132:
-                movss xmm1,[rbx]
-                jmp  @LoopMMXFinishAlloc
-              @AllocMMX032:
-                movss xmm0,[rbx]
-              @LoopMMXFinishAlloc:
-                dec  r11
-                jmp  @LoopFinishAlloc
-
-            @LoopReg:
-                cmp  r12,6
-                jle  @LoopRegAlloc // Lower or equal: Register allocation, Higher: Push to stack
-              // Push to stack
-                push r13
-                jmp  @LoopRegFinishAlloc
-              @LoopRegAlloc:
-                cmp  r12,1
-                je   @AllocRDI
-                cmp  r12,2
-                je   @AllocRSI
-                cmp  r12,3
-                je   @AllocRDX
-                cmp  r12,4
-                je   @AllocRCX
-                cmp  r12,5
-                je   @AllocR9
-              // R8
-                mov  r8,r13
-                jmp  @LoopRegFinishAlloc
-              @AllocRDI:
-                mov  rdi,r13
-                jmp  @LoopRegFinishAlloc
-              @AllocRSI:
-                mov  rsi,r13
-                jmp  @LoopRegFinishAlloc
-              @AllocRDX:
-                mov  rdx,r13
-                jmp  @LoopRegFinishAlloc
-              @AllocRCX:
-                mov  rcx,r13
-                jmp  @LoopRegFinishAlloc
-              @AllocR9:
-                mov  r9,r13
-              @LoopRegFinishAlloc:
-                dec  r12
-            @LoopFinishAlloc:
-              dec  r10
-              cmp  r10,0 // Still have arguments to take care of?
-              jne  @Loop
-            @FinishLoop:
-              call [FuncImport]
-              mov  ImportResult,rax
-              movsd ImportResultD,xmm0
-              movss ImportResultS,xmm0
-              xor  rax,rax
-              mov  eax,ArgCountStack
-              mov  ecx,8
-              mul  ecx
-              add  rsp,rax
-              add  rsp,StackModulo
-            end ['rsi', 'rdi', 'rax', 'rbx', 'rcx', 'rdx', 'r8', 'r9', 'r10', 'r11', 'r12', 'r13', 'r14', 'xmm0', 'xmm1', 'xmm2', 'xmm3', 'xmm4', 'xmm5', 'xmm6', 'xmm7'];
-          {$endif}
-          {$else}
-          raise Exception.Create('Import external function does not support this CPU architecture');
-          {$endif} // CPUX86_64
-        {$endif}
-
-          case FuncImportInfo^.Return of
-            seakI8, seakI16, seakI32:
-              begin
-                TV := Int64(LongInt(ImportResult));
-              end;
-            seakI64:
-              begin
-                TV := Int64(ImportResult);
-              end;
-            seakU8, seakU16, seakU32:
-              begin
-                TV := QWord(LongWord(ImportResult));
-              end;
-            seakU64:
-              begin
-                TV := QWord(ImportResult);
-              end;
-            seakBuffer, seakWBuffer:
-              begin
-                GC.AllocBuffer(@TV, 0);
-                TV.VarBuffer^.Ptr := Pointer(QWord(ImportResult));
-              end;
-            seakF32:
-              begin
-                TV := ImportResultS;
-              end;
-            seakF64:
-              begin
-                TV := ImportResultD;
-              end;
-          end;
-          Push(TV);
-          Inc(CodePtrLocal, 4);
-          DispatchGoto;
-        end;
       {$ifdef SE_COMPUTED_GOTO}labelPopFrame{$else}opPopFrame{$endif}:
         begin
           GC.CheckForGC;
@@ -5472,6 +5098,12 @@ begin
             Push(TV);
             Dec(Self.TrapPtr);
           end;
+          DispatchGoto;
+        end;
+      {$ifdef SE_COMPUTED_GOTO}labelCallImport{$else}opCallImport{$endif}:
+        begin
+        CallImport:
+          CallImportFunc;
           DispatchGoto;
         end;
       {$ifndef SE_COMPUTED_GOTO}
@@ -6816,7 +6448,7 @@ var
       opOperatorSub:
         begin
           OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
-          OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar, opPushLocalVar, opPushArrayPop]);
+          OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar, opPushLocalVar, opPushArrayPop, opCallScript, opCallNative, opCallImport]);
           if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
           begin
             A := Self.Binary[OpInfoPrev1^.Pos + 1];
@@ -6851,7 +6483,7 @@ var
       opOperatorMul:
         begin
           OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
-          OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar, opPushLocalVar, opPushArrayPop]);
+          OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar, opPushLocalVar, opPushArrayPop, opCallScript, opCallNative, opCallImport]);
           if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
           begin
             A := Self.Binary[OpInfoPrev1^.Pos + 1];
@@ -6880,7 +6512,7 @@ var
       opOperatorDiv:
         begin
           OpInfoPrev1 := PeekAtPrevOpExpected(0, [opPushConst]);
-          OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar, opPushLocalVar, opPushArrayPop]);
+          OpInfoPrev2 := PeekAtPrevOpExpected(1, [opPushGlobalVar, opPushLocalVar, opPushArrayPop, opCallScript, opCallNative, opCallImport]);
           if (OpInfoPrev1 <> nil) and (OpInfoPrev2 <> nil) then
           begin
             A := Self.Binary[OpInfoPrev1^.Pos + 1];
