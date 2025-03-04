@@ -64,7 +64,7 @@ Operator                                        Precedence
  +, subtract "-"                                 3
  bitshift <<, >>                                 4
  equal "=", !=, <, <=, >, >=, &, |, ~, pow "^"   5
- unary                                           6
+ ternary                                         6
  assign "=", +=, -=, *=, /=                      7
 
 #+end_example
@@ -162,7 +162,7 @@ bitwise_left_shift = a << b
 
 bitwise_right_shift = a >> b
 
-unary = a != 5 ? 2 : 4
+ternary = a != 5 ? 2 : 4
 #+end_example
 
 *** If block
