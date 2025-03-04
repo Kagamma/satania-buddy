@@ -486,6 +486,7 @@ type
     tkBegin,
     tkEnd,
     tkColon,
+    tkQuestion,
     tkBracketOpen,
     tkBracketClose,
     tkNegative,
@@ -533,7 +534,7 @@ TSETokenKinds = set of TSETokenKind;
 const
   TokenNames: array[TSETokenKind] of String = (
     'EOF', '.', '+', '-', '*', 'div', 'mod', '^', '<<', '>>', 'operator assign', '=', '!=', '<',
-    '>', '<=', '>=', '{', '}', ':', '(', ')', 'neg', 'number', 'string',
+    '>', '<=', '>=', '{', '}', ':', '?', '(', ')', 'neg', 'number', 'string',
     ',', 'if', 'switch', 'case', 'default', 'identity', 'function', 'fn', 'variable', 'const', 'local',
     'unknown', 'else', 'while', 'break', 'continue', 'yield', 'wait',
     '[', ']', 'and', 'or', 'xor', 'not', 'for', 'in', 'to', 'downto', 'step', 'return',
@@ -5599,6 +5600,8 @@ begin
         end;
       ':':
         Token.Kind := tkColon;
+      '?':
+        Token.Kind := tkQuestion;
       '''', '"':
         begin
           PrevQuote := C;
@@ -7294,9 +7297,29 @@ var
       end;
     end;
 
+  var
+    Expr2Block,
+    EndBlock,
+    JumpEnd,
+    JumpExpr2: Integer;
+
   begin
     OpCountStart := Self.OpcodeInfoList.Count;
     Logic;
+    // Handle unary
+    if PeekAtNextToken.Kind = tkQuestion then
+    begin
+      NextToken;
+      JumpExpr2 := Emit([Pointer(opJumpEqual1), False, Pointer(0)]);
+      ParseExpr;
+      NextTokenExpected([tkColon]);
+      JumpEnd := Emit([Pointer(opJumpUnconditional), Pointer(0)]);
+      Expr2Block := Self.Binary.Count;
+      ParseExpr;
+      EndBlock := Self.Binary.Count;
+      Patch(JumpExpr2 - 1, Pointer(Expr2Block));
+      Patch(JumpEnd - 1, Pointer(EndBlock));
+    end;
   end;
 
   procedure ParseFuncRefCallByMapRewind(const Ident: TSEIdent; const DeepCount, RewindStartAdd: Integer; const ThisRefIdent: PSEIdent = nil);

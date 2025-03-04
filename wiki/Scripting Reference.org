@@ -64,7 +64,8 @@ Operator                                        Precedence
  +, subtract "-"                                 3
  bitshift <<, >>                                 4
  equal "=", !=, <, <=, >, >=, &, |, ~, pow "^"   5
- assign "=", +=, -=, *=, /=                      6
+ unary                                           6
+ assign "=", +=, -=, *=, /=                      7
 
 #+end_example
 
@@ -160,6 +161,8 @@ pow = a^b
 bitwise_left_shift = a << b
 
 bitwise_right_shift = a >> b
+
+unary = a != 5 ? 2 : 4
 #+end_example
 
 *** If block
@@ -1112,4 +1115,8 @@ set('new_flag', 'Data')
 ** About Evil script compiler
 - The compiler itself is a one-pass compiler. It follows Niklaus Wirth's design, completely skips AST generation and generates binary directly.
 - Due to the lack of AST, only ~constant folding~ and ~peephole~ optimizations are implemented.
-- The performance of its virtual machine should be better than CPython.
+- The virtual machine is stack-based, with super instructions to speed up certain operations.
+
+![image](https://github.com/user-attachments/assets/de9a7711-c977-4ae7-81fe-7b82e3cf7092)
+
+poca: https://github.com/BeRo1985/poca
