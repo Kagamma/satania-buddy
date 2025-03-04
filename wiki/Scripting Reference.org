@@ -1117,4 +1117,4 @@ set('new_flag', 'Data')
 - Due to the lack of AST, only ~constant folding~ and ~peephole~ optimizations are implemented.
 - The virtual machine is stack-based, with super instructions to speed up certain operations.
 
-[[https://github.com/user-attachments/assets/241f6c68-a5b8-4e11-bc08-07f79ed2beae]]
+[[https://i.imgur.com/ZPaufwu.png]]
