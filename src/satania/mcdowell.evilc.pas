@@ -844,6 +844,7 @@ type
     class function SENumber(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
     class function SELength(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
     class function SEMapCreate(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+    class function SEMapClone(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
     class function SEMapKeyDelete(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
     class function SEMapKeysGet(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
     class function SEArrayResize(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
@@ -1264,6 +1265,7 @@ end;
 
 function SEClone(constref V: TSEValue): TSEValue;
 var
+  I: Integer;
   S, Key: String;
 begin
   case V.Kind of
@@ -1285,8 +1287,19 @@ begin
     sevkMap:
       begin
         GC.AllocMap(@Result);
-        for Key in TSEValueMap(V.VarMap).Keys do
-          SEMapSet(Result, Key, SEMapGet(V, Key))
+        if not SEMapIsValidArray(V) then
+        begin
+          for Key in TSEValueMap(V.VarMap).Keys do
+          begin
+            SEMapSet(Result, Key, TSEValueMap(V.VarMap).Get2(Key));
+          end;
+        end else
+        begin
+          for I := 0 to TSEValueMap(V.VarMap).List.Count - 1 do
+          begin
+            SEMapSet(Result, I, TSEValueMap(V.VarMap).Get2(I));
+          end;
+        end;
       end;
   end;
 end;
@@ -1854,6 +1867,11 @@ begin
       SEMapSet(Result, Round(Args[I].VarNumber), Args[I + 1]);
     Inc(I, 2);
   end;
+end;
+
+class function TBuiltInFunction.SEMapClone(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
+begin
+  Exit(SEClone(Args[0]));
 end;
 
 class function TBuiltInFunction.SEMapKeyDelete(const VM: TSEVM; const Args: PSEValue; const ArgCount: Cardinal): TSEValue;
@@ -5301,6 +5319,7 @@ begin
   Self.RegisterFunc('length', @TBuiltInFunction(nil).SELength, 1);
   Self.RegisterFunc('map_create', @TBuiltInFunction(nil).SEMapCreate, -1);
   Self.RegisterFunc('___map_create', @TBuiltInFunction(nil).SEMapCreate, -1);
+  Self.RegisterFunc('map_clone', @TBuiltInFunction(nil).SEMapClone, 1);
   Self.RegisterFunc('map_key_delete', @TBuiltInFunction(nil).SEMapKeyDelete, 2);
   Self.RegisterFunc('map_keys_get', @TBuiltInFunction(nil).SEMapKeysGet, 1);
   Self.RegisterFunc('array_resize', @TBuiltInFunction(nil).SEArrayResize, 2);
@@ -6371,13 +6390,14 @@ var
     end;
   end;
 
-  function EmitPushVar(const Ident: TSEIdent): Integer; inline;
+  function EmitPushVar(const Ident: TSEIdent; const IsPotentialRewind: Boolean = False): Integer; inline;
   begin
     if Ident.Local > 0 then
       Result := Emit([Pointer(opPushLocalVar), Pointer(Ident.Addr), Pointer(Self.FuncTraversal - Ident.Local)])
     else
       Result := Emit([Pointer(opPushGlobalVar), Pointer(Ident.Addr)]);
-    PeepholePushVar2Optimization;
+    if not IsPotentialRewind then
+      PeepholePushVar2Optimization;
   end;
 
   function EmitAssignVar(const Ident: TSEIdent): Integer; inline;
@@ -7028,7 +7048,7 @@ var
               EmitAssignVar(FuncRefIdent);
               RewindStartAddr := Self.Binary.Count;
             end;
-            EmitPushVar(FuncRefIdent);
+            EmitPushVar(FuncRefIdent, True);
             Tail;
           end;
         end;
@@ -7093,7 +7113,7 @@ var
                             PushConstCount := 0;
                             IsTailed := True;
                             NextToken;
-                            EmitPushVar(Ident^);
+                            EmitPushVar(Ident^, True);
                             ParseExpr;
                             Emit([Pointer(opPushArrayPop), SENull]);
                             PeepholeArrayAssignOptimization;
@@ -7107,7 +7127,7 @@ var
                             IsTailed := True;
                             NextToken;
                             Token2 := NextTokenExpected([tkIdent]);
-                            EmitPushVar(Ident^);
+                            EmitPushVar(Ident^, True);
                             Emit([Pointer(opPushArrayPop), Token2.Value]);
                             Tail;
                             FuncTail;
@@ -7147,7 +7167,7 @@ var
                     FuncRefIdent := CreateIdent(ikVariable, FuncRefToken, True, False);
                     EmitAssignVar(FuncRefIdent);
                     RewindStartAddr := Self.Binary.Count;
-                    EmitPushVar(FuncRefIdent);
+                    EmitPushVar(FuncRefIdent, True);
                     Tail;
                     FuncTail;
                   end;
@@ -7344,7 +7364,7 @@ var
     end;
     // Allocate stack for this
     if ThisRefIdent <> nil then
-      EmitPushVar(ThisRefIdent^)
+      EmitPushVar(ThisRefIdent^, True)
     else
     begin
       This := FindVar('self');
@@ -7355,7 +7375,7 @@ var
     end;
     // Push map to stack
     Rewind(RewindStartAdd, RewindCount);
-    EmitPushVar(Ident);
+    EmitPushVar(Ident, True);
     Emit([Pointer(opCallRef), Pointer(0), Pointer(ArgCount), Pointer(DeepCount)]);
   end;
 
@@ -7381,7 +7401,7 @@ var
     end;
     // Allocate stack for this
     if ThisRefIdent <> nil then
-      EmitPushVar(ThisRefIdent^)
+      EmitPushVar(ThisRefIdent^, True)
     else
     begin
       This := FindVar('self');
@@ -8154,7 +8174,7 @@ var
       end;
       EmitAssignVar(FuncRefIdent);
       RewindStartAddr := Self.Binary.Count;
-      EmitPushVar(FuncRefIdent);
+      EmitPushVar(FuncRefIdent, True);
       while PeekAtNextToken.Kind in [tkSquareBracketOpen, tkDot] do
       begin
         case PeekAtNextToken.Kind of
@@ -9001,4 +9021,5 @@ finalization
   ScriptCacheMap.Free;
 
 end.
+
 
