@@ -543,7 +543,7 @@ begin
   Thread.URL := Args[1];
   Thread.Method := UpperCase(Args[0].VarString^);
   if Args[2].Kind = sevkMap then
-    for S in TSEValueMap(Args[2].VarMap).Keys do
+    for S in TSEValueMap(Args[2].VarMap).Map.Keys do
     begin
       Thread.HTTP.AddHeader(S, SEMapGet(Args[2], S));
     end;
@@ -1021,7 +1021,7 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: PSEValue; const A
     V: TSEValue;
   begin
     SB.Append('[');
-    for I := 0 to TSEValueMap(Map.VarMap).List.Count - 1 do
+    for I := 0 to TSEValueMap(Map.VarMap).Count - 1 do
     begin
       if (I > 0) then
         SB.Append(',');
@@ -1055,7 +1055,7 @@ function TSatania.SEJSONStringify(const VM: TSEVM; const Args: PSEValue; const A
     Key: String;
   begin
     SB.Append('{');
-    for Key in TSEValueMap(Map.VarMap).Keys do
+    for Key in TSEValueMap(Map.VarMap).Map.Keys do
     begin
       if (I > 0) then
         SB.Append(',');
@@ -1165,7 +1165,7 @@ begin
   Item.LastTimestamp := GetTickCount64;
   if ArgCount >= 4 then
   begin
-    for ConstKey in TSEValueMap(Args[3].VarMap).Keys do
+    for ConstKey in TSEValueMap(Args[3].VarMap).Map.Keys do
       Item.Script.ConstMap.AddOrSetValue(ConstKey, SEMapGet(Args[3], ConstKey));
   end;
   Self.BackgroundScriptDict.AddOrSetValue(Key, Item);
