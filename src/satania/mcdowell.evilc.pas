@@ -67,7 +67,7 @@ const
   // Maximum memory in bytes before GC starts acting aggressive
   SE_MEM_CEIL = 1024 * 1024 * 2048;
   // Time in miliseconds before GC starts collecting memory
-  SE_MEM_TIME = 1000 * 60 * 2;
+  SE_MEM_TIME = 1000 * 60;
 
 type
   TSENumber = Double;
@@ -439,6 +439,7 @@ type
   TEvilC = class;
   TSEVM = class
   public
+    Name: String;
     IsPaused: Boolean;
     IsDone: Boolean;
     IsYielded: Boolean;
@@ -3583,7 +3584,7 @@ var
   Ticks: QWord;
 begin
   Ticks := GetTickCount64 - Self.FTicks;
-  if (Ticks > SE_MEM_TIME) or
+  if (Ticks > SE_MEM_TIME) or (Self.FValueList.Count > $1FFFFFF) or
     ((Self.FAllocatedMem > Self.CeilMem) and (Ticks > 1000 * 2)) then
   begin
     Self.GC;
@@ -3595,7 +3596,19 @@ procedure TSEGarbageCollector.Sweep; inline;
 var
   Value: TSEGCValue;
   I, MS: Integer;
+
+  procedure Add;
+  begin
+    Value.Value.Kind := sevkNull;
+    Self.FValueList[I] := Value;
+    Self.FValueAvailStack.Push(I);
+  end;
+
 begin
+  {$ifdef SE_LOG}
+  Writeln('[GC] Number of objects before cleaning: ', Self.FValueList.Count);
+  Writeln('[GC] Number of objects in object pool: ', Self.FValueAvailStack.Count);
+  {$endif}
   for I := Self.FValueList.Count - 1 downto 1 do
   begin
     Value := Self.FValueList[I];
@@ -3608,6 +3621,7 @@ begin
             begin
               Value.Value.VarMap.Free;
             end;
+            Add;
           end;
         sevkString:
           begin
@@ -3618,6 +3632,7 @@ begin
               Value.Value.VarString^ := '';
               Dispose(Value.Value.VarString);
             end;
+            Add;
           end;
         sevkBuffer:
           begin
@@ -3631,6 +3646,7 @@ begin
               end;
               Dispose(Value.Value.VarBuffer);
             end;
+            Add;
           end;
         sevkPascalObject:
           begin
@@ -3641,13 +3657,15 @@ begin
               Self.FAllocatedMem := Self.FAllocatedMem - SizeOf(TSEPascalObject);
               Dispose(Value.Value.VarPascalObject);
             end;
+            Add;
           end;
       end;
-      Value.Value.Kind := sevkNull;
-      Self.FValueList[I] := Value;
-      Self.FValueAvailStack.Push(I);
     end;
   end;
+  {$ifdef SE_LOG}
+  Writeln('[GC] Number of objects after cleaning: ', Self.FValueList.Count);
+  Writeln('[GC] Number of objects in object pool: ', Self.FValueAvailStack.Count);
+  {$endif}
 end;
 
 procedure TSEGarbageCollector.GC;
@@ -3663,36 +3681,40 @@ procedure TSEGarbageCollector.GC;
     Value := Self.FValueList[PValue^.Ref];
     if not Value.Garbage then
       Exit;
-    case Value.Value.Kind of
-      sevkMap:
-        begin
-          if PValue^.VarMap <> nil then
-            if SEMapIsValidArray(PValue^) then
+    if Value.Value.VarPointer = PValue^.VarPointer then
+    begin
+      try
+        case Value.Value.Kind of
+          sevkMap:
             begin
-              try
-                for I := 0 to TSEValueMap(PValue^.VarMap).Count - 1 do
+              if PValue^.VarMap <> nil then
+                if SEMapIsValidArray(PValue^) then
                 begin
-                  RValue := SEMapGet(PValue^, I);
-                  Mark(@RValue);
-                end;
-              except
-                on E: Exception do;
-              end;
-            end else
-            begin
-              try
-                for Key in TSEValueMap(PValue^.VarMap).Map.Keys do
+                  for I := 0 to TSEValueMap(PValue^.VarMap).Count - 1 do
+                  begin
+                    RValue := SEMapGet(PValue^, I);
+                    Mark(@RValue);
+                  end;
+                end else
                 begin
-                  RValue := SEMapGet(PValue^, Key);
-                  Mark(@RValue);
+                  for Key in TSEValueMap(PValue^.VarMap).Map.Keys do
+                  begin
+                    RValue := SEMapGet(PValue^, Key);
+                    Mark(@RValue);
+                  end;
                 end;
-              except
-                on E: Exception do;
-              end;
             end;
         end;
+      except
+        on E: Exception do
+        begin
+          {$ifdef SE_LOG}
+          Writeln(E.Message);
+          {$endif}
+        end;
+      end;
+      Value.Garbage := False;
     end;
-    Value.Garbage := False;
     Self.FValueList[PValue^.Ref] := Value;
   end;
 
@@ -3716,7 +3738,7 @@ begin
   begin
     VM := VMList[I];
     P := @VM.Stack[0];
-    while P < VM.StackPtr do
+    while P <= VM.StackPtr do
     begin
       Mark(P);
       Inc(P);
@@ -5275,7 +5297,6 @@ begin
   Self.CodePtr := CodePtrLocal;
   Self.StackPtr := StackPtrLocal;
   Self.BinaryPtr := BinaryPtrLocal;
-  GC.CheckForGC;
 end;
 
 constructor TEvilC.Create;
@@ -8767,6 +8788,7 @@ begin
       Self.Parse;
     end;
     Self.VM.Exec;
+    GC.CheckForGC;
     Exit(Self.VM.Global[0]);
   finally
     {$ifdef SE_PROFILER}
@@ -8818,6 +8840,7 @@ begin
       Stack[I] := Args[I];
     end;
     Self.VM.Exec;
+    GC.CheckForGC;
     Exit(Stack[-1]);
   end else
     Exit(SENull);
@@ -8842,7 +8865,10 @@ begin
         begin
           Self.VM.Exec;
           if Self.VM.IsDone then
+          begin
+            GC.CheckForGC;
             Exit(Stack[-1]);
+          end;
         end;
       end;
     end else
@@ -8874,7 +8900,10 @@ begin
         end;
         Self.VM.Exec;
         if Self.VM.IsDone then
+        begin
+          GC.CheckForGC;
           Exit(Stack[-1]);
+        end;
       end;
     end;
   finally
@@ -9127,5 +9156,4 @@ finalization
   ScriptCacheMap.Free;
 
 end.
-
 
