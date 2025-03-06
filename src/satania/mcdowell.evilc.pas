@@ -3730,6 +3730,7 @@ var
   T: QWord;
 begin
   {$ifdef SE_LOG}
+  Writeln('[GC] Number of objects before cleaning: ', Self.FValueAvailStack.Count);
   Writeln('[GC] Number of objects in object pool: ', Self.FObjects);
   T := GetTickCount64;
   {$endif}
@@ -3767,6 +3768,7 @@ begin
   end;
   Sweep;
   {$ifdef SE_LOG}
+  Writeln('[GC] Number of objects after cleaning: ', Self.FValueAvailStack.Count);
   Writeln('[GC] Number of objects in object pool: ', Self.FObjects);
   Writeln('[GC] Time: ', GetTickCount64 - T, 'ms');
   {$endif}
